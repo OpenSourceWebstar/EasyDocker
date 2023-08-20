@@ -1,0 +1,34 @@
+version: "2.1"
+
+networks:
+  vpn:
+    external: true
+
+services:
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+      #- CLI_ARGS= #optional
+    volumes:
+      - ./duplicati-data/:/config
+      - ./duplicati-backups/:/backups
+      - ./duplicati-source/:/source
+    ports:
+      - 8200:8200
+    restart: unless-stopped
+    #labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #caddy.tls: "internal"
+      #traefik.enable: true
+      #traefik.http.routers.cozy.entrypoints: web,websecure
+      #traefik.http.routers.cozy.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.cozy.tls: true
+      #traefik.http.routers.cozy.tls.certresolver: production
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

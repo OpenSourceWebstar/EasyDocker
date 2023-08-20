@@ -1,0 +1,21 @@
+version: '3.0'
+networks:
+  vpn:
+    external: true
+services:
+  cozy:
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #traefik.enable: true
+      #traefik.http.routers.cozy.entrypoints: web,websecure
+      #traefik.http.routers.cozy.rule: HostRegexp:${COZY_TLD},{subdomain:.*}.${COZY_TLD}
+      #traefik.http.routers.cozy.tls: true
+      #traefik.http.routers.cozy.tls.certresolver: production
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE
+  db:
+    networks:
+      vpn:
+         ipv4_address: 10.8.1.110

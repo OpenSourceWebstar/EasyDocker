@@ -1,0 +1,17 @@
+version: "3.7"
+networks:
+  vpn:
+    external: true
+services:
+  akaunting:
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #traefik.enable: true
+      #traefik.http.routers.akaunting.entrypoints: web,websecure
+      #traefik.http.routers.akaunting.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.akaunting.tls: true
+      #traefik.http.routers.akaunting.tls.certresolver: production
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

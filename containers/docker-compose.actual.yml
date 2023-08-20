@@ -1,0 +1,27 @@
+version: '3'
+networks:
+  vpn:
+    external: true
+services:
+  actual_server:
+    image: actualbudget/actual-server:latest
+    container_name: actual
+    ports:
+      # This line makes Actual available at port 5006 of the device you run the server on,
+      # i.e. http://localhost:5006. You can change the first number to change the port, if you want.
+      - 'PORTHERE:5006'
+    #environment:
+      # Uncomment any of the lines below to set configuration options.
+      # - ACTUAL_HTTPS_KEY=/data/selfhost.key
+      # - ACTUAL_HTTPS_CERT=/data/selfhost.crt
+      # - ACTUAL_NORDIGEN_SECRET_ID=xxxx
+      # - ACTUAL_NORDIGEN_SECRET_KEY=xxxx
+      # See all options and more details at https://actualbudget.github.io/docs/Installing/Configuration
+    volumes:
+      # Change './actual-data' below to the path to the folder you want Actual to store its data in on your server.
+      # '/data' is the path Actual will look for its files in by default, so leave that as-is.
+      - ./actual-data:/data
+    restart: unless-stopped
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    environment:
+      TZ: Europe/Lisbon
+      WATCHTOWER_SCHEDULE: "0 0 4 * * *"
+      WATCHTOWER_CLEANUP: 'true'
+      WATCHTOWER_LABEL_ENABLE: 'true'
+      WATCHTOWER_MONITOR_ONLY: 'true'
+      #WATCHTOWER_NOTIFICATIONS: email
+      #WATCHTOWER_NOTIFICATION_EMAIL_FROM: from-address@your-domain.com
+      #WATCHTOWER_NOTIFICATION_EMAIL_TO: to-address@your-domain.com
+      # you have to use a network alias here, if you use your own certificate
+      #WATCHTOWER_NOTIFICATION_EMAIL_SERVER: smtp.your-domain.com
+      #WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: 25
+      #WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

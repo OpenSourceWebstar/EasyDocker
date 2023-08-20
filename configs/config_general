@@ -1,0 +1,27 @@
+# General - NEEDED FOR INSTALLATION
+CFG_INSTALL_NAME=Change-Me
+CFG_EMAIL=change@me.com
+
+# Domains (9 maximum)
+CFG_DOMAIN_1=changeme.co.uk
+CFG_DOMAIN_2=
+CFG_DOMAIN_3=
+
+# Network
+CFG_NETWORK_NAME=vpn
+CFG_NETWORK_SUBNET=10.8.1.0/24
+# Examples for below :
+# 1.2.3.4,2.3.4.5
+#
+CFG_IPS_WHITELIST=
+CFG_IPS_SSH_SETUP=
+
+# Docker Manager (Used for remote access)
+# Not recommended to change the dockermanager username as it may cause issues with ssh transfer
+CFG_DOCKER_MANAGER_USER=dockermanager
+CFG_DOCKER_MANAGER_PASS=RANDOMIZEDPASSWORD
+
+# Only edit below if you know what you are doing
+CFG_UPDATER_CHECK=60
+CFG_SWAPFILE_SIZE=2G
+CFG_GENERATED_PASS_LENGTH=26

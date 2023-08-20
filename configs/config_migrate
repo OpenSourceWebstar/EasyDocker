@@ -1,0 +1,19 @@
+# Migration - NOT NEEDED FOR INSTALLATION
+#
+# Transfers over all or a specific app from here to a remote server
+# Makes use of SSH key installation
+#
+# Migration Types :
+#
+# external - migrates from this local to an external host
+# local - migrates from an external host to here
+#
+CFG_MIGRATE_TYPE=external
+
+# for usage with external
+CFG_MIGRATE_EXTERNAL_INSTALL_NAME=Change-Me
+CFG_MIGRATE_EXTERNAL_IP=1.1.1.1
+CFG_MIGRATE_EXTERNAL_USER=username
+CFG_MIGRATE_EXTERNAL_PASS=password
+CFG_MIGRATE_EXTERNAL_BACKUP_DIRECTORY=/docker/backups/
+CFG_MIGRATE_EXTERNAL_BACKUP_PASSPHRASE=passphrase

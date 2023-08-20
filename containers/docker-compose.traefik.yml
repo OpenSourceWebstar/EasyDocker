@@ -1,0 +1,22 @@
+version: "3"
+
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+  traefik:
+    image: traefik:v2.5
+    container_name: traefik
+    ports:
+      - 80:80
+      - 443:443
+      #- 8080:8080  # (optional) expose the dashboard !don't use in production!
+    volumes:
+      - ./etc:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

@@ -1,0 +1,32 @@
+version: '3.3'
+
+networks:
+  vpn:
+    external: true
+
+services:
+  portainer:
+    ports:
+      - '8000:8000'
+      - '9000:9000'
+    container_name: portainer
+    restart: always
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - ./portainer-data/:/data
+    image: portainer/portainer-ce
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #traefik.enable: true
+      #traefik.http.routers.portainer.entrypoints: web,websecure
+      #traefik.http.routers.portainer.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.portainer.service: portainer
+      #traefik.http.routers.portainer.tls: true
+      #traefik.http.routers.portainer.tls.certresolver: production
+      #traefik.http.services.portainer.loadbalancer.server.port: 9000
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.portainer.middlewares: my-whitelist-in-docker@docker
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

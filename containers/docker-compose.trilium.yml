@@ -1,0 +1,27 @@
+version: '2.1'
+
+networks:
+  vpn:
+    external: true
+
+services:
+  trilium:
+    image: zadam/trilium
+    restart: always
+    environment:
+      - TRILIUM_DATA_DIR=/home/node/trilium-data
+    ports:
+      - "PORTHERE:8080"
+    volumes:
+      - ./trilium-data/:/home/node/trilium-data
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #traefik.enable: true
+      #traefik.http.routers.trilium.entrypoints: web,websecure
+      #traefik.http.routers.trilium.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.trilium.tls: true
+      #traefik.http.routers.trilium.tls.certresolver: production
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

@@ -1,0 +1,54 @@
+version: '3'
+
+networks:
+  vpn:
+    external: true
+
+services:
+  vaultwarden:
+    restart: always
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    ports:
+      - 8201:80
+    volumes:
+      - ./vaultwarden-ssl/:/ssl/
+      - ./vaultwarden-data:/data
+    environment:
+      #- SMTP_HOST=mail.DOMAINNAMEHERE
+      #- SMTP_FROM=admin@DOMAINNAMEHERE
+      #- SMTP_FROM_NAME=VaultWarden
+      #- SMTP_SECURITY=starttls
+      #- SMTP_PORT=587
+      #- SMTP_USERNAME=test@DOMAINNAMEHERE
+      #- SMTP_PASSWORD="claWol,26,_"
+      #- SMTP_TIMEOUT=30
+      #- SMTP_AUTH_MECHANISM="Plain"
+      - LOGIN_RATELIMIT_MAX_BURST=10
+      - LOGIN_RATELIMIT_SECONDS=60
+      - DOMAIN=https://DOMAINSUBNAMEHERE
+      #- INVITATION_ORG_NAME=HomeVault
+      #- INVITATIONS_ALLOWED=true
+      #- ADMIN_TOKEN="afaSGAfasFSAFAdqHad6sasfsagacacsFFASX"
+      - SIGNUPS_ALLOWED=true
+      #- SIGNUPS_DOMAINS_WHITELIST=DOMAINNAMEHERE
+      #- SIGNUPS_VERIFY=false
+      #- SIGNUPS_VERIFY_RESEND_TIME=3600
+      #- SIGNUPS_VERIFY_RESEND_LIMIT=6
+      - EMERGENCY_ACCESS_ALLOWED=true
+      #- SENDS_ALLOWED=true
+      - WEB_VAULT_ENABLED=true
+      #- ROCKET_TLS={certs="ssl/cert.pem",key="ssl/key.pem"}
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #traefik.enable: true
+      #traefik.http.routers.vaultwarden.entrypoints: web,websecure
+      #traefik.http.routers.vaultwarden.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.vaultwarden.tls: true
+      #traefik.http.routers.vaultwarden.tls.certresolver: production
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.vaultwarden.middlewares: my-whitelist-in-docker@docker
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

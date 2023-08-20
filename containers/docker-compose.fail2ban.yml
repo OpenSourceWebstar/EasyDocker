@@ -1,0 +1,36 @@
+version: "2.1"
+
+services:
+  fail2ban:
+    image: lscr.io/linuxserver/fail2ban:latest
+    container_name: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - VERBOSITY=-vv #optional
+    volumes:
+      - ./config/:/config
+      - ./logs/:/var/log:ro
+      #- ./logs/airsonic/:/remotelogs/airsonic:ro #optional
+      #- ./logs/apache2/log:/remotelogs/apache2:ro #optional
+      #- ./logs/authelia/log:/remotelogs/authelia:ro #optional
+      #- ./logs/emby/log:/remotelogs/emby:ro #optional
+      #- ./logs/filebrowser/log:/remotelogs/filebrowser:ro #optional
+      #- ./logs/homeassistant/log:/remotelogs/homeassistant:ro #optional
+      #- ./logs/lighttpd/log:/remotelogs/lighttpd:ro #optional
+      #- ./logs/nextcloud/log:/remotelogs/nextcloud:ro #optional
+      #- ./logs/nginx/log:/remotelogs/nginx:ro #optional
+      #- ./logs/nzbget/log:/remotelogs/nzbget:ro #optional
+      #- ./logs/overseerr/log:/remotelogs/overseerr:ro #optional
+      #- ./logs/prowlarr/log:/remotelogs/prowlarr:ro #optional
+      #- ./logs/radarr/log:/remotelogs/radarr:ro #optional
+      #- ./logs/sabnzbd/log:/remotelogs/sabnzbd:ro #optional
+      #- ./logs/sonarr/log:/remotelogs/sonarr:ro #optional
+      #- ./logs/unificontroller/log:/remotelogs/unificontroller:ro #optional
+      #- ./logs/vaultwarden/log:/remotelogs/vaultwarden:ro #optional
+    restart: unless-stopped

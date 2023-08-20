@@ -1,0 +1,16 @@
+[sshd]
+enabled = true
+
+# To use more aggressive sshd modes set filter parameter "mode" in jail.local:
+# normal (default), ddos, extra or aggressive (combines all).
+# See "tests/files/logs/sshd" or "filter.d/sshd.conf" for usage example and details.
+mode   = normal
+port    = ssh
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+
+ignoreip = ips_whitelist
+
+# Ban IP and report to AbuseIPDB for SSH Brute-Forcing
+action = %(action_)s
+         %(action_abuseipdb)s[abuseipdb_apikey="my-api-key", abuseipdb_category="5,14,15,18,19,21,22"]

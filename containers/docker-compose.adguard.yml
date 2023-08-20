@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+  unbound:
+    image: "mvance/unbound:latest"
+    container_name: unbound
+    restart: unless-stopped
+    hostname: "unbound"
+    volumes:
+      - "./etc:/opt/unbound/etc/unbound/"
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.119
+
+  adguard:
+    depends_on: [unbound]
+    container_name: adguard
+    image: adguard/adguardhome
+    restart: unless-stopped
+    hostname: adguard
+    #ports:
+      #- 53:53/tcp
+      #- 53:53/udp
+      #- 3784:784/udp
+      #- 853:853/tcp
+      #- 3000:3000/tcp
+      #- 3300:80/tcp
+      #- 3443:443/tcp
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #traefik.enable: true
+      #traefik.http.routers.adguard.entrypoints: web,websecure
+      #traefik.http.routers.adguard.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.adguard.tls: true
+      #traefik.http.routers.adguard.tls.certresolver: production
+      #traefik.http.services.adguard.loadbalancer.server.port:PORTHERE
+      #traefik.tcp.routers.adguard-dot.rule:HostSNI(`${DOMAINSUBNAMEHERE}`)
+      #traefik.tcp.routers.adguard-dot.entrypoints:dnsovertls
+      #traefik.tcp.routers.adguard-dot.tls:true
+      #traefik.tcp.routers.adguard-dot.service:adguard
+      #traefik.tcp.services.adguard.loadbalancer.server.port:53
+    volumes:
+      - "./work:/opt/adguardhome/work"
+      - "./conf:/opt/adguardhome/conf"
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

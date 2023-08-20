@@ -1,0 +1,30 @@
+version: '3'
+networks:
+  vpn:
+    external: true
+services:
+    nginx-mailcow:
+      networks:
+        vpn:
+          ipv4_address: IPADDRESSHERE
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.moo.rule=Host(`${MAILCOW_HOSTNAME}`)
+        - traefik.http.routers.moo.tls=true
+        - traefik.http.routers.moo.tls.certresolver=production
+        - traefik.http.services.moo.loadbalancer.server.port=PORTHERE
+        - traefik.http.routers.moo.entrypoints=websecure
+        - traefik.docker.network=vpn
+
+    certdumper:
+      image: ghcr.io/kereis/traefik-certs-dumper:latest
+      command: --restart-containers ${COMPOSE_PROJECT_NAME}-postfix-mailcow-1,${COMPOSE_PROJECT_NAME}-nginx-mailcow-1,${COMPOSE_PROJECT_NAME}-dovecot-mailcow-1
+        #network_mode: none
+      volumes:
+          - /docker/traefik/etc/certs:/traefik:ro
+          - ./data/assets/ssl/:/output:rw
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      restart: always
+      environment:
+          # only change this, if you're using another domain for mailcow's web frontend compared to the standard config
+          - DOMAIN=${MAILCOW_HOSTNAME}

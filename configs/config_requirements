@@ -1,0 +1,21 @@
+# REQUIREMENTS
+#----------------------------------------------------------------
+# Not needed to edit but if you dont need anything in here
+# upon intial installation requirements, disable them here.
+# Not recommended to edit if you don't know what you are doing.
+#
+CFG_REQUIREMENT_ROOT=true
+CFG_REQUIREMENT_COMMAND=true
+CFG_REQUIREMENT_CONFIG=true
+CFG_REQUIREMENT_DATABASE=true
+CFG_REQUIREMENT_DOCKER_CE=true
+CFG_REQUIREMENT_DOCKER_COMPOSE=true
+CFG_REQUIREMENT_UFW=true
+CFG_REQUIREMENT_UFWD=true
+CFG_REQUIREMENT_MANAGER=true
+CFG_REQUIREMENT_SSLCERTS=true
+CFG_REQUIREMENT_SWAPFILE=true
+CFG_REQUIREMENT_CRONTAB=true
+CFG_REQUIREMENT_SWAPFILE=true
+CFG_REQUIREMENT_SSHREMOTE=true
+CFG_REQUIREMENT_PASSWORDS=true

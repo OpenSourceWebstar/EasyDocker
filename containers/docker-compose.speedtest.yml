@@ -1,0 +1,28 @@
+version: "3.3"
+
+networks:
+  vpn:
+    external: true
+
+services:
+  speedtest:
+    image: adolfintel/speedtest
+    environment:
+      - MODE=standalone
+      - TELEMETRY=false
+      - ENABLE_ID_OBFUSCATION=true
+      - PASSWORD=asGA5sa9ajsomtf
+      - WEBPORT=80
+    ports:
+      - 4001:80
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #traefik.enable: true
+      #traefik.http.routers.speedtest.entrypoints: web,websecure
+      #traefik.http.routers.speedtest.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.speedtest.tls: true
+      #traefik.http.routers.speedtest.tls.certresolver: production
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

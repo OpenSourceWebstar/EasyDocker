@@ -1,0 +1,104 @@
+version: '3.5'
+
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+
+  kimai: # This is the latest FPM image of kimai
+    image: kimai/kimai2:fpm-dev
+    container_name: kimai
+    environment:
+      - ADMINMAIL=admin@kimai.local
+      - ADMINPASS=changemeplease
+      - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
+      - TRUSTED_HOSTS=DOMAINSUBNAMEHERE
+      - memory_limit=500
+    volumes:
+      - ./kimai-public/:/opt/kimai/public
+      # - var:/opt/kimai/var
+      # - ./ldap.conf:/etc/openldap/ldap.conf:z
+      # - ./ROOT-CA.pem:/etc/ssl/certs/ROOT-CA.pem:z
+    restart: unless-stopped
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
+
+  sqldb:
+    image: mysql:5.7
+    container_name: kimai-sqldb
+    environment:
+      - MYSQL_DATABASE=kimai
+      - MYSQL_USER=kimaiuser
+      - MYSQL_PASSWORD=kimaipassword
+      - MYSQL_ROOT_PASSWORD=aSVAui5awsTASj55mva
+    ports:
+      - 3336:3306
+    volumes:
+      - ./kimai-mysql/:/var/lib/mysql
+    command: --default-storage-engine innodb
+    restart: unless-stopped
+    healthcheck:
+      test: mysqladmin -p$$MYSQL_ROOT_PASSWORD ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.101
+
+  phpmyadmin:
+    container_name: kimai-phpmyadmin
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8002:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.102
+
+  swagger:
+    container_name: kimai-swagger
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8003:8080
+    volumes:
+      - ./swagger.json:/swagger.json
+    environment:
+      - SWAGGER_JSON=/swagger.json
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.103
+
+  kimai-nginx:
+    container_name: kimai-nginx
+    image: tobybatch/nginx-fpm-reverse-proxy
+    ports:
+      - 8001:80
+    volumes:
+      - ./kimai-public:/opt/kimai/public:ro
+    restart: unless-stopped
+    depends_on:
+      - kimai
+    healthcheck:
+      test:  wget --spider http://kimai-nginx/health || exit 1
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+    labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: "10.8.1.104:PORTHERE"
+      #traefik.enable: true
+      #traefik.http.routers.kimai-nginx.entrypoints: web,websecure
+      #traefik.http.routers.kimai-nginx.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.kimai-nginx.tls: true
+      #traefik.http.routers.kimai-nginx.tls.certresolver: production
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.104

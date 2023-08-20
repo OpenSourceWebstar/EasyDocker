@@ -1,0 +1,10 @@
+# Restore - RECOMMENDED BUT NOT NEEDED FOR INSTALLATION
+#
+# This is used for restoring backups from local or external hosts
+# It's not the same as the migration tool, and it more simple
+#
+CFG_RESTORE_REMOTE_IP=1.1.1.1
+CFG_RESTORE_REMOTE_USER=username
+CFG_RESTORE_REMOTE_PASS=password
+CFG_RESTORE_REMOTE_BACKUP_DIRECTORY=/docker/backups/
+CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE=passphrase

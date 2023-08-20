@@ -1,0 +1,47 @@
+version: "3"
+
+networks:
+  vpn:
+    external: true
+
+services:
+  pihole:
+    container_name: pihole
+    image: cbcrowe/pihole-unbound:latest
+    hostname: pihole
+    domainname: DOMAINSUBNAMEHERE
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 3232:80/tcp #Allows use of different when other docker containers use port 80
+      # - 443:443/tcp #Allows use of https
+      # - 5335:5335/tcp # Uncomment to enable unbound access on local server
+      # - 22/tcp # Uncomment to enable SSH
+    environment:
+      - FTLCONF_LOCAL_IPV4=10.8.1.3
+      - TZ=Europe/Lisbon
+      - WEBPASSWORD=QWERTY123456asdfASDF
+      - WEBTHEME=default-dark
+      - REV_SERVER=true
+      - REV_SERVER_TARGET=192.168.1.1
+      - REV_SERVER_DOMAIN=local
+      - REV_SERVER_CIDR=192.168.0.0/16
+      - PIHOLE_DNS_=127.0.0.1#5335
+      - DNSSEC="true"
+      - DNSMASQ_LISTENING=single
+    volumes:
+      - ./pihole-dnsmasq-unbound:/etc/pihole:rw
+      - ./pihole-unbound:/etc/dnsmasq:rw
+    restart: unless-stopped
+    #labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.rewrite: / /admin{uri}
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #traefik.enable: true
+      #traefik.http.routers.cozy.entrypoints: web,websecure
+      #traefik.http.routers.cozy.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.cozy.tls: true
+      #traefik.http.routers.cozy.tls.certresolver: production
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE
