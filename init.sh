@@ -45,7 +45,7 @@ initializeScript()
 
 	# Install Git
 	# Check if Git is already installed
-	if dpkg -l git &> /dev/null; then
+	if ! dpkg -l git &> /dev/null; then
 		echo "Git is already installed."
 	else
 		# Install Git
@@ -63,7 +63,7 @@ initializeScript()
 	else
 		echo "No .git found. Cloning Git Repository"
 		# Handle the case where the directory exists but is not a Git repository
-		git clone "$repo_url" "$script_dir"
+		git clone "$github_url" "$script_dir"
 		echo "Git repository cloned into '$script_dir'."
     fi
 
