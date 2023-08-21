@@ -16,7 +16,7 @@ installSSHRemoteList()
 
             # Check if sqlite3 is available
             if ! command -v sqlite3 &> /dev/null; then
-                checkSuccess "sqlite3 command not found. Make sure it's installed."
+                isNotice "sqlite3 command not found. Make sure it's installed."
                 return 1
             fi
 

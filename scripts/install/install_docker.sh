@@ -8,6 +8,7 @@ installDockerCompose()
         echo "############################################"
 
         # install docker-compose
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Installing Docker-Compose..."
         echo ""
@@ -19,12 +20,14 @@ installDockerCompose()
         ######################################        
         
         if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
-            VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*\d')
-            sudo curl -SL https://github.com/docker/compose/releases/download/$VERSION/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
-            #sudo curl -L "https://github.com/docker/compose/releases/download/$(curl https://github.com/docker/compose/releases | grep -m1 '<a href="/docker/compose/releases/download/' | grep -o 'v[0-9:].[0-9].[0-9]')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose)
+            checkSuccess "Download the official Docker Compose script"
 
-            sleep 2
-            sudo chmod +x /usr/local/bin/docker-compose
+            result=$(sudo chmod +x /usr/local/bin/docker-compose)
+            checkSuccess "Make the script executable"
+
+            result=$(docker-compose --version)
+            checkSuccess "Verify the installation"
         fi
 
         ######################################
@@ -34,7 +37,6 @@ installDockerCompose()
         if [[ "$OS" == "4" ]]; then
             sudo pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
         fi
-
 
         echo ""
 

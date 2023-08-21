@@ -5,7 +5,7 @@ app_name="$1"
 databaseInstallApp() {
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
 
@@ -41,7 +41,7 @@ databaseUninstallApp()
 {
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
 
@@ -78,7 +78,7 @@ databaseAppScan()
 {
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
 
@@ -168,7 +168,7 @@ databaseListAllApps()
     
         # Check if sqlite3 is available
         if ! command -v sqlite3 &> /dev/null; then
-            checkSuccess "sqlite3 command not found. Make sure it's installed."
+            isNotice "sqlite3 command not found. Make sure it's installed."
             return 1
         fi
 
@@ -206,7 +206,7 @@ databaseListInstalledApps()
 {
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
 
@@ -289,7 +289,7 @@ databaseCycleThroughListApps()
 
         # Check if sqlite3 is available
         if ! command -v sqlite3 &> /dev/null; then
-            checkSuccess "sqlite3 command not found. Make sure it's installed."
+            isNotice "sqlite3 command not found. Make sure it's installed."
             return 1
         fi
 
@@ -371,7 +371,7 @@ databaseCycleThroughListAppsCrontab()
 
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
 
@@ -400,7 +400,7 @@ databaseSSHScanForKeys()
 
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
 
@@ -433,7 +433,7 @@ databaseDisplayTables()
 
         # Check if sqlite3 is available
         if ! command -v sqlite3 &> /dev/null; then
-        checkSuccess "sqlite3 command not found. Make sure it's installed."
+        isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
         fi
 
@@ -491,7 +491,7 @@ databaseEmptyTable()
 
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-      checkSuccess "sqlite3 command not found. Make sure it's installed."
+      isNotice "sqlite3 command not found. Make sure it's installed."
       return 1
     fi
 
@@ -537,14 +537,14 @@ databaseEmptyTable()
 checkIfUpdateShouldRun() {
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
-      checkSuccess "sqlite3 command not found. Make sure it's installed."
-      return 1
+      isNotice "sqlite3 command not found. Make sure it's installed."
+      return 0
     fi
 
     # Ensure the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-      isError "Database file not found: $base_dir/$db_file"
-      return
+        isError "Database file not found: $base_dir/$db_file"
+        return 0  # Database doesn't exist, so we should run the update
     fi
 
     local table_name="sysupdate"
