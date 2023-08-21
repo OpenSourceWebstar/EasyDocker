@@ -1,3 +1,8 @@
+# NOTICE
+
+THIS HAS ONLY BEEN TESTED ON DEBIAN!
+It should work with Ubuntu, but OS's with different commands will not work at the moment.
+
 # Usage
 The usage of an automated Docker script is highly beneficial for system administrators and developers alike. 
 

@@ -33,7 +33,7 @@ initializeScript()
 	fi
 	
 	# Setup folder structure
-	folders=("$base_dir" "$install_path" "$logs_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir")
+	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			mkdir "$folder"
@@ -42,6 +42,16 @@ initializeScript()
 			echo "Folder '$folder' already exists."
 		fi
 	done
+
+	# Install Git
+	# Check if Git is already installed
+	if dpkg -l git &> /dev/null; then
+		echo "Git is already installed."
+	else
+		# Install Git
+		apt-get install git -y
+		echo "Git has been installed."
+	fi
 
 	# Git Clone and Update
 	# Check if it's a Git repository by looking for the .git directory
