@@ -3,6 +3,7 @@
 installUFW()
 {
    if [[ "$CFG_REQUIREMENT_UFW" == "true" ]]; then
+    	ISUFW=$( (ufw status ) 2>&1 )
 		if [[ "$ISUFW" == *"command not found"* ]]; then
             echo ""
             echo "##########################################"
