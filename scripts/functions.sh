@@ -50,6 +50,16 @@ resetToMenu()
     return 1
 }
 
+updateGit() 
+{
+    cd $script_dir
+    result=$(chmod 0755 init.sh)
+    checkSuccess "Updating init.sh permissions"
+    
+    result=$(./init.sh run)
+    checkSuccess "Running init.sh for Git Pull"
+}
+
 function userExists() {
     if id "$1" &>/dev/null; then
         return 0 # User exists

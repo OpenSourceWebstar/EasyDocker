@@ -131,6 +131,9 @@ startOther()
     #######################################################
     ###                     Tools                    ###
     #######################################################
+	if [[ "$toolsupdategit" == [yY] ]]; then
+		updateGit;
+	fi
 
 	if [[ "$toolstartpreinstallation" == [yY] ]]; then
 		startPreInstall;

@@ -2,6 +2,8 @@
 
 param1="$1"
 
+github_url="https://github.com/OpenSourceWebstar/EasyDocker"
+
 # Directories
 base_dir=/docker
 install_path=$base_dir/containers/
@@ -24,15 +26,14 @@ logs_dir=$script_dir/logs/
 
 initializeScript()
 {
-	# IMPLEMENT GIT CLONE 
 	# Check if script is run as root
 	if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run as root."
-	exit 1
+		echo "This script must be run as root."
+		exit 1
 	fi
 	
 	# Setup folder structure
-	folders=("$base_dir" "$install_path" "$logs_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir" "$configs_dir" "$resources_dir" "$resources_dir" "$scripts_dir" "$install_dir" "$containers_dir")
+	folders=("$base_dir" "$install_path" "$logs_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			mkdir "$folder"
@@ -41,6 +42,20 @@ initializeScript()
 			echo "Folder '$folder' already exists."
 		fi
 	done
+
+	# Git Clone and Update
+	# Check if it's a Git repository by looking for the .git directory
+	if [ -d "$script_dir/.git" ]; then
+		echo "A Git repository is already cloned in '$script_dir'."
+		# Optionally, you can pull updates here if desired
+		cd "$script_dir"
+		git pull
+	else
+		echo "No .git found. Cloning Git Repository"
+		# Handle the case where the directory exists but is not a Git repository
+		git clone "$repo_url" "$script_dir"
+		echo "Git repository cloned into '$script_dir'."
+    fi
 
 	# Custom command check
 	if grep -q "easydocker" ~/.bashrc; then
