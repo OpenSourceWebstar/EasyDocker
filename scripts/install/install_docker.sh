@@ -2,7 +2,7 @@
 
 installDockerCompose()
 {
-    if [[ "$DCOMP" = [yY] ]]; then
+    if [[ "$ISCOMP" == *"command not found"* ]]; then
         echo "############################################"
         echo "######     Install Docker-Compose     ######"
         echo "############################################"
@@ -20,7 +20,7 @@ installDockerCompose()
         
         if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
             VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*\d')
-		    sudo curl -SL https://github.com/docker/compose/releases/download/$VERSION/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+            sudo curl -SL https://github.com/docker/compose/releases/download/$VERSION/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
             #sudo curl -L "https://github.com/docker/compose/releases/download/$(curl https://github.com/docker/compose/releases | grep -m1 '<a href="/docker/compose/releases/download/' | grep -o 'v[0-9:].[0-9].[0-9]')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
             sleep 2
@@ -43,7 +43,6 @@ installDockerCompose()
         echo "        "${DOCKCOMPV}
         echo ""
         echo ""
-        DCOMP=n
         sleep 3s
     fi
 }

@@ -43,15 +43,13 @@ initializeScript()
 		fi
 	done
 
+	# Update OS
+	apt-get update
+	apt-get upgrade -y
+	echo "OS Updated"
 	# Install Git
-	# Check if Git is already installed
-	if ! dpkg -l git &> /dev/null; then
-		echo "Git is already installed."
-	else
-		# Install Git
-		apt-get install git -y
-		echo "Git has been installed."
-	fi
+	apt-get install git -y
+	echo "Git has been installed."
 
 	# Git Clone and Update
 	# Check if it's a Git repository by looking for the .git directory
