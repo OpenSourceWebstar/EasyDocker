@@ -2,7 +2,7 @@
 
 param1="$1"
 
-github_url="https://github.com/OpenSourceWebstar/EasyDocker"
+repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
 
 # Directories
 base_dir=/docker
@@ -55,13 +55,11 @@ initializeScript()
 	# Check if it's a Git repository by looking for the .git directory
 	if [ -d "$script_dir/.git" ]; then
 		echo "A Git repository is already cloned in '$script_dir'."
-		# Optionally, you can pull updates here if desired
-		cd "$script_dir"
-		git pull
+		echo "Please run the easydocker command to update the repository"
 	else
 		echo "No .git found. Cloning Git Repository"
 		# Handle the case where the directory exists but is not a Git repository
-		git clone "$github_url" "$script_dir"
+		git clone "$repo_url" "$script_dir"
 		echo "Git repository cloned into '$script_dir'."
     fi
 
