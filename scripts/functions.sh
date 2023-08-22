@@ -153,7 +153,7 @@ detectOS()
         source /etc/os-release
         case "$NAME" in
             "Debian GNU/Linux")
-                detected_os="Debian 10 / 11"
+                detected_os="Debian 10 / 11 / 12"
                 OS=1 ;;
             "Ubuntu")
                 case "$VERSION_ID" in
@@ -188,7 +188,7 @@ detectOS()
             done
         fi
 
-        checkRequirements
+        checkUpdates
     else
         checkSuccess "Unable to detect OS."
         exit 1
