@@ -21,7 +21,7 @@
 
 			# Cleaning Git Repository but utilizing the .gitignore file
             # Get patterns to exclude from .gitignore
-            exclude_patterns=$(git -C "$repo_path" ls-files -oi --exclude-standard)
+            exclude_patterns=$(git -C "$script_dir" ls-files -oi --exclude-standard)
             clean_command="git clean -fd"
             for pattern in $exclude_patterns; do
                 clean_command="$clean_command --exclude=$pattern"
