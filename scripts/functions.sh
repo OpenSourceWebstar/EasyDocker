@@ -644,7 +644,7 @@ scanConfigsForRandomPassword()
                     sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
                     
                     # Display the update message
-                    echo "Updated $scanned_config_file with a new password."
+                    isSuccessful "Updated $scanned_config_file with a new password."
                 done
             fi
         done
