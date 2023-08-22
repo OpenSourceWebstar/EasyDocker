@@ -25,8 +25,8 @@ installDockerManagerUser()
                 result=$(sudo chown -R root:root $base_dir)
                 checkSuccess "Chown $base_dir folder to root for chroot access"
 
-                result=$(sudo chmod -R 755 $base_dir)
-                checkSuccess "Set appropriate permissions for $base_dir SSH folder"
+                #result=$(sudo chmod -R 755 $base_dir)
+                #checkSuccess "Set appropriate permissions for $base_dir SSH folder"
 
                 result=$(mkdir -p $ssh_dir$CFG_DOCKER_MANAGER_USER)
                 checkSuccess "Creating folder for $CFG_DOCKER_MANAGER_USER to use"
@@ -100,8 +100,8 @@ EOL")
                 checkSuccess "Updating SSH Server Configuration for the Manager User."
                 
                 # Fix Perms
-                result=$(sudo chmod -R 755 $base_dir)
-                checkSuccess "Adjusting permissions for all files in $base_dir"
+                #result=$(sudo chmod -R 755 $base_dir)
+                #checkSuccess "Adjusting permissions for all files in $base_dir"
                 result=$(sudo chmod 700 $ssh_dir)
                 checkSuccess "Adjusting permissions for $base_dir"
                 result=$(sudo chmod 700 $ssh_dir$CFG_DOCKER_MANAGER_USER/)

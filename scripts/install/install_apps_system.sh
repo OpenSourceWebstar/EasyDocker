@@ -116,11 +116,7 @@ installTraefik()
         shutdownApp;
     fi
 
-    if [[ "$traefik" == *[rR]* ]]; then
-        # Fix permissions if files have been changed to avoid non loading
-        result=$(chmod 600 "$install_path$app_name/etc/certs/acme.json")
-        checkSuccess "Set permissions to acme.json file for $app_name"
-        
+    if [[ "$traefik" == *[rR]* ]]; then      
         dockerDownUpDefault;
     fi
 
