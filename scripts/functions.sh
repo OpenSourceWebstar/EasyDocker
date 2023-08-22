@@ -635,17 +635,17 @@ scanConfigsForRandomPassword()
         for scanned_config_file in "$configs_dir"/*; do
             if [ -f "$scanned_config_file" ]; then
                 # Check if the file contains the placeholder string "RANDOMIZEDPASSWORD"
-                if grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; then
+                while grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
                     # Generate a unique random password
                     local seed="$scanned_config_file$(date +%s)"
                     local random_password=$(echo "$seed" | sha256sum | base64 | head -c "$CFG_GENERATED_PASS_LENGTH")
 
-                    # Update the file with the new password
-                    sudo sed -i "s/RANDOMIZEDPASSWORD/$random_password/g" "$scanned_config_file"
+                    # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
+                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
                     
                     # Display the update message
                     echo "Updated $scanned_config_file with a new password."
-                fi
+                done
             fi
         done
         isSuccessful "Random password generation and update completed successfully."
