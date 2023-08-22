@@ -18,8 +18,17 @@
         if [[ $customupdatesfound == [yY] ]]; then
 			result=$(git reset --hard HEAD)
 			checkSuccess "Resetting Git Repository"
-			result=$(git clean -fd)
-			checkSuccess "Cleaning Git Repository"
+
+			# Cleaning Git Repository but utilizing the .gitignore file
+            # Get patterns to exclude from .gitignore
+            exclude_patterns=$(git -C "$repo_path" ls-files -oi --exclude-standard)
+            clean_command="git clean -fd"
+            for pattern in $exclude_patterns; do
+                clean_command="$clean_command --exclude=$pattern"
+            done
+            # Execute the git clean command
+            eval "$clean_command"
+			
             isSuccessful "Custom changes have been discarded successfully"
         else
             isNotice "Custom changes will be kept, continuing..."
