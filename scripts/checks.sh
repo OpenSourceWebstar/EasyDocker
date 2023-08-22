@@ -12,7 +12,7 @@
 
     # Check if there are uncommitted changes
     if [[ $(git status --porcelain) ]]; then
-        echo "There are uncommitted changes in the repository."
+        isNotice "There are uncommitted changes in the repository."
 		isQuestion "Do you want to discard these changes and update the repository? (y/n): "
         read -p "" customupdatesfound
         if [[ $customupdatesfound == [yY] ]]; then
@@ -28,7 +28,7 @@
             done
             # Execute the git clean command
             eval "$clean_command"
-			
+
             isSuccessful "Custom changes have been discarded successfully"
         else
             isNotice "Custom changes will be kept, continuing..."
