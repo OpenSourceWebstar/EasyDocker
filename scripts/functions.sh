@@ -219,6 +219,41 @@ checkConfigFilesExist()
     fi
 }
 
+checkConfigFilesEdited()
+{
+    # Flag to control the loop
+    config_check_done=false
+
+    while ! "$config_check_done"; do
+        # Check if configs have not been changed
+        if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
+            isNotice "Default config values have been found, have you edited the config files?"
+            while true; do
+                isQuestion "Would you like to continue with the default config values or edit them? (c/e): "
+                read -rp "" configsnotchanged
+                if [[ -n "$configsnotchanged" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+
+            if [[ $configsnotchanged == [cC] ]]; then
+                isNotice "Config files have been accepted with the default values, continuing... "
+                config_check_done=true  # Set the flag to exit the loop
+            elif [[ $configsnotchanged == [eE] ]]; then
+                viewConfigs
+                # Continue to the next iteration of the loop
+            else
+                isFatalError "Please update your config files, continuing..."
+                exit 1
+            fi
+        else
+            isSuccessful "Config file has been updated, continuing..."
+            config_check_done=true  # Set the flag to exit the loop
+        fi
+    done
+}
+
 # Function to view log file with different options
 viewLogs()
 {
@@ -640,11 +675,15 @@ scanConfigsForRandomPassword()
                     local seed="$scanned_config_file$(date +%s)"
                     local random_password=$(echo "$seed" | sha256sum | base64 | head -c "$CFG_GENERATED_PASS_LENGTH")
 
+                    # Extract the filename without path and the content before "RANDOMIZEDPASSWORD"
+                    file_name="$(basename "$scanned_config_file")"
+                    content_before_password=$(sed -n "/RANDOMIZEDPASSWORD/ {s/RANDOMIZEDPASSWORD.*//p}" "$scanned_config_file")
+
                     # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
                     sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
                     
-                    # Display the update message
-                    isSuccessful "Updated $scanned_config_file with a new password."
+                    # Display the update message with the last name in the path, content before "RANDOMIZEDPASSWORD," and no "="
+                    echo "Updated ${file_name##*/} with a new password for ${content_before_password%%=}"
                 done
             fi
         done

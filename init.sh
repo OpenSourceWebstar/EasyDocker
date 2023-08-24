@@ -12,6 +12,7 @@ ssh_dir=$base_dir/ssh/
 backup_dir="$base_dir/backups"
 backup_full_dir="$backup_dir/full"
 backup_single_dir="$backup_dir/single"
+backup_install_dir="$backup_dir/install"
 restore_dir="$base_dir/restore"
 restore_full_dir="$restore_dir/full"
 restore_single_dir="$restore_dir/single"
@@ -33,7 +34,7 @@ initializeScript()
 	fi
 	
 	# Setup folder structure
-	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir")
+	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			mkdir "$folder"

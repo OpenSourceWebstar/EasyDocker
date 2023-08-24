@@ -12,6 +12,7 @@ NC='\033[0m' # No Color
 
 # Date/Time
 backupDate=$(date  +'%F')
+backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
 current_date=$(date +%Y-%m-%d)
 current_time=$(date +%H:%M:%S)
 

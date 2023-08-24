@@ -2,54 +2,84 @@
 
  checkUpdates()
  {
-	echo ""
-	echo "#####################################"
-	echo "###      Checking for Updates     ###"
-	echo "#####################################"
-	echo ""
+	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
+		echo ""
+		echo "#####################################"
+		echo "###      Checking for Updates     ###"
+		echo "#####################################"
+		echo ""
 
-    cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
+		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
-    # Check if there are uncommitted changes
-    if [[ $(git status --porcelain) ]]; then
-        isNotice "There are uncommitted changes in the repository."
-		isQuestion "Do you want to discard these changes and update the repository? (y/n): "
-        read -p "" customupdatesfound
-        if [[ $customupdatesfound == [yY] ]]; then
-			result=$(git reset --hard HEAD)
-			checkSuccess "Resetting Git Repository"
+		result=$(git config core.fileMode false)
+		checkSuccess "Update Git to ignore changes in file permissions"
 
-			# Cleaning Git Repository but utilizing the .gitignore file
-            # Get patterns to exclude from .gitignore
-            exclude_patterns=$(git -C "$script_dir" ls-files -oi --exclude-standard)
-            clean_command="git clean -fd"
-            for pattern in $exclude_patterns; do
-                clean_command="$clean_command --exclude=$pattern"
-            done
-            # Execute the git clean command
-            eval "$clean_command"
+		# Check if there are uncommitted changes
+		if [[ $(git status --porcelain) ]]; then
+			isNotice "There are uncommitted changes in the repository."
+			isQuestion "Do you want to discard these changes and update the repository? (y/n): "
+			read -p "" customupdatesfound
+			if [[ $customupdatesfound == [yY] ]]; then
+				backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
 
-            isSuccessful "Custom changes have been discarded successfully"
-        else
-            isNotice "Custom changes will be kept, continuing..."
-			checkRequirements;
-        fi
-    fi
 
-	result=$(git remote update)
-	checkSuccess "Checking for changes in the remote repository"
+				# Folder setup
+				result=$(mkdir "$backup_install_dir/$backupFolder")
+				checkSuccess "Create the backup folder"
+				result=$(cd $backup_install_dir)
+				checkSuccess "Going into the backup install folder"
 
-    # Check if the local branch is behind the remote branch
-    if git status -uno | grep -q "Your branch is behind"; then
-        isNotice "Updates found."
-        result=$(git pull)
-		checkSuccess "Pulling latest updates"
-        isSuccessful "Files are now up to date."
-    else
-        isSuccessful "Files are all up to date."
-    fi
+				# Copy folders
+				result=$(cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
+				checkSuccess "Copy the configs to the backup folder"
+				result=$(cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
+				checkSuccess "Copy the logs to the backup folder"
 
-	checkRequirements;
+				# Reset git
+				result=$(git reset --hard HEAD)
+				checkSuccess "Resetting Git Repository"
+
+				# Copy folders back into the install folder
+				result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
+				checkSuccess "Copy the backed up folders back into the installation directory"
+
+				# Zip up folder for safe keeping and remove folder
+				result=$(zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
+				checkSuccess "Zipping up the the backup folder for safe keeping"
+				result=$(rm -r "$backup_install_dir/$backupFolder")
+				checkSuccess "Removing the backup folder"
+
+				# Fixing the issue where the git does not use the .gitignore
+				result=$(git rm --cached configs/config_apps configs/config_backup configs/config_general configs/config_requirements configs/config_migrate logs/easydocker.log logs/backup.log)
+				checkSuccess "Removing configs and logs from git for git changes"
+				result=$(git commit -m 'Stop tracking ignored files')
+				checkSuccess "Removing tracking ignored files"
+
+				isSuccessful "Custom changes have been discarded successfully"
+
+				isSuccessful "Restarting EasyDocker"
+				exit 0 && easydocker
+			else
+				isNotice "Custom changes will be kept, continuing..."
+				checkRequirements;
+			fi
+		fi
+
+		result=$(git remote update)
+		checkSuccess "Checking for changes in the remote repository"
+
+		# Check if the local branch is behind the remote branch
+		if git status -uno | grep -q "Your branch is behind"; then
+			isNotice "Updates found."
+			result=$(git pull)
+			checkSuccess "Pulling latest updates"
+			isSuccessful "Files are now up to date."
+		else
+			isSuccessful "Files are all up to date."
+		fi
+
+		checkRequirements;
+	fi
  }
 
  checkRequirements()
@@ -95,7 +125,8 @@
 	ISCRON=$( (crontab -l) 2>&1 )
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-		checkConfigFilesExist
+		checkConfigFilesExist;
+		checkConfigFilesEdited;
 	fi
 
 	if [[ $CFG_REQUIREMENT_DATABASE == "true" ]]; then
