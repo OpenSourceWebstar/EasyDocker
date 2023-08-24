@@ -131,7 +131,7 @@ startOther()
     #######################################################
     ###                     Tools                       ###
     #######################################################
-	if [[ "$toolsupdategit" == [yY] ]]; then
+	if [[ "$toolsresetgit" == [yY] ]]; then
 		gitFolderResetAndBackup;
 	fi
 

@@ -47,6 +47,8 @@
 		fi
 
 		checkRequirements;
+	else
+		checkRequirements;
 	fi
  }
 

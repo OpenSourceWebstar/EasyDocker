@@ -220,8 +220,8 @@ mainMenu()
 				echo "###             Tools             ###"
 				echo "#####################################"
 				echo ""
-				isOptionMenu "Pull EasyDocker Git Changes (y/n): "
-				read -rp "" updateGit
+				isOptionMenu "Reset EasyDocker Git Folder (y/n): "
+				read -rp "" toolsresetgit
 				isOptionMenu "Start Pre-Installation (y/n): "
 				read -rp "" toolstartpreinstallation
 				isOptionMenu "Start Crontab Installation? (y/n): "
