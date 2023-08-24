@@ -129,10 +129,10 @@ startOther()
 	databaseCycleThroughListApps;
 
     #######################################################
-    ###                     Tools                    ###
+    ###                     Tools                       ###
     #######################################################
 	if [[ "$toolsupdategit" == [yY] ]]; then
-		updateGit;
+		gitFolderResetAndBackup;
 	fi
 
 	if [[ "$toolstartpreinstallation" == [yY] ]]; then
