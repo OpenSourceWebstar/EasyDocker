@@ -19,7 +19,7 @@ CFG_IPS_SSH_SETUP=
 # Docker Manager (Used for remote access)
 # Not recommended to change the dockermanager username as it may cause issues with ssh transfer
 CFG_DOCKER_MANAGER_USER=dockermanager
-CFG_DOCKER_MANAGER_PASS=RANDOMIZEDPASSWORD
+CFG_DOCKER_MANAGER_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 
 # Only edit below if you know what you are doing
 CFG_UPDATER_CHECK=60
