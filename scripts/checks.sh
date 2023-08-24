@@ -38,7 +38,9 @@
 				# Reset git
 				result=$(git reset --hard HEAD)
 				checkSuccess "Resetting Git Repository"
-
+				result=$(git clean -fd)
+				checkSuccess "Cleaning Git Repository"
+	
 				# Copy folders back into the install folder
 				result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
 				checkSuccess "Copy the backed up folders back into the installation directory"
@@ -50,8 +52,16 @@
 				checkSuccess "Removing the backup folder"
 
 				# Fixing the issue where the git does not use the .gitignore
-				result=$(git rm --cached configs/config_apps configs/config_backup configs/config_general configs/config_requirements configs/config_migrate logs/easydocker.log logs/backup.log)
-				checkSuccess "Removing configs and logs from git for git changes"
+				result=$(cd $script_dir)
+				checkSuccess "Going into the install folder"
+				git rm --cached $configs_dir/config_apps 
+				git rm --cached $configs_dir/config_backup 
+				git rm --cached $configs_dir/config_general 
+				git rm --cached $configs_dir/config_requirements 
+				git rm --cached $configs_dir/config_migrate 
+				git rm --cached $logs_dir/easydocker.log 
+				git rm --cached $logs_dir/backup.log
+				isSuccessful "Removing configs and logs from git for git changes"
 				result=$(git commit -m 'Stop tracking ignored files')
 				checkSuccess "Removing tracking ignored files"
 
