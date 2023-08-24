@@ -36,10 +36,16 @@
 				checkSuccess "Copy the logs to the backup folder"
 
 				# Reset git
-				result=$(git reset --hard HEAD)
-				checkSuccess "Resetting Git Repository"
-				result=$(git clean -fd)
-				checkSuccess "Cleaning Git Repository"
+				#result=$(git reset --hard HEAD)
+				#checkSuccess "Resetting Git Repository"
+				#result=$(git clean -fd)
+				#checkSuccess "Cleaning Git Repository"
+				result=$(rm -rf $script_dir)
+				checkSuccess "Deleting all Git files"
+				result=$(mkdir "$script_dir")
+				checkSuccess "Create the install folder"
+				result=$(git clone "$repo_url" "$script_dir")
+				checkSuccess "Cloning Git Repository"
 	
 				# Copy folders back into the install folder
 				result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
@@ -62,7 +68,7 @@
 				git rm --cached $logs_dir/easydocker.log 
 				git rm --cached $logs_dir/backup.log
 				isSuccessful "Removing configs and logs from git for git changes"
-				result=$(git commit -m 'Stop tracking ignored files')
+				result=$(git commit -m "Stop tracking ignored files")
 				checkSuccess "Removing tracking ignored files"
 
 				isSuccessful "Custom changes have been discarded successfully"

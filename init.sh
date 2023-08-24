@@ -53,16 +53,16 @@ initializeScript()
 	echo "Git has been installed."
 
 	# Git Clone and Update
-	# Check if it's a Git repository by looking for the .git directory
-	if [ -d "$script_dir/.git" ]; then
+	# Check if it's a Git repository by checking if it's inside a Git working tree
+	if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 		echo "A Git repository is already cloned in '$script_dir'."
-		echo "Please run the easydocker command to update the repository"
+		echo "Please run the easydocker command to update the repository."
 	else
-		echo "No .git found. Cloning Git Repository"
-		# Handle the case where the directory exists but is not a Git repository
+		echo "No Git repository found. Cloning Git Repository."
+		# Clone the Git repository into the specified directory
 		git clone "$repo_url" "$script_dir"
 		echo "Git repository cloned into '$script_dir'."
-    fi
+	fi
 
 	# Custom command check
 	if grep -q "easydocker" ~/.bashrc; then
