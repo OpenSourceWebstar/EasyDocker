@@ -1,6 +1,9 @@
 #!/bin/bash
 
-source scripts/sources.sh
+source init.sh
+source configs/config_requirements
+source scripts/functions.sh
+source scripts/variables.sh
 
 checkUpdates()
 {
@@ -102,3 +105,5 @@ gitFolderResetAndBackup()
     result=$(git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
 }
+
+checkUpdates;

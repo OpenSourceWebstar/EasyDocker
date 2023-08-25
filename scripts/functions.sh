@@ -60,6 +60,16 @@ runInit()
     checkSuccess "Running init.sh"
 }
 
+runUpdate() 
+{
+    cd $script_dir
+    result=$(chmod 0755 update.sh)
+    checkSuccess "Updating update script permissions"
+    
+    result=$(./update.sh)
+    checkSuccess "Running update script"
+}
+
 function userExists() {
     if id "$1" &>/dev/null; then
         return 0 # User exists
@@ -188,7 +198,7 @@ detectOS()
             done
         fi
 
-        checkUpdates
+        checkRequirements
     else
         checkSuccess "Unable to detect OS."
         exit 1

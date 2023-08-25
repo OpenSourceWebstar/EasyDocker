@@ -1,7 +1,7 @@
 #!/bin/bash
 
- checkRequirements()
- {  
+checkRequirements()
+{  
 	echo ""
 	echo "#####################################"
 	echo "###      Checking Requirements    ###"

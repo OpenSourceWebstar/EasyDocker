@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source init.sh
-source update.sh
 
 source configs/config_apps
 source configs/config_backup
