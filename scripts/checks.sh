@@ -155,14 +155,11 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_CRONTAB == "true" ]]; then
 		### Crontab
-		if [[ "$ISCRON" != *"command not found"* ]]; then
-			isSuccessful "Crontab is successfully setup."
-		elif ! crontab -l -u root | grep -q "cron is set up for root"; then
-			isNotice "Crontab not installed."
-			((preinstallneeded++)) 
+		if [[ "$ISCRON" != *"command not found"* ]] && crontab -l -u root | grep -q "cron is set up for root"; then
+			isSuccessful "Crontab is successfully set up."
 		else
 			isNotice "Crontab not installed."
-			((preinstallneeded++)) 
+			((preinstallneeded++))
 		fi
 	fi
 
@@ -205,7 +202,7 @@ checkRequirements()
 		done
 
 		if [ "$pass_found" -eq 0 ]; then
-			isNotice "No passwords found to change."
+			isSuccessful "No passwords found to change."
 		else
 			isSuccessful "Passwords found to change in the following files:"
 			isNotice "${files_with_password[*]}"  # Join the array elements with spaces
