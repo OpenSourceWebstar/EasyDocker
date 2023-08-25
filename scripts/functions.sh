@@ -745,8 +745,7 @@ emailValidation()
     done
 }
 
-scanConfigsForRandomPassword() 
-{
+scanConfigsForRandomPassword() {
     if [[ "$CFG_REQUIREMENT_PASSWORDS" == "true" ]]; then
         echo ""
         echo "##########################################"
@@ -762,14 +761,14 @@ scanConfigsForRandomPassword()
                     local seed="$scanned_config_file$(date +%s)"
                     local random_password=$(echo "$seed" | sha256sum | base64 | head -c "$CFG_GENERATED_PASS_LENGTH")
 
+                    # Store the data before "RANDOMIZEDPASSWORD"
+                    local data_before_password=$(grep -o -m 1 ".*RANDOMIZEDPASSWORD" "$scanned_config_file")
+
                     # Update all occurrences of "RANDOMIZEDPASSWORD" with the new password
                     sudo sed -i "s/RANDOMIZEDPASSWORD/$random_password/g" "$scanned_config_file"
-                    
-                    # Capture the data before "RANDOMIZEDPASSWORD"
-                    data_before_password=$(sed -n "s/RANDOMIZEDPASSWORD.*//p" "$scanned_config_file")
-                    
-                    # Display the update message with the file name and data before "RANDOMIZEDPASSWORD"
-                    isSuccessful "Updated $(basename "$scanned_config_file") with data before RANDOMIZEDPASSWORD: $data_before_password"
+
+                    # Display the update message with the data and file name
+                    isSuccessful "Updated $data_before_password in $(basename "$scanned_config_file")"
                 done
             fi
         done

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Used for saving directory path
+initial_path="$3"
+initial_path_save=$initial_path
+
 source scripts/sources.sh
 
 checkUpdates()
