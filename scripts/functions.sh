@@ -745,8 +745,7 @@ emailValidation()
     done
 }
 
-scanConfigsForRandomPassword() 
-{
+scanConfigsForRandomPassword() {
     if [[ "$CFG_REQUIREMENT_PASSWORDS" == "true" ]]; then
         echo ""
         echo "##########################################"
@@ -757,22 +756,33 @@ scanConfigsForRandomPassword()
         for scanned_config_file in "$configs_dir"/*; do
             if [ -f "$scanned_config_file" ]; then
                 # Check if the file contains the placeholder string "RANDOMIZEDPASSWORD"
-                while grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
-                    # Generate a unique random password for each instance
-                    local seed="$scanned_config_file$(date +%s)"
-                    local random_password=$(echo "$seed" | sha256sum | base64 | head -c "$CFG_GENERATED_PASS_LENGTH")
+                if grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; then
+                    # Generate a unique random password
+                    local random_password=$(openssl rand -base64 12 | tr -d '+/=')
 
-                    # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
-                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
+                    # Process each instance of "RANDOMIZEDPASSWORD" separately
+                    sed -i "s/RANDOMIZEDPASSWORD/$random_password/" "$scanned_config_file"
 
-                    # Display the update message with the file name and password
-                    isSuccessful "Updated $(basename "$scanned_config_file") with a new password: $random_password"
-                done
+                    # Display the update message for each instance
+                    while grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
+                        # Capture the content before "RANDOMIZEDPASSWORD"
+                        local data_before_password=$(grep -o -m 1 ".*RANDOMIZEDPASSWORD" "$scanned_config_file")
+
+                        # Display the update message with the captured content and file name
+                        isSuccessful "Updated $data_before_password in $(basename "$scanned_config_file") with a new password: $random_password"
+
+                        # Remove the processed instance of "RANDOMIZEDPASSWORD"
+                        sed -i "s/$data_before_password.*RANDOMIZEDPASSWORD/$data_before_password/" "$scanned_config_file"
+                    done
+                fi
             fi
         done
         isSuccessful "Random password generation and update completed successfully."
     fi
 }
+
+
+
 
 setupEnvFile()
 {
