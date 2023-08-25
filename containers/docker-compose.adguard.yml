@@ -34,12 +34,12 @@ services:
       #traefik.http.routers.adguard.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
       #traefik.http.routers.adguard.tls: true
       #traefik.http.routers.adguard.tls.certresolver: production
-      #traefik.http.services.adguard.loadbalancer.server.port:PORTHERE
-      #traefik.tcp.routers.adguard-dot.rule:HostSNI(`${DOMAINSUBNAMEHERE}`)
-      #traefik.tcp.routers.adguard-dot.entrypoints:dnsovertls
-      #traefik.tcp.routers.adguard-dot.tls:true
-      #traefik.tcp.routers.adguard-dot.service:adguard
-      #traefik.tcp.services.adguard.loadbalancer.server.port:53
+      #traefik.http.services.adguard.loadbalancer.server.port: PORTHERE
+      #traefik.tcp.routers.adguard-dot.rule: HostSNI(`${DOMAINSUBNAMEHERE}`)
+      #traefik.tcp.routers.adguard-dot.entrypoints: web,websecure
+      #traefik.tcp.routers.adguard-dot.tls: true
+      #traefik.tcp.routers.adguard-dot.service: adguard
+      #traefik.tcp.services.adguard.loadbalancer.server.port: 53
     volumes:
       - "./work:/opt/adguardhome/work"
       - "./conf:/opt/adguardhome/conf"

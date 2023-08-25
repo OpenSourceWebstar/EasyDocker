@@ -625,9 +625,9 @@ editComposeFileDefault()
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
             result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-            checkSuccess "Enabling Traefik options for public setup)"
+            checkSuccess "Enabling Traefik options for public setup"
             result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-            checkSuccess "Enable labels for Traefik option options on private setup)"
+            checkSuccess "Enable labels for Traefik option options on private setup"
         fi
     fi
 
@@ -784,24 +784,28 @@ setupEnvFile()
 
 dockerStopAllApps()
 {
+    isNotice "Please wait for docker containers to stop"
     result=$(docker stop $(docker ps -a -q))
     checkSuccess "Stopping all docker containers"
 }
 
 dockerStartAllApps()
 {
+    isNotice "Please wait for docker containers to start"
     result=$(docker restart $(docker ps -a -q))
     checkSuccess "Starting up all docker containers"
 }
 
 dockerAppDown()
 {
+    isNotice "Please wait for $app_name container to stop"
     result=$(docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
     checkSuccess "Shutting down $app_name container"
 }
 
 dockerAppUp()
 {
+    isNotice "Please wait for $app_name container to start"
     result=$(docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)
     checkSuccess "Starting up $app_name container"
 }
