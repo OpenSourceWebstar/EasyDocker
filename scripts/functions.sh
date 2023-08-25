@@ -50,24 +50,35 @@ resetToMenu()
     return 1
 }
 
+runStart() 
+{
+    local path="$3"
+    cd $script_dir
+    result=$(chmod 0755 start.sh)
+    checkSuccess "Updating Start Script Permissions"
+    
+    result=$(./start.sh "" "" "$path")
+    checkSuccess "Running Start script"
+}
+
 runInit() 
 {
     cd $script_dir
     result=$(chmod 0755 init.sh)
-    checkSuccess "Updating init.sh permissions"
+    checkSuccess "Updating Init Script Permissions"
     
     result=$(./init.sh run)
-    checkSuccess "Running init.sh"
+    checkSuccess "Running Init Script"
 }
 
 runUpdate() 
 {
     cd $script_dir
     result=$(chmod 0755 update.sh)
-    checkSuccess "Updating update script permissions"
+    checkSuccess "Updating Update Script Permissions"
     
     result=$(./update.sh)
-    checkSuccess "Running update script"
+    checkSuccess "Running Update Script"
 }
 
 function userExists() {
@@ -243,22 +254,22 @@ checkConfigFilesEdited()
             while true; do
                 isQuestion "Would you like to continue with the default config values or edit them? (c/e): "
                 read -rp "" configsnotchanged
-                if [[ -n "$configsnotchanged" ]]; then
-                    break
-                fi
-                isNotice "Please provide a valid input."
+                case $configsnotchanged in
+                    [cC])
+                        isNotice "Config files have been accepted with the default values, continuing... "
+                        config_check_done=true  # Set the flag to exit the loop
+                        break  # Exit the loop
+                        ;;
+                    [eE])
+                        viewConfigs
+                        # No need to set config_check_done here; it will continue to the next iteration of the loop
+                        break  # Exit the loop
+                        ;;
+                    *)
+                        isNotice "Please provide a valid input (c or e)."
+                        ;;
+                esac
             done
-
-            if [[ $configsnotchanged == [cC] ]]; then
-                isNotice "Config files have been accepted with the default values, continuing... "
-                config_check_done=true  # Set the flag to exit the loop
-            elif [[ $configsnotchanged == [eE] ]]; then
-                viewConfigs
-                # Continue to the next iteration of the loop
-            else
-                isFatalError "Please update your config files, continuing..."
-                exit 1
-            fi
         else
             isSuccessful "Config file has been updated, continuing..."
             config_check_done=true  # Set the flag to exit the loop

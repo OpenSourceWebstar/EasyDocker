@@ -1,5 +1,7 @@
 #!/bin/bash
 
+path="$3"
+
 source init.sh
 source configs/config_requirements
 source scripts/functions.sh
@@ -22,27 +24,34 @@ checkUpdates()
 		# Check if there are uncommitted changes
 		if [[ $(git status --porcelain) ]]; then
 			isNotice "There are uncommitted changes in the repository."
-			isQuestion "Do you want to discard these changes and update the repository? (y/n): "
-			read -p "" customupdatesfound
-			if [[ $customupdatesfound == [yY] ]]; then
-				backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
+			while true; do
+				isQuestion "Do you want to discard these changes and update the repository? (y/n): "
+				read -p "" customupdatesfound
+				case $customupdatesfound in
+					[yY])
+						backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
+						gitFolderResetAndBackup
 
-				gitFolderResetAndBackup;
+						# Reloading all scripts after clone
+						for file in $script_dir*.sh; do
+							[ -f "$file" ] && . "$file"
+						done
 
-				# Reloading all scripts after clone
-				for file in $script_dir*.sh; do
-					[ -f "$file" ] && . "$file"
-				done
-
-				isSuccessful "Starting/Restarting EasyDocker"
-				exit 0 ; easydocker
-			else
-				isNotice "Custom changes will be kept, continuing..."
-				exit 0 ; easydocker
-			fi
+						isSuccessful "Starting/Restarting EasyDocker"
+						exit 0 ; runStart
+						;;
+					[nN])
+						isNotice "Custom changes will be kept, continuing..."
+						exit 0 ; runStart
+						;;
+					*)
+						isNotice "Please provide a valid input (y or n)."
+						;;
+				esac
+			done
 		fi
 	else
-		exit 0 ; easydocker
+		exit 0 ; runStart
 	fi
 }
 
