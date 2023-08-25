@@ -11,7 +11,6 @@ checkUpdates()
 		echo "#####################################"
 		echo ""
 
-		update_done=false
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
 		result=$(git config core.fileMode false)
@@ -26,7 +25,6 @@ checkUpdates()
 				case $customupdatesfound in
 					[yY])
 						gitFolderResetAndBackup;
-						echo "reload scripts"
 						reloadScripts;
 
 						isSuccessful "Starting/Restarting EasyDocker"
