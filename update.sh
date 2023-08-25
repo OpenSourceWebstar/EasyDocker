@@ -16,12 +16,8 @@ checkUpdates()
 		echo "#####################################"
 		echo ""
 
+		update_done=false
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
-
-		result=$(git fetch origin)
-		checkSuccess "Fetch latest updates"
-		current_branch=$(git symbolic-ref --short HEAD)
-		checkSuccess "Getting the name of the current branch"
 
 		result=$(git config core.fileMode false)
 		checkSuccess "Update Git to ignore changes in file permissions"
@@ -42,7 +38,7 @@ checkUpdates()
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
-						exit 0 ; runStart
+						continue;
 						;;
 					*)
 						isNotice "Please provide a valid input (y or n)."
@@ -51,31 +47,13 @@ checkUpdates()
 			done
 		fi
 
-		# Check if the current branch is up to date
-		if [[ $(git rev-parse HEAD) == $(git rev-parse "origin/$current_branch") ]]; then
-			isSuccessful "EasyDocker is up to date... starting scripts..."
-		else
-			isNotice "The local branch is not up to date with the remote branch."
-			while true; do
-				isQuestion "Do you want to update the repository? (y/n): "
-				read -p "" notlatestcode
-				case $notlatestcode in
-					[yY])
-						gitFolderResetAndBackup;
-						reloadScripts;
+		# Make sure an update happens after custom code check
+		if [[ $update_done != "true" ]]; then
+			gitFolderResetAndBackup;
+			reloadScripts;
 
-						isSuccessful "Starting/Restarting EasyDocker"
-						exit 0 ; runStart
-						;;
-					[nN])
-						isNotice "Skipping update..."
-						exit 0 ; runStart
-						;;
-					*)
-						isNotice "Please provide a valid input (y or n)."
-						;;
-				esac
-			done
+			isSuccessful "Starting/Restarting EasyDocker"
+			exit 0 ; runStart
 		fi
 	else
 		exit 0 ; runStart
@@ -135,6 +113,7 @@ gitFolderResetAndBackup()
     checkSuccess "Removing tracking ignored files"
 
 	isSuccessful "Custom changes have been discarded successfully"
+	update_done=true
 }
 
 exitScript() {
