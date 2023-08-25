@@ -85,7 +85,7 @@ gitFolderResetAndBackup()
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir" || exit 1
     checkSuccess "Go to the install folder"	
-	result=$(git clone "$repo_url" "$script_dir" >> $logs_dir/$docker_log_file 2>&1)
+	result=$(git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
