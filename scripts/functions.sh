@@ -50,8 +50,63 @@ resetToMenu()
     return 1
 }
 
-runStart() 
+gitFolderResetAndBackup()
 {
+    # Folder setup
+    # Check if the directory specified in $script_dir exists
+    if [ ! -d "$backup_install_dir/$backupFolder" ]; then
+        result=$(mkdir -p "$backup_install_dir/$backupFolder")
+        checkSuccess "Create the backup folder"
+    fi
+    result=$(cd $backup_install_dir)
+    checkSuccess "Going into the backup install folder"
+
+    # Copy folders
+    result=$(cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
+    checkSuccess "Copy the configs to the backup folder"
+    result=$(cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
+    checkSuccess "Copy the logs to the backup folder"
+
+    # Reset git
+    result=$(rm -rf $script_dir)
+    checkSuccess "Deleting all Git files"
+    result=$(mkdir -p "$script_dir")
+    checkSuccess "Create the directory if it doesn't exist"	
+    cd "$script_dir" || exit 1
+    checkSuccess "Go to the install folder"	
+	result=$(git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
+    checkSuccess "Clone the Git repository"
+
+    # Copy folders back into the install folder
+    result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
+    checkSuccess "Copy the backed up folders back into the installation directory"
+
+    # Zip up folder for safe keeping and remove folder
+    result=$(zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
+    checkSuccess "Zipping up the the backup folder for safe keeping"
+    result=$(rm -r "$backup_install_dir/$backupFolder")
+    checkSuccess "Removing the backup folder"
+
+    # Fixing the issue where the git does not use the .gitignore
+    result=$(cd $script_dir)
+    checkSuccess "Going into the install folder"
+	git rm --cached $configs_dir/config_apps >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_backup >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_general >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_requirements >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_migrate >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $logs_dir/easydocker.log >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $logs_dir/backup.log >> $logs_dir/$docker_log_file 2>&1
+    isSuccessful "Removing configs and logs from git for git changes"
+    result=$(git commit -m "Stop tracking ignored files")
+    checkSuccess "Removing tracking ignored files"
+
+	isSuccessful "Custom changes have been discarded successfully"
+	update_done=true
+}
+
+runStart() 
+{  
     local path="$3"
     cd $script_dir
     result=$(chmod 0755 start.sh)
@@ -709,9 +764,11 @@ scanConfigsForRandomPassword()
                     # Update all occurrences of "RANDOMIZEDPASSWORD" with the new password
                     sudo sed -i "s/RANDOMIZEDPASSWORD/$random_password/g" "$scanned_config_file"
                     
+                    # Capture the data before "RANDOMIZEDPASSWORD"
+                    data_before_password=$(sed -n "s/RANDOMIZEDPASSWORD.*//p" "$scanned_config_file")
+                    
                     # Display the update message with the file name and data before "RANDOMIZEDPASSWORD"
-                    data_before_password=$(grep -oP ".*(?=RANDOMIZEDPASSWORD)" "$scanned_config_file")
-                    echo "Updated $(basename "$scanned_config_file") with data before RANDOMIZEDPASSWORD: $data_before_password"
+                    isSuccessful "Updated $(basename "$scanned_config_file") with data before RANDOMIZEDPASSWORD: $data_before_password"
                 done
             fi
         done

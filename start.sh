@@ -2,6 +2,60 @@
 
 source scripts/sources.sh
 
+checkUpdates()
+{
+	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
+		echo ""
+		echo "#####################################"
+		echo "###      Checking for Updates     ###"
+		echo "#####################################"
+		echo ""
+
+		update_done=false
+		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
+
+		result=$(git config core.fileMode false)
+		checkSuccess "Update Git to ignore changes in file permissions"
+
+		# Check if there are uncommitted changes
+		if [[ $(git status --porcelain) ]]; then
+			isNotice "There are uncommitted changes in the repository."
+			while true; do
+				isQuestion "Do you want to discard these changes and update the repository? (y/n): "
+				read -p "" customupdatesfound
+				case $customupdatesfound in
+					[yY])
+						gitFolderResetAndBackup;
+						echo "reload scripts"
+						reloadScripts;
+
+						isSuccessful "Starting/Restarting EasyDocker"
+						detectOS;
+						;;
+					[nN])
+						isNotice "Custom changes will be kept, continuing..."
+                        detectOS;
+						;;
+					*)
+						isNotice "Please provide a valid input (y or n)."
+						;;
+				esac
+			done
+		fi
+
+		# Make sure an update happens after custom code check
+		if [[ $update_done != "true" ]]; then
+			gitFolderResetAndBackup;
+			reloadScripts;
+
+			isSuccessful "Starting/Restarting EasyDocker"
+			detectOS;
+		fi
+	else
+		detectOS;
+	fi
+}
+
 startPreInstall()
 {
 	# Disable Input
@@ -214,6 +268,6 @@ exitScript() {
 	exit 0
 }
 
-# Start the script
-detectOS;
 
+# Start the script
+checkUpdates;

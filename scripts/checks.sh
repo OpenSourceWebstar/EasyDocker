@@ -207,7 +207,6 @@ checkRequirements()
 		if [ "$pass_found" -eq 0 ]; then
 			isNotice "No passwords found to change."
 		else
-			echo ""
 			isSuccessful "Passwords found to change in the following files:"
 			isNotice "${files_with_password[*]}"  # Join the array elements with spaces
 			((preinstallneeded++))
