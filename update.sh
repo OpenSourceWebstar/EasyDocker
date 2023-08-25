@@ -20,6 +20,8 @@ checkUpdates()
 
 		result=$(git fetch origin)
 		checkSuccess "Fetch latest updates"
+		current_branch=$(git symbolic-ref --short HEAD)
+		checkSuccess "Getting the name of the current branch"
 
 		result=$(git config core.fileMode false)
 		checkSuccess "Update Git to ignore changes in file permissions"
@@ -50,7 +52,7 @@ checkUpdates()
 		fi
 
 		# Check if the current branch is up to date
-		if [[ $(git rev-parse HEAD) == $(git rev-parse origin/master) ]]; then
+		if [[ $(git rev-parse HEAD) == $(git rev-parse "origin/$current_branch") ]]; then
 			isSuccessful "EasyDocker is up to date... starting scripts..."
 		else
 			isNotice "The local branch is not up to date with the remote branch."
