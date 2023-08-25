@@ -765,18 +765,17 @@ scanConfigsForRandomPassword()
                     # Store the data before "RANDOMIZEDPASSWORD" and remove "=RANDOMIZEDPASSWORD"
                     local data_before_password=$(grep -o -m 1 ".*RANDOMIZEDPASSWORD" "$scanned_config_file" | sed 's/=RANDOMIZEDPASSWORD//')
 
-                    # Update all occurrences of "RANDOMIZEDPASSWORD" with the new password
-                    sudo sed -i "s/RANDOMIZEDPASSWORD/$random_password/g" "$scanned_config_file"
+                    # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
+                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
 
                     # Display the update message with the modified data and file name
-                    isSuccessful "Updated $data_before_password in $(basename "$scanned_config_file")"
+                    isSuccessful "Updated $data_before_password in $(basename "$scanned_config_file") with a new password: $random_password"
                 done
             fi
         done
         isSuccessful "Random password generation and update completed successfully."
     fi
 }
-
 
 setupEnvFile()
 {
