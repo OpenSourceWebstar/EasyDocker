@@ -71,7 +71,7 @@ initializeScript()
 		echo "Custom command 'easydocker' is not installed. Installing..."
 		echo 'easydocker() {' >> ~/.bashrc
 		echo '  path="$PWD"' >> ~/.bashrc
-		echo '  cd /docker/install/ && chmod 0755 /docker/install/* && ./start.sh "" "" "$path"' >> ~/.bashrc
+		echo '  cd /docker/install/ && chmod 0755 /docker/install/* && ./update.sh && ./start.sh "" "" "$path"' >> ~/.bashrc
 		echo '}' >> ~/.bashrc
 		source ~/.bashrc
 		echo "Custom command 'easydocker' has been installed. You can now use 'easydocker'."

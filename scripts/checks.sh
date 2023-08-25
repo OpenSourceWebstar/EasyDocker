@@ -1,57 +1,5 @@
 #!/bin/bash
 
- checkUpdates()
- {
-	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
-		echo ""
-		echo "#####################################"
-		echo "###      Checking for Updates     ###"
-		echo "#####################################"
-		echo ""
-
-		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
-
-		result=$(git config core.fileMode false)
-		checkSuccess "Update Git to ignore changes in file permissions"
-
-		# Check if there are uncommitted changes
-		if [[ $(git status --porcelain) ]]; then
-			isNotice "There are uncommitted changes in the repository."
-			isQuestion "Do you want to discard these changes and update the repository? (y/n): "
-			read -p "" customupdatesfound
-			if [[ $customupdatesfound == [yY] ]]; then
-				backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
-
-				gitFolderResetAndBackup;
-
-				isSuccessful "Custom changes have been discarded successfully"
-				isSuccessful "Restarting EasyDocker"
-				exit 0 ; easydocker
-			else
-				isNotice "Custom changes will be kept, continuing..."
-				checkRequirements;
-			fi
-		fi
-
-		result=$(git remote update)
-		checkSuccess "Checking for changes in the remote repository"
-
-		# Check if the local branch is behind the remote branch
-		if git status -uno | grep -q "Your branch is behind"; then
-			isNotice "Updates found."
-			result=$(git pull)
-			checkSuccess "Pulling latest updates"
-			isSuccessful "Files are now up to date."
-		else
-			isSuccessful "Files are all up to date."
-		fi
-
-		checkRequirements;
-	else
-		checkRequirements;
-	fi
- }
-
  checkRequirements()
  {  
 	echo ""

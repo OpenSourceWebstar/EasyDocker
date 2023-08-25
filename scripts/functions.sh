@@ -219,57 +219,6 @@ checkConfigFilesExist()
     fi
 }
 
-gitFolderResetAndBackup()
-{
-    # Folder setup
-    result=$(mkdir "$backup_install_dir/$backupFolder")
-    checkSuccess "Create the backup folder"
-    result=$(cd $backup_install_dir)
-    checkSuccess "Going into the backup install folder"
-
-    # Copy folders
-    result=$(cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
-    checkSuccess "Copy the configs to the backup folder"
-    result=$(cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
-    checkSuccess "Copy the logs to the backup folder"
-
-    # Reset git
-    #result=$(git reset --hard HEAD)
-    #checkSuccess "Resetting Git Repository"
-    #result=$(git clean -fd)
-    #checkSuccess "Cleaning Git Repository"
-    result=$(rm -rf $script_dir)
-    checkSuccess "Deleting all Git files"
-    result=$(mkdir "$script_dir")
-    checkSuccess "Create the install folder"
-    result=$(git clone "$repo_url" "$script_dir")
-    checkSuccess "Cloning Git Repository"
-
-    # Copy folders back into the install folder
-    result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
-    checkSuccess "Copy the backed up folders back into the installation directory"
-
-    # Zip up folder for safe keeping and remove folder
-    result=$(zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
-    checkSuccess "Zipping up the the backup folder for safe keeping"
-    result=$(rm -r "$backup_install_dir/$backupFolder")
-    checkSuccess "Removing the backup folder"
-
-    # Fixing the issue where the git does not use the .gitignore
-    result=$(cd $script_dir)
-    checkSuccess "Going into the install folder"
-    git rm --cached $configs_dir/config_apps 
-    git rm --cached $configs_dir/config_backup 
-    git rm --cached $configs_dir/config_general 
-    git rm --cached $configs_dir/config_requirements 
-    git rm --cached $configs_dir/config_migrate 
-    git rm --cached $logs_dir/easydocker.log 
-    git rm --cached $logs_dir/backup.log
-    isSuccessful "Removing configs and logs from git for git changes"
-    result=$(git commit -m "Stop tracking ignored files")
-    checkSuccess "Removing tracking ignored files"
-}
-
 checkConfigFilesEdited()
 {
     # Flag to control the loop
@@ -359,6 +308,7 @@ viewLogs()
             ;;
     esac
 }
+
 viewConfigs() {
   local config_files=("$configs_dir"*)  # List all files in the /configs/ folder
 
@@ -440,7 +390,6 @@ viewConfigs() {
     fi
   done
 }
-
 
 setupIPsAndHostnames() 
 {
@@ -726,8 +675,8 @@ scanConfigsForRandomPassword()
                     local seed="$scanned_config_file$(date +%s)"
                     local random_password=$(echo "$seed" | sha256sum | base64 | head -c "$CFG_GENERATED_PASS_LENGTH")
 
-                    # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
-                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
+                    # Update all occurrences of "RANDOMIZEDPASSWORD" with the new password
+                    sudo sed -i "s/RANDOMIZEDPASSWORD/$random_password/g" "$scanned_config_file"
                     
                     # Display the update message with the file name and password
                     echo "Updated $(basename "$scanned_config_file") with a new password: $random_password"
