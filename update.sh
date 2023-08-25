@@ -80,7 +80,7 @@ gitFolderResetAndBackup()
     checkSuccess "Deleting all Git files"
     result=$(mkdir -p "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
-    result=$(cd "$script_dir")
+    cd "$script_dir" || exit 1
     checkSuccess "Go to the install folder"	
 	result=$(git clone "$repo_url" .)
     checkSuccess "Clone the Git repository"
