@@ -1,3 +1,22 @@
+<h1 align="center" style="border-bottom: none">
+    <b>
+        <a href="https://scottwebstar.co.uk/services/off-grid-it-systems/">EasyDocker</a><br>
+    </b>
+    ⭐️  Deploying Docker applications has never been so easy!  ⭐️ <br>
+</h1>
+
+<p align="center">
+You can ditch the old popular data scraping platforms and replace them with your very own Open Source privacy based software giving you full control of your data.
+</p>
+
+<p align="center">
+
+<a href="https://github.com/OpenSourceWebstar/EasyDocker"><img src="https://img.shields.io/github/stars/OpenSourceWebstar/EasyDocker?logo=github"></a>
+<a href="https://github.com/OpenSourceWebstar/EasyDocker"><img src="https://img.shields.io/github/forks/OpenSourceWebstar/EasyDocker?label=forks"></a>
+<a href="https://opensource.org/licenses/AGPL-3.0"><img src="https://img.shields.io/badge/license-AGPL-purple.svg" alt="License: AGPL"></a>
+
+</p>
+
 # NOTICE
 
 THIS HAS ONLY BEEN TESTED ON DEBIAN!
@@ -17,8 +36,8 @@ This script aims to streamline the installation process by automating it, saving
 
 In addition, the use of Docker makes the deployment process even more efficient and lightweight, allowing applications to run smoothly and reliably. 
 
-## Using this script
-1. Upload init.sh to the root folder
+## Instructions
+1. Upload init.sh to your root (~) folder
 2. Run - "cd ~ && chmod 0755 init.sh && ./init.sh run && source ~/.bashrc && easydocker"
 3. Make that selection, and the install will continue.
 4. Answering "n" or pressing enter to any option will cause them to be skipped.
@@ -26,9 +45,9 @@ In addition, the use of Docker makes the deployment process even more efficient 
 ### NOTE
 * All networking is currently routed through the VPN network
 
-## Future Work
+## Future Plans
 - [ ] Add postfix by default
-- [ ] Add Duplicate Reports on Restart: https://www.abuseipdb.com/fail2ban.html
+
 - [ ] Add Rustdesk https://github.com/rustdesk/rustdesk-server
 - [ ] Finish setup of Mailcow software
 - [ ] Finish setup of Akaunting software
@@ -37,6 +56,9 @@ In addition, the use of Docker makes the deployment process even more efficient 
 - [ ] Password encryption
 - [ ] Test on other Operating Systems other than Debian 11
 
+## Improvements/Ideas
+- [ ] Add Duplicate Reports on Restart: https://www.abuseipdb.com/fail2ban.html
+
 ## Contributing
 If you find issues, please let me know. I'm always open to new contributors helping progress this project.
 
@@ -44,4 +66,6 @@ If you find issues, please let me know. I'm always open to new contributors help
 My script is offered without warranty against defect, and is free for you to use any way / time you want.  You may modify it in any way you see fit.  Please see the individual project pages of the software packages for their licensing.
 
 # Credit
-Taken and modified from https://gitlab.com/bmcgonag/docker_installs.git
+Inspired by https://opensourceisawesome.com
+Based on https://gitlab.com/bmcgonag/docker_installs.git
+Managed services available at https://scottwebstar.co.uk/it-services/   
