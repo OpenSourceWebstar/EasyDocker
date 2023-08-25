@@ -19,6 +19,9 @@ checkUpdates()
 
 		result=$(git config core.fileMode false)
 		checkSuccess "Update Git to ignore changes in file permissions"
+		result=$(git config --global user.email "$CFG_EMAIL")
+		checkSuccess "Update Git with email address"
+		
 
 		# Check if there are uncommitted changes
 		if [[ $(git status --porcelain) ]]; then
