@@ -11,6 +11,11 @@ checkRequirements()
 	isNotice "Edit the config_requirements if you want to disable anything before starting."
 	echo ""
 
+	# Reloading all scripts
+	for file in $script_dir*.sh; do
+		[ -f "$file" ] && . "$file"
+	done
+
 	if [[ $CFG_REQUIREMENT_ROOT == "true" ]]; then
 		# Check if script is run as root
 		if [[ $EUID -ne 0 ]]; then
@@ -199,17 +204,19 @@ checkRequirements()
 
 		for config_file in "$configs_dir"/*; do
 			if [ -f "$config_file" ] && grep -q "RANDOMIZEDPASSWORD" "$config_file"; then
-				files_with_password+=("$config_file")
+				files_with_password+=("$(basename "$config_file")")  # Get only the filename
 				pass_found=1
 			fi
 		done
 
 		if [ "$pass_found" -eq 0 ]; then
-			checkSuccess "No passwords found to change."
+			isNotice "No passwords found to change."
 		else
 			echo ""
-			checkSuccess "Passwords found to change in the following files:"
-			printf '%s\n' "${files_with_password[@]}"
+			isSuccessful "Passwords found to change in the following files:"
+			for file in "${files_with_password[@]}"; do
+				isNotice "$file"
+			done
 			((preinstallneeded++)) 
 		fi
 	fi

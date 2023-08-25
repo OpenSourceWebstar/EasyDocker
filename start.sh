@@ -203,6 +203,17 @@ endStart()
 	mainMenu;
 }
 
+exitScript() {
+	echo ""
+	echo ""
+	isNotice "Exiting script..."
+	echo ""
+	isNotice "Last working path :"
+	isNotice "cd $initial_path_save"
+	echo ""
+	exit 0
+}
+
 # Start the script
 detectOS;
 

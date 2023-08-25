@@ -29,8 +29,12 @@ checkUpdates()
 
 				gitFolderResetAndBackup;
 
-				isSuccessful "Custom changes have been discarded successfully"
-				isSuccessful "Restarting EasyDocker"
+				# Reloading all scripts after clone
+				for file in $script_dir*.sh; do
+					[ -f "$file" ] && . "$file"
+				done
+
+				isSuccessful "Starting/Restarting EasyDocker"
 				exit 0 ; easydocker
 			else
 				isNotice "Custom changes will be kept, continuing..."
@@ -82,7 +86,7 @@ gitFolderResetAndBackup()
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir" || exit 1
     checkSuccess "Go to the install folder"	
-	result=$(git clone "$repo_url" .)
+	result=$(git clone "$repo_url" "$script_dir")
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
@@ -108,6 +112,19 @@ gitFolderResetAndBackup()
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
+
+	isSuccessful "Custom changes have been discarded successfully"
+}
+
+exitScript() {
+	echo ""
+	echo ""
+	isNotice "Exiting script..."
+	echo ""
+	isNotice "Last working path :"
+	isNotice "cd $initial_path_save"
+	echo ""
+	exit 0
 }
 
 checkUpdates;
