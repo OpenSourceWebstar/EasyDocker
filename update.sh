@@ -38,26 +38,11 @@ checkUpdates()
 				exit 0 ; easydocker
 			else
 				isNotice "Custom changes will be kept, continuing..."
-				checkRequirements;
+				exit 0 ; easydocker
 			fi
 		fi
-
-		result=$(git remote update)
-		checkSuccess "Checking for changes in the remote repository"
-
-		# Check if the local branch is behind the remote branch
-		if git status -uno | grep -q "Your branch is behind"; then
-			isNotice "Updates found."
-			result=$(git pull)
-			checkSuccess "Pulling latest updates"
-			isSuccessful "Files are now up to date."
-		else
-			isSuccessful "Files are all up to date."
-		fi
-
-		checkRequirements;
 	else
-		checkRequirements;
+		exit 0 ; easydocker
 	fi
 }
 

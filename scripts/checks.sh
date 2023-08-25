@@ -11,11 +11,6 @@ checkRequirements()
 	isNotice "Edit the config_requirements if you want to disable anything before starting."
 	echo ""
 
-	# Reloading all scripts
-	for file in $script_dir*.sh; do
-		[ -f "$file" ] && . "$file"
-	done
-
 	if [[ $CFG_REQUIREMENT_ROOT == "true" ]]; then
 		# Check if script is run as root
 		if [[ $EUID -ne 0 ]]; then
