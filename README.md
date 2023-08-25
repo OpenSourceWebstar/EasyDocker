@@ -20,8 +20,7 @@ You can ditch the old popular data scraping platforms and replace them with your
 <p align="center"><img src="https://scottwebstar.co.uk/wp-content/uploads/2023/08/easydocker-system-apps.jpg" alt="EasyDocker System Apps" width="1000px" /></p>
 
 # NOTICE
-
-THIS HAS ONLY BEEN TESTED ON DEBIAN!
+THIS HAS ONLY BEEN TESTED ON DEBIAN!<br/>
 It should work with Ubuntu, but OS's with different commands will not work at the moment.
 
 # Usage
@@ -67,6 +66,6 @@ If you find issues, please let me know. I'm always open to new contributors help
 My script is offered without warranty against defect, and is free for you to use any way / time you want.  You may modify it in any way you see fit.  Please see the individual project pages of the software packages for their licensing.
 
 # Credit
-Inspired by https://opensourceisawesome.com
-Based on https://gitlab.com/bmcgonag/docker_installs.git
-Managed services available at https://scottwebstar.co.uk/it-services/   
+* Inspired by https://opensourceisawesome.com <br/>
+* Based on https://gitlab.com/bmcgonag/docker_installs.git <br/>
+* Managed services available at https://scottwebstar.co.uk/it-services/   
