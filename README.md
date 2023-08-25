@@ -48,18 +48,17 @@ In addition, the use of Docker makes the deployment process even more efficient 
 * All networking is currently routed through the VPN network
 
 ## Future Plans
-- [ ] Add postfix by default
-
-- [ ] Add Rustdesk https://github.com/rustdesk/rustdesk-server
 - [ ] Finish setup of Mailcow software
 - [ ] Finish setup of Akaunting software
-- [ ] Backup & Restore Scripts
-- [ ] Update networks with best security practices
-- [ ] Password encryption
+- [ ] Finish setup of Ruskdesk software
+- [ ] Migration Script
 - [ ] Test on other Operating Systems other than Debian 11
 
 ## Improvements/Ideas
+- [ ] Add postfix by default
 - [ ] Add Duplicate Reports on Restart: https://www.abuseipdb.com/fail2ban.html
+- [ ] Update networks with best security practices
+- [ ] Password encryption
 
 ## Contributing
 If you find issues, please let me know. I'm always open to new contributors helping progress this project.
