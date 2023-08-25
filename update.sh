@@ -78,8 +78,12 @@ gitFolderResetAndBackup()
     # Reset git
     result=$(rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
-    result=$(git clone "$repo_url" "$script_dir")
-    checkSuccess "Create the install folder"
+    result=$(mkdir -p "$script_dir")
+    checkSuccess "Create the directory if it doesn't exist"	
+    result=$(cd "$script_dir")
+    checkSuccess "Go to the install folder"	
+	result=$(git clone "$repo_url" .)
+    checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
     result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")

@@ -82,7 +82,11 @@ function checkSuccess()
 {
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}SUCCESS:${NC} $1"
-        echo "SUCCESS: $1" >> "$logs_dir/$docker_log_file"
+        if [ -f "$logs_dir/$docker_log_file" ]; then
+            echo "SUCCESS: $1" >> "$logs_dir/$docker_log_file"
+        else
+            echo "SUCCESS: $1"
+        fi
     else
         echo -e "${RED}ERROR:${NC} $1"
         # Ask to continue
