@@ -709,8 +709,9 @@ scanConfigsForRandomPassword()
                     # Update all occurrences of "RANDOMIZEDPASSWORD" with the new password
                     sudo sed -i "s/RANDOMIZEDPASSWORD/$random_password/g" "$scanned_config_file"
                     
-                    # Display the update message with the file name and password
-                    echo "Updated $(basename "$scanned_config_file") with a new password: $random_password"
+                    # Display the update message with the file name and data before "RANDOMIZEDPASSWORD"
+                    data_before_password=$(grep -oP ".*(?=RANDOMIZEDPASSWORD)" "$scanned_config_file")
+                    echo "Updated $(basename "$scanned_config_file") with data before RANDOMIZEDPASSWORD: $data_before_password"
                 done
             fi
         done

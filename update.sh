@@ -85,7 +85,7 @@ gitFolderResetAndBackup()
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir" || exit 1
     checkSuccess "Go to the install folder"	
-	result=$(git clone "$repo_url" "$script_dir")
+	result=$(git clone "$repo_url" "$script_dir" >> $logs_dir/$docker_log_file 2>&1)
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
@@ -101,13 +101,13 @@ gitFolderResetAndBackup()
     # Fixing the issue where the git does not use the .gitignore
     result=$(cd $script_dir)
     checkSuccess "Going into the install folder"
-    git rm --cached $configs_dir/config_apps 
-    git rm --cached $configs_dir/config_backup 
-    git rm --cached $configs_dir/config_general 
-    git rm --cached $configs_dir/config_requirements 
-    git rm --cached $configs_dir/config_migrate 
-    git rm --cached $logs_dir/easydocker.log 
-    git rm --cached $logs_dir/backup.log
+	git rm --cached $configs_dir/config_apps >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_backup >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_general >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_requirements >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $configs_dir/config_migrate >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $logs_dir/easydocker.log >> $logs_dir/$docker_log_file 2>&1
+	git rm --cached $logs_dir/backup.log >> $logs_dir/$docker_log_file 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"

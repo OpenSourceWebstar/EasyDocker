@@ -209,10 +209,8 @@ checkRequirements()
 		else
 			echo ""
 			isSuccessful "Passwords found to change in the following files:"
-			for file in "${files_with_password[@]}"; do
-				isNotice "$file"
-			done
-			((preinstallneeded++)) 
+			isNotice "${files_with_password[*]}"  # Join the array elements with spaces
+			((preinstallneeded++))
 		fi
 	fi
 
