@@ -81,6 +81,14 @@ runUpdate()
     checkSuccess "Running Update Script"
 }
 
+reloadScripts()
+{
+    # Reloading all scripts after clone
+    for file in $script_dir*.sh; do
+        [ -f "$file" ] && . "$file"
+    done
+}
+
 function userExists() {
     if id "$1" &>/dev/null; then
         return 0 # User exists

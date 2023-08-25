@@ -18,6 +18,9 @@ checkUpdates()
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
+		result=$(git fetch origin)
+		checkSuccess "Fetch latest updates"
+
 		result=$(git config core.fileMode false)
 		checkSuccess "Update Git to ignore changes in file permissions"
 
@@ -29,19 +32,41 @@ checkUpdates()
 				read -p "" customupdatesfound
 				case $customupdatesfound in
 					[yY])
-						backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
-						gitFolderResetAndBackup
-
-						# Reloading all scripts after clone
-						for file in $script_dir*.sh; do
-							[ -f "$file" ] && . "$file"
-						done
+						gitFolderResetAndBackup;
+						reloadScripts;
 
 						isSuccessful "Starting/Restarting EasyDocker"
 						exit 0 ; runStart
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
+						exit 0 ; runStart
+						;;
+					*)
+						isNotice "Please provide a valid input (y or n)."
+						;;
+				esac
+			done
+		fi
+
+		# Check if the current branch is up to date
+		if [[ $(git rev-parse HEAD) == $(git rev-parse origin/master) ]]; then
+			isSuccessful "EasyDocker is up to date... starting scripts..."
+		else
+			isNotice "The local branch is not up to date with the remote branch."
+			while true; do
+				isQuestion "Do you want to update the repository? (y/n): "
+				read -p "" notlatestcode
+				case $notlatestcode in
+					[yY])
+						gitFolderResetAndBackup;
+						reloadScripts;
+
+						isSuccessful "Starting/Restarting EasyDocker"
+						exit 0 ; runStart
+						;;
+					[nN])
+						isNotice "Skipping update..."
 						exit 0 ; runStart
 						;;
 					*)
