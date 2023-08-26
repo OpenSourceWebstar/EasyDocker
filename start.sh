@@ -15,6 +15,14 @@ checkUpdates()
 		echo "#####################################"
 		echo ""
 
+		# Attempt to download a file from the repository
+		if curl --output /dev/null --silent --head --fail "$repo_url/README.md"; then
+			checkSuccess "Repository is accessible network-wide."
+		else
+			checkSuccess "Repository is not accessible network-wide."
+			exit 1
+		fi
+
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
 		result=$(git config core.fileMode false)
