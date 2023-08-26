@@ -1,5 +1,9 @@
 version: "3"
 
+networks:
+  vpn:
+    external: true
+
 services:
   unbound:
     image: "mvance/unbound:latest"
@@ -35,7 +39,7 @@ services:
       #traefik.http.routers.adguard.tls: true
       #traefik.http.routers.adguard.tls.certresolver: production
       #traefik.http.services.adguard.loadbalancer.server.port: PORTHERE
-      #traefik.tcp.routers.adguard-dot.rule: HostSNI(`${DOMAINSUBNAMEHERE}`)
+      #traefik.tcp.routers.adguard-dot.rule: HostSNI(`DOMAINSUBNAMEHERE`)
       #traefik.tcp.routers.adguard-dot.entrypoints: web,websecure
       #traefik.tcp.routers.adguard-dot.tls: true
       #traefik.tcp.routers.adguard-dot.service: adguard
