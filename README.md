@@ -31,12 +31,37 @@ This type of script helps to simplify the deployment and management of Docker co
 
 Ultimately, an automated Docker script is a powerful solution that streamlines the process of containerization and significantly enhances the productivity of users, making it an essential tool for modern system admin and DevOps teams.
 
-## Reason for Making this Script. 
-Deploying servers can be a tedious process, especially when it involves installing multiple dependencies and configuring various settings. 
+# Apps Available
 
-This script aims to streamline the installation process by automating it, saving time and effort by eliminating the need for manual installation and setup. By using this script, users can easily and quickly deploy servers without the hassle of dealing with complex installation procedures. 
-
-In addition, the use of Docker makes the deployment process even more efficient and lightweight, allowing applications to run smoothly and reliably. 
+| Type           | Name                                  |  Status          | Notes                                            |
+| -------------- | ------------------------------------- | ---------------- | ------------------------------------------------ |
+| System         | Fail2Ban                              | Tested & Working |                                                  |
+| System         | Traefik - Reverse Proxy               | Tested & Working |                                                  |
+| System         | Wireguard Easy - VPN Server           | Tested & Working |                                                  |
+| System         | Adguard & Unbound - DNS Server        | Tested & Working |                                                  |
+| System         | Portainer - Docker Management         | Tested & Working |                                                  |
+| System         | Watchtower - Docker Updater           | Tested & Working |                                                  |
+| System         | Dashy - Docker Dashboard              | Tested & Working |                                                  |
+| Privacy        | Searxng - Search Engine               | Tested & Working |                                                  |
+| Privacy        | Speedtest - Internet Testing          | Tested & Working |                                                  |
+| Privacy        | IPInfo - Show IP Address              | Tested & Working |                                                  |
+| Privacy        | Trilium - Note Manager                | Tested & Working |                                                  |
+| Privacy        | Vaultwarden - Password Manager        | Tested & Working |                                                  |
+| User           | Jitsi Meet - Video Conferencing       | Tested & Working | Coturn Needed for improvement                    |
+| User           | OwnCloud - File & Document Cloud      | Tested & Working |                                                  |
+| User           | Killbill - Payment Processing         | Tested & Working |                                                  |
+| User           | Mattermost - Collaboration Platform   | Tested & Working |                                                  |
+| User           | Kimai - Online-Timetracker            | Tested & Working |                                                  |
+| User           | Kimai - Online-Timetracker            | Tested & Working |                                                  |
+| Old/Unfinished | System - Pi-Hole - DNS Server         | Tested & Working | Replaced with Adguard Home                       |
+| Old/Unfinished | System - Duplicati - Backups          | Tested & Working | Replaced with EasyDocker crontab backups         |
+| Old/Unfinished | System - Caddy - Reverse Proxy        | Tested & Working | Replaced with Traefik                            |
+| Old/Unfinished | User - Tiledesk - Live Chat Platfor   | Needs Finishing  |                                                  |
+| Old/Unfinished | User - GitLab - DevOps Platform       | Needs Testing    |                                                  |
+| Old/Unfinished | User - Actual - Money Budgetting      | Needs Testing    |                                                  |
+| Old/Unfinished | User - Akaunting - Invoicing Solution | Needs Testing    |                                                  |
+| Old/Unfinished | User - Cozy - Cloud Platfrom          | Not Working      |                                                  |
+| Old/Unfinished | Privacy - Mailcow - Mail Server       | Needs Testing    |                                                  |
 
 ## Instructions
 1. Upload init.sh to your root (~) folder
