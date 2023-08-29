@@ -272,13 +272,15 @@ endStart()
 }
 
 exitScript() {
-	databaseRetreivePath;
 	echo ""
 	echo ""
 	isNotice "Exiting script..."
 	echo ""
-	isNotice "Last working path :"
-	isNotice "cd $database_path"
+    if [ -f "$base_dir/$db_file" ]; then
+        database_path=$(sqlite3 "$base_dir/$db_file" "SELECT path FROM path LIMIT 1;")
+		isNotice "Last working path :"
+		isNotice "cd $database_path"
+    fi
 	echo ""
 	exit 0
 }

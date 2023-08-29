@@ -594,14 +594,6 @@ databasePathInsert()
     checkSuccess "Adding $initial_path_save to the $table_name table." 
 }
 
-databaseRetreivePath()
-{
-    if [ -f "$base_dir/$db_file" ]; then
-        database_path=$(sqlite3 "$base_dir/$db_file" "SELECT path FROM path LIMIT 1;")
-        #echo "DATABASE PATH = $database_path"
-    fi
-}
-
 databaseBackupInsert()
 {
     app_name="$1"
