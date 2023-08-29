@@ -495,18 +495,17 @@ setupIPsAndHostnames()
             ip_setup=$ip
 
             if [[ "$public" == "true" ]]; then
-                isSuccessful "Match found: $hostname with IP $ip."
                 isSuccessful "Using $host_setup for public domain."
-                echo ""
-            else
-                isSuccessful "Match found: $hostname with IP $ip."
-                echo ""
             fi
         fi
     done < "$configs_dir$ip_file"
 
-    if ! "$found_match"; then
-        isError "Failure - No matching hostnames found for $host_name, please fill in the ips_hostname file"
+    if "$found_match"; then
+        checkSuccess "Match found: $hostname with IP $ip."
+        echo ""
+    else
+        checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"
+        echo ""
     fi
 }
 
