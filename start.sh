@@ -272,6 +272,7 @@ endStart()
 }
 
 exitScript() {
+	databaseRetreivePath;
 	echo ""
 	echo ""
 	isNotice "Exiting script..."
