@@ -16,11 +16,11 @@ checkUpdates()
 		echo ""
 
 		# Attempt to download a file from the repository
-		if curl --output /dev/null --silent --head --fail "$repo_url/README.md"; then
-			checkSuccess "Repository is accessible network-wide."
+		response=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "$repo_url")
+		if [[ $response == 200 ]]; then
+			echo "Repository is accessible network-wide."
 		else
-			checkSuccess "Repository is not accessible network-wide."
-			exit 1
+			echo "Repository is not accessible network-wide."
 		fi
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
