@@ -586,8 +586,9 @@ checkIfUpdateShouldRun() {
 
 databasePathInsert()
 {
+    #initial_path_save="$1"
+    #if [ -f "$base_dir/$db_file" ] && [ -n "$initial_path_save" ]; then
     if [ -f "$base_dir/$db_file" ]; then
-        initial_path_save="$1"
         table_name=path
         
         # Check if the path already exists in the database
