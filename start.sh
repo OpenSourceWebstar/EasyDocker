@@ -15,7 +15,7 @@ checkUpdates()
 		echo "#####################################"
 		echo ""
 
-		databasePathInsert;
+		databasePathInsert $initial_path;
 
 		# Attempt to download a file from the repository
 		response=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "$repo_url")
@@ -125,7 +125,7 @@ startPreInstall()
 
 startScan()
 {
-	databasePathInsert;
+	databasePathInsert $initial_path_save
     databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
     databaseAppScan;
