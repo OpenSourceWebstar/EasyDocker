@@ -44,4 +44,8 @@ config_file_restore=config_restore
 # Menu
 menu_number=0
 
+# Used for saving directory path
+initial_path="$3"
+initial_path_save=$initial_path
+
 #Secondary IP available : 10.8.1.120
