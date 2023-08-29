@@ -506,9 +506,7 @@ setupIPsAndHostnames()
     done < "$configs_dir$ip_file"
 
     if ! "$found_match"; then
-        echo "Failure - No matching hostnames found for $host_name, please fill in the ips_hostname file"
-        sleep 5
-        exit 1
+        isError "Failure - No matching hostnames found for $host_name, please fill in the ips_hostname file"
     fi
 }
 
