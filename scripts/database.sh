@@ -586,12 +586,24 @@ checkIfUpdateShouldRun() {
 
 databasePathInsert()
 {
-    initial_path_save="$1"
-    table_name=path
-    result=$(sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name;")
-    checkSuccess "Clearing old path data"
-    result=$(sqlite3 "$base_dir/$db_file" "REPLACE INTO $table_name (path) VALUES ('$initial_path_save');")
-    checkSuccess "Adding $initial_path_save to the $table_name table." 
+    if [ -f "$base_dir/$db_file" ]; then
+        initial_path_save="$1"
+        table_name=path
+        
+        # Check if the path already exists in the database
+        existing_path=$(sqlite3 "$base_dir/$db_file" "SELECT path FROM $table_name WHERE path = '$initial_path_save';")
+
+        if [ -z "$existing_path" ]; then
+            # Path doesn't exist, clear old data and insert
+            result=$(sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name;")
+            checkSuccess "Clearing old path data"
+            result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (path) VALUES ('$initial_path_save');")
+            checkSuccess "Adding $initial_path_save to the $table_name table."
+        #else
+            # Path already exists, do nothing
+            #checkSuccess "Path $initial_path_save already exists in the $table_name table. No changes made."
+        fi
+    fi
 }
 
 databaseBackupInsert()
