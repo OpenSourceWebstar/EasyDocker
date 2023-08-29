@@ -141,13 +141,7 @@ reloadScripts()
 {
     # Reloading all scripts after clone
     for file in $script_dir*.sh; do
-        if [ "$(basename "$file")" == "start.sh" ]; then
-            # Pass the variables as arguments to start.sh
-            . "$file" "" "" "$initial_path_save"
-            else
-            [ -f "$file" ] && . "$file"
-        fi
-        
+        [ -f "$file" ] && . "$file"
     done
 }
 

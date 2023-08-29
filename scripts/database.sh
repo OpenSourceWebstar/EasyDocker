@@ -584,6 +584,22 @@ checkIfUpdateShouldRun() {
     fi
 }
 
+databasePathInsert()
+{
+    initial_path_save="$1"
+    table_name=path
+    result=$(sqlite3 "$db_file" "DELETE FROM $table_name;")
+    checkSuccess "Clearing old path data"
+    result=$(sqlite3 "$base_dir/$db_file" "REPLACE INTO $table_name (path) VALUES ('$initial_path_save');")
+    checkSuccess "Adding $initial_path_save to the $table_name table." 
+}
+
+databaseRetreivePath()
+{
+    if [ -f "$base_dir/$db_file" ]; then
+        database_path=$(sqlite3 "$db_file" "SELECT path FROM path LIMIT 1;")
+    fi
+}
 
 databaseBackupInsert()
 {

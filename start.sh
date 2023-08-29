@@ -123,6 +123,7 @@ startPreInstall()
 
 startScan()
 {
+	databasePathInsert $initial_path_save;
     databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
     databaseAppScan;
@@ -276,7 +277,7 @@ exitScript() {
 	isNotice "Exiting script..."
 	echo ""
 	isNotice "Last working path :"
-	isNotice "cd $initial_path_save"
+	isNotice "cd $database_path"
 	echo ""
 	exit 0
 }
