@@ -1,8 +1,6 @@
 version: '3.7'
 
 networks:
-  tiledesk_default:
-    external: true
   vpn:
     external: true
 #dashboard:
@@ -26,7 +24,6 @@ services:
       #traefik.http.routers.tiledesk.tls: true
       #traefik.http.routers.tiledesk.tls.certresolver: production
     networks:
-      tiledesk_default:
       vpn:
          ipv4_address: IPADDRESSHERE
   mongo:
