@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Used for saving directory path
+initial_path="$3"
+initial_path_save=$initial_path
+
 source scripts/sources.sh
 
 checkUpdates()
@@ -14,9 +18,9 @@ checkUpdates()
 		# Attempt to download a file from the repository
 		response=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "$repo_url")
 		if [[ $response == 200 ]]; then
-			echo "Repository is accessible network-wide."
+			checkSuccess "Repository is accessible network-wide."
 		else
-			echo "Repository is not accessible network-wide."
+			checkSuccess "Repository is not accessible network-wide."
 		fi
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
