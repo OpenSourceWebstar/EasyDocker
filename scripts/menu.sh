@@ -84,6 +84,8 @@ mainMenu()
 				read -rp "" trilium
 				isOptionMenu "Vaultwarden - Password Manager (u/s/r/i): "
 				read -rp "" vaultwarden
+				isOptionMenu "Actual - Money Budgetting (u/s/r/i): "
+				read -rp "" actual
 
     			startInstall;
 				
@@ -124,8 +126,6 @@ mainMenu()
 				read -rp "" tiledesk
 				isOptionMenu "USER - GitLab - DevOps Platform (u/s/r/i): "
 				read -rp "" gitlab
-				isOptionMenu "USER - Actual- Money Budgetting (u/s/r/i): "
-				read -rp "" actual
 				isOptionMenu "USER - Akaunting - Invoicing Solution (u/s/r/i): "
 				read -rp "" akaunting
 				isOptionMenu "USER - Cozy - Cloud Platfrom (u/s/r/i): "

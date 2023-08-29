@@ -47,18 +47,17 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | Privacy        | IPInfo - Show IP Address              | Tested & Working |                                                  |
 | Privacy        | Trilium - Note Manager                | Tested & Working |                                                  |
 | Privacy        | Vaultwarden - Password Manager        | Tested & Working |                                                  |
+| Privacy        | Actual - Money Budgetting             | Tested & Working |                                                  |
 | User           | Jitsi Meet - Video Conferencing       | Tested & Working | Coturn Needed for improvement                    |
 | User           | OwnCloud - File & Document Cloud      | Tested & Working |                                                  |
 | User           | Killbill - Payment Processing         | Tested & Working |                                                  |
 | User           | Mattermost - Collaboration Platform   | Tested & Working |                                                  |
-| User           | Kimai - Online-Timetracker            | Tested & Working |                                                  |
 | User           | Kimai - Online-Timetracker            | Tested & Working |                                                  |
 | Old/Unfinished | System - Pi-Hole - DNS Server         | Tested & Working | Replaced with Adguard Home                       |
 | Old/Unfinished | System - Duplicati - Backups          | Tested & Working | Replaced with EasyDocker crontab backups         |
 | Old/Unfinished | System - Caddy - Reverse Proxy        | Tested & Working | Replaced with Traefik                            |
 | Old/Unfinished | User - Tiledesk - Live Chat Platfor   | Needs Finishing  |                                                  |
 | Old/Unfinished | User - GitLab - DevOps Platform       | Needs Testing    |                                                  |
-| Old/Unfinished | User - Actual - Money Budgetting      | Needs Testing    |                                                  |
 | Old/Unfinished | User - Akaunting - Invoicing Solution | Needs Testing    |                                                  |
 | Old/Unfinished | User - Cozy - Cloud Platfrom          | Not Working      |                                                  |
 | Old/Unfinished | Privacy - Mailcow - Mail Server       | Needs Testing    |                                                  |
