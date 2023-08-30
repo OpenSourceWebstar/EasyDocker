@@ -33,34 +33,35 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 
 # Apps Available
 
-| Type           | Name                                  |  Status          | Notes                                            |
-| -------------- | ------------------------------------- | ---------------- | ------------------------------------------------ |
-| System         | Fail2Ban                              | Tested & Working |                                                  |
-| System         | Traefik - Reverse Proxy               | Tested & Working |                                                  |
-| System         | Wireguard Easy - VPN Server           | Tested & Working |                                                  |
-| System         | Adguard & Unbound - DNS Server        | Tested & Working |                                                  |
-| System         | Portainer - Docker Management         | Tested & Working |                                                  |
-| System         | Watchtower - Docker Updater           | Tested & Working |                                                  |
-| System         | Dashy - Docker Dashboard              | Tested & Working |                                                  |
-| Privacy        | Searxng - Search Engine               | Tested & Working |                                                  |
-| Privacy        | Speedtest - Internet Testing          | Tested & Working |                                                  |
-| Privacy        | IPInfo - Show IP Address              | Tested & Working |                                                  |
-| Privacy        | Trilium - Note Manager                | Tested & Working |                                                  |
-| Privacy        | Vaultwarden - Password Manager        | Tested & Working |                                                  |
-| Privacy        | Actual - Money Budgetting             | Tested & Working |                                                  |
-| User           | Jitsi Meet - Video Conferencing       | Tested & Working | Coturn Needed for improvement                    |
-| User           | OwnCloud - File & Document Cloud      | Tested & Working |                                                  |
-| User           | Killbill - Payment Processing         | Tested & Working |                                                  |
-| User           | Mattermost - Collaboration Platform   | Tested & Working |                                                  |
-| User           | Kimai - Online-Timetracker            | Tested & Working |                                                  |
-| Old/Unfinished | System - Pi-Hole - DNS Server         | Tested & Working | Replaced with Adguard Home                       |
-| Old/Unfinished | System - Duplicati - Backups          | Tested & Working | Replaced with EasyDocker crontab backups         |
-| Old/Unfinished | System - Caddy - Reverse Proxy        | Tested & Working | Replaced with Traefik                            |
-| Old/Unfinished | User - Tiledesk - Live Chat Platfor   | Needs Finishing  |                                                  |
-| Old/Unfinished | User - GitLab - DevOps Platform       | Needs Testing    |                                                  |
-| Old/Unfinished | User - Akaunting - Invoicing Solution | Needs Testing    |                                                  |
-| Old/Unfinished | User - Cozy - Cloud Platfrom          | Not Working      |                                                  |
-| Old/Unfinished | Privacy - Mailcow - Mail Server       | Needs Testing    |                                                  |
+| Type           | Name                                             |  Status          | 
+| -------------- | ------------------------------------------------ | ---------------- | 
+| System         | Fail2Ban - Connection Security                   | Tested & Working |
+| System         | Traefik - Reverse Proxy *RECOMMENDED*            | Tested & Working |
+| System         | Caddy - Reverse Proxy *NOT RECOMMENDED*          | Tested & Working |
+| System         | Wireguard Easy - VPN Server                      | Tested & Working |
+| System         | Adguard & Unbound - DNS Server *RECOMMENDED*     | Tested & Working |
+| System         | Pi-Hole & Unbound - DNS Server *NOT RECOMMENDED* | Tested & Working |
+| System         | Portainer - Docker Management                    | Tested & Working |
+| System         | Watchtower - Docker Updater                      | Tested & Working |
+| System         | Dashy - Docker Dashboard                         | Tested & Working |
+| Privacy        | Searxng - Search Engine                          | Tested & Working |
+| Privacy        | Speedtest - Internet Testing                     | Tested & Working |
+| Privacy        | IPInfo - Show IP Address                         | Tested & Working |
+| Privacy        | Trilium - Note Manager                           | Tested & Working |
+| Privacy        | Vaultwarden - Password Manager                   | Tested & Working |
+| Privacy        | Actual - Money Budgetting                        | Tested & Working |
+| Privacy        | Mailcow - Mail Server *UNFINISHED*               | Needs Testing    |
+| User           | Jitsi Meet - Video Conferencing                  | Tested & Working |
+| User           | OwnCloud - File & Document Cloud                 | Tested & Working |
+| User           | Killbill - Payment Processing                    | Tested & Working |
+| User           | Mattermost - Collaboration Platform              | Tested & Working |
+| User           | Kimai - Online-Timetracker                       | Tested & Working |
+| User           | Tiledesk - Live Chat Platform *UNFINISHED*       | Needs Finishing  |
+| User           | GitLab - DevOps Platform *UNFINISHED*            | Needs Testing    |
+| User           | Akaunting - Invoicing Solution *UNFINISHED*      | Needs Testing    |
+| Old            | System - Duplicati - Backups                     | Tested & Working |
+| Old            | User - Cozy - Cloud Platfrom *BROKEN             | Needs Fixing     |
+
 
 ## Instructions
 1. Upload init.sh to your root (~) folder
@@ -75,6 +76,7 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 - [ ] Finish setup of Mailcow software
 - [ ] Finish setup of Akaunting software
 - [ ] Finish setup of Ruskdesk software
+- [ ] Jitisi Meet - Coturn Needed for improvement
 - [ ] Migration Script
 - [ ] Test on other Operating Systems other than Debian 11
 

@@ -50,12 +50,16 @@ mainMenu()
 				echo ""
 				isOptionMenu "Fail2Ban - Connection Security (u/s/r/i): "
 				read -rp "" fail2ban
-				isOptionMenu "Traefik - Reverse Proxy (u/s/r/i): "
+				isOptionMenu "Traefik - Reverse Proxy *RECOMMENDED* (u/s/r/i): "
 				read -rp "" traefik
+				isOptionMenu " Caddy - Reverse Proxy *NOT RECOMMENDED* (u/s/r/i): "
+				read -rp "" caddy
 				isOptionMenu "Wireguard Easy - VPN Server (u/s/r/i): "
 				read -rp "" wireguard
-				isOptionMenu "Adguard & Unbound - DNS Server (u/s/r/i): "
+				isOptionMenu "Adguard & Unbound - DNS Server *RECOMMENDED* (u/s/r/i): "
 				read -rp "" adguard
+				isOptionMenu "Pi-Hole & Unbound - DNS Server *NOT RECOMMENDED* (u/s/r/i): "
+				read -rp "" pihole
 				isOptionMenu "Portainer - Docker Management (u/s/r/i): "
 				read -rp "" portainer
 				isOptionMenu "Watchtower - Docker Updater (u/s/r/i): "
@@ -86,7 +90,8 @@ mainMenu()
 				read -rp "" vaultwarden
 				isOptionMenu "Actual - Money Budgetting (u/s/r/i): "
 				read -rp "" actual
-
+				isOptionMenu "Mailcow - Mail Server *UNFINISHED* (u/s/r/i): "
+				read -rp "" mailcow
     			startInstall;
 				
 				;;
@@ -108,7 +113,13 @@ mainMenu()
 				read -rp "" mattermost
 				isOptionMenu "Kimai - Online-Timetracker (u/s/r/i): "
 				read -rp "" kimai
-				
+				isOptionMenu "Tiledesk - Live Chat Platform *UNFINISHED* (u/s/r/i): "
+				read -rp "" tiledesk
+				isOptionMenu "GitLab - DevOps Platform *UNFINISHED* (u/s/r/i): "
+				read -rp "" gitlab
+				isOptionMenu " Akaunting - Invoicing Solution *UNFINISHED* (u/s/r/i): "
+				read -rp "" akaunting
+
     			startInstall;
 
 				;;
@@ -120,22 +131,11 @@ mainMenu()
 				echo "###         Old/Unfinished        ###"
 				echo "#####################################"
 				echo ""
-				isOptionMenu "PRIVACY - Mailcow - Mail Server (u/s/r/i): "
-				read -rp "" mailcow
-				isOptionMenu "USER - Tiledesk - Live Chat Platform (u/s/r/i): "
-				read -rp "" tiledesk
-				isOptionMenu "USER - GitLab - DevOps Platform (u/s/r/i): "
-				read -rp "" gitlab
-				isOptionMenu "USER - Akaunting - Invoicing Solution (u/s/r/i): "
-				read -rp "" akaunting
 				isOptionMenu "USER - Cozy - Cloud Platfrom (u/s/r/i): "
 				read -rp "" cozy
-				isOptionMenu "SYSTEM - Pi-Hole - DNS Server (u/s/r/i): "
-				read -rp "" pihole
 				isOptionMenu "SYSTEM - Duplicati - Backups (u/s/r/i): "
 				read -rp "" duplicati
-				isOptionMenu "SYSTEM - Caddy - Reverse Proxy (u/s/r/i): "
-				read -rp "" caddy
+
 
 				startInstall
 
