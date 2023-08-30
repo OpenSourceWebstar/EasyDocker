@@ -52,7 +52,7 @@ mainMenu()
 				read -rp "" fail2ban
 				isOptionMenu "Traefik - Reverse Proxy *RECOMMENDED* (u/s/r/i): "
 				read -rp "" traefik
-				isOptionMenu " Caddy - Reverse Proxy *NOT RECOMMENDED* (u/s/r/i): "
+				isOptionMenu "Caddy - Reverse Proxy *NOT RECOMMENDED* (u/s/r/i): "
 				read -rp "" caddy
 				isOptionMenu "Wireguard Easy - VPN Server (u/s/r/i): "
 				read -rp "" wireguard
@@ -117,7 +117,7 @@ mainMenu()
 				read -rp "" tiledesk
 				isOptionMenu "GitLab - DevOps Platform *UNFINISHED* (u/s/r/i): "
 				read -rp "" gitlab
-				isOptionMenu " Akaunting - Invoicing Solution *UNFINISHED* (u/s/r/i): "
+				isOptionMenu "Akaunting - Invoicing Solution *UNFINISHED* (u/s/r/i): "
 				read -rp "" akaunting
 
     			startInstall;

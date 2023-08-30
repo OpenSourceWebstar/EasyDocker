@@ -4,7 +4,7 @@ app_name="$1"
 
 installFail2Ban()
 {
-	app_name=fail2ban
+	app_name=$CFG_FAIL2BAN_APP_NAME
 
     if [[ "$fail2ban" == *[uU]* ]]; then
         uninstallApp;
@@ -100,13 +100,91 @@ installFail2Ban()
     fail2ban=n
 }
 
+installAdguard()
+{
+    app_name=$CFG_ADGUARD_APP_NAME
+    host_name=$CFG_ADGUARD_HOST_NAME
+    domain_number=$CFG_ADGUARD_DOMAIN_NUMBER
+    public=$CFG_ADGUARD_PUBLIC
+	port=$CFG_ADGUARD_PORT
+
+    if [[ "$adguard" == *[uU]* ]]; then
+        uninstallApp;
+    fi
+
+    if [[ "$adguard" == *[sS]* ]]; then
+        shutdownApp;
+    fi
+
+    if [[ "$adguard" == *[rR]* ]]; then
+        dockerDownUpDefault;
+    fi
+
+    if [[ "$adguard" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###          Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+		
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		result=$(sudo cp $resources_dir/unbound/unbound.conf $install_path$app_name/unbound.conf >> $logs_dir/$docker_log_file 2>&1)
+		checkSuccess "Copying unbound.conf to containers folder."
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+		echo "    NOTICE : Setup is needed in order to get Adguard online"
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+
+		menu_number=0
+        sleep 3s
+        cd
+    fi
+    adguard=n
+}
+
 installTraefik()
 {
-    app_name=traefik
-    host_name=proxy
-	domain_number=1
-    public=true
-    port=8080
+    app_name=$CFG_TRAEFIK_APP_NAME
+    host_name=$CFG_TRAEFIK_HOST_NAME
+    domain_number=$CFG_TRAEFIK_DOMAIN_NUMBER
+    public=$CFG_TRAEFIK_PUBLIC
+	port=$CFG_TRAEFIK_PORT
 
     if [[ "$traefik" == *[uU]* ]]; then
         uninstallApp;
@@ -217,10 +295,10 @@ installTraefik()
 
 installCaddy()
 {
-    app_name=caddy
-    host_name=proxy
-	domain_number=1
-    public=false
+    app_name=$CFG_CADDY_APP_NAME
+    host_name=$CFG_CADDY_HOST_NAME
+    domain_number=$CFG_CADDY_DOMAIN_NUMBER
+    public=$CFG_CADDY_PUBLIC
 
     if [[ "$caddy" == *[uU]* ]]; then
         uninstallApp;
@@ -311,11 +389,11 @@ installCaddy()
 
 installWireguard()
 {
-    app_name=wireguard
-    host_name=wireguard
-	domain_number=1
-    public=false
-    port=51821
+    app_name=$CFG_WIREGUARD_APP_NAME
+    host_name=$CFG_WIREGUARD_HOST_NAME
+    domain_number=$CFG_WIREGUARD_DOMAIN_NUMBER
+    public=$CFG_WIREGUARD_PUBLIC
+	port=$CFG_WIREGUARD_PORT
     
     if [[ "$wireguard" == *[uU]* ]]; then
         uninstallApp;
@@ -410,11 +488,11 @@ installWireguard()
 
 installPihole()
 {
-    app_name=pihole
-    host_name=pihole
-	domain_number=1
-    public=false
-    port=3232
+    app_name=$CFG_PIHOLE_APP_NAME
+    host_name=$CFG_PIHOLE_HOST_NAME
+    domain_number=$CFG_PIHOLE_DOMAIN_NUMBER
+    public=$CFG_PIHOLE_PUBLIC
+	port=$CFG_PIHOLE_PORT
 
     if [[ "$pihole" == *[uU]* ]]; then
         uninstallApp;
@@ -512,11 +590,11 @@ installPihole()
 
 installPortainer()
 {
-    app_name=portainer
-    host_name=portainer
-	domain_number=1
-    public=false
-    port=9000
+    app_name=$CFG_PORTAINER_APP_NAME
+    host_name=$CFG_PORTAINER_HOST_NAME
+    domain_number=$CFG_PORTAINER_DOMAIN_NUMBER
+    public=$CFG_PORTAINER_PUBLIC
+	port=$CFG_PORTAINER_PORT
 
     if [[ "$portainer" == *[uU]* ]]; then
         uninstallApp;
@@ -587,7 +665,7 @@ installPortainer()
 
 installWatchtower()
 {
-	app_name=watchtower
+    app_name=$CFG_WATCHTOWER_APP_NAME
 
     if [[ "$watchtower" == *[uU]* ]]; then
         uninstallApp;
@@ -644,11 +722,11 @@ installWatchtower()
 
 installDuplicati()
 {
-    app_name=duplicati
-    host_name=backup
-	domain_number=1
-    public=false
-    port=8200
+    app_name=$CFG_DUPLICATI_APP_NAME
+    host_name=$CFG_DUPLICATI_HOST_NAME
+    domain_number=$CFG_DUPLICATI_DOMAIN_NUMBER
+    public=$CFG_DUPLICATI_PUBLIC
+	port=$CFG_DUPLICATI_PORT
 
     if [[ "$duplicati" == *[uU]* ]]; then
         uninstallApp;
@@ -718,11 +796,11 @@ installDuplicati()
 
 installDashy()
 {
-    app_name=dashy
-    host_name=dashy
-	domain_number=1
-    public=false
-    port=4000
+    app_name=$CFG_DASHY_APP_NAME
+    host_name=$CFG_DASHY_HOST_NAME
+    domain_number=$CFG_DASHY_DOMAIN_NUMBER
+    public=$CFG_DASHY_PUBLIC
+	port=$CFG_DASHY_PORT
     
     if [[ "$dashy" == *[uU]* ]]; then
         uninstallApp;

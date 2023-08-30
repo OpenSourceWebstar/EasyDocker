@@ -4,11 +4,11 @@ app_name="$1"
 
 installTileDesk()
 {
-	app_name=tiledesk
-	host_name=livechat
-	domain_number=1
-	public=true
-	port=8081
+    app_name=$CFG_TILEDESK_APP_NAME
+    host_name=$CFG_TILEDESK_HOST_NAME
+    domain_number=$CFG_TILEDESK_DOMAIN_NUMBER
+    public=$CFG_TILEDESK_PUBLIC
+	port=$CFG_TILEDESK_PORT
 
 	if [[ "$tiledesk" == *[uU]* ]]; then
 		uninstallApp;
@@ -102,14 +102,12 @@ installTileDesk()
 
 installGitLab()
 {
-	app_name=gitlab
-	host_name=gitlab
-	domain_number=1
-	public=true
-	port=9032
-	
-	#Custom
-	port_2=2222
+    app_name=$CFG_GITLAB_APP_NAME
+    host_name=$CFG_GITLAB_HOST_NAME
+    domain_number=$CFG_GITLAB_DOMAIN_NUMBER
+    public=$CFG_GITLAB_PUBLIC
+	port=$CFG_GITLAB_PORT
+	port_2=$CFG_GITLAB_PORT_2
 
 	if [[ "$gitlab" == *[uU]* ]]; then
 		uninstallApp;
@@ -177,122 +175,13 @@ installGitLab()
 	gitlab=n
 }
 
-installOwnCloud()
-{
-	app_name=owncloud
-	host_name=cloud
-	domain_number=1
-	public=false
-	port=8086
-
-	# Custom
-	owncloud_version=10.12.1
-
-	if [[ "$owncloud" == *[uU]* ]]; then
-		uninstallApp;
-	fi
-
-	if [[ "$owncloud" == *[sS]* ]]; then
-		shutdownApp;
-	fi
-
-    if [[ "$owncloud" == *[rR]* ]]; then
-        dockerDownUpDefault;
-    fi
-
-    if [[ "$owncloud" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###          Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Setup .env file for $app_name"
-        echo ""
-
-if [[ "$public" == "true" ]]; then	
-cd $install_path$app_name
-cat << EOF > $install_path$app_name/.env
-OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
-OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
-ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
-ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
-HTTP_PORT=$port
-EOF
-fi
-
-if [[ "$public" == "false" ]]; then	
-cd $install_path$app_name
-cat << EOF > $install_path$app_name/.env
-OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
-OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
-ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
-ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
-HTTP_PORT=$port
-EOF
-fi
-		editEnvFileDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your new service using one of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		    
-		menu_number=0
-        sleep 3s
-        cd
-	fi
-	owncloud=n
-}
-
 installJitsiMeet()
 {
-	app_name=jitsimeet
-	host_name=meet
-	domain_number=1
-	public=true
-
-	# Custom
-	repo_url="https://github.com/jitsi/docker-jitsi-meet/"
+    app_name=$CFG_JITSIMEET_APP_NAME
+    host_name=$CFG_JITSIMEET_HOST_NAME
+    domain_number=$CFG_JITSIMEET_DOMAIN_NUMBER
+    public=$CFG_JITSIMEET_PUBLIC
+	git_url=$CFG_JITSIMEET_GIT
 
 	if [[ "$jitsimeet" == *[uU]* ]]; then
 		uninstallApp;
@@ -325,7 +214,7 @@ installJitsiMeet()
         echo "---- $menu_number. Downloading latest GitHub release"
         echo ""
 
-		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $repo_url | cut -d/ -f3- | tail -n1)
+		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $git_url | cut -d/ -f3- | tail -n1)
 		echo "The latest tag is: $latest_tag"
 
 		result=$(mkdir $install_path$app_name && cd $install_path$app_name)
@@ -337,7 +226,7 @@ installJitsiMeet()
 		
 
 		# Download files and unzip
-		result=$(wget -O $install_path$app_name/$latest_tag.zip $repo_url/archive/refs/tags/$latest_tag.zip)
+		result=$(wget -O $install_path$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
 		checkSuccess "Downloading tagged zip file from GitHub"
 		result=$(unzip -o $install_path$app_name/$latest_tag.zip -d $install_path$app_name)
 		checkSuccess "Unzip downloaded file"
@@ -433,11 +322,11 @@ installJitsiMeet()
 
 installKillbill()
 {
-	app_name=killbill
-	host_name=payment
-	domain_number=1
-	public=true
-	port=9090
+    app_name=$CFG_KILLBILL_APP_NAME
+    host_name=$CFG_KILLBILL_HOST_NAME
+    domain_number=$CFG_KILLBILL_DOMAIN_NUMBER
+    public=$CFG_KILLBILL_PUBLIC
+	port=$CFG_KILLBILL_PORT
 
 	if [[ "$killbill" == *[uU]* ]]; then
 		uninstallApp;
@@ -507,11 +396,11 @@ installKillbill()
 
 installAkaunting()
 {
-	app_name=akaunting
-	host_name=invoice
-	domain_number=1
-	public=true
-	port=8080
+    app_name=$CFG_AKAUNTING_APP_NAME
+    host_name=$CFG_AKAUNTING_HOST_NAME
+    domain_number=$CFG_AKAUNTING_DOMAIN_NUMBER
+    public=$CFG_AKAUNTING_PUBLIC
+	port=$CFG_AKAUNTING_PORT
 
 	if [[ "$akaunting" == *[uU]* ]]; then
 		uninstallApp;
@@ -632,11 +521,11 @@ installAkaunting()
 
 installKimai()
 {
-	app_name=kimai
-	host_name=client
-	domain_number=1
-	public=true
-	port=8001
+    app_name=$CFG_KIMAI_APP_NAME
+    host_name=$CFG_KIMAI_HOST_NAME
+    domain_number=$CFG_KIMAI_DOMAIN_NUMBER
+    public=$CFG_KIMAI_PUBLIC
+	port=$CFG_KIMAI_PORT
 
 	if [[ "$kimai" == *[uU]* ]]; then
 		uninstallApp;
@@ -706,12 +595,12 @@ installKimai()
 
 installMattermost()
 {
-	app_name=mattermost
-	host_name=project
-	domain_number=1
-	public=true
-	port=8065
-	easy_setup=true
+    app_name=$CFG_MATTERMOST_APP_NAME
+    host_name=$CFG_MATTERMOST_HOST_NAME
+    domain_number=$CFG_MATTERMOST_DOMAIN_NUMBER
+    public=$CFG_MATTERMOST_PUBLIC
+	port=$CFG_MATTERMOST_PORT
+	easy_setup=$CFG_MATTERMOST_EASY_SETUP
 
 	if [[ "$mattermost" == *[uU]* ]]; then
 		uninstallApp;

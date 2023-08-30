@@ -2,706 +2,14 @@
 
 app_name="$1"
 
-
-installAdguard()
-{
-    app_name=adguard
-    host_name=adguard
-    domain_number=1
-    public=true
-	port=3300
-
-    if [[ "$adguard" == *[uU]* ]]; then
-        uninstallApp;
-    fi
-
-    if [[ "$adguard" == *[sS]* ]]; then
-        shutdownApp;
-    fi
-
-    if [[ "$adguard" == *[rR]* ]]; then
-        dockerDownUpDefault;
-    fi
-
-    if [[ "$adguard" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###          Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-		
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		result=$(sudo cp $resources_dir/unbound/unbound.conf $install_path$app_name/unbound.conf >> $logs_dir/$docker_log_file 2>&1)
-		checkSuccess "Copying unbound.conf to containers folder."
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-		echo "    NOTICE : Setup is needed in order to get Adguard online"
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-
-		menu_number=0
-        sleep 3s
-        cd
-    fi
-    adguard=n
-}
-
-installCozy()
-{
-    app_name=cozy
-    host_name=cozy
-	domain_number=1
-    public=false
-    #port=8091
-
-	# Custom Cozy Variables
-	# Additional non default apps to be installed
-	# List here - https://github.com/vsellier/easy-cozy/blob/master/application.sh
-	cozy_user_1=test1
-	cozy_user_1_apps_enabled=true
-	cozy_user_1_apps="banks contacts"
-
-    if [[ "$cozy" == *[uU]* ]]; then
-        uninstallApp;
-    fi
-
-    if [[ "$cozy" == *[sS]* ]]; then
-        shutdownApp;
-    fi
-
-    if [[ "$cozy" == *[rR]* ]]; then
-        dockerDownUpDefault;
-    fi
-
-    if [[ "$cozy" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###           Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling from $app_name GitHub."
-        echo ""
-
-		result=$(sudo git clone https://github.com/vsellier/easy-cozy.git $install_path/$app_name)
-		checkSuccess "Cloning the Easy-Cozy from GitHub"
-		
-		result=$(sudo cp $install_path/$app_name/env.template $install_path/$app_name/.env >> $logs_dir/$docker_log_file 2>&1)
-		checkSuccess "Coping .env template into .env for usage"
-
-		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
-		checkSuccess "Update database directory to the correct install path"
-
-		result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
-		checkSuccess "Update storage directory to the correct install path"
-
-		result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
-		checkSuccess "Update acme directory to the correct install path"
-
-		result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
-		checkSuccess "Update the domain name to $domain_full"
-
-		result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
-		checkSuccess "Update the email to $CFG_EMAIL"
-
-		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
-		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
-		
-		result=$(mkdir -p $install_path/$app_name/db $install_path/$app_name/storage)
-		checkSuccess "Creating db and storage folders"
-
-		result=$(sudo chown 1000 $install_path/$app_name/db $install_path/$app_name/storage)
-		checkSuccess "Setting permissions for db and storage folders"
-
-		setupComposeFileApp;
-
-		result=$(sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
-		checkSuccess "Removing line 35 from the docker-compose.yml file"
-
-		result=$(sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
-		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
-
-		result=$(sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
-		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
-
-		editComposeFileApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Setting up Users with their applications for $app_name"
-        echo ""
-
-		# Setting up a single instance of Cozy
-		result=$(cd $install_path/$app_name && sudo ./create-instance.sh $cozy_user_1)
-		checkSuccess "Creating instance of $app_name for $cozy_user_1"
-
-		if [[ "$cozy_user_1_apps_enabled" == true ]]; then
-			result=$(sudo ./application.sh $cozy_user_1 $cozy_user_1_apps)
-			checkSuccess "Setting up applications for $app_name for $cozy_user_1"
-		fi
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		     
-		menu_number=0
-        sleep 3s
-        cd
-    fi
-    cozy=n
-}
-
-installTrilium()
-{
-    app_name=trilium
-    host_name=notes
-	domain_number=1
-    public=false
-    port=8091
-
-    if [[ "$trilium" == *[uU]* ]]; then
-        uninstallApp;
-    fi
-
-    if [[ "$trilium" == *[sS]* ]]; then
-        shutdownApp;
-    fi
-
-    if [[ "$trilium" == *[rR]* ]]; then
-        dockerDownUpDefault;
-    fi
-
-    if [[ "$trilium" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###          Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		     
-		menu_number=0
-        sleep 3s
-        cd
-    fi
-    trilium=n
-}
-
-installIPInfo()
-{
-	app_name=ipinfo
-	host_name=ipinfo
-	domain_number=1
-	public=true
-	port=4545
-
-	if [[ "$ipinfo" == *[uU]* ]]; then
-		uninstallApp;
-	fi
-
-	if [[ "$ipinfo" == *[sS]* ]]; then
-		shutdownApp;
-	fi
-
-	if [[ "$ipinfo" == *[rR]* ]]; then
-		dockerDownUpDefault;
-	fi
-
-    if [[ "$ipinfo" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###           Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-		
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		      
-		menu_number=0
-        sleep 3s
-        cd
-    fi
-    ipinfo=n
-}
-
-installSearXNG()
-{
-	app_name=searxng
-	host_name=search
-	domain_number=1
-	public=true
-	port=8080
-	
-	if [[ "$searxng" == *[uU]* ]]; then
-		uninstallApp;
-	fi
-
-	if [[ "$searxng" == *[sS]* ]]; then
-		shutdownApp;
-	fi
-
-	if [[ "$searxng" == *[rR]* ]]; then
-		dockerDownUpDefault;
-	fi
-
-	if [[ "$searxng" == *[iI]* ]]; then
-		echo ""
-		echo "##########################################"
-		echo "###          Install $app_name"
-		echo "##########################################"
-		echo ""
-
-		((menu_number++))
-		echo ""
-		echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-		echo ""
-
-		setupIPsAndHostnames;
-		
-		((menu_number++))
-        echo ""
-		echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		((menu_number++))
-        echo ""
-		echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-		echo ""
-
-		dockerDownUpDefault;
-
-		# Loop to check for the existence of the file every second
-		while [ ! -f "$install_path$app_name/searxng-data/settings.yml" ]; do
-			isNotice "Waiting for the file to appear..."
-			read -t 1 # Wait for 1 second
-		done
-
-		# Perform the required operation on the file once it exists
-		result=$(sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
-		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		      
-		menu_number=0
-        sleep 3s
-        cd
-	fi
-	searxng=n
-}
-
-installSpeedtest()
-{
-	app_name=speedtest
-	host_name=speedtest
-	domain_number=1
-	public=true
-	port=4001
-
-	if [[ "$speedtest" == *[uU]* ]]; then
-		uninstallApp;
-	fi
-
-	if [[ "$speedtest" == *[sS]* ]]; then
-		shutdownApp;
-	fi
-
-	if [[ "$speedtest" == *[rR]* ]]; then
-		dockerDownUpDefault;
-	fi
-
-    if [[ "$speedtest" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###           Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		     
-		menu_number=0
-        sleep 3s
-        cd
-	fi
-	speedtest=n
-}
-
-installVaultwarden()
-{
-	app_name=vaultwarden
-	host_name=vaultwarden
-	domain_number=1
-	public=true
-	port=8201
-
-	if [[ "$vaultwarden" == *[uU]* ]]; then
-		uninstallApp;
-	fi
-
-	if [[ "$vaultwarden" == *[sS]* ]]; then
-		shutdownApp;
-	fi
-
-	if [[ "$vaultwarden" == *[rR]* ]]; then
-		dockerDownUpDefault;
-	fi
-
-    if [[ "$vaultwarden" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###           Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your $app_name service using any of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-		
-		menu_number=0
-        sleep 3s
-        cd
-    fi
-	vaultwarden=n
-}
-
-installActual()
-{
-	app_name=actual
-	host_name=budget
-	domain_number=1
-	public=true
-	port=5006
-
-	if [[ "$actual" == *[uU]* ]]; then
-		uninstallApp;
-	fi
-
-	if [[ "$actual" == *[sS]* ]]; then
-		shutdownApp;
-	fi
-
-    if [[ "$actual" == *[rR]* ]]; then
-        dockerDownUpDefault;
-    fi
-
-    if [[ "$actual" == *[iI]* ]]; then
-        echo ""
-        echo "##########################################"
-        echo "###      Install $app_name"
-        echo "##########################################"
-        echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupIPsAndHostnames;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
-        echo ""
-
-		setupComposeFileNoApp;
-		editComposeFileDefault;
-
-		# SSL Cert is needed to load, using self signed
-		if [ -f "$ssl_dir$ssl_key" ]; then
-			checkSuccess "Self Signed SSL Certificate found, installing...."
-
-			result=$(sudo mkdir -p $install_path$app_name/actual-data)
-			checkSuccess "Create actual-data folder"
-			
-			result=$(sudo cp $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json >> $logs_dir/$docker_log_file 2>&1)
-			checkSuccess "Copying config.json to actual-data folder"
-
-			result=$(sudo cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem >> $logs_dir/$docker_log_file 2>&1)
-			checkSuccess "Copying cert to actual-data folder"
-
-			result=$(sudo cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem >> $logs_dir/$docker_log_file 2>&1)
-			checkSuccess "Copying key to actual-data folder"
-			
-		else
-			checkSuccess "Self Signed SSL Certificate not found, this may cause an issue!"
-		fi
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		dockerDownUpDefault;
-
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
-        echo ""
-        echo "    You can now navigate to your new service using one of the options below : "
-        echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
-        echo ""
-
-		menu_number=0
-        sleep 3s
-        cd
-	fi
-	actual=n
-}
-
 installMailcow()
 {
-	app_name=mailcow
-	host_name=mail
-	domain_number=1
-	public=true
-
-	# Custom
-	easy_setup=true
-	using_caddy=false
+    app_name=$CFG_MAILCOW_APP_NAME
+    host_name=$CFG_MAILCOW_HOST_NAME
+    domain_number=$CFG_MAILCOW_DOMAIN_NUMBER
+    public=$CFG_MAILCOW_PUBLIC
+	easy_setup=$CFG_MAILCOW_EASY_SETUP
+	using_caddy=$CFG_MAILCOW_USING_CADDY
 
 	if [[ "$mailcow" == *[uU]* ]]; then
 		uninstallApp;
@@ -904,4 +212,720 @@ installMailcow()
         cd
     fi
 	mailcow=n
+}
+
+installOwnCloud()
+{
+    app_name=$CFG_OWNCLOUD_APP_NAME
+    host_name=$CFG_OWNCLOUD_HOST_NAME
+    domain_number=$CFG_OWNCLOUD_DOMAIN_NUMBER
+    public=$CFG_OWNCLOUD_PUBLIC
+	port=$CFG_OWNCLOUD_PORT
+	owncloud_version=$CFG_OWNCLOUD_VERSION
+
+	if [[ "$owncloud" == *[uU]* ]]; then
+		uninstallApp;
+	fi
+
+	if [[ "$owncloud" == *[sS]* ]]; then
+		shutdownApp;
+	fi
+
+    if [[ "$owncloud" == *[rR]* ]]; then
+        dockerDownUpDefault;
+    fi
+
+    if [[ "$owncloud" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###          Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setup .env file for $app_name"
+        echo ""
+
+if [[ "$public" == "true" ]]; then	
+cd $install_path$app_name
+cat << EOF > $install_path$app_name/.env
+OWNCLOUD_VERSION=$owncloud_version
+OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
+OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
+ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
+ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
+HTTP_PORT=$port
+EOF
+fi
+
+if [[ "$public" == "false" ]]; then	
+cd $install_path$app_name
+cat << EOF > $install_path$app_name/.env
+OWNCLOUD_VERSION=$owncloud_version
+OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
+OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
+ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
+ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
+HTTP_PORT=$port
+EOF
+fi
+		editEnvFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your new service using one of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		    
+		menu_number=0
+        sleep 3s
+        cd
+	fi
+	owncloud=n
+}
+
+installCozy()
+{
+    app_name=$CFG_COZY_APP_NAME
+    host_name=$CFG_COZY_HOST_NAME
+    domain_number=$CFG_COZY_DOMAIN_NUMBER
+    public=$CFG_COZY_PUBLIC
+	#port=$CFG_COZY_PORT
+
+	# Custom Cozy Variables
+	# Additional non default apps to be installed
+	# List here - https://github.com/vsellier/easy-cozy/blob/master/application.sh
+	cozy_user_1=test1
+	cozy_user_1_apps_enabled=true
+	cozy_user_1_apps="banks contacts"
+
+    if [[ "$cozy" == *[uU]* ]]; then
+        uninstallApp;
+    fi
+
+    if [[ "$cozy" == *[sS]* ]]; then
+        shutdownApp;
+    fi
+
+    if [[ "$cozy" == *[rR]* ]]; then
+        dockerDownUpDefault;
+    fi
+
+    if [[ "$cozy" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###           Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling from $app_name GitHub."
+        echo ""
+
+		result=$(sudo git clone https://github.com/vsellier/easy-cozy.git $install_path/$app_name)
+		checkSuccess "Cloning the Easy-Cozy from GitHub"
+		
+		result=$(sudo cp $install_path/$app_name/env.template $install_path/$app_name/.env >> $logs_dir/$docker_log_file 2>&1)
+		checkSuccess "Coping .env template into .env for usage"
+
+		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
+		checkSuccess "Update database directory to the correct install path"
+
+		result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
+		checkSuccess "Update storage directory to the correct install path"
+
+		result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
+		checkSuccess "Update acme directory to the correct install path"
+
+		result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
+		checkSuccess "Update the domain name to $domain_full"
+
+		result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
+		checkSuccess "Update the email to $CFG_EMAIL"
+
+		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
+		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
+		
+		result=$(mkdir -p $install_path/$app_name/db $install_path/$app_name/storage)
+		checkSuccess "Creating db and storage folders"
+
+		result=$(sudo chown 1000 $install_path/$app_name/db $install_path/$app_name/storage)
+		checkSuccess "Setting permissions for db and storage folders"
+
+		setupComposeFileApp;
+
+		result=$(sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
+		checkSuccess "Removing line 35 from the docker-compose.yml file"
+
+		result=$(sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
+		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
+
+		result=$(sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
+		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
+
+		editComposeFileApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setting up Users with their applications for $app_name"
+        echo ""
+
+		# Setting up a single instance of Cozy
+		result=$(cd $install_path/$app_name && sudo ./create-instance.sh $cozy_user_1)
+		checkSuccess "Creating instance of $app_name for $cozy_user_1"
+
+		if [[ "$cozy_user_1_apps_enabled" == true ]]; then
+			result=$(sudo ./application.sh $cozy_user_1 $cozy_user_1_apps)
+			checkSuccess "Setting up applications for $app_name for $cozy_user_1"
+		fi
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		     
+		menu_number=0
+        sleep 3s
+        cd
+    fi
+    cozy=n
+}
+
+installTrilium()
+{
+    app_name=$CFG_TRILIUM_APP_NAME
+    host_name=$CFG_TRILIUM_HOST_NAME
+    domain_number=$CFG_TRILIUM_DOMAIN_NUMBER
+    public=$CFG_TRILIUM_PUBLIC
+	port=$CFG_TRILIUM_PORT
+
+    if [[ "$trilium" == *[uU]* ]]; then
+        uninstallApp;
+    fi
+
+    if [[ "$trilium" == *[sS]* ]]; then
+        shutdownApp;
+    fi
+
+    if [[ "$trilium" == *[rR]* ]]; then
+        dockerDownUpDefault;
+    fi
+
+    if [[ "$trilium" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###          Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		     
+		menu_number=0
+        sleep 3s
+        cd
+    fi
+    trilium=n
+}
+
+installIPInfo()
+{
+    app_name=$CFG_IPINFO_APP_NAME
+    host_name=$CFG_IPINFO_HOST_NAME
+    domain_number=$CFG_IPINFO_DOMAIN_NUMBER
+    public=$CFG_IPINFO_PUBLIC
+	port=$CFG_IPINFO_PORT
+
+	if [[ "$ipinfo" == *[uU]* ]]; then
+		uninstallApp;
+	fi
+
+	if [[ "$ipinfo" == *[sS]* ]]; then
+		shutdownApp;
+	fi
+
+	if [[ "$ipinfo" == *[rR]* ]]; then
+		dockerDownUpDefault;
+	fi
+
+    if [[ "$ipinfo" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###           Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+		
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		      
+		menu_number=0
+        sleep 3s
+        cd
+    fi
+    ipinfo=n
+}
+
+installSearXNG()
+{
+    app_name=$CFG_SEARXNG_APP_NAME
+    host_name=$CFG_SEARXNG_HOST_NAME
+    domain_number=$CFG_SEARXNG_DOMAIN_NUMBER
+    public=$CFG_SEARXNG_PUBLIC
+	port=$CFG_SEARXNG_PORT
+	
+	if [[ "$searxng" == *[uU]* ]]; then
+		uninstallApp;
+	fi
+
+	if [[ "$searxng" == *[sS]* ]]; then
+		shutdownApp;
+	fi
+
+	if [[ "$searxng" == *[rR]* ]]; then
+		dockerDownUpDefault;
+	fi
+
+	if [[ "$searxng" == *[iI]* ]]; then
+		echo ""
+		echo "##########################################"
+		echo "###          Install $app_name"
+		echo "##########################################"
+		echo ""
+
+		((menu_number++))
+		echo ""
+		echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+		echo ""
+
+		setupIPsAndHostnames;
+		
+		((menu_number++))
+        echo ""
+		echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+		echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+		echo ""
+
+		dockerDownUpDefault;
+
+		# Loop to check for the existence of the file every second
+		while [ ! -f "$install_path$app_name/searxng-data/settings.yml" ]; do
+			isNotice "Waiting for the file to appear..."
+			read -t 1 # Wait for 1 second
+		done
+
+		# Perform the required operation on the file once it exists
+		result=$(sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
+		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		      
+		menu_number=0
+        sleep 3s
+        cd
+	fi
+	searxng=n
+}
+
+installSpeedtest()
+{
+    app_name=$CFG_SPEEDTEST_APP_NAME
+    host_name=$CFG_SPEEDTEST_HOST_NAME
+    domain_number=$CFG_SPEEDTEST_DOMAIN_NUMBER
+    public=$CFG_SPEEDTEST_PUBLIC
+	port=$CFG_SPEEDTEST_PORT
+
+	if [[ "$speedtest" == *[uU]* ]]; then
+		uninstallApp;
+	fi
+
+	if [[ "$speedtest" == *[sS]* ]]; then
+		shutdownApp;
+	fi
+
+	if [[ "$speedtest" == *[rR]* ]]; then
+		dockerDownUpDefault;
+	fi
+
+    if [[ "$speedtest" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###           Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		     
+		menu_number=0
+        sleep 3s
+        cd
+	fi
+	speedtest=n
+}
+
+installVaultwarden()
+{
+    app_name=$CFG_VAULTWARDEN_APP_NAME
+    host_name=$CFG_VAULTWARDEN_HOST_NAME
+    domain_number=$CFG_VAULTWARDEN_DOMAIN_NUMBER
+    public=$CFG_VAULTWARDEN_PUBLIC
+	port=$CFG_VAULTWARDEN_PORT
+
+	if [[ "$vaultwarden" == *[uU]* ]]; then
+		uninstallApp;
+	fi
+
+	if [[ "$vaultwarden" == *[sS]* ]]; then
+		shutdownApp;
+	fi
+
+	if [[ "$vaultwarden" == *[rR]* ]]; then
+		dockerDownUpDefault;
+	fi
+
+    if [[ "$vaultwarden" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###           Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+		
+		menu_number=0
+        sleep 3s
+        cd
+    fi
+	vaultwarden=n
+}
+
+installActual()
+{
+    app_name=$CFG_ACTUAL_APP_NAME
+    host_name=$CFG_ACTUAL_HOST_NAME
+    domain_number=$CFG_ACTUAL_DOMAIN_NUMBER
+    public=$CFG_ACTUAL_PUBLIC
+	port=$CFG_ACTUAL_PORT
+
+	if [[ "$actual" == *[uU]* ]]; then
+		uninstallApp;
+	fi
+
+	if [[ "$actual" == *[sS]* ]]; then
+		shutdownApp;
+	fi
+
+    if [[ "$actual" == *[rR]* ]]; then
+        dockerDownUpDefault;
+    fi
+
+    if [[ "$actual" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###      Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+        echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		editComposeFileDefault;
+
+		# SSL Cert is needed to load, using self signed
+		if [ -f "$ssl_dir$ssl_key" ]; then
+			checkSuccess "Self Signed SSL Certificate found, installing...."
+
+			result=$(sudo mkdir -p $install_path$app_name/actual-data)
+			checkSuccess "Create actual-data folder"
+			
+			result=$(sudo cp $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json >> $logs_dir/$docker_log_file 2>&1)
+			checkSuccess "Copying config.json to actual-data folder"
+
+			result=$(sudo cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem >> $logs_dir/$docker_log_file 2>&1)
+			checkSuccess "Copying cert to actual-data folder"
+
+			result=$(sudo cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem >> $logs_dir/$docker_log_file 2>&1)
+			checkSuccess "Copying key to actual-data folder"
+			
+		else
+			checkSuccess "Self Signed SSL Certificate not found, this may cause an issue!"
+		fi
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your new service using one of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+
+		menu_number=0
+        sleep 3s
+        cd
+	fi
+	actual=n
 }
