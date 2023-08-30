@@ -1,55 +1,5 @@
 #!/bin/bash
 
-resetToMenu()
-{
-    echo "RESET TO MENU--------------------------------"
-    # Probably a better way of doing
-    fail2ban=n
-    traefik=n
-    wireguard=n
-    pihole=n
-    portainer=n
-    watchtower=n
-    dashy=n
-    searxng=n
-    speedtest=n
-    ipinfo=n
-    trilium=n
-    vaultwarden=n
-    jitsimeet=n
-    owncloud=n
-    killbill=n
-    mattermost=n
-    kimai=n
-    mailcow=n
-    tiledesk=n
-    gitlab=n
-    actual=n
-    akaunting=n
-    cozy=n
-    duplicati=n
-    caddy=n
-    backupsingle=n
-    backupfull=n
-    restoresingle=n
-    restorefull=n
-    migratesingle=n
-    migratefull=n
-    tooldeletedb=n
-    toollistallapps=n
-    toollistinstalledapps=n
-    toolstartpreinstallation=n
-    toolrestartcontainers=n
-    toolstopcontainers=n
-    toolsremovedockermanageruser=n
-    toolsinstalldockermanageruser=n
-    toolinstallcustomsshfolder=n
-    toolinstallremotesshlist=n
-
-    mainMenu
-    return 1
-}
-
 gitFolderResetAndBackup()
 {
     update_done=false
@@ -187,7 +137,7 @@ function checkSuccess()
             # Log the error output to the log file
             echo "ERROR: $1" >> "$logs_dir/$docker_log_file"
             echo "===================================" >> "$logs_dir/$docker_log_file"
-            mainMenu
+            resetToMenu
         fi
     fi
 }
@@ -828,4 +778,53 @@ completeMessage()
     isSuccessful "You seem to have reached the end of the script! Restarting.... <3"
     echo ""
     sleep 1
+}
+
+resetToMenu()
+{
+    # Probably a better way of doing
+    fail2ban=n
+    traefik=n
+    wireguard=n
+    pihole=n
+    portainer=n
+    watchtower=n
+    dashy=n
+    searxng=n
+    speedtest=n
+    ipinfo=n
+    trilium=n
+    vaultwarden=n
+    jitsimeet=n
+    owncloud=n
+    killbill=n
+    mattermost=n
+    kimai=n
+    mailcow=n
+    tiledesk=n
+    gitlab=n
+    actual=n
+    akaunting=n
+    cozy=n
+    duplicati=n
+    caddy=n
+    backupsingle=n
+    backupfull=n
+    restoresingle=n
+    restorefull=n
+    migratesingle=n
+    migratefull=n
+    tooldeletedb=n
+    toollistallapps=n
+    toollistinstalledapps=n
+    toolstartpreinstallation=n
+    toolrestartcontainers=n
+    toolstopcontainers=n
+    toolsremovedockermanageruser=n
+    toolsinstalldockermanageruser=n
+    toolinstallcustomsshfolder=n
+    toolinstallremotesshlist=n
+
+    mainMenu
+    return 1
 }
