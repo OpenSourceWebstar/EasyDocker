@@ -32,6 +32,13 @@ dockerDownShutdown()
     fi
 }
 
+dockerDownShutdownSuccessMessage()
+{
+        echo ""
+        isSuccessful "$app_name has been shutdown!"
+        echo ""
+}
+
 dockerDownShutdownFailureMessage()
 {
         echo ""
