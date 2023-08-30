@@ -81,7 +81,7 @@ restoreStart()
     backupfull=n
     restoresingle=n
     restorefull=n
-    mainMenu;
+    resetToMenu;
     cd
 }
 

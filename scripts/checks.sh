@@ -215,5 +215,5 @@ checkRequirements()
 	fi
 
 	startScan;
-	mainMenu;
+	resetToMenu;
 } 

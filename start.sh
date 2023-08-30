@@ -120,7 +120,7 @@ startPreInstall()
     
 
     startScan;
-	mainMenu;
+	resetToMenu;
 }
 
 startScan()
@@ -270,7 +270,7 @@ endStart()
 
     completeMessage;
     checkRequirements;
-	mainMenu;
+	resetToMenu;
 }
 
 exitScript() {
