@@ -35,9 +35,9 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 
 | Type           | Name                                             |  Status          | 
 | -------------- | ------------------------------------------------ | ---------------- | 
-| System         | <a href="https://hub.docker.com/r/linuxserver/fail2ban">Fail2Ban - Connection Security</a>                   | Tested & Working |
-| System         | <a href="https://hub.docker.com/_/traefik">Traefik - Reverse Proxy</a> *RECOMMENDED*            | Tested & Working |
-| System         | <a href="https://hub.docker.com/_/caddy">Caddy - Reverse Proxy</a> *NOT RECOMMENDED*          | Tested & Working |
+| System         | <a href="https://github.com/fail2ban/fail2ban">Fail2Ban - Connection Security</a>                   | Tested & Working |
+| System         | <a href="https://github.com/traefik/traefik">Traefik - Reverse Proxy</a> *RECOMMENDED*            | Tested & Working |
+| System         | <a href="https://github.com/caddyserver/caddy">Caddy - Reverse Proxy</a> *NOT RECOMMENDED*          | Tested & Working |
 | System         | <a href="https://github.com/wg-easy/wg-easy">Wireguard Easy - VPN Server</a>                      | Tested & Working |
 | System         | <a href="https://github.com/AdguardTeam/AdGuardHome">Adguard & Unbound - DNS Server</a> *RECOMMENDED*     | Tested & Working |
 | System         | <a href="https://github.com/pi-hole/pi-hole">Pi-Hole & Unbound - DNS Server</a> *NOT RECOMMENDED* | Tested & Working |
