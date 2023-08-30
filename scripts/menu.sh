@@ -80,7 +80,7 @@ mainMenu()
 				echo ""
 				isOptionMenu "Searxng - Search Engine (u/s/r/i): "
 				read -rp "" searxng
-				isOptionMenu "Speedtest - Internet Testing (u/s/r/i): "
+				isOptionMenu "LibreSpeed - Internet Speed Test (u/s/r/i): "
 				read -rp "" speedtest
 				isOptionMenu "IPInfo - Show IP Address  (u/s/r/i): "
 				read -rp "" ipinfo
@@ -135,7 +135,6 @@ mainMenu()
 				read -rp "" cozy
 				isOptionMenu "SYSTEM - Duplicati - Backups (u/s/r/i): "
 				read -rp "" duplicati
-
 
 				startInstall
 

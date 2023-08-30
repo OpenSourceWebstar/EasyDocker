@@ -35,32 +35,32 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 
 | Type           | Name                                             |  Status          | 
 | -------------- | ------------------------------------------------ | ---------------- | 
-| System         | Fail2Ban - Connection Security                   | Tested & Working |
-| System         | Traefik - Reverse Proxy *RECOMMENDED*            | Tested & Working |
-| System         | Caddy - Reverse Proxy *NOT RECOMMENDED*          | Tested & Working |
-| System         | Wireguard Easy - VPN Server                      | Tested & Working |
-| System         | Adguard & Unbound - DNS Server *RECOMMENDED*     | Tested & Working |
-| System         | Pi-Hole & Unbound - DNS Server *NOT RECOMMENDED* | Tested & Working |
-| System         | Portainer - Docker Management                    | Tested & Working |
-| System         | Watchtower - Docker Updater                      | Tested & Working |
-| System         | Dashy - Docker Dashboard                         | Tested & Working |
-| Privacy        | Searxng - Search Engine                          | Tested & Working |
-| Privacy        | Speedtest - Internet Testing                     | Tested & Working |
-| Privacy        | IPInfo - Show IP Address                         | Tested & Working |
-| Privacy        | Trilium - Note Manager                           | Tested & Working |
-| Privacy        | Vaultwarden - Password Manager                   | Tested & Working |
-| Privacy        | Actual - Money Budgetting                        | Tested & Working |
-| Privacy        | Mailcow - Mail Server *UNFINISHED*               | Needs Testing    |
-| User           | Jitsi Meet - Video Conferencing                  | Tested & Working |
-| User           | OwnCloud - File & Document Cloud                 | Tested & Working |
-| User           | Killbill - Payment Processing                    | Tested & Working |
-| User           | Mattermost - Collaboration Platform              | Tested & Working |
-| User           | Kimai - Online-Timetracker                       | Tested & Working |
-| User           | Tiledesk - Live Chat Platform *UNFINISHED*       | Needs Finishing  |
-| User           | GitLab - DevOps Platform *UNFINISHED*            | Needs Testing    |
-| User           | Akaunting - Invoicing Solution *UNFINISHED*      | Needs Testing    |
-| Old            | System - Duplicati - Backups                     | Tested & Working |
-| Old            | User - Cozy - Cloud Platfrom *BROKEN             | Needs Fixing     |
+| System         | <a href="https://hub.docker.com/r/linuxserver/fail2ban">Fail2Ban - Connection Security</a>                   | Tested & Working |
+| System         | <a href="https://hub.docker.com/_/traefik">Traefik - Reverse Proxy</a> *RECOMMENDED*            | Tested & Working |
+| System         | <a href="https://hub.docker.com/_/caddy">Caddy - Reverse Proxy</a> *NOT RECOMMENDED*          | Tested & Working |
+| System         | <a href="https://github.com/wg-easy/wg-easy">Wireguard Easy - VPN Server</a>                      | Tested & Working |
+| System         | <a href="https://github.com/AdguardTeam/AdGuardHome">Adguard & Unbound - DNS Server</a> *RECOMMENDED*     | Tested & Working |
+| System         | <a href="https://github.com/pi-hole/pi-hole">Pi-Hole & Unbound - DNS Server</a> *NOT RECOMMENDED* | Tested & Working |
+| System         | <a href="https://github.com/portainer/portainer">Portainer - Docker Management</a>                    | Tested & Working |
+| System         | <a href="https://github.com/containrrr/watchtower">Watchtower - Docker Updater</a>                      | Tested & Working |
+| System         | <a href="https://github.com/Lissy93/dashy">Dashy - Docker Dashboard</a>                         | Tested & Working |
+| Privacy        | <a href="https://github.com/searxng/searxng">Searxng - Search Engine</a>                          | Tested & Working |
+| Privacy        | <a href="https://github.com/librespeed/speedtest">LibreSpeed - Internet Speed Test</a>                     | Tested & Working |
+| Privacy        | <a href="https://github.com/PeterDaveHello/ipinfo.tw">IPInfo - Show IP Address</a>                         | Tested & Working |
+| Privacy        | <a href="https://github.com/zadam/trilium">Trilium - Note Manager</a>                           | Tested & Working |
+| Privacy        | <a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden - Password Manager</a>                   | Tested & Working |
+| Privacy        | <a href="https://github.com/actualbudget/actual">Actual - Money Budgetting</a>                        | Tested & Working |
+| Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*               | Needs Testing    |
+| User           | <a href="https://github.com/jitsi/docker-jitsi-meet">Jitsi Meet - Video Conferencing</a>                  | Tested & Working |
+| User           | <a href="https://github.com/owncloud-docker/server">OwnCloud - File & Document Cloud</a>                 | Tested & Working |
+| User           | <a href="https://github.com/killbill/killbill">Killbill - Payment Processing</a>                    | Tested & Working |
+| User           | <a href="https://github.com/mattermost/mattermost">Mattermost - Collaboration Platform</a>              | Tested & Working |
+| User           | <a href="https://github.com/kimai/kimai">Kimai - Online-Timetracker</a>                       | Tested & Working |
+| User           | <a href="https://github.com/Tiledesk/tiledesk">Tiledesk - Live Chat Platform</a> *UNFINISHED*       | Needs Finishing  |
+| User           | <a href="https://gitlab.com/gitlab-org/gitlab">GitLab - DevOps Platform</a> *UNFINISHED*            | Needs Testing    |
+| User           | <a href="https://github.com/akaunting/docker">Akaunting - Invoicing Solution</a> *UNFINISHED*      | Needs Testing    |
+| Old            | <a href="https://github.com/duplicati/duplicati">Duplicati - Backups</a>                     | Tested & Working |
+| Old            | <a href="https://github.com/vsellier/easy-cozy">Cozy - Cloud Platfrom</a> *BROKEN             | Needs Fixing     |
 
 
 ## Instructions
