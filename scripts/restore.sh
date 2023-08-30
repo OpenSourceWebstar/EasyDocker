@@ -96,14 +96,21 @@ restoreSingleBackupList()
             echo "##########################################"
             echo ""
             app_list=()
+            declare -A seen_apps
             local count=1
+
             for zip_file in "$BACKUP_SAVE_DIRECTORY"/*.zip; do
                 if [ -f "$zip_file" ]; then
                     # Extract the app_name from the filename using sed
                     app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
-                    app_list+=("$app_name")
-                    isOption "$count. $app_name"
-                    ((count++))
+                    
+                    # Check if the app_name is already in the associative array
+                    if [ -z "${seen_apps[$app_name]}" ]; then
+                        app_list+=("$app_name")
+                        seen_apps["$app_name"]=1  # Mark the app_name as seen
+                        isOption "$count. $app_name"
+                        ((count++))
+                    fi
                 fi
             done
         }
