@@ -651,10 +651,10 @@ installActual()
 			checkSuccess "Copying config.json to actual-data folder"
 
 			result=$(sudo cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem >> $logs_dir/$docker_log_file 2>&1)
-			checkSuccess "Copying cert.pem to actual-data folder"
+			checkSuccess "Copying cert to actual-data folder"
 
 			result=$(sudo cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem >> $logs_dir/$docker_log_file 2>&1)
-			checkSuccess "Copying key.pem to actual-data folder"
+			checkSuccess "Copying key to actual-data folder"
 			
 		else
 			checkSuccess "Self Signed SSL Certificate not found, this may cause an issue!"

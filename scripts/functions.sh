@@ -492,6 +492,8 @@ setupIPsAndHostnames()
             domain_var_name="CFG_DOMAIN_${domain_number}"
             domain_full=$(grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
             host_setup=${domain_prefix}.${domain_full}
+            ssl_key=${domain_full}.key
+            ssl_crt=${domain_full}.crt
             ip_setup=$ip
 
             if [[ "$public" == "true" ]]; then

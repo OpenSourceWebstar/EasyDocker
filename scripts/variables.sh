@@ -18,18 +18,12 @@ current_time=$(date +%H:%M:%S)
 
 # Domain/Network
 public_ip=$(hostname -I | awk '{print $1}')
-#domain_prefix=$hostname
-#domain_var_name="CFG_DOMAIN_${domain_number}"
-#domain_full=$(grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
-#host_setup=${domain_prefix}.${domain_full}
 
 # Files
 docker_log_file=easydocker.log
 backup_log_file=backup.log
 db_file=database.db
 ip_file=ips_hostname
-ssl_key=${domain_full}.key
-ssl_crt=${domain_full}.crt
 swap_file=/swapfile
 
 
