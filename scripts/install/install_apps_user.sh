@@ -58,7 +58,7 @@ installTileDesk()
 			checkSuccess "Shutting down docker-compose.$app_name.yml"
 			if [[ "$public" == "true" ]]; then
 				result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-				checkSuccess "Shutting down public docker-compose.$app_name.yml"
+				checkSuccess "Starting public docker-compose.$app_name.yml"
 			else
 				result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 				checkSuccess "Starting standard docker-compose.$app_name.yml"
@@ -68,7 +68,7 @@ installTileDesk()
 			checkSuccess "Shutting down docker-compose.$app_name.yml"
 			if [[ "$public" == "true" ]]; then
 				result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-				checkSuccess "Shutting down public docker-compose.$app_name.yml"
+				checkSuccess "Starting public docker-compose.$app_name.yml"
 			else
 				result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 				checkSuccess "Starting standard docker-compose.$app_name.yml"
