@@ -448,14 +448,13 @@ setupIPsAndHostnames()
 
             if [[ "$public" == "true" ]]; then
                 isSuccessful "Using $host_setup for public domain."
+                checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
+                echo ""
             fi
         fi
     done < "$configs_dir$ip_file"
 
-    if "$found_match"; then
-        checkSuccess "Match found: $hostname with IP $ip."
-        echo ""
-    else
+    if ! "$found_match"; then  # Changed the condition to check if no match is found
         checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"
         echo ""
     fi
