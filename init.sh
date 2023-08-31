@@ -49,8 +49,8 @@ initializeScript()
 	apt-get upgrade -y
 	echo "OS Updated"
 	# Install Git
-	apt-get install git -y
-	echo "Git has been installed."
+	apt-get install git zip -y
+	echo "Git & Zip have been installed."
 
 	# Git Clone and Update
 	# Check if it's a Git repository by checking if it's inside a Git working tree
