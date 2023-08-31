@@ -105,7 +105,7 @@ installCrontab()
             checkSuccess "Updating apt for post installation"
             result=$(apt install cron -y)
             isSuccessful "Installing crontab application"
-            result=$(crontab -e)
+            result=$(crontab -l)
             isSuccessful "Enabling crontab on the system"
         fi
 
