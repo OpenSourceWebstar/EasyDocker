@@ -18,15 +18,15 @@ services:
     labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
-      #traefik.http.routers.gitlab.rule=Host(DOMAINSUBNAMEHERE)
-      #traefik.http.routers.gitlab.entrypoints=websecure
-      #traefik.http.routers.gitlab.tls.certresolver=production
-      #traefik.http.services.gitlab.loadbalancer.server.port=PORTHERE
-      #traefik.docker.network=vpn
-      #traefik.tcp.routers.gitlab-ssh.rule=HostSNI(DOMAINSUBNAMEHERE)
-      #traefik.tcp.routers.gitlab-ssh.entrypoints=ssh
-      #traefik.tcp.routers.gitlab-ssh.service=gitlab-ssh-svc
-      #traefik.tcp.services.gitlab-ssh-svc.loadbalancer.server.port=SECONDPORT
+      #traefik.http.routers.gitlab.rule: Host(DOMAINSUBNAMEHERE)
+      #traefik.http.routers.gitlab.entrypoints: web,websecure
+      #traefik.http.routers.gitlab.tls.certresolver: production
+      #traefik.http.services.gitlab.loadbalancer.server.port: PORTHERE
+      #traefik.docker.network: vpn
+      #traefik.tcp.routers.gitlab-ssh.rule: HostSNI(DOMAINSUBNAMEHERE)
+      #traefik.tcp.routers.gitlab-ssh.entrypoints: ssh
+      #traefik.tcp.routers.gitlab-ssh.service: gitlab-ssh-svc
+      #traefik.tcp.services.gitlab-ssh-svc.loadbalancer.server.port: SECONDPORT
     volumes:
       - ./config:/etc/gitlab
       - ./logs:/var/log/gitlab
