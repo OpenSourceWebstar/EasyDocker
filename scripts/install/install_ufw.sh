@@ -16,19 +16,32 @@ installUFW()
             result=$(yes | sudo apt-get install ufw )
             checkSuccess "Installing UFW package"
 
-            isQuestion "Do you want to allow port 22 (SSH) through the firewall? (y/n): "
-            read -rp "" UFWSSH
+            while true; do
+                isQuestion "Do you want to allow port 22 (SSH) through the firewall? (y/n): "
+                read -rp "" UFWSSH
+                if [[ "$UFWSSH" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
+
             if [[ "$UFWSSH" == "yY" ]]; then
-            result=$(sudo ufw allow ssh --force)
-            checkSuccess "Enabling SSH through the firewall"
+                result=$(sudo ufw allow ssh --force)
+                checkSuccess "Enabling SSH through the firewall"
             fi
 
             result=$(sudo ufw --force enable)
             checkSuccess "Enabling UFW Firewall"
             
             # UFW Logging rules : https://linuxhandbook.com/ufw-logs/
-            isQuestion "Do you want to disable logging for privacy? (y/n): "
-            read -rp "" UFWP
+            while true; do
+                isQuestion "Do you want to disable logging for privacy? (y/n): "
+                read -rp "" UFWP
+                if [[ "$UFWP" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done            
             if [[ "$UFWP" == "yY" ]]; then
                 result=$(yes | sudo ufw logging off)
                 checkSuccess "Disabling UFW Firewall Logging"	
