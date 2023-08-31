@@ -46,6 +46,7 @@ gitFolderResetAndBackup()
 	git rm --cached $configs_dir/config_general > /dev/null 2>&1
 	git rm --cached $configs_dir/config_requirements > /dev/null 2>&1
 	git rm --cached $configs_dir/config_migrate > /dev/null 2>&1
+	git rm --cached $configs_dir/ips_hostname > /dev/null 2>&1
 	git rm --cached $logs_dir/easydocker.log > /dev/null 2>&1
 	git rm --cached $logs_dir/backup.log > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
