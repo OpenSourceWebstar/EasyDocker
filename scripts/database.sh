@@ -244,9 +244,6 @@ databaseListInstalledApps()
 	    if [[ "$toollistinstalledapps" == [yY] ]]; then
             read -p "Press Enter to continue..."
         fi
-    else
-        isNotice "No installed apps found."
-        crontabNeeded=false
     fi
 }
 
@@ -333,12 +330,6 @@ databaseCycleThroughListAppsCrontab()
 {
     local name=$1
     ISCRON=$( (crontab -l) 2>&1 )
-
-    # As no apps were found
-    if [[ "$crontabNeeded" == "false" ]]; then
-        isNotice "No backup crontabs needed."
-        return 1
-    fi
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
