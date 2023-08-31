@@ -20,17 +20,17 @@ checkUpdates()
 		# Attempt to download a file from the repository
 		response=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "$repo_url")
 		if [[ $response == 200 ]]; then
-			checkSuccess "Repository is accessible network-wide."
+			isSuccessful "Repository is accessible network-wide."
 		else
-			checkSuccess "Repository is not accessible network-wide."
+			isFatalErrorExit "Repository is not accessible network-wide."
 		fi
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
-		result=$(git config core.fileMode false)
-		checkSuccess "Update Git to ignore changes in file permissions"
-		result=$(git config --global user.email "$CFG_EMAIL")
-		checkSuccess "Update Git with email address"
+		# Update Git to ignore changes in file permissions
+		git config core.fileMode false
+		# Update Git with email address
+		git config --global user.email "$CFG_EMAIL"
 		
 
 		# Check if there are uncommitted changes
