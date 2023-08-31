@@ -25,7 +25,7 @@ installUFW()
                 isNotice "Please provide a valid input (y/n)."
             done
 
-            if [[ "$UFWSSH" == "yY" ]]; then
+            if [[ "$UFWSSH" == [yY] ]]; then
                 result=$(sudo ufw allow 22)
                 checkSuccess "Enabling Port 22 through the firewall"
                 result=$(sudo ufw allow ssh)
@@ -44,12 +44,12 @@ installUFW()
                 fi
                 isNotice "Please provide a valid input (y/n)."
             done            
-            if [[ "$UFWP" == "yY" ]]; then
+            if [[ "$UFWP" == [yY] ]]; then
                 result=$(yes | sudo ufw logging off)
                 checkSuccess "Disabling UFW Firewall Logging"	
             fi
             
-            if [[ "$UFWP" == "nN" ]]; then
+            if [[ "$UFWP" == [nN] ]]; then
                 result=$(yes | sudo ufw logging medium)
                 checkSuccess "Enabling UFW Firewall Logging"	
             fi
