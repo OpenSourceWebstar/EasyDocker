@@ -26,7 +26,9 @@ installUFW()
             done
 
             if [[ "$UFWSSH" == "yY" ]]; then
-                result=$(sudo ufw allow ssh --force)
+                result=$(sudo ufw allow 22)
+                checkSuccess "Enabling Port 22 through the firewall"
+                result=$(sudo ufw allow ssh)
                 checkSuccess "Enabling SSH through the firewall"
             fi
 
