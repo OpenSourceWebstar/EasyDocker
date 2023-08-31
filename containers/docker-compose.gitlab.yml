@@ -18,6 +18,7 @@ services:
     labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #traefik.enable: true
       #traefik.http.routers.gitlab.rule: Host(DOMAINSUBNAMEHERE)
       #traefik.http.routers.gitlab.entrypoints: web,websecure
       #traefik.http.routers.gitlab.tls.certresolver: production
