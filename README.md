@@ -66,7 +66,7 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 ## Instructions
 1. Run the following command :  
 ```
-"cd ~ && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run && source ~/.bashrc && easydocker"
+cd ~ && rm init.sh && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run && source ~/.bashrc && easydocker
 ```
 2. Let the install run and wait for the menu to show.
 3. Once the menu is shown, choose the option you desire.
