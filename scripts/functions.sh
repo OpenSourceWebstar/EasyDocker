@@ -716,7 +716,7 @@ scanConfigsForRandomPassword()
                     sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
 
                     # Display the update message with the captured content and file name
-                    isSuccessful "Updated $config_content in $(basename "$scanned_config_file") with a new password: $random_password"
+                    #isSuccessful "Updated $config_content in $(basename "$scanned_config_file") with a new password: $random_password"
                 done
             fi
         done
