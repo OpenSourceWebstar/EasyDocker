@@ -19,11 +19,11 @@ installUFW()
             isQuestion "Do you want to allow port 22 (SSH) through the firewall? (y/n): "
             read -rp "" UFWSSH
             if [[ "$UFWSSH" == "yY" ]]; then
-            result=$(yes | sudo ufw allow ssh)
+            result=$(sudo ufw allow ssh --force)
             checkSuccess "Enabling SSH through the firewall"
             fi
 
-            result=$(yes | sudo ufw enable)
+            result=$(sudo ufw --force enable)
             checkSuccess "Enabling UFW Firewall"
             
             # UFW Logging rules : https://linuxhandbook.com/ufw-logs/
