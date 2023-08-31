@@ -65,7 +65,7 @@ installFail2Ban()
             checkSuccess "Copying abuseipdb.conf file"
 
             # Jail.local
-		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local >> $script_dir/docker-script-install.log 2>&1)
+		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local >> $logs_dir/$docker_log_file 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
             result=$(sed -i "s/my-api-key/$CFG_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
