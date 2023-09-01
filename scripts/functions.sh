@@ -237,12 +237,11 @@ detectOS()
 checkConfigFilesExist() 
 {
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-        local files_to_check=("$config_file_apps" "$config_file_backup" "$config_file_general" "$config_file_migrate" "$config_file_restore" "$config_file_requirements")
+        local files_to_check=("$config_file_apps_system" "$config_file_apps_privacy" "$config_file_apps_user" "$config_file_backup" "$config_file_general" "$config_file_restore" "$config_file_requirements")
         local file_found_count=0
 
         for file in "${files_to_check[@]}"; do
             if [ -f "$configs_dir/$file" ]; then
-                #echo "File $file exists in $configs_dir."
                 ((file_found_count++))
             else
                 isFatalError "Config File $file does not exist in $configs_dir."
