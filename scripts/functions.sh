@@ -41,9 +41,9 @@ gitFolderResetAndBackup()
     # Fixing the issue where the git does not use the .gitignore
     result=$(cd $script_dir)
     checkSuccess "Going into the install folder"
+	git rm --cached $configs_dir/$config_file_apps_system > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
+	git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
