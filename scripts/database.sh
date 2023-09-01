@@ -376,6 +376,8 @@ databaseCycleThroughListAppsCrontab()
         installBackupCrontabApp $name
     done
 
+    isSuccessful "Setting up Crontab backups for application(s) completed."
+
 }
 
 # Function to scan the folder for missing .pub keys and process them

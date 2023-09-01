@@ -135,9 +135,7 @@ installBackupCrontabApp()
 {
     local name=$1
 
-    if crontab -l | grep -q "$name"; then
-        isSuccessful "Backup Crontab setup for $name."
-    else
+    if ! crontab -l | grep -q "$name"; then
         isNotice "Automatic Backups for $name are not set up."
         while true; do
             isQuestion "Do you want to set up automatic $name backups (y/n): "
