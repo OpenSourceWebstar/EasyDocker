@@ -260,6 +260,8 @@ backupTransferFile()
 
 backupInitialize()
 {
+    app_name=$1
+    
     # Safeguarding
     if [ "$app_name" == "" ]; then
         isNotice "Empty app_name, something went wrong"
