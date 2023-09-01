@@ -2,6 +2,11 @@
 
 migrateScanFoldersForUpdates()
 {
+    echo ""
+    echo "############################################"
+    echo "######       Migration Install        ######"
+    echo "############################################"
+    echo ""
     # Loop through all directories in the install path
     for folder in "$install_path"/*; do
         if [ -d "$folder" ]; then
@@ -62,13 +67,13 @@ migrateBuildTXT()
 {
     local folder=$1
     local app_name=$(basename "$folder")
+
     # Create a migrate.txt file with IP and InstallName
-    result=$(touch "$folder/$migrate_file")
-    checkSuccess "Generated $migrate_file for $app_name"
-    result=$(echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file")
-    checkSuccess "Adding MIGRATE_IP $public_ip to $migrate_file"
-    result=$(echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" >> "$install_path/$app_name/$migrate_file")
-    checkSuccess "Adding MIGRATE_INSTALL_NAME $CFG_INSTALL_NAME to $migrate_file"
+    touch "$folder/$migrate_file"
+    
+    # Add MIGRATE options to file
+    echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file" 2>/dev/null
+    echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" >> "$install_path/$app_name/$migrate_file" 2>/dev/null
     
     isSuccessful "Created $migrate_file for $app_name"
 }
@@ -78,7 +83,7 @@ migrateCheckAndUpdateIP()
     local folder="$1"
     local app_name=$(basename "$folder")
     # Check if the migrate.txt file exists
-    if [ -f "$migrate_file" ]; then
+    if [ -f "$folder/$migrate_file" ]; then
         local migrate_ip=$(grep -o 'MIGRATE_IP=.*' "$folder/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_ip" = "$public_ip" ]; then
             isSuccessful "MIGRATE_IP is already set correctly in $migrate_file."
@@ -100,7 +105,7 @@ migrateCheckAndUpdateInstallName()
     local folder="$1"
     local app_name=$(basename "$folder")
     # Check if the migrate.txt file exists
-    if [ -f "$migrate_file" ]; then
+    if [ -f "$folder/$migrate_file" ]; then
         local migrate_install_name=$(grep -o 'MIGRATE_INSTALL_NAME=.*' "$folder/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_install_name" = "$CFG_INSTALL_NAME" ]; then
             isSuccessful "MIGRATE_INSTALL_NAME is already set correctly in $migrate_file."

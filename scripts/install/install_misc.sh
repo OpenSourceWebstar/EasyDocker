@@ -120,8 +120,7 @@ installCrontab()
         export VISUAL=nano
         export EDITOR=nano
 
-        result=$(installCrontabSSHScan)
-        isSuccessful "Installing crontab SSH Scan entry"
+        installCrontabSSHScan;
     fi
 }
 
