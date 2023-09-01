@@ -1,12 +1,27 @@
 #!/bin/bash
 
-migrateScanFoldersForUpdates()
+migrateGenerateTXTAll()
 {
     echo ""
     echo "############################################"
     echo "######       Migration Install        ######"
     echo "############################################"
     echo ""
+    # Loop through subdirectories
+    for folder in "$install_path"/*; do
+        if [ -d "$folder" ]; then
+            # Check if a migrate.txt file exists in the current directory
+            if [ ! -f "$folder/$migrate_file" ]; then
+                migrateBuildTXT $folder;
+            fi
+        fi
+    done
+
+    isSuccessful "Scanning and creating migrate.txt files completed."
+}
+
+migrateScanFoldersForUpdates()
+{
     # Loop through all directories in the install path
     for folder in "$install_path"/*; do
         if [ -d "$folder" ]; then
@@ -16,21 +31,6 @@ migrateScanFoldersForUpdates()
     done
 
     isSuccessful "Migration IP checking and updating completed."
-}
-
-migrateGenerateTXTAll()
-{
-    # Loop through subdirectories
-    for folder in "$install_path"/*; do
-        if [ -d "$folder" ]; then
-            # Check if a migrate.txt file exists in the current directory
-            if [ ! -f "$migrate_file" ]; then
-                migrateBuildTXT $folder;
-            fi
-        fi
-    done
-
-    isSuccessful "Scanning and creating migrate.txt files completed."
 }
 
 migrateGenerateTXTSingle()
