@@ -126,6 +126,8 @@ startPreInstall()
 startScan()
 {
 	databasePathInsert $initial_path_save
+	migrateGenerateTXTAll;
+	migrateScanFoldersForUpdates;
     databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
     databaseAppScan;

@@ -96,7 +96,7 @@ migrateCheckAndUpdateInstallName()
     fi
 }
 
-migrateScanFolders()
+migrateScanFoldersForUpdates()
 {
     # Loop through all directories in the install path
     for folder in "$install_path"/*; do
