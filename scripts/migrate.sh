@@ -48,6 +48,8 @@ migrateBuildTXT()
 {
     local app_name=$1
     # Create a migrate.txt file with IP and InstallName
+    result=$(touch "$install_path/$app_name/$migrate_file")
+    checkSuccess "Generated $migrate_file for $app_name"
     result=$(echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file")
     checkSuccess "Adding MIGRATE_IP $public_ip to $migrate_file"
     result=$(echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" >> "$install_path/$app_name/$migrate_file")
