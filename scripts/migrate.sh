@@ -85,9 +85,7 @@ migrateCheckAndUpdateIP()
     # Check if the migrate.txt file exists
     if [ -f "$folder/$migrate_file" ]; then
         local migrate_ip=$(grep -o 'MIGRATE_IP=.*' "$folder/$migrate_file" | cut -d '=' -f 2)
-        if [ "$migrate_ip" = "$public_ip" ]; then
-            isSuccessful "MIGRATE_IP is already set correctly in $migrate_file."
-        else
+        if [ "$migrate_ip" != "$public_ip" ]; then
             result=$(sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$folder/$migrate_file")
             checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
 
@@ -107,9 +105,7 @@ migrateCheckAndUpdateInstallName()
     # Check if the migrate.txt file exists
     if [ -f "$folder/$migrate_file" ]; then
         local migrate_install_name=$(grep -o 'MIGRATE_INSTALL_NAME=.*' "$folder/$migrate_file" | cut -d '=' -f 2)
-        if [ "$migrate_install_name" = "$CFG_INSTALL_NAME" ]; then
-            isSuccessful "MIGRATE_INSTALL_NAME is already set correctly in $migrate_file."
-        else
+        if [ "$migrate_install_name" != "$CFG_INSTALL_NAME" ]; then
             result=$(sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$folder/$migrate_file")
             checkSuccess "Updated MIGRATE_INSTALL_NAME in $migrate_file to $CFG_INSTALL_NAME."
         fi
