@@ -1,0 +1,76 @@
+# APPS - NEEDED FOR THE INSTALLATION OF APPS
+#
+# APP_NAME = name of the application for use in the scripts
+# HOST NAME = subdomain name e.g test is the name for test.website.com
+# DOMAIN NUMBER = number of the domain from the general config, useful when using multiple domains
+# PUBLIC = if true, application will be setup with the reverse proxy and accessible from the internet
+# PORT = port number of the application that will be used
+#
+#----------------------------------------------------------------
+# USER
+#----------------------------------------------------------------
+
+# Tiledesk
+CFG_TILEDESK_APP_NAME=tiledesk
+CFG_TILEDESK_HOST_NAME=livechat
+CFG_TILEDESK_DOMAIN_NUMBER=1
+CFG_TILEDESK_PUBLIC=true
+CFG_TILEDESK_PORT=8081
+
+# GitLab
+CFG_GITLAB_APP_NAME=gitlab
+CFG_GITLAB_HOST_NAME=gitlab
+CFG_GITLAB_DOMAIN_NUMBER=1
+CFG_GITLAB_PUBLIC=true
+CFG_GITLAB_PORT=9032 # Web
+CFG_GITLAB_PORT_2=2222 # SSH
+
+# Jitsi Meet
+CFG_JITSIMEET_APP_NAME=jitsimeet
+CFG_JITSIMEET_HOST_NAME=meet
+CFG_JITSIMEET_DOMAIN_NUMBER=1
+CFG_JITSIMEET_PUBLIC=true
+CFG_JITSIMEET_GIT=https://github.com/jitsi/docker-jitsi-meet/
+
+# Killbill
+CFG_KILLBILL_APP_NAME=killbill
+CFG_KILLBILL_HOST_NAME=payment
+CFG_KILLBILL_DOMAIN_NUMBER=1
+CFG_KILLBILL_PUBLIC=true
+CFG_KILLBILL_PORT=9090
+
+# Akaunting
+CFG_AKAUNTING_APP_NAME=akaunting
+CFG_AKAUNTING_HOST_NAME=invoice
+CFG_AKAUNTING_DOMAIN_NUMBER=1
+CFG_AKAUNTING_PUBLIC=true
+CFG_AKAUNTING_PORT=8080
+CFG_AKAUNTING_PASSWORD=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_AKAUNTING_LANGUAGE=en-GB
+
+# Kimai
+CFG_KIMAI_APP_NAME=kimai
+CFG_KIMAI_HOST_NAME=client
+CFG_KIMAI_DOMAIN_NUMBER=1
+CFG_KIMAI_PUBLIC=true
+CFG_KIMAI_PORT=8001
+
+# Mattermost
+CFG_MATTERMOST_APP_NAME=mattermost
+CFG_MATTERMOST_HOST_NAME=project
+CFG_MATTERMOST_DOMAIN_NUMBER=1
+CFG_MATTERMOST_PUBLIC=true
+CFG_MATTERMOST_PORT=8065
+CFG_MATTERMOST_EASY_SETUP=true
+
+#----------------------------------------------------------------
+# OLD
+#----------------------------------------------------------------
+
+# Cozy
+CFG_COZY_APP_NAME=cozy
+CFG_COZY_HOST_NAME=cozy
+CFG_COZY_DOMAIN_NUMBER=1
+CFG_COZY_PUBLIC=false
+#CFG_COZY_PORT=8091
+CFG_COZY_ADMIN_PASSPHRASE=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
