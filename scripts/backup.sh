@@ -59,17 +59,17 @@ backupStart()
 
 	((menu_number++))
     echo ""
+    echo "---- $menu_number. Logging backup into database"
+    echo ""
+
+    databaseBackupInsert $app_name;
+
+	((menu_number++))
+    echo ""
     echo "---- $menu_number. Cleaning backup files older than $CFG_BACKUP_KEEPDAYS days"
     echo ""
 
     backupCleanFiles;
-
-	((menu_number++))
-    echo ""
-    echo "---- $menu_number. Logging backup into database"
-    echo ""
-
-    databaseBackupInsert;
 
 	((menu_number++))
     echo ""
