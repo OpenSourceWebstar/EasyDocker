@@ -27,10 +27,11 @@ db_file=database.db
 migrate_file=migrate.txt
 
 # Configs
-config_file_apps=config_apps
+config_file_apps_privacy=config_apps_privacy
+config_file_apps_system=config_apps_system
+config_file_apps_user=config_apps_user
 config_file_backup=config_backup
 config_file_general=config_general
-config_file_migrate=config_migrate
 config_file_requirements=config_requirements
 config_file_restore=config_restore
 ip_file=ips_hostname
