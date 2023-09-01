@@ -47,11 +47,11 @@ backupStart()
         dockerAppUp;
     fi
 
-    if [ "$CFG_BACKUP_REMOTE_ENABLED" == "true" ]; then
+    if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ] || [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ]; then
 
 	    ((menu_number++))
         echo ""
-        echo "---- $menu_number. Transfering backup file to remote server : $CFG_BACKUP_REMOTE_IP"
+        echo "---- $menu_number. Transfering backup file to remote server(s)"
         echo ""
 
         backupFindLatestFile;
@@ -204,28 +204,55 @@ backupTransferFile()
         exit
     fi
 
-    if [ "$CFG_BACKUP_REMOTE_ENABLED" == "true" ]; then
+    if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ]; then
         isNotice "Remote backup enabled, transfering file : $LatestBackupFile"
-        if [ "$CFG_BACKUP_REMOTE_TYPE" == "SSH" ]; then
-            if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_USER"@"$CFG_BACKUP_REMOTE_IP" true; then
-                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_IP"
+        if [ "$CFG_BACKUP_REMOTE_1_TYPE" == "SSH" ]; then
+            if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP" true; then
+                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_1_IP"
                 if [ "$app_name" == "full" ]; then
-                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_USER"@"$CFG_BACKUP_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/full")
-                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_IP"
+                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
+                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
                 elif [ "$app_name" != "full" ]; then
-                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_USER"@"$CFG_BACKUP_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/single")
-                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_IP"
+                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
+                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
                 fi
             else
-                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_IP"
+                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_1_IP"
             fi
         else
             if [ "$app_name" == "full" ]; then
-                result=$(sshpass -p "$CFG_BACKUP_REMOTE_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_USER"@"$CFG_BACKUP_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/full")
-                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_IP"
+                result=$(sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
+                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
             elif [ "$app_name" != "full" ]; then
-                result=$(sshpass -p "$CFG_BACKUP_REMOTE_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_USER"@"$CFG_BACKUP_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/single")
-                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_IP"
+                result=$(sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
+                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
+            fi
+        fi
+    fi
+
+
+    if [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
+        isNotice "Remote backup enabled, transfering file : $LatestBackupFile"
+        if [ "$CFG_BACKUP_REMOTE_2_TYPE" == "SSH" ]; then
+            if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP" true; then
+                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_2_IP"
+                if [ "$app_name" == "full" ]; then
+                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
+                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+                elif [ "$app_name" != "full" ]; then
+                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
+                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+                fi
+            else
+                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_2_IP"
+            fi
+        else
+            if [ "$app_name" == "full" ]; then
+                result=$(sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
+                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+            elif [ "$app_name" != "full" ]; then
+                result=$(sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
+                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
             fi
         fi
     fi

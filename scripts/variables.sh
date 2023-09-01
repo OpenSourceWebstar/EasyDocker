@@ -20,12 +20,11 @@ current_time=$(date +%H:%M:%S)
 public_ip=$(hostname -I | awk '{print $1}')
 
 # Files
+swap_file=/swapfile
 docker_log_file=easydocker.log
 backup_log_file=backup.log
 db_file=database.db
-ip_file=ips_hostname
-swap_file=/swapfile
-
+migrate_file=migrate.txt
 
 # Configs
 config_file_apps=config_apps
@@ -34,6 +33,7 @@ config_file_general=config_general
 config_file_migrate=config_migrate
 config_file_requirements=config_requirements
 config_file_restore=config_restore
+ip_file=ips_hostname
 
 # Menu
 menu_number=0
