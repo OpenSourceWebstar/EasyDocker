@@ -45,7 +45,7 @@ installFail2Ban()
         echo "---- $menu_number. Setting up AbuseIPDB for fail2ban if api key is provided"
         echo ""
 
-        if [ -n "$CFG_ABUSEIPDB_APIKEY" ]; then
+        if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
             result=$(cd $install_path$app_name && touch $install_path$app_name/logs/auth.log)
@@ -58,7 +58,7 @@ installFail2Ban()
             result=$(cd $install_path$app_name/config/$app_name/action.d/ && curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
             checkSuccess "Downloading abuseipdb.conf from GitHub"
             
-            result=$(sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
+            result=$(sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
             checkSuccess "Setting up abuseipdb_apikey"
 
             result=$(docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf)
@@ -68,7 +68,7 @@ installFail2Ban()
 		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local >> $logs_dir/$docker_log_file 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
-            result=$(sed -i "s/my-api-key/$CFG_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
+            result=$(sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up AbuseIPDB API Key in jail.local file"
 
             result=$(sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_path$app_name/config/$app_name/jail.local)
