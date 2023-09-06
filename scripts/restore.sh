@@ -288,9 +288,9 @@
         elif [[ "$restorefull" == [rR] ]]; then
             # SSH command to list backup files on the remote host
             if [[ "$CFG_RESTORE_REMOTE_TYPE" == "LOGIN" ]]; then
-                remote_backup_list=$(sshpass -p "$CFG_RESTORE_REMOTE_PASS" ssh "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP" "ls -1 \"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY\"/*.zip 2>/dev/null")
+                remote_backup_list=$(sshpass -p "$CFG_RESTORE_REMOTE_PASS" ssh "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP" "ls -1 \"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY\full\"/*.zip 2>/dev/null")
             elif [[ "$CFG_RESTORE_REMOTE_TYPE" == "SSH" ]]; then
-                remote_backup_list=$(ssh "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP" "ls -1 \"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY\"/*.zip 2>/dev/null")
+                remote_backup_list=$(ssh "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP" "ls -1 \"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY\full\"/*.zip 2>/dev/null")
             fi
 
             # Function to display a numbered list of backup files from the remote host
