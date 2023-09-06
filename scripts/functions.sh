@@ -347,7 +347,8 @@ viewLogs()
     esac
 }
 
-viewConfigs() {
+viewConfigs() 
+{
   local config_files=("$configs_dir"*)  # List all files in the /configs/ folder
 
   echo ""
@@ -367,8 +368,13 @@ viewConfigs() {
   while true; do
     for ((i = 0; i < ${#config_files[@]}; i++)); do
       file_name=$(basename "${config_files[i]}")  # Get the basename of the file
-      file_name_without_prefix=${file_name#config_}  # Remove the "config_" prefix
+      file_name_without_prefix=${file_name#config_}  # Remove the "config_" prefix from all files
       config_name=${file_name_without_prefix,,}  # Convert the name to lowercase
+      
+      if [[ "$file_name" == config_apps_* ]]; then
+        config_name=${config_name#apps_}  # Remove the "apps_" prefix from files with that prefix
+      fi
+
       first_letter=${config_name:0:1}  # Get the first letter
 
       # Check if the config name is in the associative array and retrieve the last modified timestamp
@@ -380,7 +386,16 @@ viewConfigs() {
       fi
 
       formatted_last_modified=$(date -d "$last_modified" +"%m/%d %H:%M")  # Format the timestamp
-      isOption "$first_letter. ${config_name,,} (Last modified: $formatted_last_modified)"
+
+      if [[ "$file_name" == "config_apps_privacy" ]]; then
+        isOption "$first_letter. apps_privacy (Last modified: $formatted_last_modified)"
+      elif [[ "$file_name" == "config_apps_system" ]]; then
+        isOption "$first_letter. apps_system (Last modified: $formatted_last_modified)"
+      elif [[ "$file_name" == "config_apps_user" ]]; then
+        isOption "$first_letter. apps_user (Last modified: $formatted_last_modified)"
+      else
+        isOption "$first_letter. ${config_name,,} (Last modified: $formatted_last_modified)"
+      fi
     done
 
     isOption "x. Exit"
@@ -397,6 +412,11 @@ viewConfigs() {
         file_name=$(basename "${config_files[i]}")
         file_name_without_prefix=${file_name#config_}
         config_name=${file_name_without_prefix,,}
+        
+        if [[ "$file_name" == config_apps_* ]]; then
+          config_name=${config_name#apps_}
+        fi
+        
         first_letter=${config_name:0:1}
         if [[ "$selected_letter" == "$first_letter" ]]; then
           selected_file="${config_files[i]}"
@@ -782,7 +802,7 @@ completeMessage()
 
 resetToMenu()
 {
-    # Probably a better way of doing
+    # Apps
     fail2ban=n
     traefik=n
     wireguard=n
@@ -808,22 +828,42 @@ resetToMenu()
     cozy=n
     duplicati=n
     caddy=n
+
+    # Backup
     backupsingle=n
     backupfull=n
+
+    # Restore
     restoresingle=n
     restorefull=n
-    migratesingle=n
-    migratefull=n
-    tooldeletedb=n
+
+    # Mirate
+    migratecheckforfiles=n
+    migratemovefrommigrate=n
+    migrategeneratetxt=n
+    migratescanforupdates=n
+    migratescanforconfigstomigrate=n
+    migratescanformigratetoconfigs=n
+
+    # Database
+    toollistalltables=n
     toollistallapps=n
     toollistinstalledapps=n
+    toolupdatedb=n
+    toolemptytable=n
+    tooldeletedb=n
+
+    # Tools
+    toolsresetgit=n
     toolstartpreinstallation=n
+    toolsstartcrontabsetup=n
     toolrestartcontainers=n
     toolstopcontainers=n
     toolsremovedockermanageruser=n
     toolsinstalldockermanageruser=n
-    toolinstallcustomsshfolder=n
     toolinstallremotesshlist=n
+    toolinstallcrontab=n
+    toolinstallcrontabssh=n
 
     mainMenu
     return 1

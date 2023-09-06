@@ -16,6 +16,9 @@ backup_install_dir="$backup_dir/install"
 restore_dir="$base_dir/restore"
 restore_full_dir="$restore_dir/full"
 restore_single_dir="$restore_dir/single"
+migrate_dir="$base_dir/migrate"
+migrate_full_dir="$migrate_dir/full"
+migrate_single_dir="$migrate_dir/single"
 # Install Scripts
 script_dir="$base_dir/install/"
 configs_dir="$script_dir/configs/"
@@ -34,7 +37,7 @@ initializeScript()
 	fi
 	
 	# Setup folder structure
-	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$script_dir")
+	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			mkdir "$folder"
@@ -49,7 +52,7 @@ initializeScript()
 	apt-get upgrade -y
 	echo "OS Updated"
 	# Install Git
-	apt-get install git zip -y
+	apt-get install git zip curl -y
 	echo "Git & Zip have been installed."
 
 	# Git Clone and Update

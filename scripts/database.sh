@@ -579,7 +579,7 @@ checkIfUpdateShouldRun() {
 
 databasePathInsert()
 {
-    initial_path_save="$1"
+    local initial_path_save="$1"
     if [ -f "$base_dir/$db_file" ] && [ -n "$initial_path_save" ]; then
         table_name=path
         # Check if the path already exists in the database
@@ -599,42 +599,42 @@ databasePathInsert()
 
 databaseBackupInsert()
 {
-    app_name="$1"
-    table_name=backups
+    local app_name="$1"
+    local table_name=backups
     result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table."    
 }
 
 databaseRestoreInsert()
 {
-    app_name="$1"
-    table_name=restores
+    local app_name="$1"
+    local table_name=restores
     result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table."
 }
 
 databaseMigrateInsert()
 {
-    app_name="$1"
-    table_name=migrations
+    local app_name="$1"
+    local table_name=migrations
     result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table." 
 }
 
 databaseSSHInsert()
 {
-    app_name="$1"
-    table_name=ssh
+    local app_name="$1"
+    local table_name=ssh
     result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table." 
 }
 
 databaseSSHKeysInsert()
 {
-    key_filename="$1"
-    key_file=$(basename "$key_filename")
-    table_name=ssh_keys
-    key_in_db=$(sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
+    local key_filename="$1"
+    local key_file=$(basename "$key_filename")
+    local table_name=ssh_keys
+    local key_in_db=$(sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
 
     if [ "$key_in_db" -eq 0 ]; then
         result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
@@ -647,9 +647,9 @@ databaseSSHKeysInsert()
 
 databaseCronJobsInsert()
 {
-    app_name="$1"
-    table_name=cron_jobs
-    key_in_db=$(sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$app_name';")
+    local app_name="$1"
+    local table_name=cron_jobs
+    local key_in_db=$(sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$app_name';")
 
     if [ "$key_in_db" != "" ]; then
         if [ "$key_in_db" -eq 0 ]; then

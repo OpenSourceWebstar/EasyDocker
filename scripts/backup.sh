@@ -5,9 +5,10 @@ param2="$2"
 
 backupStart()
 {
+    local stored_app_name=$app_name
     echo ""
     echo "##########################################"
-    echo "###      Backing up $app_name"
+    echo "###      Backing up $stored_app_name"
     echo "##########################################"
     echo ""
 
@@ -23,7 +24,7 @@ backupStart()
     echo "---- $menu_number. Shutting container(s) for backup"
     echo ""
 
-    if [ "$app_name" == "full" ]; then
+    if [ "$stored_app_name" == "full" ]; then
         dockerStopAllApps;
     else
         dockerAppDown;
@@ -31,7 +32,7 @@ backupStart()
 
 	((menu_number++))
     echo ""
-    echo "---- $menu_number. Backing up $app_name docker folder"
+    echo "---- $menu_number. Backing up $stored_app_name docker folder"
     echo ""
 
     backupZipFile;
@@ -41,7 +42,7 @@ backupStart()
     echo "---- $menu_number. Starting up all docker containers"
     echo ""
 
-    if [ "$app_name" == "full" ]; then
+    if [ "$stored_app_name" == "full" ]; then
         dockerStartAllApps;
     else
         dockerAppUp;
@@ -62,7 +63,7 @@ backupStart()
     echo "---- $menu_number. Logging backup into database"
     echo ""
 
-    databaseBackupInsert $app_name;
+    databaseBackupInsert $stored_app_name;
 
 	((menu_number++))
     echo ""
@@ -73,7 +74,7 @@ backupStart()
 
 	((menu_number++))
     echo ""
-    echo "    A backup of the $app_name docker folder has been taken!"
+    echo "    A backup of the $stored_app_name docker folder has been taken!"
     echo ""
 
 	menu_number=0
@@ -135,8 +136,8 @@ backupZipFile()
         result=$(mkdir -p "$temp_dir/$(basename "$base_dir")")
         checkSuccess "Create the $base_dir inside the temporary directory"
 
-        result=$(cd "$base_dir" && find . -exec cp -r --parents {} "$temp_dir/$(basename "$base_dir")" \;)
-        checkSuccess "Copy the contents of $base_dir to the temporary directory"
+        result=$(cd $base_dir && cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")
+        checkSuccess "Copy the data to the temporary directory"
 
         result=$(cd "$temp_dir" && zip -r -MM -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$(basename "$base_dir")")
         checkSuccess "Create the zip command to include duplicates in the zip file"

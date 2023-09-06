@@ -151,7 +151,7 @@ mainMenu()
 				isOptionMenu "Full Backup - Docker Folder (y/n): "
 				read -rp "" backupfull
 
-				startOther
+				startOther;
 
 				;;
 			r)
@@ -178,15 +178,22 @@ mainMenu()
 				echo "###            Migrate            ###"
 				echo "#####################################"
 				echo ""
-   				echo "Please make sure your migration connection settings are setup"
-				echo ""
-				isOptionMenu "Migrate Single Docker App (y/n): "
-				read -rp "" migratesingle
-				isOptionMenu "Migrate Full Docker Folder (y/n): "
-				read -rp "" migratefull
+
+				isOptionMenu "Check for Migration file(s) (y/n): "
+				read -rp "" migratecheckforfiles
+				isOptionMenu "Move files from Migrate folder(s) (y/n): "
+				read -rp "" migratemovefrommigrate
+				isOptionMenu "Generate Migrate.txt files(s) (y/n): "
+				read -rp "" migrategeneratetxt
+				isOptionMenu "Scan Folders for Migrate.txt updates (IP/InstallName) (y/n): "
+				read -rp "" migratescanforupdates
+				isOptionMenu "Scan Folders for Missing Config Values to Migrate.txt (y/n): "
+				read -rp "" migratescanforconfigstomigrate
+				isOptionMenu "Scan Folders for Migrate.txt updated values to Config (y/n): "
+				read -rp "" migratescanformigratetoconfigs
 
 				startOther;
-
+				
 				;;
 			d)
 				echo ""

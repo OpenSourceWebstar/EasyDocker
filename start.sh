@@ -126,8 +126,11 @@ startPreInstall()
 startScan()
 {
 	databasePathInsert $initial_path_save
+	migrateCheckForMigrateFiles;
 	migrateGenerateTXTAll;
 	migrateScanFoldersForUpdates;
+	migrateScanConfigsToMigrate;
+	migrateScanMigrateToConfigs;
     databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
     databaseAppScan;
@@ -199,6 +202,30 @@ startOther()
 
 	restoreInitialize;
 	databaseCycleThroughListApps;
+
+	if [[ "$migratecheckforfiles" == [yY] ]]; then
+		migrateCheckForMigrateFiles;
+	fi
+
+	if [[ "$migratemovefrommigrate" == [yY] ]]; then
+		migrateRestoreFileMoveFromMigrate;
+	fi
+
+	if [[ "$migrategeneratetxt" == [yY] ]]; then
+		migrateGenerateTXTAll;
+	fi
+
+	if [[ "$migratescanforupdates" == [yY] ]]; then
+		migrateScanFoldersForUpdates;
+	fi
+
+	if [[ "$migratescanforconfigstomigrate" == [yY] ]]; then
+		migrateScanConfigsToMigrate;
+	fi
+
+	if [[ "$migratescanformigratetoconfigs" == [yY] ]]; then
+		migrateScanMigrateToConfigs;
+	fi
 
     #######################################################
     ###                     Tools                       ###
@@ -279,6 +306,7 @@ exitScript() {
 	echo ""
 	echo ""
 	isNotice "Exiting script..."
+	isNotice "Goodbye <3..."
 	echo ""
     if [ -f "$base_dir/$db_file" ]; then
         database_path=$(sqlite3 "$base_dir/$db_file" "SELECT path FROM path LIMIT 1;")
