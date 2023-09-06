@@ -353,7 +353,7 @@
             RestoreBackupDate=$(echo "$chosen_backup_file" | cut -d'-' -f1-3)
             isNotice "The Backup file is $chosen_backup_file, using this for restore."
             # Copy the file from the remote host to the local restore_dir
-            result=$(scp "$CFG_RESTORE_CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            result=$(scp "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_RESTORE_REMOTE_IP locally to $CFG_BACKUP_REMOTE_BACKUP_DIRECTORY"
         elif [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
             # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
