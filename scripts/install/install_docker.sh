@@ -52,7 +52,7 @@ installDockerCompose()
 installDockerUser()
 {
     if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
-        isSuccess "User $CFG_DOCKER_INSTALL_USER already exists."
+        isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
     else
         # If the user doesn't exist, create the user
         result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
@@ -124,12 +124,12 @@ installDockerRootless()
             checkSuccess "Installing Docker Rootless script"
 
             # Use runuser for the grep operation
-            if ! runuser -l "$CFG_DOCKER_INSTALL_USER" -c "grep -qF \"# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT\" \"$sshd_config\""; then
-                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> \"$sshd_config\"")
+            if ! grep -qF \"# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT\" \"$sshd_config\"; then
+                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> \"$sshd_config\")
                 checkSuccess "Adding rootless header to sshd_config"
-                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'export PATH=/home/$CFG_DOCKER_INSTALL_USER/bin:\$PATH' >> \"$sshd_config\"")
+                result=$(echo 'export PATH=/home/$CFG_DOCKER_INSTALL_USER/bin:\$PATH' >> \"$sshd_config\")
                 checkSuccess "Adding export path to sshd_config"
-                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'export DOCKER_HOST=unix:///run/user/$docker_install_user_id/docker.sock' >> \"$sshd_config\"")
+                result=$(echo 'export DOCKER_HOST=unix:///run/user/$docker_install_user_id/docker.sock' >> \"$sshd_config\")
                 checkSuccess "Adding export docker_host path to sshd_config"
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to sshd_config file"
             fi
