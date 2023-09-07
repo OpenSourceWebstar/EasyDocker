@@ -18,12 +18,8 @@ checkUpdates()
 		databasePathInsert $initial_path;
 
 		# Attempt to download a file from the repository
-		response=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "$repo_url")
-		if [[ $response == 200 ]]; then
-			isSuccessful "Repository is accessible network-wide."
-		else
-			isFatalErrorExit "Repository is not accessible network-wide."
-		fi
+		result=$(ping -c 4 9.9.9.9 > /dev/null)
+		checkSuccess "Testing internet connection"
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
