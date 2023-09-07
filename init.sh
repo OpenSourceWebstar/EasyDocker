@@ -58,20 +58,13 @@ initializeScript()
 		echo "User $sudo_user_name created successfully."
 	fi
 
-	# Disable Root login
-	cp "$sshd_config" "$sshd_config.bak"
-	sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' "$sshd_config"
-	echo "AllowUsers $sudo_user_name" >> "$sshd_config"
-	if ! grep -qF "$line_to_append" "$sshd_config"; then
-		echo "$line_to_append" >> "$sshd_config"
-		echo "Added $sudo_user_name to sshd_config file"
-	fi
-
 	# Setup folder structure
 	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
-			runuser -l  $sudo_user_name -c "mkdir "$folder""
+			sudo mkdir "$folder"
+			sudo chown $sudo_user_name:$sudo_user_name "$folder"
+			sudo chmod 750 "$folder"
 			echo "Folder '$folder' created."
 		else
 			echo "Folder '$folder' already exists."
@@ -105,8 +98,6 @@ initializeScript()
 		echo ""
 		echo "You can now use the command under the $sudo_user_name."
 	fi
-
-	reboot
 }
 
 if [ "$param1" == "run" ]; then
