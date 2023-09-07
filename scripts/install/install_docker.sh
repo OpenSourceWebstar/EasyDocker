@@ -55,7 +55,7 @@ installDockerUser()
         isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
     else
         # If the user doesn't exist, create the user
-        result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+        result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
         checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
         result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
         checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
@@ -167,14 +167,14 @@ installDockerRootless()
             result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
 
+            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            checkSuccess "Adding automatic start (linger)"
+
             result=$(systemctl --user start docker)
             checkSuccess "Starting Docker for $CFG_DOCKER_INSTALL_USER"
 
             result=$(systemctl --user enable docker)
             checkSuccess "Enabling Docker for $CFG_DOCKER_INSTALL_USER"
-
-            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
-            checkSuccess "Adding automatic start (linger)"
 
             result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
