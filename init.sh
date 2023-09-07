@@ -45,7 +45,7 @@ initializeScript()
 	echo "OS Updated"
 
 	# Install Apps
-	apt-get install git zip curl apt-transport-https ca-certificates software-properties-common uidmap -y
+	apt-get install sudo git zip curl apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "Prerequisite apps installed."
 
 	# Create Users
@@ -54,6 +54,7 @@ initializeScript()
 	else
 		# If the user doesn't exist, create the user
 		useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
+		echo "Setting password for $sudo_user_name user."
 		passwd $sudo_user_name
 		echo "User $sudo_user_name created successfully."
 	fi
@@ -86,6 +87,8 @@ initializeScript()
 	# Custom command check
 	if grep -q "easydocker" $sudo_bashrc; then
 		echo "Custom command 'easydocker' is already installed. You can already use 'easydocker'."
+		echo ""
+		echo "You can now use the command under the $sudo_user_name."
 	else
 		echo "Custom command 'easydocker' is not installed. Installing..."
 		echo 'easydocker() {' >> $sudo_bashrc
@@ -97,7 +100,7 @@ initializeScript()
 		echo "Custom command 'easydocker' has been installed."
 		echo ""
 		echo "You can now use the command under the $sudo_user_name."
-	fi
+	fi	
 }
 
 if [ "$param1" == "run" ]; then
