@@ -127,20 +127,22 @@ installDockerRootless()
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$sshd_config"; then
                 result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> "$sshd_config")
                 checkSuccess "Adding rootless header to sshd_config"
-                result=$(echo 'export PATH=/home/$CFG_DOCKER_INSTALL_USER/bin:$PATH' >> "$sshd_config")
+                result=$(echo 'export PATH=/home/'$CFG_DOCKER_INSTALL_USER'/bin:$PATH' >> "$sshd_config")
                 checkSuccess "Adding export path to sshd_config"
-                result=$(echo 'export DOCKER_HOST=unix:///run/user/$docker_install_user_id/docker.sock' >> "$sshd_config")
+                result=$(echo 'export DOCKER_HOST=unix:///run/user/'$docker_install_user_id'/docker.sock' >> "$sshd_config")
                 checkSuccess "Adding export docker_host path to sshd_config"
+                result=$(sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
+                checkSuccess "Disable PermitRootLogin"
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to sshd_config file"
             fi
 
             result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
 
-            result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user start docker")
+            result=$(systemctl --user start docker)
             checkSuccess "Starting Docker for $CFG_DOCKER_INSTALL_USER"
 
-            result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user enable docker")
+            result=$(systemctl --user enable docker)
             checkSuccess "Enabling Docker for $CFG_DOCKER_INSTALL_USER"
 
             result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
