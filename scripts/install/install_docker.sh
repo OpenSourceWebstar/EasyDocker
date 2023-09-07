@@ -51,16 +51,14 @@ installDockerCompose()
 
 installDockerUser()
 {
-    if [[ "$ISACT" != "active" ]]; then
-        if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
-            isNotice "User $CFG_DOCKER_INSTALL_USER already exists."
-        else
-            # If the user doesn't exist, create the user
-            result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
-            checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
-            result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
-            checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
-        fi
+    if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
+        isSuccess "User $CFG_DOCKER_INSTALL_USER already exists."
+    else
+        # If the user doesn't exist, create the user
+        result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+        checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
+        result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
+        checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
     fi
 }
 
