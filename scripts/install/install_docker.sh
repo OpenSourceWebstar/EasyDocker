@@ -150,12 +150,12 @@ installDockerRootless()
             checkSuccess "Backing up sysctl file"
             
             # Use runuser for the grep operation
-            if ! runuser -l "$CFG_DOCKER_INSTALL_USER" -c "grep -qF \"# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT\" \"$sysctl\""; then
-                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' >> \"$sysctl\"")
+            if ! grep -qF \"# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT\" \"$sysctl\"; then
+                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' >> \"$sysctl\")
                 checkSuccess "Adding rootless header to sysctl"
-                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'net.ipv4.ip_unprivileged_port_start=0' >> \"$sysctl\"")
+                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' >> \"$sysctl\")
                 checkSuccess "Adding ip_unprivileged_port_start to sysctl"
-                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'kernel.unprivileged_userns_clone=1' >> \"$sysctl\"")
+                result=$(echo 'kernel.unprivileged_userns_clone=1' >> \"$sysctl\")
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
                 isSuccess "Updated the sysctl to with Docker Rootless configuration"
             fi
