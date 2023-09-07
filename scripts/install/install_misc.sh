@@ -101,19 +101,19 @@ installCrontab()
         # Check to see if already installed
         if [[ "$ISCRON" == *"command not found"* ]]; then
             isNotice "Crontab is not installed, setting up now."
-            result=$(apt update)
+            result=$(sudo apt update)
             checkSuccess "Updating apt for post installation"
-            result=$(apt install cron -y)
+            result=$(sudo apt install cron -y)
             isSuccessful "Installing crontab application"
-            result=$(crontab -l)
+            result=$(sudo crontab -l)
             isSuccessful "Enabling crontab on the system"
         fi
 
         search_line="# cron is set up for root"
-        cron_output=$(crontab -l 2>/dev/null)
+        cron_output=$(sudo crontab -l 2>/dev/null)
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
-            result=$( (crontab -l 2>/dev/null; echo "# cron is set up for root") | crontab -u root - )
+            result=$( (sudo crontab -l 2>/dev/null; echo "# cron is set up for root") | sudo crontab -u root - )
             checkSuccess "Setting up crontab for root user"
         fi
 
@@ -177,7 +177,7 @@ installSetupCrontab() {
     local entry_name=$1
 
     # Check to see if already instealled
-    if ! crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo crontab -l -u root | grep -q "cron is set up for root"; then
         isError "Crontab is not setup"
         return
     fi
@@ -213,7 +213,7 @@ $crontab_entry")
         checkSuccess "Insert the non-full entry after the apps comment"
     fi
 
-    result=$(echo "$existing_crontab" | crontab -)
+    result=$(echo "$existing_crontab" | sudo crontab -)
     checkSuccess "Set the updated crontab"
     
     crontab_full_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
@@ -225,7 +225,7 @@ $crontab_entry")
 # Function to update a specific line in the crontab
 installSetupCrontabTiming() {
     local entry_name=$1
-    ISCRON=$( (crontab -l) 2>&1 )
+    ISCRON=$( (sudo crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -234,7 +234,7 @@ installSetupCrontabTiming() {
     fi
 
     # Check to see if already setup
-    if ! crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo crontab -l -u root | grep -q "cron is set up for root"; then
         isError "Crontab is not setup"
         return 1
     fi
@@ -280,9 +280,9 @@ installSetupCrontabTiming() {
     # Assuming CFG_BACKUP_CRONTAB_APP is set to "0 5 * * *"
     crontab_app_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
 
-    result=$(crontab -l | grep -v "$entry_name" | crontab - )
+    result=$(sudo crontab -l | grep -v "$entry_name" | sudo crontab - )
     checkSuccess "Remove the existing crontab entry"
-    result=$( (crontab -l; echo "$updated_crontab_entry") | crontab - )
+    result=$( (sudo crontab -l; echo "$updated_crontab_entry") | sudo crontab - )
     checkSuccess "Add the updated crontab entry"
 
     isSuccessful "Crontab entry for '$entry_name' updated successfully."
@@ -320,7 +320,6 @@ installSQLiteDatabase()
                 result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
-
 
                 setup_table_name=apps
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
