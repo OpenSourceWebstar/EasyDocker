@@ -30,6 +30,7 @@ checkUpdates()
 		# Update Git to ignore changes in file permissions
 		git config core.fileMode false
 		# Update Git with email address
+		git config --global user.name "$CFG_INSTALL_NAME"
 		git config --global user.email "$CFG_EMAIL"
 		
 
