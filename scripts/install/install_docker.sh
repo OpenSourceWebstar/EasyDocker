@@ -59,6 +59,29 @@ installDockerUser()
         checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
         result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
         checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
+
+        # Check if PermitRootLogin is set to "yes" before disabling it
+        if grep -q 'PermitRootLogin yes' "$sshd_config"; then
+            while true; do
+                read -p "Do you want to disable login for the root user? (y/n): " rootdisableconfirm
+                case "$rootdisableconfirm" in
+                    [Yy]*)
+                        result=$(sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
+                        checkSuccess "Disabling Root Login"
+                        break
+                        ;;
+                    [Nn]*)
+                        echo "No changes were made to PermitRootLogin."
+                        break
+                        ;;
+                    *)
+                        echo "Please enter 'y' or 'n'."
+                        ;;
+                esac
+            done
+        else
+            echo "PermitRootLogin is already set to 'no' or not found in $sshd_config"
+        fi
     fi
 }
 
@@ -119,21 +142,26 @@ installDockerRootless()
 			isNotice "Docker Rootless appears to be installed."
         else
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+            local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
             result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
             checkSuccess "Installing Docker Rootless script"
 
-            # Update sshd_config file
-            if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$sshd_config"; then
-                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> "$sshd_config")
-                checkSuccess "Adding rootless header to sshd_config"
-                result=$(echo 'export PATH=/home/'$CFG_DOCKER_INSTALL_USER'/bin:$PATH' >> "$sshd_config")
-                checkSuccess "Adding export path to sshd_config"
-                result=$(echo 'export DOCKER_HOST=unix:///run/user/'$docker_install_user_id'/docker.sock' >> "$sshd_config")
-                checkSuccess "Adding export docker_host path to sshd_config"
-                result=$(sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
-                checkSuccess "Disable PermitRootLogin"
-                isSuccessful "Added $CFG_DOCKER_INSTALL_USER to sshd_config file"
+            # Update .bashrc file
+            if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
+                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> "$docker_install_bashrc")
+                checkSuccess "Adding rootless header to .bashrc"
+
+                result=$(echo 'export XDG_RUNTIME_DIR=/home/'$CFG_DOCKER_INSTALL_USER'/.docker/run' >> "$docker_install_bashrc")
+                checkSuccess "Adding export path to .bashrc"
+
+                result=$(echo 'export PATH=/home/'$CFG_DOCKER_INSTALL_USER'/bin:$PATH' >> "$docker_install_bashrc")
+                checkSuccess "Adding export path to .bashrc"
+
+                result=$(echo 'export DOCKER_HOST=unix:///home/'$CFG_DOCKER_INSTALL_USER'/.docker/run/docker.sock' >> "$docker_install_bashrc")
+                checkSuccess "Adding export DOCKER_HOST path to .bashrc"
+
+                isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
             result=$(sudo systemctl disable --now docker.service docker.socket)

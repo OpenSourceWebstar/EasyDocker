@@ -315,6 +315,7 @@ exitScript() {
 		isNotice "cd $database_path"
     fi
 	echo ""
+	stty echo
 	exit 0
 }
 
