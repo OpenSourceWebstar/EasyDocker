@@ -123,13 +123,13 @@ installDockerRootless()
             result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
             checkSuccess "Installing Docker Rootless script"
 
-            # Use runuser for the grep operation
-            if ! grep -qF \"# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT\" \"$sshd_config\"; then
-                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> \"$sshd_config\")
+            # Update sshd_config file
+            if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$sshd_config"; then
+                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> "$sshd_config")
                 checkSuccess "Adding rootless header to sshd_config"
-                result=$(echo 'export PATH=/home/$CFG_DOCKER_INSTALL_USER/bin:\$PATH' >> \"$sshd_config\")
+                result=$(echo 'export PATH=/home/$CFG_DOCKER_INSTALL_USER/bin:$PATH' >> "$sshd_config")
                 checkSuccess "Adding export path to sshd_config"
-                result=$(echo 'export DOCKER_HOST=unix:///run/user/$docker_install_user_id/docker.sock' >> \"$sshd_config\")
+                result=$(echo 'export DOCKER_HOST=unix:///run/user/$docker_install_user_id/docker.sock' >> "$sshd_config")
                 checkSuccess "Adding export docker_host path to sshd_config"
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to sshd_config file"
             fi
@@ -149,15 +149,15 @@ installDockerRootless()
             result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
             
-            # Use runuser for the grep operation
-            if ! grep -qF \"# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT\" \"$sysctl\"; then
-                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' >> \"$sysctl\")
+            # Update sysctl file
+            if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
+                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' >> "$sysctl")
                 checkSuccess "Adding rootless header to sysctl"
-                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' >> \"$sysctl\")
+                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' >> "$sysctl")
                 checkSuccess "Adding ip_unprivileged_port_start to sysctl"
-                result=$(echo 'kernel.unprivileged_userns_clone=1' >> \"$sysctl\")
+                result=$(echo 'kernel.unprivileged_userns_clone=1' >> "$sysctl")
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
-                isSuccess "Updated the sysctl to with Docker Rootless configuration"
+                isSuccess "Updated the sysctl with Docker Rootless configuration"
             fi
 
             result=$(sudo sysctl --system)
