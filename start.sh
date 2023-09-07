@@ -44,6 +44,7 @@ checkUpdates()
 					[yY])
 						gitFolderResetAndBackup;
 						reloadScripts;
+						scanConfigsForRandomPassword;
 
 						isSuccessful "Starting/Restarting EasyDocker"
 						detectOS;
@@ -232,6 +233,7 @@ startOther()
     #######################################################
     ###                     Tools                       ###
     #######################################################
+
 	if [[ "$toolsresetgit" == [yY] ]]; then
 		gitFolderResetAndBackup;
 	fi

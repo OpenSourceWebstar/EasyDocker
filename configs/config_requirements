@@ -5,7 +5,7 @@
 # Not recommended to edit if you don't know what you are doing.
 #
 CFG_REQUIREMENT_UPDATES=true
-CFG_REQUIREMENT_ROOT=true
+CFG_REQUIREMENT_ROOT=false
 CFG_REQUIREMENT_COMMAND=true
 CFG_REQUIREMENT_CONFIG=true
 CFG_REQUIREMENT_DATABASE=true
