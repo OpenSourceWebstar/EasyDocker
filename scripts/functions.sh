@@ -45,6 +45,7 @@ gitFolderResetAndBackup()
 	git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
+	git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
 	git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
 	git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
