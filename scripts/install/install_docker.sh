@@ -144,6 +144,42 @@ installDockerRootless()
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
+            result=$(sudo apt-get install -y dbus-user-session fuse-overlayfs)
+            checkSuccess "Installing Docker Rootless script"
+
+            # slirp4netns update and install
+            if ! command -v slirp4netns &> /dev/null; then
+                isNotice "slirp4netns is not installed. Installing..."
+                result=$(sudo apt-get install -y slirp4netns)
+                checkSuccess "Installing slirp4netns"
+            else
+                isNotice "slirp4netns is already installed"
+                installed_version=$(slirp4netns --version | awk '{print $2}')
+                latest_version=$(curl -s https://api.github.com/repos/rootless-containers/slirp4netns/releases/latest | grep tag_name | cut -d '"' -f 4)
+                if [[ "$installed_version" != "$latest_version" ]]; then
+                    isNotice "slirp4netns version $installed_version is outdated."
+                    isNotice "Installing version $latest_version..."
+                    result=$(sudo apt-get update)
+                    checkSuccess "Updating apt packages"
+                    result=$(sudo apt-get install -y slirp4netns)
+                    checkSuccess "Installing slirp4netns"
+                else
+                    isSuccess "slirp4netns version $installed_version is up to date"
+                fi
+            fi
+
+            # Updating Debian 10
+            if [[ $(lsb_release -rs) == "10" ]]; then
+                if grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
+                    isNotice "kernel.unprivileged_userns_clone=1 already exists in $sysctl"
+                else
+                    result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
+                    checkSuccess "Adding kernel.unprivileged_userns_clone=1 to $sysctl..."
+                    result=$(sudo sysctl --system)
+                    checkSuccess "Running sudo sysctl --system..."
+                fi
+            fi
+
             result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
             checkSuccess "Installing Docker Rootless script"
 
@@ -161,14 +197,17 @@ installDockerRootless()
                 result=$(echo 'export DOCKER_HOST=unix:///home/'$CFG_DOCKER_INSTALL_USER'/.docker/run/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DOCKER_HOST path to .bashrc"
 
+                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/'$docker_install_user_id'/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                checkSuccess "Adding export DBUS_SESSION_BUS_ADDRESS path to .bashrc"
+
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
             result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
 
-            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
-            checkSuccess "Adding automatic start (linger)"
+            #result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "dockerd-rootless-setuptool.sh install")
+            #checkSuccess "Running dockerd-rootless-setuptool.sh install"
 
             result=$(systemctl --user start docker)
             checkSuccess "Starting Docker for $CFG_DOCKER_INSTALL_USER"
@@ -176,22 +215,30 @@ installDockerRootless()
             result=$(systemctl --user enable docker)
             checkSuccess "Enabling Docker for $CFG_DOCKER_INSTALL_USER"
 
+            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            checkSuccess "Adding automatic start (linger)"
+
             result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
-            
+
             # Update sysctl file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
+
                 result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding rootless header to sysctl"
+
                 result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding ip_unprivileged_port_start to sysctl"
+
                 result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
+
                 isSuccess "Updated the sysctl with Docker Rootless configuration"
             fi
 
             result=$(sudo sysctl --system)
             checkSuccess "Applying changes to sysctl"
+
             result=$(sudo reboot)
             checkSuccess "Restarting server... please run 'easydocker' again after the server is back online"
         fi
