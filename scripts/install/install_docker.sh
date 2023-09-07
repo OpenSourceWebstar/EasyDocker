@@ -52,17 +52,14 @@ installDockerCompose()
 installDockerUser()
 {
     if [[ "$ISACT" != "active" ]]; then
-        if [[ "$DOCK" == [yY] ]]; then
-            # add current user to docker group so sudo isn't needed
-            echo ""
-            echo "  - Attempting to add the currently logged in user to the docker group..."
-
-            sleep 2s
-            sudo usermod -aG docker "${USER}" >> $logs_dir/$docker_log_file 2>&1
-            echo "  - You'll need to log out and back in to finalize the addition of your user to the docker group."
-            echo ""
-            echo ""
-            sleep 3s
+        if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
+            isNotice "User $CFG_DOCKER_INSTALL_USER already exists."
+        else
+            # If the user doesn't exist, create the user
+            result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+            checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
+            result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
+            checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
         fi
     fi
 }
@@ -124,16 +121,6 @@ installDockerRootless()
 			isNotice "Docker Rootless appears to be installed."
         else
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-
-            if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
-                isNotice "User $CFG_DOCKER_INSTALL_USER already exists."
-            else
-                # If the user doesn't exist, create the user
-                result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
-                checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
-                result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
-                checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
-            fi
 
             result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
             checkSuccess "Installing Docker Rootless script"
