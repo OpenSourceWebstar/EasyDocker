@@ -545,16 +545,16 @@ setupComposeFileApp()
 
 dockerDownUpDefault()
 {
-    cd $install_path$app_name
+    
     if [[ "$OS" == "1" ]]; then
-        result=$(docker-compose down)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && docker-compose down")
         checkSuccess "Shutting down container for $app_name"
-        result=$(docker-compose up -d)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && docker-compose up -d")
         checkSuccess "Starting up container for $app_name"
     else
-        result=$(sudo docker-compose down)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && sudo docker-compose down")
         checkSuccess "Shutting down container for $app_name"
-        result=$(sudo docker-compose up -d)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && sudo docker-compose up -d")
         checkSuccess "Starting up container for $app_name"
     fi
 }
@@ -563,14 +563,14 @@ dockerUpDownAdditionalYML()
 {
     cd $install_path$app_name
     if [[ "$OS" == "1" ]]; then
-        result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
         checkSuccess "Shutting down container for $app_name (Using additional yml file)"
-        result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
         checkSuccess "Starting up container for $app_name (Using additional yml file)"
     else
-        result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
         checkSuccess "Shutting down container for $app_name (Using additional yml file)"
-        result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+        result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd $install_path$app_name && sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
         checkSuccess "Starting up container for $app_name (Using additional yml file)"
     fi
 }

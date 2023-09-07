@@ -2,7 +2,10 @@
 
 param1="$1"
 
+sudo_user_name=easydocker
 repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
+sshd_config="/etc/ssh/sshd_config"
+sudo_bashrc="/home/$sudo_user_name/.bashrc"
 
 # Directories
 base_dir=/docker
@@ -36,24 +39,44 @@ initializeScript()
 		exit 1
 	fi
 	
+	# Update OS
+	apt-get update
+	apt-get upgrade -y
+	echo "OS Updated"
+
+	# Install Apps
+	apt-get install git zip curl apt-transport-https ca-certificates software-properties-common uidmap -y
+	echo "Prerequisite apps installed."
+
+	# Create Users
+	if id "$sudo_user_name" &>/dev/null; then
+		echo "User $sudo_user_name already exists."
+	else
+		# If the user doesn't exist, create the user
+		useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
+		passwd $sudo_user_name
+		echo "User $sudo_user_name created successfully."
+	fi
+
+	# Disable Root login
+	cp "$sshd_config" "$sshd_config.bak"
+	sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' "$sshd_config"
+	echo "AllowUsers $sudo_user_name" >> "$sshd_config"
+	if ! grep -qF "$line_to_append" "$sshd_config"; then
+		echo "$line_to_append" >> "$sshd_config"
+		echo "Added $sudo_user_name to sshd_config file"
+	fi
+
 	# Setup folder structure
 	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
-			mkdir "$folder"
+			runuser -l  $sudo_user_name -c "mkdir "$folder""
 			echo "Folder '$folder' created."
 		else
 			echo "Folder '$folder' already exists."
 		fi
 	done
-
-	# Update OS
-	apt-get update
-	apt-get upgrade -y
-	echo "OS Updated"
-	# Install Git
-	apt-get install git zip curl -y
-	echo "Git & Zip have been installed."
 
 	# Git Clone and Update
 	# Check if it's a Git repository by checking if it's inside a Git working tree
@@ -63,23 +86,27 @@ initializeScript()
 	else
 		echo "No Git repository found. Cloning Git Repository."
 		# Clone the Git repository into the specified directory
-		git clone "$repo_url" "$script_dir"
+		runuser -l  $sudo_user_name -c "git clone "$repo_url" "$script_dir""
 		echo "Git repository cloned into '$script_dir'."
 	fi
 
 	# Custom command check
-	if grep -q "easydocker" ~/.bashrc; then
+	if grep -q "easydocker" $sudo_bashrc; then
 		echo "Custom command 'easydocker' is already installed. You can already use 'easydocker'."
 	else
 		echo "Custom command 'easydocker' is not installed. Installing..."
-		echo 'easydocker() {' >> ~/.bashrc
-		echo '  path="$PWD"' >> ~/.bashrc
-		echo '  cd /docker/install/ && chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> ~/.bashrc
-		echo '}' >> ~/.bashrc
-		source ~/.bashrc
-		echo "Custom command 'easydocker' has been installed. You can now use 'easydocker'."
+		echo 'easydocker() {' >> $sudo_bashrc
+		echo '  path="$PWD"' >> $sudo_bashrc
+		echo '  cd /docker/install/ && chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
+		echo '}' >> $sudo_bashrc
+		source $sudo_bashrc
+		echo ""
+		echo "Custom command 'easydocker' has been installed."
+		echo ""
+		echo "You can now use the command under the $sudo_user_name."
 	fi
-	# Future for a command maybe to link to here?
+
+	reboot
 }
 
 if [ "$param1" == "run" ]; then

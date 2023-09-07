@@ -96,6 +96,7 @@ startPreInstall()
     installDockerUser;
     installDockerCompose;
     installDockerCheck;
+	installDockerRootless;
     installDockerNetwork;
 
     #######################################################

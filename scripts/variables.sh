@@ -21,6 +21,7 @@ public_ip=$(hostname -I | awk '{print $1}')
 
 # Files
 swap_file=/swapfile
+sysctl="/etc/sysctl.conf"
 docker_log_file=easydocker.log
 backup_log_file=backup.log
 db_file=database.db

@@ -116,3 +116,69 @@ installDockerCheck()
         done
     fi
 }
+
+installDockerRootless()
+{
+	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+		if grep -q "ROOTLESS" $sysctl; then
+			isNotice "Docker Rootless appears to be installed."
+        else
+            local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+
+            if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
+                isNotice "User $CFG_DOCKER_INSTALL_USER already exists."
+            else
+                # If the user doesn't exist, create the user
+                result=$(useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+                checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
+                result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | chpasswd)
+                checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
+            fi
+
+            result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
+            checkSuccess "Installing Docker Rootless script"
+
+            # Use runuser for the grep operation
+            if ! runuser -l "$CFG_DOCKER_INSTALL_USER" -c "grep -qF \"# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT\" \"$sshd_config\""; then
+                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' >> \"$sshd_config\"")
+                checkSuccess "Adding rootless header to sshd_config"
+                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'export PATH=/home/$CFG_DOCKER_INSTALL_USER/bin:\$PATH' >> \"$sshd_config\"")
+                checkSuccess "Adding export path to sshd_config"
+                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'export DOCKER_HOST=unix:///run/user/$docker_install_user_id/docker.sock' >> \"$sshd_config\"")
+                checkSuccess "Adding export docker_host path to sshd_config"
+                isSuccessful "Added $CFG_DOCKER_INSTALL_USER to sshd_config file"
+            fi
+
+            result=$(sudo systemctl disable --now docker.service docker.socket)
+            checkSuccess "Disabling Docker service & Socket"
+
+            result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user start docker")
+            checkSuccess "Starting Docker for $CFG_DOCKER_INSTALL_USER"
+
+            result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user enable docker")
+            checkSuccess "Enabling Docker for $CFG_DOCKER_INSTALL_USER"
+
+            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            checkSuccess "Adding automatic start (linger)"
+
+            result=$(sudo cp $sysctl $sysctl.bak)
+            checkSuccess "Backing up sysctl file"
+            
+            # Use runuser for the grep operation
+            if ! runuser -l "$CFG_DOCKER_INSTALL_USER" -c "grep -qF \"# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT\" \"$sysctl\""; then
+                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' >> \"$sysctl\"")
+                checkSuccess "Adding rootless header to sysctl"
+                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'net.ipv4.ip_unprivileged_port_start=0' >> \"$sysctl\"")
+                checkSuccess "Adding ip_unprivileged_port_start to sysctl"
+                result=$(runuser -l "$CFG_DOCKER_INSTALL_USER" -c "echo 'kernel.unprivileged_userns_clone=1' >> \"$sysctl\"")
+                checkSuccess "Adding unprivileged_userns_clone to sysctl"
+                isSuccess "Updated the sysctl to with Docker Rootless configuration"
+            fi
+
+            result=$(sudo sysctl --system)
+            checkSuccess "Applying changes to sysctl"
+            result=$(sudo reboot)
+            checkSuccess "Restarting server... please run 'easydocker' again after the server is back online"
+        fi
+    fi
+}

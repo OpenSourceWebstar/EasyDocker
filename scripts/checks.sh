@@ -77,6 +77,16 @@ checkRequirements()
 		fi
 	fi
 	
+	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+		### Docker Rootless
+		if grep -q "ROOTLESS" $sysctl; then
+			isSuccessful "Docker Rootless appears to be installed."
+		else
+			isNotice "Docker Rootless does not appear to be installed."
+			((preinstallneeded++)) 
+		fi
+	fi
+	
 	if [[ $CFG_REQUIREMENT_UFW == "true" ]]; then
 		### UFW Firewall
 		if [[ "$ISUFW" != *"command not found"* ]]; then
