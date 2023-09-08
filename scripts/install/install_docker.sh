@@ -1,5 +1,39 @@
 #!/bin/bash
 
+installDocker()
+{
+    # Check if Docker is already installed
+    if command -v docker &> /dev/null; then
+        checkSuccess 0 "Docker is already installed."
+        exit 0
+    fi
+
+    if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
+        result=$(curl -fsSL https://get.docker.com -o get-docker.sh)
+        checkSuccess "Downloading Docker"
+
+        result=$(sudo sh get-docker.sh)
+        checkSuccess "Installing Docker"
+
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            result=$(sudo systemctl start docker)
+            checkSuccess "Starting Docker Service"
+
+            result=$(sudo systemctl enable docker)
+            checkSuccess "Enabling Docker Service"
+
+            result=$(sudo usermod -aG docker $USER)
+            checkSuccess "Adding user to 'docker' group"
+        fi
+
+        # Clean up the installation script
+        result=$(rm get-docker.sh)
+        checkSuccess "Cleaning up"
+    fi
+
+    isSuccessful "Docker has been installed and configured. Please log out and log back in for group changes to take effect."
+}
+
 installDockerCompose()
 {
     if [[ "$ISCOMP" == *"command not found"* ]]; then
@@ -65,37 +99,40 @@ installDockerCompose()
 }
 
 installDockerUser()
-{
-    if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
-        isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
-    else
-        # If the user doesn't exist, create the user
-        result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
-        checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
-        result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo chpasswd)
-        checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
-
-        # Check if PermitRootLogin is set to "yes" before disabling it
-        if grep -q 'PermitRootLogin yes' "$sshd_config"; then
-            while true; do
-                read -p "Do you want to disable login for the root user? (y/n): " rootdisableconfirm
-                case "$rootdisableconfirm" in
-                    [Yy]*)
-                        result=$(sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
-                        checkSuccess "Disabling Root Login"
-                        break
-                        ;;
-                    [Nn]*)
-                        echo "No changes were made to PermitRootLogin."
-                        break
-                        ;;
-                    *)
-                        echo "Please enter 'y' or 'n'."
-                        ;;
-                esac
-            done
+{   
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
+            isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
         else
-            echo "PermitRootLogin is already set to 'no' or not found in $sshd_config"
+            # If the user doesn't exist, create the user
+            result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+            checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
+            result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo chpasswd)
+            checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
+
+            # Check if PermitRootLogin is set to "yes" before disabling it
+            if grep -q 'PermitRootLogin yes' "$sshd_config"; then
+                while true; do
+                    isQuestion "Do you want to disable login for the root user? (y/n): "
+                    read -p "" rootdisableconfirm
+                    case "$rootdisableconfirm" in
+                        [Yy]*)
+                            result=$(sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
+                            checkSuccess "Disabling Root Login"
+                            break
+                            ;;
+                        [Nn]*)
+                            echo "No changes were made to PermitRootLogin."
+                            break
+                            ;;
+                        *)
+                            echo "Please enter 'y' or 'n'."
+                            ;;
+                    esac
+                done
+            else
+                echo "PermitRootLogin is already set to 'no' or not found in $sshd_config"
+            fi
         fi
     fi
 }
@@ -161,33 +198,8 @@ installDockerRootless()
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
-            result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common dbus-user-session fuse-overlayfs)
+            result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
             checkSuccess "Installing necessary packages"
-
-            # Debian
-	        if [[ $OS == "1" ]]; then
-                result=$(curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg)
-                checkSuccess "Adding Docker's GPG key"
-
-                # Define the repository entry
-                repository_entry="deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-                # Check if the entry already exists in the file
-                if ! grep -qF "$repository_entry" /etc/apt/sources.list.d/docker.list; then
-                    # Entry doesn't exist, so add it
-                    result=$(echo "$repository_entry" | sudo tee -a /etc/apt/sources.list.d/docker.list > /dev/null)
-                    isSuccessful "Repository entry added."
-                else
-                    isNotice "Repository entry already exists."
-                fi
-
-
-
-                result=$(sudo apt-get update)
-                checkSuccess "Updating apt packages"
-
-                result=$(sudo apt-get install -y docker-ce uidmap)
-                checkSuccess "Installing Docker and uidmap"
-            fi
 
             result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
@@ -209,7 +221,7 @@ installDockerRootless()
                     result=$(sudo apt-get install -y slirp4netns)
                     checkSuccess "Installing slirp4netns"
                 else
-                    isSuccess "slirp4netns version $installed_version is up to date"
+                    isSuccessful "slirp4netns version $installed_version is up to date"
                 fi
             fi
 
@@ -255,6 +267,7 @@ result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $
 EOF
 )
 checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
+
             result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
@@ -273,14 +286,11 @@ checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
                 result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
 
-                isSuccess "Updated the sysctl with Docker Rootless configuration"
+                isSuccessful "Updated the sysctl with Docker Rootless configuration"
             fi
 
             result=$(sudo sysctl --system)
             checkSuccess "Applying changes to sysctl"
-
-            #result=$(sudo reboot)
-            #checkSuccess "Restarting server... please run 'easydocker' again after the server is back online"
         fi
     fi
 }

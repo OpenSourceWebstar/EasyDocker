@@ -5,6 +5,9 @@ installDebianUbuntu()
     if [[ "$OS" == [123] ]]; then
         if checkIfUpdateShouldRun; then
             isNotice "Installing System Updates... this may take a while...be patient."
+            if [[ "$OS" == "1" ]]; then
+                export DEBIAN_FRONTEND="noninteractive"
+            fi
             (apt update && apt install sudo -y && apt-get autoclean) > $logs_dir/$docker_log_file 2>&1 &
             ## Show a spinner for activity progress
             pid=$! # Process Id of the previous running command
