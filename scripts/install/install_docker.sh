@@ -258,10 +258,8 @@ installDockerRootless()
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
-            isNotice "Please enter the password for the $CFG_DOCKER_INSTALL_USER user"
-
 result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
-    curl -fsSL https://get.docker.com/rootless -o get-docker.sh && \
+    curl -fsSL https://get.docker.com/rootless | sh && \
     systemctl --user start docker && \
     systemctl --user enable docker && \
     exit
