@@ -37,6 +37,7 @@ installDocker()
 installDockerCompose()
 {
     if [[ "$ISCOMP" == *"command not found"* ]]; then
+        echo ""
         echo "############################################"
         echo "######     Install Docker-Compose     ######"
         echo "############################################"
@@ -260,7 +261,7 @@ installDockerRootless()
             isNotice "Please enter the password for the $CFG_DOCKER_INSTALL_USER user"
 
 result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
-    dockerd-rootless-setuptool.sh install && \
+    curl -fsSL https://get.docker.com/rootless -o get-docker.sh && \
     systemctl --user start docker && \
     systemctl --user enable docker && \
     exit
