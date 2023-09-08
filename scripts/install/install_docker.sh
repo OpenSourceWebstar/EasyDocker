@@ -169,8 +169,18 @@ installDockerRootless()
                 result=$(curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg)
                 checkSuccess "Adding Docker's GPG key"
 
-                result=$(echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null)
-                checkSuccess "Adding Docker repository"
+                # Define the repository entry
+                repository_entry="deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+                # Check if the entry already exists in the file
+                if ! grep -qF "$repository_entry" /etc/apt/sources.list.d/docker.list; then
+                    # Entry doesn't exist, so add it
+                    result=$(echo "$repository_entry" | sudo tee -a /etc/apt/sources.list.d/docker.list > /dev/null)
+                    isSuccessful "Repository entry added."
+                else
+                    isNotice "Repository entry already exists."
+                fi
+
+
 
                 result=$(sudo apt-get update)
                 checkSuccess "Updating apt packages"
@@ -237,7 +247,7 @@ installDockerRootless()
 
             isNotice "Please enter the password for the $CFG_DOCKER_INSTALL_USER user"
 
-result=$(ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
+result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
     dockerd-rootless-setuptool.sh install && \
     systemctl --user start docker && \
     systemctl --user enable docker && \
