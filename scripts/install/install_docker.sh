@@ -3,35 +3,34 @@
 installDocker()
 {
     # Check if Docker is already installed
-    if command -v docker &> /dev/null; then
-        checkSuccess 0 "Docker is already installed."
-        exit 0
-    fi
-
     if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
-        result=$(curl -fsSL https://get.docker.com -o get-docker.sh)
-        checkSuccess "Downloading Docker"
+        if command -v docker &> /dev/null; then
+            isSuccessful "Docker is already installed."
+        else
+            result=$(curl -fsSL https://get.docker.com -o get-docker.sh)
+            checkSuccess "Downloading Docker"
 
-        result=$(sudo sh get-docker.sh)
-        checkSuccess "Installing Docker"
+            result=$(sudo sh get-docker.sh)
+            checkSuccess "Installing Docker"
 
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo systemctl start docker)
-            checkSuccess "Starting Docker Service"
+            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                result=$(sudo systemctl start docker)
+                checkSuccess "Starting Docker Service"
 
-            result=$(sudo systemctl enable docker)
-            checkSuccess "Enabling Docker Service"
+                result=$(sudo systemctl enable docker)
+                checkSuccess "Enabling Docker Service"
 
-            result=$(sudo usermod -aG docker $USER)
-            checkSuccess "Adding user to 'docker' group"
+                result=$(sudo usermod -aG docker $USER)
+                checkSuccess "Adding user to 'docker' group"
+            fi
+
+            # Clean up the installation script
+            result=$(rm get-docker.sh)
+            checkSuccess "Cleaning up"
         fi
 
-        # Clean up the installation script
-        result=$(rm get-docker.sh)
-        checkSuccess "Cleaning up"
+        isSuccessful "Docker has been installed and configured. Please log out and log back in for group changes to take effect."
     fi
-
-    isSuccessful "Docker has been installed and configured. Please log out and log back in for group changes to take effect."
 }
 
 installDockerCompose()
