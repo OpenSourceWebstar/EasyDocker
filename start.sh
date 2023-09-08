@@ -19,8 +19,12 @@ checkUpdates()
 
 		# Internet Test
 		isNotice "Testing internet, please wait..."
-		result=$(sudo ping -c 4 9.9.9.9 > /dev/null)
-		checkSuccess "Testing internet connection"
+		if sudo ping -c 4 "$ip_address" > /dev/null; then
+			isSuccess "Internet connectivity is working."
+		else
+			isError "Internet connectivity is not working."
+			exit 1
+		fi
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
@@ -93,6 +97,7 @@ startPreInstall()
     #######################################################
 
     installDockerUser;
+	installDocker;
     installDockerCompose;
     installDockerCheck;
 	installDockerRootless;
