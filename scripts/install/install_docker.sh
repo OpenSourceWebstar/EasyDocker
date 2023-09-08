@@ -20,11 +20,26 @@ installDockerCompose()
         ######################################        
         
         if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
-            result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose)
-            checkSuccess "Download the official Docker Compose script"
+            #result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose)
+            #checkSuccess "Download the official Docker Compose script"
 
-            result=$(sudo chmod +x /usr/local/bin/docker-compose)
-            checkSuccess "Make the script executable"
+            #result=$(sudo chmod +x /usr/local/bin/docker-compose)
+            #checkSuccess "Make the script executable"
+
+            #result=$(sapt install docker.io docker-compose -y)
+            #checkSuccess "Make the script executable"
+
+            result=$(sudo apt-get update)
+            checkSuccess "Updating apt packages"
+
+            result=$(sudo apt-get upgrade -y)
+            checkSuccess "Upgrading packages"
+
+            result=$(sudo apt-get install -y docker.io docker-compose)
+            checkSuccess "Installing Docker and Docker Compose"
+
+            result=$(sudo apt-get --purge autoremove -y)
+            checkSuccess "Removing unused packages"
 
             result=$(docker-compose --version)
             checkSuccess "Verify the installation"
@@ -115,10 +130,10 @@ installDockerCheck()
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
         if [[ "$ISACT" != "active" ]]; then
-        isNotice "Checking Docker service status. Waiting if not found."
+            isNotice "Checking Docker service status. Waiting if not found."
             while [[ "$ISACT" != "active" ]] && [[ $X -le 10 ]]; do
-                    sudo systemctl start docker >> $logs_dir/$docker_log_file 2>&1
-                    sleep 10s &
+                sudo systemctl start docker >> $logs_dir/$docker_log_file 2>&1
+                sleep 10s &
                 pid=$! # Process Id of the previous running command
                 spin='-\|/'
                 i=0
@@ -146,8 +161,23 @@ installDockerRootless()
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
-            result=$(sudo apt-get install -y dbus-user-session fuse-overlayfs)
-            checkSuccess "Installing Docker Rootless script"
+            result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common dbus-user-session fuse-overlayfs)
+            checkSuccess "Installing necessary packages"
+
+            # Debian
+	        if [[ $OS == "1" ]]; then
+                result=$(curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg)
+                checkSuccess "Adding Docker's GPG key"
+
+                result=$(echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null)
+                checkSuccess "Adding Docker repository"
+
+                result=$(sudo apt-get update)
+                checkSuccess "Updating apt packages"
+
+                result=$(sudo apt-get install -y docker-ce uidmap)
+                checkSuccess "Installing Docker and uidmap"
+            fi
 
             # slirp4netns update and install
             if ! command -v slirp4netns &> /dev/null; then
@@ -182,7 +212,10 @@ installDockerRootless()
                 fi
             fi
 
-            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
+            #result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
+            #checkSuccess "Installing Docker Rootless script"
+
+            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "dockerd-rootless-setuptool.sh install")
             checkSuccess "Installing Docker Rootless script"
 
             # Update .bashrc file
@@ -208,13 +241,10 @@ installDockerRootless()
             result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
 
-            #result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "dockerd-rootless-setuptool.sh install")
-            #checkSuccess "Running dockerd-rootless-setuptool.sh install"
-
-            result=$(systemctl --user start docker)
+            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user start docker")
             checkSuccess "Starting Docker for $CFG_DOCKER_INSTALL_USER"
 
-            result=$(systemctl --user enable docker)
+            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user enable docker")
             checkSuccess "Enabling Docker for $CFG_DOCKER_INSTALL_USER"
 
             result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
@@ -241,8 +271,8 @@ installDockerRootless()
             result=$(sudo sysctl --system)
             checkSuccess "Applying changes to sysctl"
 
-            result=$(sudo reboot)
-            checkSuccess "Restarting server... please run 'easydocker' again after the server is back online"
+            #result=$(sudo reboot)
+            #checkSuccess "Restarting server... please run 'easydocker' again after the server is back online"
         fi
     fi
 }

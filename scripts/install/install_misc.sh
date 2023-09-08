@@ -60,7 +60,7 @@ installSSLCertificate()
 
             # Generate SSL certificates for each domain
             for domain_value in "${domains[@]}"; do
-                echo "Creating SSL certificate for $domain_value..."
+                isNotice "Creating SSL certificate for $domain_value..."
                 generateSSLCertificate "$domain_value"
             done
 

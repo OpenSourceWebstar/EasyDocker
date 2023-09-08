@@ -329,7 +329,7 @@ databaseCycleThroughListApps()
 databaseCycleThroughListAppsCrontab()
 {
     local name=$1
-    ISCRON=$( (crontab -l) 2>&1 )
+    ISCRON=$( (sudo crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -338,7 +338,7 @@ databaseCycleThroughListAppsCrontab()
     fi
 
     # Check to see if crontab is not installed
-    if ! crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo crontab -l -u root | grep -q "cron is set up for root"; then
         isNotice "Crontab is not setup, skipping until its found."
         return 1
     fi
@@ -426,14 +426,14 @@ databaseDisplayTables()
 
         # Check if sqlite3 is available
         if ! command -v sqlite3 &> /dev/null; then
-        isNotice "sqlite3 command not found. Make sure it's installed."
-        return 1
+            isNotice "sqlite3 command not found. Make sure it's installed."
+            return 1
         fi
 
         # Ensure the database file exists
         if [ ! -f "$base_dir/$db_file" ]; then
-        isError "Database file not found: $base_dir/$db_file"
-        return
+            isError "Database file not found: $base_dir/$db_file"
+            return
         fi
 
         # Get a list of existing tables in the database
@@ -441,7 +441,7 @@ databaseDisplayTables()
 
         # Check if there are any tables in the database
         if [ -z "$tables_list" ]; then
-            echo "No tables found in the database."
+            isError "No tables found in the database."
             return
         fi
 
