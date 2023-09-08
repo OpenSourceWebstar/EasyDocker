@@ -179,6 +179,9 @@ installDockerRootless()
                 checkSuccess "Installing Docker and uidmap"
             fi
 
+            result=$(sudo systemctl disable --now docker.service docker.socket)
+            checkSuccess "Disabling Docker service & Socket"
+
             # slirp4netns update and install
             if ! command -v slirp4netns &> /dev/null; then
                 isNotice "slirp4netns is not installed. Installing..."
@@ -211,13 +214,7 @@ installDockerRootless()
                     checkSuccess "Running sudo sysctl --system..."
                 fi
             fi
-
-            #result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "cd \$HOME && curl -fsSL https://get.docker.com/rootless | sh -s && cp ~/.bashrc ~/.bashrc.bak")
-            #checkSuccess "Installing Docker Rootless script"
-
-            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "dockerd-rootless-setuptool.sh install")
-            checkSuccess "Installing Docker Rootless script"
-
+               
             # Update .bashrc file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
                 result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
@@ -238,15 +235,16 @@ installDockerRootless()
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
-            result=$(sudo systemctl disable --now docker.service docker.socket)
-            checkSuccess "Disabling Docker service & Socket"
+            isNotice "Please enter the password for the $CFG_DOCKER_INSTALL_USER user"
 
-            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user start docker")
-            checkSuccess "Starting Docker for $CFG_DOCKER_INSTALL_USER"
-
-            result=$(sudo runuser -l "$CFG_DOCKER_INSTALL_USER" -c "systemctl --user enable docker")
-            checkSuccess "Enabling Docker for $CFG_DOCKER_INSTALL_USER"
-
+result=$(ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
+    dockerd-rootless-setuptool.sh install && \
+    systemctl --user start docker && \
+    systemctl --user enable docker && \
+    exit
+EOF
+)
+checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
             result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
