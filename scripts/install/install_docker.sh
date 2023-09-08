@@ -54,26 +54,11 @@ installDockerCompose()
         ######################################        
         
         if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
-            #result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose)
-            #checkSuccess "Download the official Docker Compose script"
+            result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
+            checkSuccess "Download the official Docker Compose script"
 
-            #result=$(sudo chmod +x /usr/local/bin/docker-compose)
-            #checkSuccess "Make the script executable"
-
-            #result=$(sapt install docker.io docker-compose -y)
-            #checkSuccess "Make the script executable"
-
-            result=$(sudo apt-get update)
-            checkSuccess "Updating apt packages"
-
-            result=$(sudo apt-get upgrade -y)
-            checkSuccess "Upgrading packages"
-
-            result=$(sudo apt-get install -y docker.io docker-compose)
-            checkSuccess "Installing Docker and Docker Compose"
-
-            result=$(sudo apt-get --purge autoremove -y)
-            checkSuccess "Removing unused packages"
+            result=$(sudo chmod +x /usr/local/bin/docker-compose)
+            checkSuccess "Make the script executable"
 
             result=$(docker-compose --version)
             checkSuccess "Verify the installation"
