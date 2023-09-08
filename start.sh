@@ -130,7 +130,7 @@ startScan()
 	migrateScanFoldersForUpdates;
 	migrateScanConfigsToMigrate;
 	migrateScanMigrateToConfigs;
-    databaseSSHScanForKeys;
+    #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
     databaseAppScan;
     databaseListInstalledApps;
