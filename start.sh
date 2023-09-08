@@ -17,7 +17,8 @@ checkUpdates()
 
 		databasePathInsert $initial_path;
 
-		# Attempt to download a file from the repository
+		# Internet Test
+		isNotice "Testing internet, please wait..."
 		result=$(sudo ping -c 4 9.9.9.9 > /dev/null)
 		checkSuccess "Testing internet connection"
 
