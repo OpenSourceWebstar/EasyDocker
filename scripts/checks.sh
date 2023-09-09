@@ -36,11 +36,17 @@ checkRequirements()
 		fi
 	fi
 
-	ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
-	ISCOMP=$( (docker-compose -v ) 2>&1 )
-	ISUFW=$( (ufw status ) 2>&1 )
-	ISUFWD=$( (ufw-docker) 2>&1 )
-	ISCRON=$( (crontab -l) 2>&1 )
+	if [[ "$OS" == [123] ]]; then
+		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+			ISACT=$( (sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "systemctl is-active docker" ) 2>&1 )
+		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
+		fi
+		ISCOMP=$( (docker-compose -v ) 2>&1 )
+		ISUFW=$( (sudo ufw status ) 2>&1 )
+		ISUFWD=$( (sudo ufw-docker) 2>&1 )
+		ISCRON=$( (sudo crontab -l) 2>&1 )
+	fi
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
 		checkConfigFilesExist;

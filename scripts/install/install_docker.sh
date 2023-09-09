@@ -53,7 +53,7 @@ installDockerCompose()
         ###     Install Debian / Ubuntu    ###
         ######################################        
         
-        if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
+        if [[ "$OS" == [123] ]]; then
             result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 
@@ -125,7 +125,7 @@ installDockerUser()
 installDockerNetwork()
 {
 	# Check if the network already exists
-	if ! sudo docker network ls | grep -q "$CFG_NETWORK_NAME"; then
+	if ! sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "docker network ls" | grep -q "$CFG_NETWORK_NAME"; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
@@ -134,7 +134,7 @@ installDockerNetwork()
 
 		echo "Network $CFG_NETWORK_NAME not found, creating now"
 		# If the network does not exist, create it with the specified subnet
-		sudo docker network create \
+		sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "sudo docker network create" \
 			--driver=bridge \
 			--subnet=$CFG_NETWORK_SUBNET \
 			--ip-range=$CFG_NETWORK_SUBNET \
@@ -178,7 +178,7 @@ installDockerRootless()
 {
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 		if grep -q "ROOTLESS" $sysctl; then
-			isNotice "Docker Rootless appears to be installed."
+			isSuccessful "Docker Rootless appears to be installed."
         else
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"

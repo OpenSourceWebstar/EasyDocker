@@ -61,8 +61,13 @@ installFail2Ban()
             result=$(sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
             checkSuccess "Setting up abuseipdb_apikey"
 
-            result=$(docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf)
-            checkSuccess "Copying abuseipdb.conf file"
+            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                result=$(sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf")
+                checkSuccess "Copying abuseipdb.conf file"
+            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                result=$(docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf)
+                checkSuccess "Copying abuseipdb.conf file"
+            fi
 
             # Jail.local
 		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local >> $logs_dir/$docker_log_file 2>&1)
