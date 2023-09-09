@@ -38,7 +38,8 @@ checkRequirements()
 
 	if [[ "$OS" == [123] ]]; then
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-			ISACT=$( (sudo -u $CFG_DOCKER_INSTALL_USER systemctl is-active docker ) 2>&1 )
+		    ISACT=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
+            "systemctl is-active docker")
 		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
 		fi
