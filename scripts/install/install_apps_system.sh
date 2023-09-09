@@ -62,7 +62,7 @@ installFail2Ban()
             checkSuccess "Setting up abuseipdb_apikey"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                result=$(sudo runuser -l $CFG_DOCKER_INSTALL_USER -c "docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf")
+                result=$(su - $CFG_DOCKER_INSTALL_USER -c "docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf")
                 checkSuccess "Copying abuseipdb.conf file"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
                 result=$(docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf)
