@@ -266,10 +266,13 @@ checkConfigFilesEdited()
     while ! "$config_check_done"; do
         # Check if configs have not been changed
         if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
+            echo ""
             isNotice "Default config values have been found, have you edited the config files?"
+            echo ""
             while true; do
                 isQuestion "Would you like to continue with the default config values or edit them? (c/e): "
                 read -rp "" configsnotchanged
+                echo ""
                 case $configsnotchanged in
                     [cC])
                         isNotice "Config files have been accepted with the default values, continuing... "

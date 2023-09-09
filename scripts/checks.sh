@@ -38,8 +38,8 @@ checkRequirements()
 
 	if [[ "$OS" == [123] ]]; then
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-		    ISACT=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-            "systemctl is-active docker")
+			ISACT=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost \
+				"docker info --format '{{.ID}}'" 2>/dev/null)
 		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
 		fi
@@ -87,11 +87,20 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_DOCKER_CE == "true" ]]; then
 		### Docker CE
-		if [[ "$ISACT" == "active" ]]; then
-			isSuccessful "Docker appears to be installed and running."
-		else
-			isNotice "Docker does not appear to be installed."
-			((preinstallneeded++)) 
+		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+			if [[ -n "$ISACT" ]]; then
+				isSuccessful "Docker appears to be installed and running."
+			else
+				isNotice "Docker does not appear to be installed."
+				((preinstallneeded++)) 
+			fi
+		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+			if [[ "$ISACT" == "active" ]]; then
+				isSuccessful "Docker appears to be installed and running."
+			else
+				isNotice "Docker does not appear to be installed."
+				((preinstallneeded++)) 
+			fi
 		fi
 	fi
 
