@@ -217,22 +217,22 @@ installJitsiMeet()
 		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $git_url | cut -d/ -f3- | tail -n1)
 		echo "The latest tag is: $latest_tag"
 
-		result=$(mkdir $install_path$app_name && cd $install_path$app_name)
+		result=$(sudo mkdir $install_path$app_name && cd $install_path$app_name)
 		checkSuccess "Creating $app_name container installation folder"
-		result=$(rm -rf $install_path$app_name/$latest_tag.zip)
+		result=$(sudo rm -rf $install_path$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"
-		result=$(touch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
+		result=$(sudo touch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
 		checkSuccess "Create logging txt file"
 		
 
 		# Download files and unzip
-		result=$(wget -O $install_path$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
+		result=$(sudo wget -O $install_path$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
 		checkSuccess "Downloading tagged zip file from GitHub"
-		result=$(unzip -o $install_path$app_name/$latest_tag.zip -d $install_path$app_name)
+		result=$(sudo unzip -o $install_path$app_name/$latest_tag.zip -d $install_path$app_name)
 		checkSuccess "Unzip downloaded file"
-		result=$(mv $install_path$app_name/docker-jitsi-meet-$latest_tag/* $install_path$app_name)
+		result=$(sudo mv $install_path$app_name/docker-jitsi-meet-$latest_tag/* $install_path$app_name)
 		checkSuccess "Moving all files from zip file to install directory"
-		result=$(rm -rf $install_path$app_name/$latest_tag.zip && rm -rf $install_path$app_name/$latest_tag/)
+		result=$(sudo rm -rf $install_path$app_name/$latest_tag.zip && rm -rf $install_path$app_name/$latest_tag/)
 		checkSuccess "Removing downloaded zip file as no longer needed"
 		
 		((menu_number++))

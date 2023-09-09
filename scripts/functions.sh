@@ -435,7 +435,7 @@ viewConfigs()
         nano "$selected_file"
 
         # Update the last modified timestamp of the edited file
-        touch "$selected_file"
+        sudo touch "$selected_file"
 
         # Store the updated last modified timestamp in the associative array
         config_name=$(basename "${selected_file}" | sed 's/config_//')

@@ -392,7 +392,7 @@ migrateBuildTXT()
     local app_name=$1
     
     # Create a migrate.txt file with IP and InstallName
-    touch "$install_path/$app_name/$migrate_file"
+    sudo touch "$install_path/$app_name/$migrate_file"
     
     # Add MIGRATE options to file
     echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file" 2>/dev/null

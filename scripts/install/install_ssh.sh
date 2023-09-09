@@ -167,7 +167,7 @@ addSSHKeyToAuthorizedKeysAndDatabase()
     if [ -f "$key_file" ]; then
         # Ensure the authorized_keys file is empty or create it if it doesn't exist
         if [ ! -f "$auth_key_file" ]; then
-            touch "$auth_key_file"
+            sudo touch "$auth_key_file"
         fi
 
         # Check if the key already exists in the file

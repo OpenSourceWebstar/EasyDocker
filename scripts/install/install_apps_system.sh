@@ -48,7 +48,7 @@ installFail2Ban()
         if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
-            result=$(cd $install_path$app_name && touch $install_path$app_name/logs/auth.log)
+            result=$(cd $install_path$app_name && sudo touch $install_path$app_name/logs/auth.log)
             checkSuccess "Creating Auth.log file"
 
             result=$(mkdir -p $install_path$app_name/config/$app_name $install_path$app_name/config/$app_name/action.d)
@@ -233,7 +233,7 @@ installTraefik()
         checkSuccess "Set permissions for /etc/ and /etc/certs/ Directories"
 
         # Create and secure the acme.json file
-        result=$(touch "$install_path$app_name/etc/certs/acme.json")
+        result=$(sudo touch "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
 
         result=$(chmod 600 "$install_path$app_name/etc/certs/acme.json")
@@ -339,7 +339,7 @@ installCaddy()
 		
 		setupComposeFileNoApp;
 		
-		touch $install_path$app_name/Caddyfile
+		sudo touch $install_path$app_name/Caddyfile
 		
 		editComposeFileDefault;
 
