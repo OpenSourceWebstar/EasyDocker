@@ -756,7 +756,7 @@ dockerStopAllApps()
 {
     isNotice "Please wait for docker containers to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "docker stop $(docker ps -a -q)")
+        result=$(sudo runuser -l $CFG_DOCKER_INSTALL_USER -c "docker stop $(docker ps -a -q)")
         checkSuccess "Stopping all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker stop $(docker ps -a -q))
@@ -768,7 +768,7 @@ dockerStartAllApps()
 {
     isNotice "Please wait for docker containers to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "docker restart $(docker ps -a -q)")
+        result=$(sudo runuser -l $CFG_DOCKER_INSTALL_USER -c "docker restart $(docker ps -a -q)")
         checkSuccess "Starting up all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker restart $(docker ps -a -q))
@@ -780,7 +780,7 @@ dockerAppDown()
 {
     isNotice "Please wait for $app_name container to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
+        result=$(sudo runuser -l $CFG_DOCKER_INSTALL_USER -c "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
         checkSuccess "Shutting down $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
@@ -792,7 +792,7 @@ dockerAppUp()
 {
     isNotice "Please wait for $app_name container to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sudo runuser -l  $CFG_DOCKER_INSTALL_USER -c "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
+        result=$(sudo runuser -l $CFG_DOCKER_INSTALL_USER -c "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
         checkSuccess "Starting up $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)
