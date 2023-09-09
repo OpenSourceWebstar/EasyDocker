@@ -245,7 +245,7 @@ databaseListInstalledApps()
             read -p "Press Enter to continue..."
         fi
     else
-        isSuccessful = "No apps found."
+        isSuccessful "No apps found."
     fi
 }
 
