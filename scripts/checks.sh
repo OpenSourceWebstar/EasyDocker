@@ -38,7 +38,7 @@ checkRequirements()
 
 	if [[ "$OS" == [123] ]]; then
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-			ISACT=$( (su - $CFG_DOCKER_INSTALL_USER -c "systemctl is-active docker" ) 2>&1 )
+			ISACT=$( (runuser -l $CFG_DOCKER_INSTALL_USER -c "systemctl is-active docker" ) 2>&1 )
 		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
 		fi
