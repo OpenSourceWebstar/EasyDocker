@@ -125,7 +125,7 @@ installDockerUser()
 installDockerNetwork()
 {
 	# Check if the network already exists
-	if ! docker network ls | grep -q "$CFG_NETWORK_NAME"; then
+	if ! sudo docker network ls | grep -q "$CFG_NETWORK_NAME"; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
@@ -134,7 +134,7 @@ installDockerNetwork()
 
 		echo "Network $CFG_NETWORK_NAME not found, creating now"
 		# If the network does not exist, create it with the specified subnet
-		docker network create \
+		sudo docker network create \
 			--driver=bridge \
 			--subnet=$CFG_NETWORK_SUBNET \
 			--ip-range=$CFG_NETWORK_SUBNET \
