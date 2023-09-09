@@ -226,21 +226,24 @@ installDockerRootless()
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
                 result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding rootless header to .bashrc"
-
-                result=$(echo 'export XDG_RUNTIME_DIR=/home/'$CFG_DOCKER_INSTALL_USER'/.docker/run' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+ 
+                result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export PATH=/home/'$CFG_DOCKER_INSTALL_USER'/bin:$PATH' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export PATH=/usr/bin:$PATH' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export DOCKER_HOST=unix:///home/'$CFG_DOCKER_INSTALL_USER'/.docker/run/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DOCKER_HOST path to .bashrc"
 
-                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/'$docker_install_user_id'/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DBUS_SESSION_BUS_ADDRESS path to .bashrc"
 
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
+
+            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            checkSuccess "Adding automatic start (linger)"
 
 result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
     curl -fsSL https://get.docker.com/rootless | sh && \
@@ -250,9 +253,6 @@ result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $
 EOF
 )
 checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
-
-            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
-            checkSuccess "Adding automatic start (linger)"
 
             result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
