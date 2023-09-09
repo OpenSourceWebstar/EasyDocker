@@ -548,14 +548,14 @@ dockerDownUpDefault()
 {
     
     if [[ "$OS" == "1" ]]; then
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && docker-compose down")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && docker-compose down)
         checkSuccess "Shutting down container for $app_name"
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && docker-compose up -d")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && docker-compose up -d)
         checkSuccess "Starting up container for $app_name"
     else
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && sudo docker-compose down")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && sudo docker-compose down)
         checkSuccess "Shutting down container for $app_name"
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && sudo docker-compose up -d")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && sudo docker-compose up -d)
         checkSuccess "Starting up container for $app_name"
     fi
 }
@@ -564,14 +564,14 @@ dockerUpDownAdditionalYML()
 {
     cd $install_path$app_name
     if [[ "$OS" == "1" ]]; then
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
         checkSuccess "Shutting down container for $app_name (Using additional yml file)"
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
         checkSuccess "Starting up container for $app_name (Using additional yml file)"
     else
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
         checkSuccess "Shutting down container for $app_name (Using additional yml file)"
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "cd $install_path$app_name && sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER cd $install_path$app_name && sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
         checkSuccess "Starting up container for $app_name (Using additional yml file)"
     fi
 }
@@ -756,7 +756,7 @@ dockerStopAllApps()
 {
     isNotice "Please wait for docker containers to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "docker stop $(docker ps -a -q)")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER "docker stop $(docker ps -a -q)")
         checkSuccess "Stopping all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker stop $(docker ps -a -q))
@@ -768,7 +768,7 @@ dockerStartAllApps()
 {
     isNotice "Please wait for docker containers to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "docker restart $(docker ps -a -q)")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER "docker restart $(docker ps -a -q)")
         checkSuccess "Starting up all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker restart $(docker ps -a -q))
@@ -780,7 +780,7 @@ dockerAppDown()
 {
     isNotice "Please wait for $app_name container to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
         checkSuccess "Shutting down $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
@@ -792,7 +792,7 @@ dockerAppUp()
 {
     isNotice "Please wait for $app_name container to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runuser -l $CFG_DOCKER_INSTALL_USER -c "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
+        result=$(su -u $CFG_DOCKER_INSTALL_USER "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
         checkSuccess "Starting up $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)
