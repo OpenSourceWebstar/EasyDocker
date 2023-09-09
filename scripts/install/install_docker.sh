@@ -125,22 +125,27 @@ installDockerUser()
 installDockerNetwork()
 {
 	# Check if the network already exists
-	if ! su -u $CFG_DOCKER_INSTALL_USER docker network ls | grep -q "$CFG_NETWORK_NAME"; then
+    if ! sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost \
+    "docker network ls | grep -q \"$CFG_NETWORK_NAME\"" 2>/dev/null; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
         echo "################################################"
         echo ""
 
-		echo "Network $CFG_NETWORK_NAME not found, creating now"
+		isNotice "Network $CFG_NETWORK_NAME not found, creating now"
 		# If the network does not exist, create it with the specified subnet
-		sudo -u $CFG_DOCKER_INSTALL_USER docker network create \
-			--driver=bridge \
-			--subnet=$CFG_NETWORK_SUBNET \
-			--ip-range=$CFG_NETWORK_SUBNET \
-			--gateway=${CFG_NETWORK_SUBNET%.*}.1 \
-			--opt com.docker.network.bridge.name=$CFG_NETWORK_NAME \
-			$CFG_NETWORK_NAME
+result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null <<EOF
+docker network create \
+  --driver=bridge \
+  --subnet=$CFG_NETWORK_SUBNET \
+  --ip-range=$CFG_NETWORK_SUBNET \
+  --gateway=${CFG_NETWORK_SUBNET%.*}.1 \
+  --opt com.docker.network.bridge.name=$CFG_NETWORK_NAME \
+  $CFG_NETWORK_NAME
+EOF
+)
+        checkSuccess "Creating docker network"
 	fi
 }
 
