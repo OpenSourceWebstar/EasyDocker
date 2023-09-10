@@ -7,7 +7,7 @@ installDocker()
         if command -v docker &> /dev/null; then
             isSuccessful "Docker is already installed."
         else
-            result=$(curl -fsSL https://get.docker.com | sh )
+            result=$(sudo curl -fsSL https://get.docker.com | sh )
             checkSuccess "Downloading & Installing Docker"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
@@ -217,7 +217,7 @@ installDockerRootless()
                 if grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
                     isNotice "kernel.unprivileged_userns_clone=1 already exists in $sysctl"
                 else
-                    result=$(echo "kernel.unprivileged_userns_clone=1" | sudo -u $easydockeruser tee -a $sysctl > /dev/null)
+                    result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
                     checkSuccess "Adding kernel.unprivileged_userns_clone=1 to $sysctl..."
                     result=$(sudo -u $easydockeruser sysctl --system)
                     checkSuccess "Running sudo -u $easydockeruser sysctl --system..."
@@ -226,25 +226,25 @@ installDockerRootless()
                
             # Update .bashrc file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
-                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding rootless header to .bashrc"
  
-                result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export PATH=/usr/bin:$PATH' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export PATH=/usr/bin:$PATH' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DOCKER_HOST path to .bashrc"
 
-                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DBUS_SESSION_BUS_ADDRESS path to .bashrc"
 
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
-            result=$(sudo -u $easydockeruser loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
 rootless_install=$(cat <<EOF
@@ -263,19 +263,19 @@ EOF
             # Update sysctl file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
 
-                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo -u $easydockeruser tee -a "$sysctl" > /dev/null)
+                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding rootless header to sysctl"
 
-                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo -u $easydockeruser tee -a "$sysctl" > /dev/null)
+                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding ip_unprivileged_port_start to sysctl"
 
-                result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo -u $easydockeruser tee -a "$sysctl" > /dev/null)
+                result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
 
                 isSuccessful "Updated the sysctl with Docker Rootless configuration"
             fi
 
-            result=$(sudo -u $easydockeruser sysctl --system)
+            result=$(sudo sysctl --system)
             checkSuccess "Applying changes to sysctl"
         fi
     fi
