@@ -28,8 +28,8 @@ gitFolderResetAndBackup()
 	result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
     checkSuccess "Clone the Git repository"
 
-    # Copy folders back into the install folder
-    result=$(copyFolder "$backup_install_dir/$backupFolder/" "$script_dir")
+    # Copy files back into the install folder
+    result=$(copyFiles "$backup_install_dir/$backupFolder/" "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
@@ -140,6 +140,36 @@ copyFile()
         result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$file")
         checkSuccess "Updating $file with $easydockeruser ownership"
     fi
+}
+
+copyFiles() 
+{
+    local source="$1"
+    local save_dir="$2"
+
+    # Ensure the source path is expanded to a list of files
+    local files=($(find "$source" -type f))
+
+    if [ ${#files[@]} -eq 0 ]; then
+        echo "No files found in the source directory: $source"
+        return
+    fi
+
+    for file in "${files[@]}"; do
+        local file_name=$(basename "$file")
+        local destination="$save_dir/$file_name"
+
+        result=$(sudo -u $easydockeruser cp -f "$file" "$destination")
+        checkSuccess "Copying $file_name to $destination"
+
+        if [[ $destination == *"$install_path"* ]]; then
+            result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$destination")
+            checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+        else
+            result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$destination")
+            checkSuccess "Updating $file_name with $easydockeruser ownership"
+        fi
+    done
 }
 
 reloadScripts()
