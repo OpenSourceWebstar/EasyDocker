@@ -96,7 +96,7 @@ mkdirFolders()
         local folder_name=$(basename "$dir_path")
         local clean_dir=$(echo "$dir_path" | sed 's#//*#/#g')
 
-        result=$(sudo -u $easydockeruser mkdir -p "$dir_path")
+        result=$(sudo mkdir -p "$dir_path")
         checkSuccess "Creating $folder_name directory"
         if [[ $clean_dir == *"$install_path"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
@@ -115,7 +115,7 @@ copyFolder()
     local save_dir="$2"
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
-    result=$(sudo -u $easydockeruser cp -rf "$folder" "$save_dir")
+    result=$(sudo cp -rf "$folder" "$save_dir")
     checkSuccess "Coping $folder_name to $save_dir"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
@@ -144,7 +144,7 @@ copyFolders()
     for subdir in "${subdirs[@]}"; do
         local subdir_name=$(basename "$subdir")
 
-        result=$(sudo -u $easydockeruser cp -rf "$subdir" "$save_dir")
+        result=$(sudo cp -rf "$subdir" "$save_dir")
         checkSuccess "Copying $subdir_name to $save_dir"
 
         if [[ $clean_dir == *"$install_path"* ]]; then
@@ -164,7 +164,7 @@ copyFile()
     local file_name=$(basename "$file")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
-    result=$(sudo -u $easydockeruser cp "$file" "$save_dir")
+    result=$(sudo cp "$file" "$save_dir")
     checkSuccess "Coping $file_name to $save_dir"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
@@ -193,7 +193,7 @@ copyFiles()
     for file in "${files[@]}"; do
         local file_name=$(basename "$file")
 
-        result=$(sudo -u $easydockeruser cp -f "$file" "$save_dir")
+        result=$(sudo cp -f "$file" "$save_dir")
         checkSuccess "Copying $file_name to $save_dir"
 
         if [[ $clean_dir == *"$install_path"* ]]; then
