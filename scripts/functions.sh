@@ -94,10 +94,11 @@ mkdirFolders()
 {
     for dir_path in "$@"; do
         local folder_name=$(basename "$dir_path")
+        local clean_dir=$(echo "$dir_path" | sed 's#//*#/#g')
 
         result=$(sudo -u $easydockeruser mkdir -p "$dir_path")
         checkSuccess "Creating $folder_name directory"
-        if [[ $folder_name == *"$install_path"* ]]; then
+        if [[ $clean_dir == *"$install_path"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
             checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
