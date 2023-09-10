@@ -112,11 +112,12 @@ copyFolder()
     local folder="$1"
     local folder_name=$(basename "$folder")
     local save_dir="$2"
+    local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     result=$(sudo -u $easydockeruser cp -rf "$folder" "$save_dir")
     checkSuccess "Coping $folder_name to $save_dir"
 
-    if [[ $save_dir == *"$install_path"* ]]; then
+    if [[ $clean_dir == *"$install_path"* ]]; then
         result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$folder")
         checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
@@ -129,6 +130,7 @@ copyFolders()
 {
     local source="$1"
     local save_dir="$2"
+    local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     # Ensure the source path is expanded to a list of subdirectories
     local subdirs=($(find "$source" -mindepth 1 -maxdepth 1 -type d))
@@ -144,7 +146,7 @@ copyFolders()
         result=$(sudo -u $easydockeruser cp -rf "$subdir" "$save_dir")
         checkSuccess "Copying $subdir_name to $save_dir"
 
-        if [[ $save_dir == *"$install_path"* ]]; then
+        if [[ $clean_dir == *"$install_path"* ]]; then
             result=$(sudo -u $easydockeruser chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
@@ -158,16 +160,18 @@ copyFile()
 {
     local file="$1"
     local save_dir="$2"
+    local file_name=$(basename "$subdir")
+    local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     result=$(sudo -u $easydockeruser cp "$file" "$save_dir")
-    checkSuccess "Coping $file to $save_dir"
+    checkSuccess "Coping $file_name to $save_dir"
 
-    if [[ $save_dir == *"$install_path"* ]]; then
+    if [[ $clean_dir == *"$install_path"* ]]; then
         result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
-        checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
+        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
         result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$file")
-        checkSuccess "Updating $file with $easydockeruser ownership"
+        checkSuccess "Updating $file_name with $easydockeruser ownership"
     fi
 }
 
@@ -175,6 +179,7 @@ copyFiles()
 {
     local source="$1"
     local save_dir="$2"
+    local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     # Ensure the source path is expanded to a list of files
     local files=($(find "$source" -type f))
@@ -186,16 +191,15 @@ copyFiles()
 
     for file in "${files[@]}"; do
         local file_name=$(basename "$file")
-        local destination="$save_dir/$file_name"
 
-        result=$(sudo -u $easydockeruser cp -f "$file" "$destination")
-        checkSuccess "Copying $file_name to $destination"
+        result=$(sudo -u $easydockeruser cp -f "$file" "$save_dir")
+        checkSuccess "Copying $file_name to $save_dir"
 
-        if [[ $destination == *"$install_path"* ]]; then
-            result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$destination")
+        if [[ $clean_dir == *"$install_path"* ]]; then
+            result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
             checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
-            result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$destination")
+            result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$save_dir")
             checkSuccess "Updating $file_name with $easydockeruser ownership"
         fi
     done
