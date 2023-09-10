@@ -198,6 +198,7 @@ detectOS()
         fi
 
         scanConfigsForRandomPassword;
+        fixFolderPermissions;
         checkRequirements
     else
         checkSuccess "Unable to detect OS."

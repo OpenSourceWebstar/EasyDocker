@@ -1,5 +1,15 @@
 #!/bin/bash
 
+fixFolderPermissions() 
+{  
+    # Docker install user setup
+    result=$(sudo chmod +x $base_dir $install_path)
+    checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+
+    result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir")
+    checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
+}
+
 runStart() 
 {  
     local path="$3"
