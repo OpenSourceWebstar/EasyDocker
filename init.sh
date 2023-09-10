@@ -45,7 +45,7 @@ initializeScript()
 	echo "OS Updated"
 
 	# Install Apps
-	apt-get install sudo -u $easydockeruser git zip curl apt-transport-https ca-certificates software-properties-common uidmap -y
+	apt-get install sudo git zip curl apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "Prerequisite apps installed."
 
 	# Create Users
@@ -53,7 +53,7 @@ initializeScript()
 		echo "User $sudo_user_name already exists."
 	else
 		# If the user doesn't exist, create the user
-		useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo -u $easydockeruser "$sudo_user_name"
+		useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
 		echo "Setting password for $sudo_user_name user."
 		passwd $sudo_user_name
 		echo "User $sudo_user_name created successfully."
@@ -63,9 +63,9 @@ initializeScript()
 	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
-			sudo -u $easydockeruser mkdir "$folder"
-			sudo -u $easydockeruser chown $sudo_user_name:$sudo_user_name "$folder"
-			sudo -u $easydockeruser chmod 750 "$folder"
+			sudo mkdir "$folder"
+			sudo chown $sudo_user_name:$sudo_user_name "$folder"
+			sudo chmod 750 "$folder"
 			echo "Folder '$folder' created."
 		else
 			echo "Folder '$folder' already exists."
