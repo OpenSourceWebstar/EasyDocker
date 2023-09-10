@@ -153,6 +153,9 @@ installBackupCrontabApp()
                 installSetupCrontabTiming $name
             fi
         fi
+
+        # Consume any remaining input (including newline)
+        read -r leftover_input
     fi
 }
 
