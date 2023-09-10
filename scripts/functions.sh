@@ -19,7 +19,7 @@ gitFolderResetAndBackup()
     checkSuccess "Copy the logs to the backup folder"
 
     # Reset git
-    result=$(copyFile-rf $script_dir)
+    result=$(copyFile -rf $script_dir)
     checkSuccess "Deleting all Git files"
     result=$(mkdirFolders "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
