@@ -58,7 +58,7 @@ installFail2Ban()
             result=$(cd $install_path$app_name/config/$app_name/action.d/ && sudo -u $easydockeruser curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
             checkSuccess "Downloading abuseipdb.conf from GitHub"
             
-            result=$(sudo -u $easydockeruser sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
+            result=$(sudo sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
             checkSuccess "Setting up abuseipdb_apikey"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
@@ -73,10 +73,10 @@ installFail2Ban()
 		    result=$(copyFile $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
-            result=$(sudo -u $easydockeruser sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
+            result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up AbuseIPDB API Key in jail.local file"
 
-            result=$(sudo -u $easydockeruser sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_path$app_name/config/$app_name/jail.local)
+            result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_path$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up IP Whitelist in jail.local file"
 
 		    dockerDownUpDefault;
@@ -243,7 +243,7 @@ installTraefik()
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
-        result=$(sudo -u $easydockeruser sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_path$app_name/etc/traefik.yml")
+        result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_path$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
 		editComposeFileDefault;
@@ -439,7 +439,7 @@ installWireguard()
         echo "---- $menu_number. Enabling IP forwarding"
 		echo ""
 
-        result=$(sudo -u $easydockeruser sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" /etc/sysctl.d/99-sysctl.conf)
+        result=$(sudo sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" /etc/sysctl.d/99-sysctl.conf)
 		checkSuccess "Enabling IPv4 IP Forwarding in the 99-sysctl.conf file (Kernel)"
 
         result=$(sudo -u $easydockeruser sysctl -p)
@@ -553,11 +553,11 @@ installPihole()
 
             if [[ "$PHDNS" =~ ^[yY]$ ]]; then
                 # Updating nameserver address in /etc/resolv.conf
-                result=$(sudo -u $easydockeruser sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
+                result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
                 checkSuccess "Updating nameserver in resolv.conf"
 
                 # Updating DNS address in /etc/systemd/resolved.conf
-                result=$(sudo -u $easydockeruser sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
+                result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
                 checkSuccess "Updating DNS in resolved.conf"
 
                 # Restarting systemd-resolved to apply changes

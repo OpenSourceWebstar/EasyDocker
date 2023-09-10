@@ -90,7 +90,7 @@ uninstallDockerManagerUser()
             checkSuccess "Removing the '$CFG_DOCKER_MANAGER_USER' user"
 
             # Remove the Docker Manager User specific block from /etc/ssh/sshd_config
-            result=$(sudo -u $easydockeruser sed -i '/### EasyDocker Manager User Start/,/### EasyDocker Manager User End/d' /etc/ssh/sshd_config)
+            result=$(sudo sed -i '/### EasyDocker Manager User Start/,/### EasyDocker Manager User End/d' /etc/ssh/sshd_config)
             checkSuccess "Removing the Docker Manager User from /etc/ssh/sshd_config."
 
             # Restart SSH Service

@@ -221,7 +221,7 @@ removeSSHKeyFromAuthorizedKeysAndDatabase()
         local auth_key_file="$ssh_directory/authorized_keys"  # Define auth_key_file here
 
         # Remove the key from the authorized_keys file
-        result=$(sudo -u $easydockeruser sed -i "/$key_filename/d" "$auth_key_file")
+        result=$(sudo sed -i "/$key_filename/d" "$auth_key_file")
         checkSuccess "SSH public key '$key_filename' removed from authorized_keys file."
 
         # Remove the key from the database

@@ -126,13 +126,13 @@ installMailcow()
         echo ""
 
 		# Custom values from files
-		result=$(sudo -u $easydockeruser sed -i "s/DOMAINNAMEHERE/$domain_full/g" $install_path$app_name/docker-compose.$app_name.yml)
+		result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g" $install_path$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Domain Name in the docker-compose.$app_name.yml file"
 
-		result=$(sudo -u $easydockeruser sed -i "s/IPADDRESSHERE/$ip_setup/g" $install_path$app_name/docker-compose.$app_name.yml)
+		result=$(sudo sed -i "s/IPADDRESSHERE/$ip_setup/g" $install_path$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating IP Address in the docker-compose.$app_name.yml file"
 
-		result=$(sudo -u $easydockeruser sed -i "s/PORTHERE/$COWP80C/g" $install_path$app_name/docker-compose.$app_name.yml)
+		result=$(sudo sed -i "s/PORTHERE/$COWP80C/g" $install_path$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Port to $$COWP80C in the docker-compose.$app_name.yml file"
 		
 		if [[ "$using_caddy" == "false" ]]; then
@@ -140,7 +140,7 @@ installMailcow()
 			result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_path$app_name/caddy-to-mailcow-ssl.sh | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
-			result=$(sudo -u $easydockeruser sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_path$app_name/caddy-to-mailcow-ssl.sh)
+			result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_path$app_name/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Setting Domain Name in caddy-to-mailcow-ssl.sh"
 			
 			result=$(sudo -u $easydockeruser chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
@@ -371,22 +371,22 @@ installCozy()
 		result=$(copyFile $install_path/$app_name/env.template $install_path/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
-		result=$(sudo -u $easydockeruser sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
 		checkSuccess "Update database directory to the correct install path"
 
-		result=$(sudo -u $easydockeruser sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
 		checkSuccess "Update storage directory to the correct install path"
 
-		result=$(sudo -u $easydockeruser sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
 		checkSuccess "Update acme directory to the correct install path"
 
-		result=$(sudo -u $easydockeruser sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
 		checkSuccess "Update the domain name to $domain_full"
 
-		result=$(sudo -u $easydockeruser sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
 		checkSuccess "Update the email to $CFG_EMAIL"
 
-		result=$(sudo -u $easydockeruser sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
 		result=$(mkdirFolders $install_path/$app_name/db $install_path/$app_name/storage)
@@ -394,13 +394,13 @@ installCozy()
 
 		setupComposeFileApp;
 
-		result=$(sudo -u $easydockeruser sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"
 
-		result=$(sudo -u $easydockeruser sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
 
-		result=$(sudo -u $easydockeruser sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
 		editComposeFileApp;
@@ -655,7 +655,7 @@ installSearXNG()
 		done
 
 		# Perform the required operation on the file once it exists
-		result=$(sudo -u $easydockeruser sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
+		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
 		dockerDownUpDefault;

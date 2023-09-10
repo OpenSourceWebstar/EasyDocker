@@ -253,10 +253,10 @@ installJitsiMeet()
 		setupEnvFile;
 
 		# Updating custom .env values
-		result=$(sudo -u $easydockeruser sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$install_path$app_name/.jitsi-meet-cfg|g" $install_path$app_name/.env)
+		result=$(sudo sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$install_path$app_name/.jitsi-meet-cfg|g" $install_path$app_name/.env)
 		checkSuccess "Updating .env file with new install path"
 
-		result=$(sudo -u $easydockeruser sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $install_path$app_name/.env)
+		result=$(sudo sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $install_path$app_name/.env)
 		checkSuccess "Updating .env file with Public URL to $host_setup"
 
 		# Values are missing from the .env by default for some reason
@@ -440,19 +440,19 @@ installAkaunting()
 
 		setupComposeFileApp;
 
-		result=$(sudo -u $easydockeruser sed -i 's|- akaunting-data:/var/www/html|- ./akaunting-data/:/var/www/html|g' $install_path$app_name/docker-compose.yml)
+		result=$(sudo sed -i 's|- akaunting-data:/var/www/html|- ./akaunting-data/:/var/www/html|g' $install_path$app_name/docker-compose.yml)
 		checkSuccess "Updating akaunting-data to persistant storage"
 
-		result=$(sudo -u $easydockeruser sed -i 's|- akaunting-db:/var/lib/mysql|- ./akaunting-db/:/var/lib/mysql|g' $install_path$app_name/docker-compose.yml)
+		result=$(sudo sed -i 's|- akaunting-db:/var/lib/mysql|- ./akaunting-db/:/var/lib/mysql|g' $install_path$app_name/docker-compose.yml)
 		checkSuccess "Updating akaunting-db to persistant storage"
 
-		result=$(sudo -u $easydockeruser sed -i "s|8080|$port|g" $install_path$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|8080|$port|g" $install_path$app_name/docker-compose.yml)
 		checkSuccess "Updating port 8080 to $port in docker-compose.yml"
 		
 		# Find the last instance of "networks:" in the file and get its line number
 		last_network=$(sudo -u $easydockeruser grep -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
 		if [ -n "$last_network" ]; then
-			result=$(sudo -u $easydockeruser sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
+			result=$(sudo sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
 		fi
 		
@@ -469,13 +469,13 @@ installAkaunting()
 		result=$(copyFile $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
 		checkSuccess "Copying example run.env for setup"
 	
-		result=$(sudo -u $easydockeruser sed -i "s/akaunting.example.com/$host_setup/g" $install_path$app_name/env/run.env)
+		result=$(sudo sed -i "s/akaunting.example.com/$host_setup/g" $install_path$app_name/env/run.env)
 		checkSuccess "Updating Domain in run.env to $host_setup"
 		
-		result=$(sudo -u $easydockeruser sed -i "s/en-US/$CFG_AKAUNTING_LANGUAGE/g" $install_path$app_name/env/run.env)
+		result=$(sudo sed -i "s/en-US/$CFG_AKAUNTING_LANGUAGE/g" $install_path$app_name/env/run.env)
 		checkSuccess "Updating language in run.env to $CFG_AKAUNTING_LANGUAGE"	
 
-		result=$(sudo -u $easydockeruser sed -i "s/akaunting_password/$CFG_AKAUNTING_PASSWORD/g" $install_path$app_name/env/db.env)
+		result=$(sudo sed -i "s/akaunting_password/$CFG_AKAUNTING_PASSWORD/g" $install_path$app_name/env/db.env)
 		checkSuccess "Setting Akaunting Password to generated password in config file"
 
         echo ""
@@ -697,13 +697,13 @@ installMattermost()
         result=$(sudo -u $easydockeruser chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)
 		checkSuccess "Setting folder permissions for $app_name folders"
 
-        result=$(sudo -u $easydockeruser sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_path$app_name/.env)
+        result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_path$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
 		
-        result=$(sudo -u $easydockeruser sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_path$app_name/.env)
+        result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_path$app_name/.env)
 		checkSuccess "Updating .env file HTTP_PORT to $MATP80C"	
 				
-        result=$(sudo -u $easydockeruser sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_path$app_name/.env)
+        result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_path$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $MATP443C"	
 		
 		editEnvFileDefault;

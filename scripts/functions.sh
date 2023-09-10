@@ -160,8 +160,9 @@ copyFolders()
 copyFile() 
 {
     local file="$1"
-    local save_dir="$2"
     local file_name=$(basename "$file")
+    local save_dir="$2"
+    local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     result=$(sudo cp "$file" "$save_dir")
@@ -169,10 +170,10 @@ copyFile()
 
     if [[ $clean_dir == *"$install_path"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
-        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+        checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
     else
         result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
-        checkSuccess "Updating $file_name with $easydockeruser ownership"
+        checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
     fi
 }
 
@@ -747,7 +748,7 @@ editComposeFileDefault()
 {
     local compose_file="$install_path$app_name/docker-compose.yml"
 
-    result=$(sudo -u $easydockeruser sed -i \
+    result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -761,16 +762,16 @@ editComposeFileDefault()
 
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo -u $easydockeruser sed -i "s/#traefik/traefik/g" $compose_file)
+            result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
             checkSuccess "Enabling Traefik options for public setup"
-            result=$(sudo -u $easydockeruser sed -i "s/#labels:/labels:/g" $compose_file)
+            result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
             checkSuccess "Enable labels for Traefik option options on private setup"
         fi
     fi
 
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo -u $easydockeruser sed -i "s/labels:/#labels/g" $compose_file)
+            result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
             checkSuccess "Disable Traefik options for private setup)"
         fi
     fi
@@ -782,7 +783,7 @@ editComposeFileApp()
 {
     local compose_file="$install_path$app_name/docker-compose.$app_name.yml"
 
-    result=$(sudo -u $easydockeruser sed -i \
+    result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -796,14 +797,14 @@ editComposeFileApp()
 
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo -u $easydockeruser sed -i "s/#traefik/traefik/g" $compose_file)
+            result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
             checkSuccess "Enabling Traefik options for public setup)"
         fi
     fi
 
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo -u $easydockeruser sed -i "s/labels:/#labels/g" $compose_file)
+            result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
             checkSuccess "Disable Traefik options for private setup)"
         fi
     fi
@@ -815,7 +816,7 @@ editEnvFileDefault()
 {
     local env_file="$install_path$app_name/.env"
 
-    result=$(sudo -u $easydockeruser sed -i \
+    result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -836,7 +837,7 @@ editCustomFile()
     local custompath="$2"
     local custompathandfile="$custompath/$customfile"
 
-    result=$(sudo -u $easydockeruser sed -i \
+    result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -909,7 +910,7 @@ removeEmptyLineAtFileEnd()
   local last_line=$(tail -n 1 "$file_path")
   
   if [ -z "$last_line" ]; then
-    result=$(sudo -u $easydockeruser sed -i '$d' "$file_path")
+    result=$(sudo sed -i '$d' "$file_path")
     checkSuccess "Removed the empty line at the end of $file_path"
   fi
 }
@@ -931,10 +932,10 @@ scanConfigsForRandomPassword()
                     local random_password=$(openssl rand -base64 12 | tr -d '+/=')
 
                     # Capture the content before "RANDOMIZEDPASSWORD"
-                    local config_content=$(sudo -u $easydockeruser sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$scanned_config_file")
+                    local config_content=$(sudo sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$scanned_config_file")
 
                     # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
-                    sudo -u $easydockeruser sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
+                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
 
                     # Display the update message with the captured content and file name
                     #isSuccessful "Updated $config_content in $(basename "$scanned_config_file") with a new password: $random_password"

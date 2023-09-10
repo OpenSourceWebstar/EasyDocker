@@ -452,7 +452,7 @@ migrateCheckAndUpdateIP()
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
         local migrate_ip=$(sudo -u $easydockeruser grep -o 'MIGRATE_IP=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_ip" != "$public_ip" ]; then
-            result=$(sudo -u $easydockeruser sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$install_path/$app_name/$migrate_file")
+            result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$install_path/$app_name/$migrate_file")
             checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
             
             # Replace old IP with $public_ip in .yml and .env files
@@ -471,7 +471,7 @@ migrateCheckAndUpdateInstallName()
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
         local migrate_install_name=$(sudo -u $easydockeruser grep -o 'MIGRATE_INSTALL_NAME=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_install_name" != "$CFG_INSTALL_NAME" ]; then
-            result=$(sudo -u $easydockeruser sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$install_path/$app_name//$migrate_file")
+            result=$(sudo sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$install_path/$app_name//$migrate_file")
             checkSuccess "Updated MIGRATE_INSTALL_NAME in $migrate_file to $CFG_INSTALL_NAME."
         fi
     else
@@ -617,7 +617,7 @@ migrateScanMigrateToConfigs() {
               # Check if the existing value is different from the value in migrate.txt
               if [[ "$existing_value" != "$var_value" ]]; then
                 # Update the value in the config
-                sudo -u $easydockeruser sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$config_file"
+                sudo sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$config_file"
                 #echo "Updated variable $var_name in $config_file to $var_value" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
               fi
             fi
