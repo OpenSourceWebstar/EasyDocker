@@ -19,7 +19,7 @@ checkUpdates()
 
 		# Internet Test
 		isNotice "Testing internet, please wait..."
-		if sudo -u $easydockeruser ping -c 4 "9.9.9.9" > /dev/null; then
+		if sudo ping -c 4 "9.9.9.9" > /dev/null; then
 			isSuccessful "Internet connectivity is working."
 		else
 			isError "Internet connectivity is not working."
