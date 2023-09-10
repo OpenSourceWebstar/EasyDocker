@@ -101,7 +101,7 @@ databaseAppScan()
     fi
 
     # Scan the folder and retrieve folder names
-    folder_names=$(sudo -u $easydockeruser find "$install_path" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+    folder_names=$(sudo find "$install_path" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
     # Check if no folders are found
     if [ -z "$folder_names" ]; then

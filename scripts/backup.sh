@@ -161,10 +161,10 @@ backupCleanFiles()
     fi
 
     if [ "$app_name" == "full" ]; then
-        result=$(sudo -u $easydockeruser find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
+        result=$(sudo find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
         checkSuccess "Deleting Backups older than $CFG_BACKUP_KEEPDAYS days"
     elif  [ "$app_name" != "full" ]; then
-        result=$(sudo -u $easydockeruser find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
+        result=$(sudo find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
         checkSuccess "Deleting Backups older than $CFG_BACKUP_KEEPDAYS days"
     fi
 }
@@ -188,7 +188,7 @@ backupFindLatestFile()
         fi
     elif [ "$app_name" != "full" ]; then
         cd $BACKUP_SAVE_DIRECTORY
-        LatestBackupFile=$(sudo -u $easydockeruser find . -maxdepth 1 -type f -regex ".*${app_name}.*${backupDate}\.zip" | sort -r | head -n 1)
+        LatestBackupFile=$(sudo find . -maxdepth 1 -type f -regex ".*${app_name}.*${backupDate}\.zip" | sort -r | head -n 1)
         if [ -z "$LatestBackupFile" ]; then
             isNotice "No backup files found for $app_name on $backupDate."
         else

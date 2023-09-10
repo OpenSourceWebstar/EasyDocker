@@ -231,13 +231,13 @@ migrateRestoreFileMoveFromMigrate() {
         read -p "" choice
 
         if [ "$choice" = "1" ]; then
-            file_count=$(sudo -u $easydockeruser find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
+            file_count=$(sudo find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
             if [ "$file_count" -eq 0 ]; then
                 echo ""
                 isNotice "No files found in $migrate_single_dir"
                 continue
             fi
-            files=( $(sudo -u $easydockeruser find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip") )
+            files=( $(sudo find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip") )
             echo ""
             isNotice "Please select a file to move:"
             echo ""
@@ -265,13 +265,13 @@ migrateRestoreFileMoveFromMigrate() {
             checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
 
         elif [ "$choice" = "2" ]; then
-            file_count=$(sudo -u $easydockeruser find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
+            file_count=$(sudo find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
             if [ "$file_count" -eq 0 ]; then
                 echo ""
                 isNotice "No files found in $migrate_full_dir"
                 continue
             fi
-            files=( $(sudo -u $easydockeruser find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip") )
+            files=( $(sudo find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip") )
             echo ""
             isNotice "Select a file to move:"
             for i in "${!files[@]}"; do
@@ -326,7 +326,7 @@ migrateRestoreFileMoveFromMigrate() {
                 isNotice "No files found in $src_dir... returning to previous menu."
                 continue
             fi
-            files=( $(sudo -u $easydockeruser find "$src_dir" -maxdepth 1 -type f -name "*.zip") )
+            files=( $(sudo find "$src_dir" -maxdepth 1 -type f -name "*.zip") )
             echo ""
             isNotice "Files to be moved :"
             echo ""
@@ -456,7 +456,7 @@ migrateCheckAndUpdateIP()
             checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
             
             # Replace old IP with $public_ip in .yml and .env files
-            result=$(sudo -u $easydockeruser find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
+            result=$(sudo find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
