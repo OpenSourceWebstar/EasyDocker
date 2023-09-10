@@ -114,7 +114,7 @@ installCrontab()
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
             result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - )
-            checkSuccess "Setting up crontab for root user"
+            checkSuccess "Setting up crontab for $easydockeruser user"
         fi
 
         export VISUAL=nano
