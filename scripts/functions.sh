@@ -29,7 +29,7 @@ gitFolderResetAndBackup()
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
-    result=$(copyFolder "$backup_install_dir/$backupFolder/*" "$script_dir")
+    result=$(copyFolder "$backup_install_dir/$backupFolder/" "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
