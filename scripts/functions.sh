@@ -111,7 +111,7 @@ function checkSuccess()
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}SUCCESS:${NC} $1"
         if [ -f "$logs_dir/$docker_log_file" ]; then
-            echo "SUCCESS: $1" | sudo tee -a "$logs_dir/$docker_log_file"
+            echo "SUCCESS: $1" | sudo tee -a "$logs_dir/$docker_log_file" >/dev/null
         fi
     else
         echo -e "${RED}ERROR:${NC} $1"
