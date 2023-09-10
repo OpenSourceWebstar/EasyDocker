@@ -44,15 +44,15 @@ checkUpdates()
 					[yY])
 						gitFolderResetAndBackup;
 						reloadScripts;
-						scanConfigsForRandomPassword;
 
 						isSuccessful "Starting/Restarting EasyDocker"
 						detectOS;
+						scanConfigsForRandomPassword;
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
-						scanConfigsForRandomPassword;
                         detectOS;
+						scanConfigsForRandomPassword;
 						;;
 					*)
 						isNotice "Please provide a valid input (y or n)."
