@@ -55,6 +55,6 @@ dockerDownRemove()
 
 dockerDeleteData()
 {
-    result=$(rm -rf $install_path$app_name)
+    result=$(sudo rm -rf $install_path$app_name)
     checkSuccess "Deleting $app_name install folder"
 }
