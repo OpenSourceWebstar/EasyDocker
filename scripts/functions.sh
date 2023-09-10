@@ -90,7 +90,7 @@ runUpdate()
     checkSuccess "Running Update Script"
 }
 
-mkdirFolderss() 
+mkdirFolders() 
 {
     local owner="$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER"
 
