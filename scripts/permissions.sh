@@ -3,7 +3,7 @@
 fixFolderPermissions() 
 {  
     # Docker install user setup
-    result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER")
+    result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
     checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
     result=$(sudo chmod +x $base_dir $install_path)
