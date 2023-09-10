@@ -10,17 +10,17 @@ installDocker()
             result=$(curl -fsSL https://get.docker.com -o get-docker.sh)
             checkSuccess "Downloading Docker"
 
-            result=$(sudo sh get-docker.sh)
+            result=$(sudo -u $easydockeruser sh get-docker.sh)
             checkSuccess "Installing Docker"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                result=$(sudo systemctl start docker)
+                result=$(sudo -u $easydockeruser systemctl start docker)
                 checkSuccess "Starting Docker Service"
 
-                result=$(sudo systemctl enable docker)
+                result=$(sudo -u $easydockeruser systemctl enable docker)
                 checkSuccess "Enabling Docker Service"
 
-                result=$(sudo usermod -aG docker $USER)
+                result=$(sudo -u $easydockeruser usermod -aG docker $USER)
                 checkSuccess "Adding user to 'docker' group"
             fi
 
@@ -54,10 +54,10 @@ installDockerCompose()
         ######################################        
         
         if [[ "$OS" == [123] ]]; then
-            result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
+            result=$(sudo -u $easydockeruser curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 
-            result=$(sudo chmod +x /usr/local/bin/docker-compose)
+            result=$(sudo -u $easydockeruser chmod +x /usr/local/bin/docker-compose)
             checkSuccess "Make the script executable"
 
             result=$(docker-compose --version)
@@ -69,7 +69,7 @@ installDockerCompose()
         ######################################
 
         if [[ "$OS" == "4" ]]; then
-            sudo pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
+            sudo -u $easydockeruser pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
         fi
 
         echo ""
@@ -90,9 +90,9 @@ installDockerUser()
             isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
         else
             # If the user doesn't exist, create the user
-            result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+            result=$(sudo -u $easydockeruser useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo -u $easydockeruser "$CFG_DOCKER_INSTALL_USER")
             checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
-            result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo chpasswd)
+            result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo -u $easydockeruser chpasswd)
             checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
 
             # Check if PermitRootLogin is set to "yes" before disabling it
@@ -134,7 +134,7 @@ installDockerNetwork()
 
 		isNotice "Network $CFG_NETWORK_NAME not found, creating now"
 		# If the network does not exist, create it with the specified subnet
-network_create=$(sudo cat <<EOF
+network_create=$(sudo -u $easydockeruser cat <<EOF
 docker network create \
   --driver=bridge \
   --subnet=$CFG_NETWORK_SUBNET \
@@ -155,11 +155,11 @@ installDockerCheck()
     #### Test if Docker Service is Running ###
     ##########################################
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
+        ISACT=$( (sudo -u $easydockeruser systemctl is-active docker ) 2>&1 )
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Checking Docker service status. Waiting if not found."
             while [[ "$ISACT" != "active" ]] && [[ $X -le 10 ]]; do
-                sudo systemctl start docker | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+                sudo -u $easydockeruser systemctl start docker | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
                 sleep 10s &
                 pid=$! # Process Id of the previous running command
                 spin='-\|/'
@@ -171,7 +171,7 @@ installDockerCheck()
                     sleep .1
                 done
                 printf "\r"
-                ISACT=`sudo systemctl is-active docker`
+                ISACT=`sudo -u $easydockeruser systemctl is-active docker`
                 let X=X+1
                 echo "$X"
             done
@@ -188,16 +188,16 @@ installDockerRootless()
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
-            result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
+            result=$(sudo -u $easydockeruser apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
             checkSuccess "Installing necessary packages"
 
-            result=$(sudo systemctl disable --now docker.service docker.socket)
+            result=$(sudo -u $easydockeruser systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
 
             # slirp4netns update and install
             if ! command -v slirp4netns &> /dev/null; then
                 isNotice "slirp4netns is not installed. Installing..."
-                result=$(sudo apt-get install -y slirp4netns)
+                result=$(sudo -u $easydockeruser apt-get install -y slirp4netns)
                 checkSuccess "Installing slirp4netns"
             else
                 isNotice "slirp4netns is already installed"
@@ -206,9 +206,9 @@ installDockerRootless()
                 if [[ "$installed_version" != "$latest_version" ]]; then
                     isNotice "slirp4netns version $installed_version is outdated."
                     isNotice "Installing version $latest_version..."
-                    result=$(sudo apt-get update)
+                    result=$(sudo -u $easydockeruser apt-get update)
                     checkSuccess "Updating apt packages"
-                    result=$(sudo apt-get install -y slirp4netns)
+                    result=$(sudo -u $easydockeruser apt-get install -y slirp4netns)
                     checkSuccess "Installing slirp4netns"
                 else
                     isSuccessful "slirp4netns version $installed_version is up to date"
@@ -220,34 +220,34 @@ installDockerRootless()
                 if grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
                     isNotice "kernel.unprivileged_userns_clone=1 already exists in $sysctl"
                 else
-                    result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
+                    result=$(echo "kernel.unprivileged_userns_clone=1" | sudo -u $easydockeruser tee -a $sysctl > /dev/null)
                     checkSuccess "Adding kernel.unprivileged_userns_clone=1 to $sysctl..."
-                    result=$(sudo sysctl --system)
-                    checkSuccess "Running sudo sysctl --system..."
+                    result=$(sudo -u $easydockeruser sysctl --system)
+                    checkSuccess "Running sudo -u $easydockeruser sysctl --system..."
                 fi
             fi
                
             # Update .bashrc file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
-                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding rootless header to .bashrc"
  
-                result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export PATH=/usr/bin:$PATH' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export PATH=/usr/bin:$PATH' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DOCKER_HOST path to .bashrc"
 
-                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo -u $easydockeruser tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DBUS_SESSION_BUS_ADDRESS path to .bashrc"
 
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
-            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            result=$(sudo -u $easydockeruser loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
 rootless_install=$(cat <<EOF
@@ -260,25 +260,25 @@ EOF
             result=$(runCommandForDockerInstallUser $rootless_install)
             checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
 
-            result=$(sudo cp $sysctl $sysctl.bak)
+            result=$(sudo -u $easydockeruser cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
 
             # Update sysctl file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
 
-                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo tee -a "$sysctl" > /dev/null)
+                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo -u $easydockeruser tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding rootless header to sysctl"
 
-                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo tee -a "$sysctl" > /dev/null)
+                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo -u $easydockeruser tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding ip_unprivileged_port_start to sysctl"
 
-                result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
+                result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo -u $easydockeruser tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
 
                 isSuccessful "Updated the sysctl with Docker Rootless configuration"
             fi
 
-            result=$(sudo sysctl --system)
+            result=$(sudo -u $easydockeruser sysctl --system)
             checkSuccess "Applying changes to sysctl"
         fi
     fi

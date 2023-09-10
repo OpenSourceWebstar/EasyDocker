@@ -26,7 +26,7 @@ dockerDownShutdown()
                 result=$(runCommandForDockerInstallUser "docker-compose down")
                 isSuccessful "Shutting down container for $app_name"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                result=$(sudo docker-compose down)
+                result=$(sudo -u $easydockeruser docker-compose down)
                 isSuccessful "Shutting down container for $app_name"
             fi
         fi

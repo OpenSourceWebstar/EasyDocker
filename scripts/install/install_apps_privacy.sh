@@ -95,7 +95,7 @@ installMailcow()
 			local ports_to_scan="25|$COWP80C|110|143|$COWP443C|465|587|993|995|4190"
 			local scan_result
 
-			scan_result=$(sudo ss -tlpn | sudo grep -E -w "$ports_to_scan")
+			scan_result=$(sudo -u $easydockeruser ss -tlpn | sudo -u $easydockeruser grep -E -w "$ports_to_scan")
 
 			if [[ -n "$scan_result" ]]; then
 				isError "Some of the specified ports are not free:"
@@ -114,10 +114,10 @@ installMailcow()
         echo "---- $menu_number. Pulling Mailcow GitHub repo into the $install_path$app_name folder"
         echo ""
 
-		result=$(sudo git clone https://github.com/mailcow/mailcow-dockerized $install_path/mailcow)
+		result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized $install_path/mailcow)
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 
-		result=$(sudo cp $script_dir/containers/docker-compose.$app_name.yml $install_path$app_name/docker-compose.$app_name.yml | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+		result=$(sudo -u $easydockeruser cp $script_dir/containers/docker-compose.$app_name.yml $install_path$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
 
 		((menu_number++))
@@ -126,24 +126,24 @@ installMailcow()
         echo ""
 
 		# Custom values from files
-		result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g" $install_path$app_name/docker-compose.$app_name.yml)
+		result=$(sudo -u $easydockeruser sed -i "s/DOMAINNAMEHERE/$domain_full/g" $install_path$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Domain Name in the docker-compose.$app_name.yml file"
 
-		result=$(sudo sed -i "s/IPADDRESSHERE/$ip_setup/g" $install_path$app_name/docker-compose.$app_name.yml)
+		result=$(sudo -u $easydockeruser sed -i "s/IPADDRESSHERE/$ip_setup/g" $install_path$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating IP Address in the docker-compose.$app_name.yml file"
 
-		result=$(sudo sed -i "s/PORTHERE/$COWP80C/g" $install_path$app_name/docker-compose.$app_name.yml)
+		result=$(sudo -u $easydockeruser sed -i "s/PORTHERE/$COWP80C/g" $install_path$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Port to $$COWP80C in the docker-compose.$app_name.yml file"
 		
 		if [[ "$using_caddy" == "false" ]]; then
 			# Setup SSL Transfer scripts
-			result=$(sudo cp $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_path$app_name/caddy-to-mailcow-ssl.sh | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+			result=$(sudo -u $easydockeruser cp $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_path$app_name/caddy-to-mailcow-ssl.sh | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
-			result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_path$app_name/caddy-to-mailcow-ssl.sh)
+			result=$(sudo -u $easydockeruser sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_path$app_name/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Setting Domain Name in caddy-to-mailcow-ssl.sh"
 			
-			result=$(sudo chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
+			result=$(sudo -u $easydockeruser chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Updating permissions for caddy-to-mailcow-ssl.sh"
 			
 			# Setup crontab
@@ -157,7 +157,7 @@ installMailcow()
 		fi
 		
 		# Script to setup Mailcow
-		result=$(cd mailcow && sudo ./generate_config.sh)
+		result=$(cd mailcow && sudo -u $easydockeruser ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
 
 		((menu_number++))
@@ -264,7 +264,7 @@ installOwnCloud()
 
 if [[ "$public" == "true" ]]; then	
 cd $install_path$app_name
-sudo cat << EOF > $install_path$app_name/.env
+sudo -u $easydockeruser cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
@@ -276,7 +276,7 @@ fi
 
 if [[ "$public" == "false" ]]; then	
 cd $install_path$app_name
-sudo cat << EOF > $install_path$app_name/.env
+sudo -u $easydockeruser cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
@@ -365,28 +365,28 @@ installCozy()
         echo "---- $menu_number. Pulling from $app_name GitHub."
         echo ""
 
-		result=$(sudo git clone https://github.com/vsellier/easy-cozy.git $install_path/$app_name)
+		result=$(sudo -u $easydockeruser git clone https://github.com/vsellier/easy-cozy.git $install_path/$app_name)
 		checkSuccess "Cloning the Easy-Cozy from GitHub"
 		
-		result=$(sudo cp $install_path/$app_name/env.template $install_path/$app_name/.env | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+		result=$(sudo -u $easydockeruser cp $install_path/$app_name/env.template $install_path/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
-		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
 		checkSuccess "Update database directory to the correct install path"
 
-		result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
 		checkSuccess "Update storage directory to the correct install path"
 
-		result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
 		checkSuccess "Update acme directory to the correct install path"
 
-		result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
 		checkSuccess "Update the domain name to $domain_full"
 
-		result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
 		checkSuccess "Update the email to $CFG_EMAIL"
 
-		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
 		result=$(mkdirFolder $install_path/$app_name/db $install_path/$app_name/storage)
@@ -394,13 +394,13 @@ installCozy()
 
 		setupComposeFileApp;
 
-		result=$(sudo sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
+		result=$(sudo -u $easydockeruser sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"
 
-		result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo -u $easydockeruser sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
 
-		result=$(sudo sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo -u $easydockeruser sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
 		editComposeFileApp;
@@ -418,11 +418,11 @@ installCozy()
         echo ""
 
 		# Setting up a single instance of Cozy
-		result=$(cd $install_path/$app_name && sudo ./create-instance.sh $cozy_user_1)
+		result=$(cd $install_path/$app_name && sudo -u $easydockeruser ./create-instance.sh $cozy_user_1)
 		checkSuccess "Creating instance of $app_name for $cozy_user_1"
 
 		if [[ "$cozy_user_1_apps_enabled" == true ]]; then
-			result=$(sudo ./application.sh $cozy_user_1 $cozy_user_1_apps)
+			result=$(sudo -u $easydockeruser ./application.sh $cozy_user_1 $cozy_user_1_apps)
 			checkSuccess "Setting up applications for $app_name for $cozy_user_1"
 		fi
 
@@ -655,7 +655,7 @@ installSearXNG()
 		done
 
 		# Perform the required operation on the file once it exists
-		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
+		result=$(sudo -u $easydockeruser sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
 		dockerDownUpDefault;
@@ -879,16 +879,16 @@ installActual()
 		if [ -f "$ssl_dir$ssl_key" ]; then
 			checkSuccess "Self Signed SSL Certificate found, installing...."
 
-			result=$(sudo mkdir -p $install_path$app_name/actual-data)
+			result=$(sudo -u $easydockeruser mkdir -p $install_path$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
-			result=$(sudo cp $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+			result=$(sudo -u $easydockeruser cp $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying config.json to actual-data folder"
 
-			result=$(sudo cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+			result=$(sudo -u $easydockeruser cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying cert to actual-data folder"
 
-			result=$(sudo cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+			result=$(sudo -u $easydockeruser cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying key to actual-data folder"
 			
 		else

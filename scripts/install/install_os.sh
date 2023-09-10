@@ -8,7 +8,7 @@ installDebianUbuntu()
             if [[ "$OS" == "1" ]]; then
                 export DEBIAN_FRONTEND="noninteractive"
             fi
-            (apt update && apt install sudo -y && apt-get autoclean) > $logs_dir/$docker_log_file 2>&1 &
+            (apt update && apt install sudo -u $easydockeruser -y && apt-get autoclean) > $logs_dir/$docker_log_file 2>&1 &
             ## Show a spinner for activity progress
             pid=$! # Process Id of the previous running command
             spin='-\|/'
@@ -22,10 +22,10 @@ installDebianUbuntu()
             printf "\r"
 
             isNotice "Installing Prerequisite Packages..."
-            result=$(sudo apt update > /dev/null)
+            result=$(sudo -u $easydockeruser apt update > /dev/null)
             checkSuccess "Running application update"
             installed_apps="apt install curl wget git zip htop sqlite3 pv sshpass rsync acl p7zip*"
-            result=$(sudo $installed_apps -y > /dev/null)
+            result=$(sudo -u $easydockeruser $installed_apps -y > /dev/null)
             checkSuccess "Installing system applications"
         else
             isNotice "System Updates already ran within the last ${CFG_UPDATER_CHECK} minutes, skipping..."
@@ -40,7 +40,7 @@ installArch()
         if [[ "$UPDARCH" == [yY] ]]; then
             isNotice "Installing System Updates... this may take a while...be patient."
             
-            (sudo pacman -Syu --noconfirm) > $logs_dir/$docker_log_file 2>&1 &
+            (sudo -u $easydockeruser pacman -Syu --noconfirm) > $logs_dir/$docker_log_file 2>&1 &
             ## Show a spinner for activity progress
             pid=$! # Process Id of the previous running command
             spin='-\|/'
@@ -58,12 +58,12 @@ installArch()
 
         isNotice "Installing Prerequisite Packages..."
 
-        sudo pacman -Sy git curl wget --noconfirm | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+        sudo -u $easydockeruser pacman -Sy git curl wget --noconfirm | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Installing Docker-CE (Community Edition)..."
 
-            sudo pacman -Sy docker --noconfirm | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+            sudo -u $easydockeruser pacman -Sy docker --noconfirm | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
             echo "- docker-ce version is now:"
             DOCKERV=$(docker -v)

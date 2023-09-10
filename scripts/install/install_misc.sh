@@ -9,22 +9,22 @@ installSwapfile()
             echo "######       Increasing Swapfile      ######"
             echo "############################################"
             echo ""
-            ISSWAP=$( (sudo swapoff /swapfile) 2>&1 )
+            ISSWAP=$( (sudo -u $easydockeruser swapoff /swapfile) 2>&1 )
             if [[ "$ISSWAP" != *"No such file or directory"* ]]; then
-                result=$(sudo swapoff /swapfile)
+                result=$(sudo -u $easydockeruser swapoff /swapfile)
                 isSuccessful "Turning off /swapfile (if needed)"
             fi
 
-            result=$(sudo fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
+            result=$(sudo -u $easydockeruser fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
             checkSuccess "Allocating $CFG_SWAPFILE_SIZE to the /swapfile"
             
-            result=$(sudo chmod 0600 /swapfile)
+            result=$(sudo -u $easydockeruser chmod 0600 /swapfile)
             checkSuccess "Adding permissions to the /swapfile"
 
-            result=$(sudo mkswap /swapfile)
+            result=$(sudo -u $easydockeruser mkswap /swapfile)
             checkSuccess "Swapping to the new /swapfile"
 
-            result=$(sudo swapon /swapfile)
+            result=$(sudo -u $easydockeruser swapon /swapfile)
             checkSuccess "Enabling the new /swapfile"
         fi
     fi
@@ -101,19 +101,19 @@ installCrontab()
         # Check to see if already installed
         if [[ "$ISCRON" == *"command not found"* ]]; then
             isNotice "Crontab is not installed, setting up now."
-            result=$(sudo apt update)
+            result=$(sudo -u $easydockeruser apt update)
             checkSuccess "Updating apt for post installation"
-            result=$(sudo apt install cron -y)
+            result=$(sudo -u $easydockeruser apt install cron -y)
             isSuccessful "Installing crontab application"
-            result=$(sudo crontab -l)
+            result=$(sudo -u $easydockeruser crontab -l)
             isSuccessful "Enabling crontab on the system"
         fi
 
         search_line="# cron is set up for root"
-        cron_output=$(sudo crontab -l 2>/dev/null)
+        cron_output=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
-            result=$( (sudo crontab -l 2>/dev/null; echo "# cron is set up for root") | sudo crontab -u root - )
+            result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for root") | sudo -u $easydockeruser crontab -u root - )
             checkSuccess "Setting up crontab for root user"
         fi
 
@@ -127,7 +127,7 @@ installCrontab()
 # Function to remove all crontab data
 deleteCrontab() 
 {
-    echo "" | sudo crontab -
+    echo "" | sudo -u $easydockeruser crontab -
     echo "All crontab data has been deleted."
 }
 
@@ -162,10 +162,10 @@ installCrontabSSHScan()
     local cron_job="*/5 * * * * cd /docker/install/ && chmod 0775 crontab.sh && ./crontab.sh sshscan"
 
     # Check if the cron job does not exist in the user's crontab
-    if ! sudo crontab -l | grep -qF "$cron_job"; then
-        result=$( (sudo crontab -l 2>/dev/null; echo "$marker") | sudo crontab - )
+    if ! sudo -u $easydockeruser crontab -l | grep -qF "$cron_job"; then
+        result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$marker") | sudo -u $easydockeruser crontab - )
         checkSuccess "Add the SSHScan marker to the crontab"
-        result=$( (sudo crontab -l 2>/dev/null; echo "$cron_job") | sudo crontab - )
+        result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$cron_job") | sudo -u $easydockeruser crontab - )
         checkSuccess "Adding SSH Scaning to the Crontab"
     else
         isNotice "Cron job for SSH scan already exists. Skipping insertion."
@@ -177,7 +177,7 @@ installSetupCrontab() {
     local entry_name=$1
 
     # Check to see if already instealled
-    if ! sudo crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
         isError "Crontab is not setup"
         return
     fi
@@ -213,7 +213,7 @@ $crontab_entry")
         checkSuccess "Insert the non-full entry after the apps comment"
     fi
 
-    result=$(echo "$existing_crontab" | sudo crontab -)
+    result=$(echo "$existing_crontab" | sudo -u $easydockeruser crontab -)
     checkSuccess "Set the updated crontab"
     
     crontab_full_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
@@ -225,7 +225,7 @@ $crontab_entry")
 # Function to update a specific line in the crontab
 installSetupCrontabTiming() {
     local entry_name=$1
-    ISCRON=$( (sudo crontab -l) 2>&1 )
+    ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -234,7 +234,7 @@ installSetupCrontabTiming() {
     fi
 
     # Check to see if already setup
-    if ! sudo crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
         isError "Crontab is not setup"
         return 1
     fi
@@ -280,9 +280,9 @@ installSetupCrontabTiming() {
     # Assuming CFG_BACKUP_CRONTAB_APP is set to "0 5 * * *"
     crontab_app_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
 
-    result=$(sudo crontab -l | grep -v "$entry_name" | sudo crontab - )
+    result=$(sudo -u $easydockeruser crontab -l | grep -v "$entry_name" | sudo -u $easydockeruser crontab - )
     checkSuccess "Remove the existing crontab entry"
-    result=$( (sudo crontab -l; echo "$updated_crontab_entry") | sudo crontab - )
+    result=$( (sudo -u $easydockeruser crontab -l; echo "$updated_crontab_entry") | sudo -u $easydockeruser crontab - )
     checkSuccess "Add the updated crontab entry"
 
     isSuccessful "Crontab entry for '$entry_name' updated successfully."
@@ -303,7 +303,7 @@ installSQLiteDatabase()
 
                 # Create SQLite database file
                 if [ ! -e "$base_dir/$db_file" ]; then
-                    result=$(sudo touch $base_dir/$db_file)
+                    result=$(sudo -u $easydockeruser touch $base_dir/$db_file)
                     checkSuccess "Creating SQLite $db_file file"
                 fi
 

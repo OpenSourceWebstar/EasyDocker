@@ -350,20 +350,20 @@ restoreCopyFile()
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        result=$(sudo cp "$BACKUP_SAVE_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        result=$(sudo -u $easydockeruser cp "$BACKUP_SAVE_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
         # Extract the date from the filename (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | cut -d'-' -f1-3)
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
         # Copy the file from the remote host to the local restore_dir
-        result=$(sudo scp "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        result=$(sudo -u $easydockeruser scp "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP":"$CFG_BACKUP_REMOTE_BACKUP_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
         checkSuccess "Copy $chosen_backup_file from $CFG_RESTORE_REMOTE_IP locally to $CFG_BACKUP_REMOTE_BACKUP_DIRECTORY"
     elif [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        result=$(sudo cp "$BACKUP_SAVE_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        result=$(sudo -u $easydockeruser cp "$BACKUP_SAVE_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     fi
 }
@@ -379,10 +379,10 @@ restoreDeleteDockerFolder()
             exclude_options+=" --exclude='$folder'"
         done
         # Run rsync command to delete everything in base_dir except the specified folders
-        result=$(sudo rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
+        result=$(sudo -u $easydockeruser rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
         checkSuccess "Deleting the $app_name Docker install folder $base_dir"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        result=$(sudo rm -rf $install_path$app_name)
+        result=$(sudo -u $easydockeruser rm -rf $install_path$app_name)
         checkSuccess "Deleting the $app_name Docker install folder in $install_path$app_name"
     fi
 }
@@ -393,34 +393,34 @@ restoreExtractFile()
         cd $RESTORE_SAVE_DIRECTORY
         # Local
         if [[ "$restorefull" == [lL] ]]; then
-            result=$(sudo unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            result=$(sudo -u $easydockeruser unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d /)
             checkSuccess "Decrypting $chosen_backup_file (Local)"
         fi
         # Remote
         if [[ "$restorefull" == [rR] ]]; then
-            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
             checkSuccess "Decrypting $chosen_backup_file (Remote)"
         fi
         # Remote Migrate
         if [[ "$restorefull" == [mM] ]]; then
-            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
             checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"
         fi
     else
         cd $RESTORE_SAVE_DIRECTORY
         # Local
         if [[ "$restoresingle" == [lL] ]]; then
-            result=$(sudo unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
+            result=$(sudo -u $easydockeruser unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
             checkSuccess "Decrypting $chosen_backup_file (Local)"
         fi
         # Remote
         if [[ "$restoresingle" == [rR] ]]; then
-            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
+            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
             checkSuccess "Decrypting $chosen_backup_file (Remote)"
         fi
         # Remote Migrate
         if [[ "$restoresingle" == [mM] ]]; then
-            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
+            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
             checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"
         fi
     fi
@@ -429,10 +429,10 @@ restoreExtractFile()
 restoreCleanFiles()
 {
     if [[ "$restorefull" == [lLrRmM] ]]; then
-        result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
+        result=$(sudo -u $easydockeruser rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
         checkSuccess "Clearing unneeded restore data"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
+        result=$(sudo -u $easydockeruser rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
         checkSuccess "Clearing unneeded restore data"
     fi
 }

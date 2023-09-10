@@ -40,12 +40,12 @@ checkRequirements()
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 			ISACT=$(runCommandForDockerInstallUser "docker info --format '{{.ID}}'")
 		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
+			ISACT=$( (sudo -u $easydockeruser systemctl is-active docker ) 2>&1 )
 		fi
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
-		ISUFW=$( (sudo ufw status ) 2>&1 )
-		ISUFWD=$( (sudo ufw-docker) 2>&1 )
-		ISCRON=$( (sudo crontab -l) 2>&1 )
+		ISUFW=$( (sudo -u $easydockeruser ufw status ) 2>&1 )
+		ISUFWD=$( (sudo -u $easydockeruser ufw-docker) 2>&1 )
+		ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 	fi
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
@@ -160,7 +160,7 @@ checkRequirements()
 		domains=()
 		for domain_num in {1..9}; do
 			domain="CFG_DOMAIN_$domain_num"
-			domain_value=$(sudo grep "^$domain=" $configs_dir$config_file_general | cut -d '=' -f 2 | tr -d '[:space:]')
+			domain_value=$(sudo -u $easydockeruser grep "^$domain=" $configs_dir$config_file_general | cut -d '=' -f 2 | tr -d '[:space:]')
 			if [ -n "$domain_value" ]; then
 				domains+=("$domain_value")
 			fi
@@ -201,7 +201,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_CRONTAB == "true" ]]; then
 		### Crontab
-		if [[ "$ISCRON" != *"command not found"* ]] && sudo crontab -l -u root | grep -q "cron is set up for root"; then
+		if [[ "$ISCRON" != *"command not found"* ]] && sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
 			isSuccessful "Crontab is successfully set up."
 		else
 			isNotice "Crontab not installed."
@@ -212,7 +212,7 @@ checkRequirements()
 	if [[ $CFG_REQUIREMENT_SSHREMOTE == "true" ]]; then
 		### Custom SSH Remote Install
 		# Check if the hosts line is empty or not found in the config file
-		ssh_hosts_line=$(sudo grep '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
+		ssh_hosts_line=$(sudo -u $easydockeruser grep '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
 		if [ -n "$ssh_hosts_line" ]; then
 			ssh_hosts=${ssh_hosts_line#*=}
 			ip_found=0

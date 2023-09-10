@@ -2,8 +2,8 @@
 
 migrateCheckForMigrateFiles() {
     # Check if there are files without the specified string
-    full_files_without_string=$(sudo ls "$backup_full_dir" | sudo grep -v "$CFG_INSTALL_NAME")
-    single_files_without_string=$(sudo ls "$backup_single_dir" | sudo grep -v "$CFG_INSTALL_NAME")
+    full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
+    single_files_without_string=$(sudo -u $easydockeruser ls "$backup_single_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
     # Combine the two lists of files
     files_without_string="$full_files_without_string"$'\n'"$single_files_without_string"
 
@@ -49,15 +49,15 @@ migrateCheckForMigrateFiles() {
 
 migrateGetAppName() 
 {
-    selected_file=$(sudo echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
-    selected_app_name=$(sudo echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
+    selected_file=$(sudo -u $easydockeruser echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
+    selected_app_name=$(sudo -u $easydockeruser echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
     echo "$selected_app_name"
 }
 
 migrateCheckForFullMigrateFiles() 
 {
     # Check if there are backup files found
-    local full_backup_files=$(sudo ls "$backup_full_dir" | sudo grep -v "$CFG_INSTALL_NAME")
+    local full_backup_files=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
 
     if [ -n "$full_backup_files" ]; then
         migrateshowfull=true
@@ -67,7 +67,7 @@ migrateCheckForFullMigrateFiles()
 migrateListFullMigrateFiles()
 {
     # Find files not containing $CFG_INSTALL_NAME
-    local full_files_without_string=$(sudo ls "$backup_full_dir" | sudo grep -v "$CFG_INSTALL_NAME")
+    local full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$full_files_without_string" ]; then
@@ -112,7 +112,7 @@ migrateListFullMigrateFiles()
 migrateCheckForSingleMigrateFiles() 
 {
     # Check if there are backup files found
-    local single_backup_files=$(sudo ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
+    local single_backup_files=$(sudo -u $easydockeruser ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
 
     if [ -n "$single_backup_files" ]; then
         migrateshowsingle=true
@@ -120,7 +120,7 @@ migrateCheckForSingleMigrateFiles()
 }
 migrateListSingleMigrateFiles() {
     # Find files not containing $CFG_INSTALL_NAME
-    local single_files_without_string=$(sudo ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo -u $easydockeruser ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$single_files_without_string" ]; then
@@ -186,10 +186,10 @@ migrateRestoreFileMoveToMigrate()
             isError "No app_name provided, unable to start restore."
             return 1
         elif [[ $app_name == "full" ]]; then
-            result=$(sudo mv $backup_full_dir/$chosen_backup_file $migrate_full_dir/$chosen_backup_file)
+            result=$(sudo -u $easydockeruser mv $backup_full_dir/$chosen_backup_file $migrate_full_dir/$chosen_backup_file)
             checkSuccess "Moving $chosen_backup_file to $migrate_full_dir"
         else
-            result=$(sudo mv $backup_single_dir/$chosen_backup_file $migrate_single_dir/$chosen_backup_file)
+            result=$(sudo -u $easydockeruser mv $backup_single_dir/$chosen_backup_file $migrate_single_dir/$chosen_backup_file)
             checkSuccess "Moving $chosen_backup_file to $migrate_single_dir"
         fi
   fi
@@ -208,10 +208,10 @@ migrateRestoreFileMoveToMigrate()
             isError "No app_name provided, unable to start restore."
             return 1
         elif [[ $app_name == "full" ]]; then
-            result=$(sudo mv $backup_full_dir/$chosen_backup_file)
+            result=$(sudo -u $easydockeruser mv $backup_full_dir/$chosen_backup_file)
             checkSuccess "Deleting $chosen_backup_file in $backup_full_dir"
         else
-            result=$(sudo rm $backup_single_dir/$chosen_backup_file)
+            result=$(sudo -u $easydockeruser rm $backup_single_dir/$chosen_backup_file)
             checkSuccess "Deleting $chosen_backup_file in $backup_single_dir"
         fi
     fi
@@ -231,13 +231,13 @@ migrateRestoreFileMoveFromMigrate() {
         read -p "" choice
 
         if [ "$choice" = "1" ]; then
-            file_count=$(sudo find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
+            file_count=$(sudo -u $easydockeruser find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
             if [ "$file_count" -eq 0 ]; then
                 echo ""
                 isNotice "No files found in $migrate_single_dir"
                 continue
             fi
-            files=( $(sudo find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip") )
+            files=( $(sudo -u $easydockeruser find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip") )
             echo ""
             isNotice "Please select a file to move:"
             echo ""
@@ -261,17 +261,17 @@ migrateRestoreFileMoveFromMigrate() {
             src_path="$file_to_move"
             dst_path="$backup_single_dir/${file_to_move##*/}"
             echo ""
-            result=$(sudo mv "$src_path" "$dst_path")
+            result=$(sudo -u $easydockeruser mv "$src_path" "$dst_path")
             checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
 
         elif [ "$choice" = "2" ]; then
-            file_count=$(sudo find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
+            file_count=$(sudo -u $easydockeruser find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
             if [ "$file_count" -eq 0 ]; then
                 echo ""
                 isNotice "No files found in $migrate_full_dir"
                 continue
             fi
-            files=( $(sudo find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip") )
+            files=( $(sudo -u $easydockeruser find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip") )
             echo ""
             isNotice "Select a file to move:"
             for i in "${!files[@]}"; do
@@ -291,7 +291,7 @@ migrateRestoreFileMoveFromMigrate() {
             src_path="$file_to_move"
             dst_path="$backup_full_dir/${file_to_move##*/}"
             echo ""
-            result=$(sudo mv "$src_path" "$dst_path")
+            result=$(sudo -u $easydockeruser mv "$src_path" "$dst_path")
             checkSuccess "Moving $(basename "$file_to_move") to $backup_full_dir"
 
         elif [ "$choice" = "3" ]; then
@@ -326,7 +326,7 @@ migrateRestoreFileMoveFromMigrate() {
                 isNotice "No files found in $src_dir... returning to previous menu."
                 continue
             fi
-            files=( $(sudo find "$src_dir" -maxdepth 1 -type f -name "*.zip") )
+            files=( $(sudo -u $easydockeruser find "$src_dir" -maxdepth 1 -type f -name "*.zip") )
             echo ""
             isNotice "Files to be moved :"
             echo ""
@@ -346,7 +346,7 @@ migrateRestoreFileMoveFromMigrate() {
                 for f in "${files[@]}"; do
                     src_path="$f"
                     dst_path="$dst_dir/${f##*/}"
-                    result=$(sudo mv "$src_path" "$dst_path")
+                    result=$(sudo -u $easydockeruser mv "$src_path" "$dst_path")
                     checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
                 done
                 echo ""
@@ -392,11 +392,11 @@ migrateBuildTXT()
     local app_name=$1
     
     # Create a migrate.txt file with IP and InstallName
-    sudo touch "$install_path/$app_name/$migrate_file"
+    sudo -u $easydockeruser touch "$install_path/$app_name/$migrate_file"
     
     # Add MIGRATE options to file
-    sudo echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file" 2>/dev/null
-    sudo echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" >> "$install_path/$app_name/$migrate_file" 2>/dev/null
+    sudo -u $easydockeruser echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file" 2>/dev/null
+    sudo -u $easydockeruser echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" >> "$install_path/$app_name/$migrate_file" 2>/dev/null
     
     isSuccessful "Created $migrate_file for $app_name"
 }
@@ -450,13 +450,13 @@ migrateCheckAndUpdateIP()
     local app_name="$1"
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_ip=$(sudo grep -o 'MIGRATE_IP=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
+        local migrate_ip=$(sudo -u $easydockeruser grep -o 'MIGRATE_IP=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_ip" != "$public_ip" ]; then
-            result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$install_path/$app_name/$migrate_file")
+            result=$(sudo -u $easydockeruser sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$install_path/$app_name/$migrate_file")
             checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
             
             # Replace old IP with $public_ip in .yml and .env files
-            result=$(sudo find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
+            result=$(sudo -u $easydockeruser find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
@@ -469,9 +469,9 @@ migrateCheckAndUpdateInstallName()
     local app_name="$1"
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_install_name=$(sudo grep -o 'MIGRATE_INSTALL_NAME=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
+        local migrate_install_name=$(sudo -u $easydockeruser grep -o 'MIGRATE_INSTALL_NAME=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_install_name" != "$CFG_INSTALL_NAME" ]; then
-            result=$(sudo sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$install_path/$app_name//$migrate_file")
+            result=$(sudo -u $easydockeruser sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$install_path/$app_name//$migrate_file")
             checkSuccess "Updated MIGRATE_INSTALL_NAME in $migrate_file to $CFG_INSTALL_NAME."
         fi
     else
@@ -534,7 +534,7 @@ migrateScanConfigsToMigrate() {
             if [[ -z "${existing_variables[$variable_name]}" ]]; then
               #echo "Adding line to migrate.txt ($migrate_file): $line"
               # Append the line to migrate.txt
-              echo "$line" | sudo tee -a "$migrate_file" >/dev/null
+              echo "$line" | sudo -u $easydockeruser tee -a "$migrate_file" >/dev/null
               # Update the associative array
               existing_variables["$variable_name"]=1
             fi
@@ -572,18 +572,18 @@ migrateScanMigrateToConfigs() {
   for app_name in "${app_names[@]}"; do
     # Capitalize the app name
     app_name_upper="CFG_$(tr '[:lower:]' '[:upper:]' <<< "${app_name}")"
-    #echo "Processing app_name: $app_name" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+    #echo "Processing app_name: $app_name" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
     # Define the migrate.txt file for the app
     local migrate_file="$install_path/$app_name/migrate.txt"
-    #echo "Migrate file: $migrate_file" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+    #echo "Migrate file: $migrate_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
     # Check if migrate.txt exists and read variables
     if [[ -f "$migrate_file" ]]; then
       while IFS='=' read -r var_name var_value; do
         # Check if the variable should be ignored
         if [[ " ${ignore_vars[*]} " == *"$var_name"* ]]; then
-          #echo "Ignoring variable: $var_name"  | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+          #echo "Ignoring variable: $var_name"  | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
           continue
         fi
 
@@ -598,7 +598,7 @@ migrateScanMigrateToConfigs() {
         for config_file in "$configs_dir"/config_apps_*; do
           if [[ -f "$config_file" ]]; then
             # Search for the app_name_upper in the config file
-            if sudo grep -q "$app_name_upper" "$config_file"; then
+            if sudo -u $easydockeruser grep -q "$app_name_upper" "$config_file"; then
               section_found=1
               last_cfg_line=""
             fi
@@ -609,16 +609,16 @@ migrateScanMigrateToConfigs() {
             fi
 
             # If the variable is found in this config file, set var_found to 1
-            if sudo grep -q "^$var_name=" "$config_file"; then
+            if sudo -u $easydockeruser grep -q "^$var_name=" "$config_file"; then
               var_found=1
               found_vars+=("$var_name")
               # Extract the existing value from the config
-              existing_value=$(sudo grep -oP "(?<=^$var_name=).*" "$config_file")
+              existing_value=$(sudo -u $easydockeruser grep -oP "(?<=^$var_name=).*" "$config_file")
               # Check if the existing value is different from the value in migrate.txt
               if [[ "$existing_value" != "$var_value" ]]; then
                 # Update the value in the config
-                sudo sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$config_file"
-                #echo "Updated variable $var_name in $config_file to $var_value" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+                sudo -u $easydockeruser sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$config_file"
+                #echo "Updated variable $var_name in $config_file to $var_value" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
               fi
             fi
           fi
@@ -637,14 +637,14 @@ migrateScanMigrateToConfigs() {
   for var_name in "${found_vars[@]}"; do
     var_exists=0
     for config_file in "$configs_dir"/config_apps_*; do
-      if [[ -f "$config_file" ]] && sudo grep -q "^$var_name=" "$config_file"; then
+      if [[ -f "$config_file" ]] && sudo -u $easydockeruser grep -q "^$var_name=" "$config_file"; then
         var_exists=1
         break
       fi
     done
     if [[ $var_exists -eq 0 ]]; then
-        echo "$var_name=${!var_name}" | sudo tee -a "$configs_dir/config_apps_system" >/dev/null
-        echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
+        echo "$var_name=${!var_name}" | sudo -u $easydockeruser tee -a "$configs_dir/config_apps_system" >/dev/null
+        echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
     fi
   done
 

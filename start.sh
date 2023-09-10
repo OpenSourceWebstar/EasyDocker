@@ -19,7 +19,7 @@ checkUpdates()
 
 		# Internet Test
 		isNotice "Testing internet, please wait..."
-		if sudo ping -c 4 "9.9.9.9" > /dev/null; then
+		if sudo -u $easydockeruser ping -c 4 "9.9.9.9" > /dev/null; then
 			isSuccessful "Internet connectivity is working."
 		else
 			isError "Internet connectivity is not working."
@@ -29,11 +29,10 @@ checkUpdates()
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
 		# Update Git to ignore changes in file permissions
-		sudo git config core.fileMode false
+		sudo -u $easydockeruser git config core.fileMode false
 		# Update Git with email address
-		sudo git config --global user.name "$CFG_INSTALL_NAME"
-		sudo git config --global user.email "$CFG_EMAIL"
-		
+		sudo -u $easydockeruser git config --global user.name "$CFG_INSTALL_NAME"
+		sudo -u $easydockeruser git config --global user.email "$CFG_EMAIL"
 
 		# Check if there are uncommitted changes
 		if [[ $(git status --porcelain) ]]; then

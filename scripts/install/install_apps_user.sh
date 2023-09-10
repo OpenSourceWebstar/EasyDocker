@@ -65,13 +65,13 @@ installTileDesk()
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-				result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+				result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
-					result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					checkSuccess "Starting public docker-compose.$app_name.yml"
 				else
-					result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			fi
@@ -219,22 +219,22 @@ installJitsiMeet()
 		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $git_url | cut -d/ -f3- | tail -n1)
 		echo "The latest tag is: $latest_tag"
 
-		result=$(sudo mkdir $install_path$app_name && cd $install_path$app_name)
+		result=$(sudo -u $easydockeruser mkdir $install_path$app_name && cd $install_path$app_name)
 		checkSuccess "Creating $app_name container installation folder"
-		result=$(sudo rm -rf $install_path$app_name/$latest_tag.zip)
+		result=$(sudo -u $easydockeruser rm -rf $install_path$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"
-		result=$(sudo touch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
+		result=$(sudo -u $easydockeruser touch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
 		checkSuccess "Create logging txt file"
 		
 
 		# Download files and unzip
-		result=$(sudo wget -O $install_path$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
+		result=$(sudo -u $easydockeruser wget -O $install_path$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
 		checkSuccess "Downloading tagged zip file from GitHub"
-		result=$(sudo unzip -o $install_path$app_name/$latest_tag.zip -d $install_path$app_name)
+		result=$(sudo -u $easydockeruser unzip -o $install_path$app_name/$latest_tag.zip -d $install_path$app_name)
 		checkSuccess "Unzip downloaded file"
-		result=$(sudo mv $install_path$app_name/docker-jitsi-meet-$latest_tag/* $install_path$app_name)
+		result=$(sudo -u $easydockeruser mv $install_path$app_name/docker-jitsi-meet-$latest_tag/* $install_path$app_name)
 		checkSuccess "Moving all files from zip file to install directory"
-		result=$(sudo rm -rf $install_path$app_name/$latest_tag.zip && sudo rm -rf $install_path$app_name/$latest_tag/)
+		result=$(sudo -u $easydockeruser rm -rf $install_path$app_name/$latest_tag.zip && sudo -u $easydockeruser rm -rf $install_path$app_name/$latest_tag/)
 		checkSuccess "Removing downloaded zip file as no longer needed"
 		
 		((menu_number++))
@@ -253,30 +253,30 @@ installJitsiMeet()
 		setupEnvFile;
 
 		# Updating custom .env values
-		result=$(sudo sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$install_path$app_name/.jitsi-meet-cfg|g" $install_path$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$install_path$app_name/.jitsi-meet-cfg|g" $install_path$app_name/.env)
 		checkSuccess "Updating .env file with new install path"
 
-		result=$(sudo sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $install_path$app_name/.env)
+		result=$(sudo -u $easydockeruser sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $install_path$app_name/.env)
 		checkSuccess "Updating .env file with Public URL to $host_setup"
 
 		# Values are missing from the .env by default for some reason
 		# https://github.com/jitsi/docker-jitsi-meet/commit/12051700562d9826f9e024ad649c4dd9b88f94de#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5
-		result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo tee -a "$install_path$app_name/.env")
+		result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_DOMAIN"
 
-		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$install_path$app_name/.env")
+		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		result=$(echo "JVB_PORT=10000" | sudo tee -a "$install_path$app_name/.env")
+		result=$(echo "JVB_PORT=10000" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo tee -a "$install_path$app_name/.env")
+		result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		result=$(echo "JVB_TCP_PORT=4443" | sudo tee -a "$install_path$app_name/.env")
+		result=$(echo "JVB_TCP_PORT=4443" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
 
-		result=$(cd "$install_path$app_name" && sudo ./gen-passwords.sh)
+		result=$(cd "$install_path$app_name" && sudo -u $easydockeruser ./gen-passwords.sh)
 		checkSuccess "Running Jitsi Meet gen-passwords.sh script"
 
 		((menu_number++))
@@ -291,10 +291,10 @@ installJitsiMeet()
         echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
 		echo ""
 
-        result=$(sudo ufw-docker allow jitsimeet-jvb-1 10000/udp)
+        result=$(sudo -u $easydockeruser ufw-docker allow jitsimeet-jvb-1 10000/udp)
 		checkSuccess "Opening port 10000 for jitsimeet-jvb-1 with ufw-docker"
 
-        result=$(sudo ufw-docker allow jitsimeet-jvb-1 4443)
+        result=$(sudo -u $easydockeruser ufw-docker allow jitsimeet-jvb-1 4443)
 		checkSuccess "Opening port 4443 for jitsimeet-jvb-1 with ufw-docker"		
 
 		((menu_number++))
@@ -435,24 +435,24 @@ installAkaunting()
         echo "---- $menu_number. Pulling a default Akaunting docker-compose.yml file and making edits."
         echo ""
 		
-		result=$(cd $install_path && sudo git clone https://github.com/akaunting/docker $install_path$app_name)
+		result=$(cd $install_path && sudo -u $easydockeruser git clone https://github.com/akaunting/docker $install_path$app_name)
 		checkSuccess "Cloning the Akaunting GitHub repo"
 
 		setupComposeFileApp;
 
-		result=$(sudo sed -i 's|- akaunting-data:/var/www/html|- ./akaunting-data/:/var/www/html|g' $install_path$app_name/docker-compose.yml)
+		result=$(sudo -u $easydockeruser sed -i 's|- akaunting-data:/var/www/html|- ./akaunting-data/:/var/www/html|g' $install_path$app_name/docker-compose.yml)
 		checkSuccess "Updating akaunting-data to persistant storage"
 
-		result=$(sudo sed -i 's|- akaunting-db:/var/lib/mysql|- ./akaunting-db/:/var/lib/mysql|g' $install_path$app_name/docker-compose.yml)
+		result=$(sudo -u $easydockeruser sed -i 's|- akaunting-db:/var/lib/mysql|- ./akaunting-db/:/var/lib/mysql|g' $install_path$app_name/docker-compose.yml)
 		checkSuccess "Updating akaunting-db to persistant storage"
 
-		result=$(sudo sed -i "s|8080|$port|g" $install_path$app_name/docker-compose.yml)
+		result=$(sudo -u $easydockeruser sed -i "s|8080|$port|g" $install_path$app_name/docker-compose.yml)
 		checkSuccess "Updating port 8080 to $port in docker-compose.yml"
 		
 		# Find the last instance of "networks:" in the file and get its line number
-		last_network=$(sudo grep -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
+		last_network=$(sudo -u $easydockeruser grep -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
 		if [ -n "$last_network" ]; then
-			result=$(sudo sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
+			result=$(sudo -u $easydockeruser sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
 		fi
 		
@@ -463,19 +463,19 @@ installAkaunting()
         echo "---- $menu_number. Setting up .env files."
         echo ""
 
-		result=$(sudo cp $install_path$app_name/env/db.env.example $install_path$app_name/env/db.env)
+		result=$(sudo -u $easydockeruser cp $install_path$app_name/env/db.env.example $install_path$app_name/env/db.env)
 		checkSuccess "Copying example db.env for setup"
 
-		result=$(sudo cp $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
+		result=$(sudo -u $easydockeruser cp $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
 		checkSuccess "Copying example run.env for setup"
 	
-		result=$(sudo sed -i "s/akaunting.example.com/$host_setup/g" $install_path$app_name/env/run.env)
+		result=$(sudo -u $easydockeruser sed -i "s/akaunting.example.com/$host_setup/g" $install_path$app_name/env/run.env)
 		checkSuccess "Updating Domain in run.env to $host_setup"
 		
-		result=$(sudo sed -i "s/en-US/$CFG_AKAUNTING_LANGUAGE/g" $install_path$app_name/env/run.env)
+		result=$(sudo -u $easydockeruser sed -i "s/en-US/$CFG_AKAUNTING_LANGUAGE/g" $install_path$app_name/env/run.env)
 		checkSuccess "Updating language in run.env to $CFG_AKAUNTING_LANGUAGE"	
 
-		result=$(sudo sed -i "s/akaunting_password/$CFG_AKAUNTING_PASSWORD/g" $install_path$app_name/env/db.env)
+		result=$(sudo -u $easydockeruser sed -i "s/akaunting_password/$CFG_AKAUNTING_PASSWORD/g" $install_path$app_name/env/db.env)
 		checkSuccess "Setting Akaunting Password to generated password in config file"
 
         echo ""
@@ -486,7 +486,7 @@ installAkaunting()
 		if [ -f "$install_path$app_name/SETUPINITIALIZED" ]; then
 			isNotice "Running setup as initial setup file not found."
 
-			result=$(sudo touch $install_path$app_name/SETUPINITIALIZED)
+			result=$(sudo -u $easydockeruser touch $install_path$app_name/SETUPINITIALIZED)
 			checkSuccess "Creating initizilation file"
 
 			if [[ "$OS" == [123] ]]; then
@@ -494,7 +494,7 @@ installAkaunting()
 					result=$(runCommandForDockerInstallUser "cd $install_path$app_name && AKAUNTING_SETUP=true docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)")
 					isSuccessful "Starting $app_name up with initial setup flag"
 				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					result=$(cd $install_path$app_name && AKAUNTING_SETUP=true sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					result=$(cd $install_path$app_name && AKAUNTING_SETUP=true sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					isSuccessful "Starting $app_name up with initial setup flag"
 				fi
 			fi
@@ -685,25 +685,25 @@ installMattermost()
         result=$(mkdirFolder $install_path$app_name)
 		checkSuccess "Creating $app_name install folder"
 
-        result=$(sudo git clone https://github.com/mattermost/docker $install_path$app_name)
+        result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_path$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
 
-        result=$(sudo cp $install_path$app_name/env.example $install_path$app_name/.env)
+        result=$(sudo -u $easydockeruser cp $install_path$app_name/env.example $install_path$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
 
         result=$(mkdirFolder $install_path$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
-        result=$(sudo chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)
+        result=$(sudo -u $easydockeruser chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)
 		checkSuccess "Setting folder permissions for $app_name folders"
 
-        result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_path$app_name/.env)
+        result=$(sudo -u $easydockeruser sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_path$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
 		
-        result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_path$app_name/.env)
+        result=$(sudo -u $easydockeruser sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_path$app_name/.env)
 		checkSuccess "Updating .env file HTTP_PORT to $MATP80C"	
 				
-        result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_path$app_name/.env)
+        result=$(sudo -u $easydockeruser sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_path$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $MATP443C"	
 		
 		editEnvFileDefault;
@@ -716,7 +716,7 @@ installMattermost()
 mattermostAddToYMLFile() 
 {
   local file_path="$1"
-  sudo tee -a "$file_path" <<EOF
+  sudo -u $easydockeruser tee -a "$file_path" <<EOF
     labels:
       traefik.enable: true
       traefik.http.routers.mattermost.entrypoints: web,websecure
@@ -752,10 +752,10 @@ EOF
 					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCN up -d")
 					checkSuccess "Starting up nginx container"
 				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					result=$(sudo docker-compose -f docker-compose.yml -f $DCWN down)
+					result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 					checkSuccess "Shutting down nginx container"
 
-					result=$(sudo docker-compose -f docker-compose.yml -f $DCN up -d)
+					result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
 					checkSuccess "Starting up nginx container"
 				fi
 			fi
@@ -780,10 +780,10 @@ EOF
 						result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN up -d")
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-						result=$(sudo docker-compose -f docker-compose.yml -f $DCWN down)
+						result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 						
-						result=$(sudo docker-compose -f docker-compose.yml -f $DCWN up -d)
+						result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					fi
 				fi

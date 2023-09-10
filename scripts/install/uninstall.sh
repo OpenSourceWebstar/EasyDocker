@@ -47,7 +47,7 @@ dockerDownRemove()
             result=$(runCommandForDockerInstallUser "docker-compose down -v --rmi all --remove-orphans")
             isSuccessful "Shutting down & Removing all $app_name container data"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo docker-compose down -v --rmi all --remove-orphans)
+            result=$(sudo -u $easydockeruser docker-compose down -v --rmi all --remove-orphans)
             isSuccessful "Shutting down & Removing all $app_name container data"
         fi
     fi

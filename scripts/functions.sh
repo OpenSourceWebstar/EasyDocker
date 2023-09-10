@@ -13,46 +13,46 @@ gitFolderResetAndBackup()
     checkSuccess "Going into the backup install folder"
 
     # Copy folders
-    result=$(sudo cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
+    result=$(sudo -u $easydockeruser cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
-    result=$(sudo cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
+    result=$(sudo -u $easydockeruser cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
 
     # Reset git
-    result=$(sudo rm -rf $script_dir)
+    result=$(sudo -u $easydockeruser rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
     result=$(mkdirFolder "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir"
     checkSuccess "Going into the install folder"
-	result=$(sudo git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
+	result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
-    result=$(sudo cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
+    result=$(sudo -u $easydockeruser cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
-    result=$(sudo zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
+    result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
-    result=$(sudo rm -r "$backup_install_dir/$backupFolder")
+    result=$(sudo -u $easydockeruser rm -r "$backup_install_dir/$backupFolder")
     checkSuccess "Removing the backup folder"
 
     # Fixing the issue where the git does not use the .gitignore
     result=$(cd $script_dir)
     checkSuccess "Going into the install folder"
-	sudo git rm --cached $configs_dir/$config_file_apps_system > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
-	sudo git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
-	sudo git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
-	sudo git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_apps_system > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
+	sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
-    result=$(sudo git commit -m "Stop tracking ignored files")
+    result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
 
 	isSuccessful "Custom changes have been discarded successfully"
@@ -63,43 +63,44 @@ runStart()
 {  
     local path="$3"
     cd $script_dir
-    result=$(sudo chmod 0755 start.sh)
+    result=$(sudo -u $easydockeruser chmod 0755 start.sh)
     checkSuccess "Updating Start Script Permissions"
     
-    result=$(sudo ./start.sh "" "" "$path")
+    result=$(sudo -u $easydockeruser ./start.sh "" "" "$path")
     checkSuccess "Running Start script"
 }
 
 runInit() 
 {
     cd $script_dir
-    result=$(sudo chmod 0755 init.sh)
+    result=$(sudo -u $easydockeruser chmod 0755 init.sh)
     checkSuccess "Updating Init Script Permissions"
     
-    result=$(sudo ./init.sh run)
+    result=$(sudo -u $easydockeruser ./init.sh run)
     checkSuccess "Running Init Script"
 }
 
 runUpdate() 
 {
     cd $script_dir
-    result=$(sudo chmod 0755 update.sh)
+    result=$(sudo -u $easydockeruser chmod 0755 update.sh)
     checkSuccess "Updating Update Script Permissions"
     
-    result=$(sudo ./update.sh)
+    result=$(sudo -u $easydockeruser ./update.sh)
     checkSuccess "Running Update Script"
 }
 
-mkdirFolders() {
+mkdirFolders() 
+{
     local owner="$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER"
 
     for dir_path in "$@"; do
         local folder_name=$(basename "$dir_path")
 
-        result=$(sudo mkdir -p "$dir_path")
+        result=$(sudo -u $easydockeruser mkdir -p "$dir_path")
         echo "Creating $folder_name directory"
 
-        result=$(sudo chown "$owner" "$dir_path")
+        result=$(sudo -u $easydockeruser chown easydocker:easydocker "$dir_path")
         echo "Updating $folder_name with $owner ownership"
     done
 }
@@ -125,7 +126,7 @@ function checkSuccess()
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}SUCCESS:${NC} $1"
         if [ -f "$logs_dir/$docker_log_file" ]; then
-            echo "SUCCESS: $1" | sudo tee -a "$logs_dir/$docker_log_file" >/dev/null
+            echo "SUCCESS: $1" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" >/dev/null
         fi
     else
         echo -e "${RED}ERROR:${NC} $1"
@@ -145,15 +146,15 @@ function checkSuccess()
 
         if [[ "$error_occurred" == [xX] ]]; then
             # Log the error output to the log file
-            echo "ERROR: $1" | sudo tee -a "$logs_dir/$docker_log_file"
-            echo "===================================" | sudo tee -a "$logs_dir/$docker_log_file"
+            echo "ERROR: $1" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
+            echo "===================================" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
             exit 1  # Exit the script with a non-zero status to stop the current action
         fi
 
         if [[ "$error_occurred" == [mM] ]]; then
             # Log the error output to the log file
-            echo "ERROR: $1" | sudo tee -a "$logs_dir/$docker_log_file"
-            echo "===================================" | sudo tee -a "$logs_dir/$docker_log_file"
+            echo "ERROR: $1" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
+            echo "===================================" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
             resetToMenu
         fi
     fi
@@ -457,7 +458,7 @@ viewConfigs()
         nano "$selected_file"
 
         # Update the last modified timestamp of the edited file
-        sudo touch "$selected_file"
+        sudo -u $easydockeruser touch "$selected_file"
 
         # Store the updated last modified timestamp in the associative array
         config_name=$(basename "${selected_file}" | sed 's/config_//')
@@ -488,7 +489,7 @@ setupIPsAndHostnames()
             # Public variables
             domain_prefix=$hostname
             domain_var_name="CFG_DOMAIN_${domain_number}"
-            domain_full=$(sudo grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
+            domain_full=$(sudo -u $easydockeruser grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
             host_setup=${domain_prefix}.${domain_full}
             ssl_key=${domain_full}.key
             ssl_crt=${domain_full}.crt
@@ -529,7 +530,7 @@ setupComposeFileNoApp()
         return 1
     fi
 
-    sudo cp "$source_file" "$target_path/docker-compose.yml" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+    sudo -u $easydockeruser cp "$source_file" "$target_path/docker-compose.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
@@ -553,7 +554,7 @@ setupComposeFileApp()
         return 1
     fi
 
-    result=$(sudo mkdir -p "$target_path")
+    result=$(sudo -u $easydockeruser mkdir -p "$target_path")
     checkSuccess "Creating install path for $app_name"
     
     if [ $? -ne 0 ]; then
@@ -561,7 +562,7 @@ setupComposeFileApp()
         return 1
     fi
 
-    result=$(sudo cp "$source_file" "$target_path/docker-compose.$app_name.yml" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
+    result=$(sudo -u $easydockeruser cp "$source_file" "$target_path/docker-compose.$app_name.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
     checkSuccess "Copying compose .yml file for setup."
 
     if [ $? -ne 0 ]; then
@@ -583,10 +584,10 @@ dockerDownUpDefault()
             result=$(runCommandForDockerInstallUser "docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo docker-compose down)
+            result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(sudo docker-compose up -d)
+            result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     else
@@ -597,10 +598,10 @@ dockerDownUpDefault()
             result=$(runCommandForDockerInstallUser "docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo docker-compose down)
+            result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(sudo docker-compose up -d)
+            result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     fi
@@ -617,10 +618,10 @@ dockerUpDownAdditionalYML()
             result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         fi
     else
@@ -631,10 +632,10 @@ dockerUpDownAdditionalYML()
             result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         fi
     fi
@@ -644,7 +645,7 @@ editComposeFileDefault()
 {
     local compose_file="$install_path$app_name/docker-compose.yml"
 
-    result=$(sudo sed -i \
+    result=$(sudo -u $easydockeruser sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -658,16 +659,16 @@ editComposeFileDefault()
 
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+            result=$(sudo -u $easydockeruser sed -i "s/#traefik/traefik/g" $compose_file)
             checkSuccess "Enabling Traefik options for public setup"
-            result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+            result=$(sudo -u $easydockeruser sed -i "s/#labels:/labels:/g" $compose_file)
             checkSuccess "Enable labels for Traefik option options on private setup"
         fi
     fi
 
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
+            result=$(sudo -u $easydockeruser sed -i "s/labels:/#labels/g" $compose_file)
             checkSuccess "Disable Traefik options for private setup)"
         fi
     fi
@@ -679,7 +680,7 @@ editComposeFileApp()
 {
     local compose_file="$install_path$app_name/docker-compose.$app_name.yml"
 
-    result=$(sudo sed -i \
+    result=$(sudo -u $easydockeruser sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -693,14 +694,14 @@ editComposeFileApp()
 
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+            result=$(sudo -u $easydockeruser sed -i "s/#traefik/traefik/g" $compose_file)
             checkSuccess "Enabling Traefik options for public setup)"
         fi
     fi
 
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
+            result=$(sudo -u $easydockeruser sed -i "s/labels:/#labels/g" $compose_file)
             checkSuccess "Disable Traefik options for private setup)"
         fi
     fi
@@ -712,7 +713,7 @@ editEnvFileDefault()
 {
     local env_file="$install_path$app_name/.env"
 
-    result=$(sudo sed -i \
+    result=$(sudo -u $easydockeruser sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -733,7 +734,7 @@ editCustomFile()
     local custompath="$2"
     local custompathandfile="$custompath/$customfile"
 
-    result=$(sudo sed -i \
+    result=$(sudo -u $easydockeruser sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -806,7 +807,7 @@ removeEmptyLineAtFileEnd()
   local last_line=$(tail -n 1 "$file_path")
   
   if [ -z "$last_line" ]; then
-    result=$(sudo sed -i '$d' "$file_path")
+    result=$(sudo -u $easydockeruser sed -i '$d' "$file_path")
     checkSuccess "Removed the empty line at the end of $file_path"
   fi
 }
@@ -823,15 +824,15 @@ scanConfigsForRandomPassword()
         for scanned_config_file in "$configs_dir"/*; do
             if [ -f "$scanned_config_file" ]; then
                 # Check if the file contains the placeholder string "RANDOMIZEDPASSWORD"
-                while sudo grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
+                while sudo -u $easydockeruser grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
                     # Generate a unique random password
                     local random_password=$(openssl rand -base64 12 | tr -d '+/=')
 
                     # Capture the content before "RANDOMIZEDPASSWORD"
-                    local config_content=$(sudo sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$scanned_config_file")
+                    local config_content=$(sudo -u $easydockeruser sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$scanned_config_file")
 
                     # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
-                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
+                    sudo -u $easydockeruser sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
 
                     # Display the update message with the captured content and file name
                     #isSuccessful "Updated $config_content in $(basename "$scanned_config_file") with a new password: $random_password"
@@ -844,7 +845,7 @@ scanConfigsForRandomPassword()
 
 setupEnvFile()
 {
-    result=$(cd $install_path$app_name && sudo cp env.example .env)
+    result=$(cd $install_path$app_name && sudo -u $easydockeruser cp env.example .env)
     checkSuccess "Setting up .env file to path"
 }
 
@@ -855,7 +856,7 @@ dockerStopAllApps()
         result=$(runCommandForDockerInstallUser "docker stop $(docker ps -a -q)")
         checkSuccess "Stopping all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo docker stop $(docker ps -a -q))
+        result=$(sudo -u $easydockeruser docker stop $(docker ps -a -q))
         checkSuccess "Stopping all docker containers"
     fi
 }
@@ -867,7 +868,7 @@ dockerStartAllApps()
         result=$(runCommandForDockerInstallUser "docker restart $(docker ps -a -q)")
         checkSuccess "Starting up all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo docker restart $(docker ps -a -q))
+        result=$(sudo -u $easydockeruser docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
 }
@@ -879,7 +880,7 @@ dockerAppDown()
         result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
         checkSuccess "Shutting down $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
+        result=$(sudo -u $easydockeruser docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
         checkSuccess "Shutting down $app_name container"
     fi
 }
@@ -891,7 +892,7 @@ dockerAppUp()
         result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
         checkSuccess "Starting up $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)
+        result=$(sudo -u $easydockeruser docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)
         checkSuccess "Starting up $app_name container"
     fi
 }

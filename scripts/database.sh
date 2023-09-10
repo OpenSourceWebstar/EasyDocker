@@ -22,16 +22,16 @@ databaseInstallApp() {
     fi
 
     # Check if the app exists in the database
-    app_exists=$(sudo sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM apps WHERE name = '$app_name';")
+    app_exists=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM apps WHERE name = '$app_name';")
 
     if [ "$app_exists" -eq 0 ]; then
         isNotice "App does not exist in the database, setting up now."
-        result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$app_name', 1, date('now'));")
+        result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$app_name', 1, date('now'));")
         checkSuccess "Adding $app_name to the apps database."
         echo ""
     else
         isNotice "App already exists in the database, updating now."
-        result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$app_name';")
+        result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$app_name';")
         checkSuccess "Updating apps database for $app_name to installed status."
         echo ""
     fi
@@ -40,7 +40,7 @@ databaseInstallApp() {
 databaseUninstallApp() 
 {
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
@@ -57,7 +57,7 @@ databaseUninstallApp()
     fi
 
     # Check if the app exists in the database
-    results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE name = '$app_name'")
+    results=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE name = '$app_name'")
 
     if [ -z "$results" ]; then
         # App not found in the database
@@ -66,7 +66,7 @@ databaseUninstallApp()
     else
         # App found in the database, update status to 0 and set uninstall_date
         isNotice "Uninstalling $app_name..."
-        if ! sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = date('now') WHERE name = '$app_name';"; then
+        if ! sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = date('now') WHERE name = '$app_name';"; then
             isError "Failed to update the database for $app_name."
             return 1
         fi
@@ -77,7 +77,7 @@ databaseUninstallApp()
 databaseAppScan() 
 {
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
@@ -101,7 +101,7 @@ databaseAppScan()
     fi
 
     # Scan the folder and retrieve folder names
-    folder_names=$(sudo find "$install_path" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+    folder_names=$(sudo -u $easydockeruser find "$install_path" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
     # Check if no folders are found
     if [ -z "$folder_names" ]; then
@@ -113,7 +113,7 @@ databaseAppScan()
     updated_count=0
 
     # Get the list of all folder names and statuses from the database
-    existing_folders=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, status FROM apps;")
+    existing_folders=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT name, status FROM apps;")
 
     # Create an array to store existing folder names in the database
     existing_folder_names=()
@@ -125,7 +125,7 @@ databaseAppScan()
                 if (( status != 1 )); then 
                     isNotice "The folder for $folder_name has been found. Updating status to Installed in the Database"
                     # Update the database to set the status to 1 (installed) and unset the uninstall_date
-                    result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$folder_name';")
+                    result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$folder_name';")
                     checkSuccess "Updating apps database for $folder_name to installed status."
                     ((updated_count++)) # Increment updated_count
                 fi
@@ -134,7 +134,7 @@ databaseAppScan()
                 if (( status != 0 )); then
                     isNotice "Unable to find the folder for $folder_name. Setting to Uninstalled in the Database"
                     # Update the database to set the status to 0 and set the uninstall_date to the current date
-                    result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = date('now') WHERE name = '$folder_name';")
+                    result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = date('now') WHERE name = '$folder_name';")
                     checkSuccess "Updating apps database for $folder_name to uninstalled status."
                     ((updated_count++)) # Increment updated_count
                 fi
@@ -149,7 +149,7 @@ databaseAppScan()
             if ! [[ "${existing_folder_names[@]}" =~ "${folder_name}" ]]; then
                 isNotice "New folder $folder_name found. Inserting into the Database."
                 # Insert the new folder into the database with status 1 (installed)
-                result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$folder_name', 1, date('now'));")
+                result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$folder_name', 1, date('now'));")
                 checkSuccess "Inserting $folder_name into the apps database."
                 ((updated_count++)) # Increment updated_count
             fi
@@ -167,7 +167,7 @@ databaseListAllApps()
 	if [[ "$toollistallapps" == [yY] ]]; then
     
         # Check if sqlite3 is available
-        if ! command -v sudo sqlite3 &> /dev/null; then
+        if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
             isNotice "sqlite3 command not found. Make sure it's installed."
             return 1
         fi
@@ -185,7 +185,7 @@ databaseListAllApps()
         echo ""
 
         # Execute the SQLite query and store the output in a variable
-        output=$(sudo sqlite3 -header -column $base_dir/$db_file "SELECT * FROM apps;")
+        output=$(sudo -u $easydockeruser sqlite3 -header -column $base_dir/$db_file "SELECT * FROM apps;")
         # Count the number of non-header lines (data rows) in the 'output'
         num_data_rows=$(echo "$output" | grep -v '^name[[:space:]]|')
 
@@ -205,7 +205,7 @@ databaseListAllApps()
 databaseListInstalledApps() 
 {
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
@@ -229,7 +229,7 @@ databaseListInstalledApps()
     fi
 
     # Execute the query and store the results in a variable for installed apps only (status = 1)
-    results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, install_date FROM apps WHERE status = 1;")
+    results=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT name, install_date FROM apps WHERE status = 1;")
 
     # Check if results variable is not empty
     if [ -n "$results" ]; then
@@ -284,10 +284,10 @@ databaseCycleThroughListApps()
         app_names=()
         while IFS= read -r name; do
             app_names+=("$name")
-        done < <(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
+        done < <(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
 
         # Check if sqlite3 is available
-        if ! command -v sudo sqlite3 &> /dev/null; then
+        if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
             isNotice "sqlite3 command not found. Make sure it's installed."
             return 1
         fi
@@ -331,7 +331,7 @@ databaseCycleThroughListApps()
 databaseCycleThroughListAppsCrontab()
 {
     local name=$1
-    ISCRON=$( (sudo crontab -l) 2>&1 )
+    ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -340,7 +340,7 @@ databaseCycleThroughListAppsCrontab()
     fi
 
     # Check to see if crontab is not installed
-    if ! sudo crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
         isNotice "Crontab is not setup, skipping until its found."
         return 1
     fi
@@ -360,10 +360,10 @@ databaseCycleThroughListAppsCrontab()
     app_names=("full")  # To Inject full to setup crontab also
     while IFS= read -r name; do
         app_names+=("$name")
-    done < <(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
+    done < <(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
 
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
@@ -394,7 +394,7 @@ databaseSSHScanForKeys()
     local ssh_directory="$ssh_dir$CFG_DOCKER_MANAGER_USER"
 
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
         return 1
     fi
@@ -411,7 +411,7 @@ databaseSSHScanForKeys()
     updateSSHPermissions
 
     # Reloading SSH Service
-    result=$(sudo service ssh reload)
+    result=$(sudo -u $easydockeruser service ssh reload)
     checkSuccess "Reloading the SSH Service"
 
     isSuccessful "SSH Key Scan completed successfully."
@@ -427,7 +427,7 @@ databaseDisplayTables()
         echo ""
 
         # Check if sqlite3 is available
-        if ! command -v sudo sqlite3 &> /dev/null; then
+        if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
             isNotice "sqlite3 command not found. Make sure it's installed."
             return 1
         fi
@@ -439,7 +439,7 @@ databaseDisplayTables()
         fi
 
         # Get a list of existing tables in the database
-        tables_list=$(sudo sqlite3 "$base_dir/$db_file" ".tables")
+        tables_list=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" ".tables")
 
         # Check if there are any tables in the database
         if [ -z "$tables_list" ]; then
@@ -459,14 +459,14 @@ databaseDisplayTables()
         if [[ "$table_name" == "x" ]]; then
             echo "Exiting."
         return
-        elif sudo sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$table_name\b"; then
+        elif sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$table_name\b"; then
             # Display all data for the selected table with formatted output
             echo ""
             echo "##########################################"
             echo "###   Displaying $table_name Table Data"
             echo "##########################################"
             echo ""
-            sudo sqlite3 -column -header "$base_dir/$db_file" "SELECT * FROM $table_name;"
+            sudo -u $easydockeruser sqlite3 -column -header "$base_dir/$db_file" "SELECT * FROM $table_name;"
             echo ""
             read -p "Press Enter to continue..."
         else
@@ -485,7 +485,7 @@ databaseEmptyTable()
     echo ""
 
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
       isNotice "sqlite3 command not found. Make sure it's installed."
       return 1
     fi
@@ -497,7 +497,7 @@ databaseEmptyTable()
     fi
 
     # Get a list of existing tables in the database
-    tables_list=$(sudo sqlite3 "$base_dir/$db_file" ".tables")
+    tables_list=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" ".tables")
 
     # Check if there are any tables in the database
     if [ -z "$tables_list" ]; then
@@ -518,9 +518,9 @@ databaseEmptyTable()
     if [[ "$table_name" == "x" ]]; then
       isNotice "Exiting."
       return
-    elif sudo sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$table_name\b"; then
+    elif sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$table_name\b"; then
       # Empty the selected table
-      sudo sqlite3 "$base_dir/$db_file" "DELETE FROM \"$table_name\";"
+      sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "DELETE FROM \"$table_name\";"
       isSuccessful "Table '$table_name' has been emptied."
     else
       isNotice "Invalid table name. Please try again."
@@ -531,7 +531,7 @@ databaseEmptyTable()
 # Function to check is we should run the update
 checkIfUpdateShouldRun() {
     # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
+    if ! command -v sudo -u $easydockeruser sqlite3 &> /dev/null; then
       isNotice "sqlite3 command not found. Make sure it's installed."
       return 0
     fi
@@ -544,7 +544,7 @@ checkIfUpdateShouldRun() {
 
     local table_name="sysupdate"
     local latest_timestamp
-    latest_timestamp=$(sudo sqlite3 "$base_dir/$db_file" "SELECT datetime(date || ' ' || time) FROM \"$table_name\" ORDER BY date DESC, time DESC LIMIT 1;")
+    latest_timestamp=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT datetime(date || ' ' || time) FROM \"$table_name\" ORDER BY date DESC, time DESC LIMIT 1;")
 
     # Check if the timestamp is empty or not (no records in the database)
     if [[ -n "$latest_timestamp" ]]; then
@@ -566,7 +566,7 @@ checkIfUpdateShouldRun() {
         if ((time_difference >= threshold)); then
             # The command can be executed since it hasn't been executed within the specified duration
             # Update the database with the latest current date and time
-            sudo sqlite3 "$base_dir/$db_file" "UPDATE \"$table_name\" SET date='$current_date', time='$current_time' WHERE ROWID=1;"
+            sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE \"$table_name\" SET date='$current_date', time='$current_time' WHERE ROWID=1;"
             return 0  # Return true (0)
         else
             # The command was executed recently, so skip it
@@ -574,7 +574,7 @@ checkIfUpdateShouldRun() {
         fi
     else
         # If there are no records in the database, execute the command and insert the update data
-        sudo sqlite3 "$base_dir/$db_file" "INSERT INTO \"$table_name\" (date, time) VALUES ('$current_date', '$current_time');"
+        sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO \"$table_name\" (date, time) VALUES ('$current_date', '$current_time');"
         return 0  # Return true (0)
     fi
 }
@@ -585,12 +585,12 @@ databasePathInsert()
     if [ -f "$base_dir/$db_file" ] && [ -n "$initial_path_save" ]; then
         table_name=path
         # Check if the path already exists in the database
-        existing_path=$(sudo sqlite3 "$base_dir/$db_file" "SELECT path FROM $table_name WHERE path = '$initial_path_save';")
+        existing_path=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT path FROM $table_name WHERE path = '$initial_path_save';")
         if [ -z "$existing_path" ]; then
             # Path doesn't exist, clear old data and insert
-            result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name;")
+            result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name;")
             checkSuccess "Clearing old path data"
-            result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (path) VALUES ('$initial_path_save');")
+            result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (path) VALUES ('$initial_path_save');")
             checkSuccess "Adding $initial_path_save to the $table_name table."
         fi
     fi
@@ -600,7 +600,7 @@ databaseBackupInsert()
 {
     local app_name="$1"
     local table_name=backups
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table."    
 }
 
@@ -608,7 +608,7 @@ databaseRestoreInsert()
 {
     local app_name="$1"
     local table_name=restores
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table."
 }
 
@@ -616,7 +616,7 @@ databaseMigrateInsert()
 {
     local app_name="$1"
     local table_name=migrations
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table." 
 }
 
@@ -624,7 +624,7 @@ databaseSSHInsert()
 {
     local app_name="$1"
     local table_name=ssh
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table." 
 }
 
@@ -633,13 +633,13 @@ databaseSSHKeysInsert()
     local key_filename="$1"
     local key_file=$(basename "$key_filename")
     local table_name=ssh_keys
-    local key_in_db=$(sudo sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
+    local key_in_db=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
 
     if [ "$key_in_db" -eq 0 ]; then
-        result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
+        result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
         checkSuccess "Adding $key_file to the $table_name table."
     else
-        result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$key_file', date = '$current_date', time = '$current_time' WHERE name = '$key_file';")
+        result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$key_file', date = '$current_date', time = '$current_time' WHERE name = '$key_file';")
         checkSuccess "$key_file already added to the $table_name table. Updating date/time."
     fi
 }
@@ -648,14 +648,14 @@ databaseCronJobsInsert()
 {
     local app_name="$1"
     local table_name=cron_jobs
-    local key_in_db=$(sudo sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$app_name';")
+    local key_in_db=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$app_name';")
 
     if [ "$key_in_db" != "" ]; then
         if [ "$key_in_db" -eq 0 ]; then
-            result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+            result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
             checkSuccess "Adding $app_name to the $table_name table." 
         else
-            result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$app_name', date = '$current_date', time = '$current_time' WHERE name = '$app_name';")
+            result=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$app_name', date = '$current_date', time = '$current_time' WHERE name = '$app_name';")
             checkSuccess "$app_name already added to the $table_name table. Updating date/time." 
         fi
         #isNotice "app_name is empty, unable to insert"
@@ -665,7 +665,7 @@ databaseCronJobsInsert()
 databaseRemoveFile()
 {
 	if [[ "$tooldeletedb" == [yY] ]]; then
-        result=$(sudo rm $base_dir/$db_file)
+        result=$(sudo -u $easydockeruser rm $base_dir/$db_file)
         checkSuccess "Removing $db_file file"
     fi
 }
