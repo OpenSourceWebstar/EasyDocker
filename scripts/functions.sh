@@ -147,10 +147,10 @@ copyFolders()
         checkSuccess "Copying $subdir_name to $save_dir"
 
         if [[ $clean_dir == *"$install_path"* ]]; then
-            result=$(sudo -u $easydockeruser chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
+            result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
-            result=$(sudo -u $easydockeruser chown -R $easydockeruser:$easydockeruser "$save_dir")
+            result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir")
             checkSuccess "Updating $subdir_name with $easydockeruser ownership"
         fi
     done
@@ -167,10 +167,10 @@ copyFile()
     checkSuccess "Coping $file_name to $save_dir"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
-        result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
+        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
         checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
-        result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$file")
+        result=$(sudo chown $easydockeruser:$easydockeruser "$file")
         checkSuccess "Updating $file_name with $easydockeruser ownership"
     fi
 }
@@ -196,10 +196,10 @@ copyFiles()
         checkSuccess "Copying $file_name to $save_dir"
 
         if [[ $clean_dir == *"$install_path"* ]]; then
-            result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
+            result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
             checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
-            result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$save_dir")
+            result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
             checkSuccess "Updating $file_name with $easydockeruser ownership"
         fi
     done
