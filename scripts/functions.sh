@@ -98,10 +98,13 @@ mkdirFolders()
         local folder_name=$(basename "$dir_path")
 
         result=$(sudo -u $easydockeruser mkdir -p "$dir_path")
-        echo "Creating $folder_name directory"
-
-        result=$(sudo -u $easydockeruser chown easydocker:easydocker "$dir_path")
-        echo "Updating $folder_name with $owner ownership"
+        checkSuccess "Creating $folder_name directory"
+        if [[ $folder_name == *"$install_path"* ]]; then
+            result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
+        else
+            result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$dir_path")
+        fi
+        checkSuccess "Updating $folder_name with $owner ownership"
     done
 }
 
@@ -255,7 +258,7 @@ runCommandForDockerInstallUser()
     local remote_command="$1"
 
     # Run the SSH command using the existing SSH variables
-    result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" 2>/dev/null)
+    result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command")
 }
 
 checkConfigFilesExist() 
