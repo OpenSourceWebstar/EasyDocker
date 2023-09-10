@@ -119,10 +119,10 @@ copyFolder()
     checkSuccess "Coping $folder_name to $save_dir"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
-        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$folder")
+        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$folder_name")
         checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
-        result=$(sudo chown $easydockeruser:$easydockeruser "$folder")
+        result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir/$folder_name")
         checkSuccess "Updating $folder_name with $easydockeruser ownership"
     fi
 }
@@ -148,10 +148,10 @@ copyFolders()
         checkSuccess "Copying $subdir_name to $save_dir"
 
         if [[ $clean_dir == *"$install_path"* ]]; then
-            result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
+            result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
-            result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir")
+            result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $easydockeruser ownership"
         fi
     done
@@ -168,10 +168,10 @@ copyFile()
     checkSuccess "Coping $file_name to $save_dir"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
-        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
+        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$file_name")
         checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
-        result=$(sudo chown $easydockeruser:$easydockeruser "$file")
+        result=$(sudo chown $easydockeruser:$easydockeruser "$$save_dir/$file_name")
         checkSuccess "Updating $file_name with $easydockeruser ownership"
     fi
 }
@@ -197,10 +197,10 @@ copyFiles()
         checkSuccess "Copying $file_name to $save_dir"
 
         if [[ $clean_dir == *"$install_path"* ]]; then
-            result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
+            result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$file_name")
             checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
-            result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
+            result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir/$file_name")
             checkSuccess "Updating $file_name with $easydockeruser ownership"
         fi
     done
