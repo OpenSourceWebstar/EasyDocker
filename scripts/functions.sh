@@ -13,13 +13,13 @@ gitFolderResetAndBackup()
     checkSuccess "Going into the backup install folder"
 
     # Copy folders
-    result=$(copyFile -rf "$configs_dir" "$backup_install_dir/$backupFolder")
+    result=$(copyFolder "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
-    result=$(copyFile -rf "$logs_dir" "$backup_install_dir/$backupFolder")
+    result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
 
     # Reset git
-    result=$(copyFile -rf $script_dir)
+    result=$(sudo -u $easydockeruser rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
     result=$(mkdirFolders "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
@@ -29,7 +29,7 @@ gitFolderResetAndBackup()
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
-    result=$(copyFile -rf "$backup_install_dir/$backupFolder/*" "$script_dir")
+    result=$(copyFolder "$backup_install_dir/$backupFolder/"* "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
@@ -107,30 +107,38 @@ mkdirFolders()
     done
 }
 
-copyFile() 
+copyFolder() 
 {
-    local checksent="$1"
-    if [[ $checksent == *"-"* ]]; then
-        local flags="$1"
-        local fileorfolder="$2"
-        local save_dir="$3"
-        
-        result=$(sudo -u $easydockeruser cp "$flags" "$fileorfolder" "$save_dir")
-        checkSuccess "Coping $fileorfolder to $save_dir"
-    else
-        local fileorfolder="$1"
-        local save_dir="$2"
+    local folder="$1"
+    local folder_name=$(basename "$folder")
+    local save_dir="$2"
 
-        result=$(sudo -u $easydockeruser cp "$fileorfolder" "$save_dir")
-        checkSuccess "Coping $fileorfolder to $save_dir"
-    fi
+    result=$(sudo -u $easydockeruser cp -rf "$folder" "$save_dir")
+    checkSuccess "Coping $folder_name to $save_dir"
 
     if [[ $save_dir == *"$install_path"* ]]; then
-        result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$fileorfolder")
-        checkSuccess "Updating $fileorfolder with $CFG_DOCKER_INSTALL_USER ownership"
+        result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$folder")
+        checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
-        result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$fileorfolder")
-        checkSuccess "Updating $fileorfolder with $easydockeruser ownership"
+        result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$folder")
+        checkSuccess "Updating $folder_name with $easydockeruser ownership"
+    fi
+}
+
+copyFile() 
+{
+    local file="$1"
+    local save_dir="$2"
+
+    result=$(sudo -u $easydockeruser cp "$file" "$save_dir")
+    checkSuccess "Coping $file to $save_dir"
+
+    if [[ $save_dir == *"$install_path"* ]]; then
+        result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
+        checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
+    else
+        result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$file")
+        checkSuccess "Updating $file with $easydockeruser ownership"
     fi
 }
 
