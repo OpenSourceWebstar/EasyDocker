@@ -35,7 +35,7 @@ gitFolderResetAndBackup()
     # Zip up folder for safe keeping and remove folder
     result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
-    result=$(sudo -u $easydockeruser rm -r "$backup_install_dir/$backupFolder")
+    result=$(sudo rm -rf "$backup_install_dir/$backupFolder")
     checkSuccess "Removing the backup folder"
 
     # Fixing the issue where the git does not use the .gitignore
