@@ -160,7 +160,7 @@ copyFile()
 {
     local file="$1"
     local save_dir="$2"
-    local file_name=$(basename "$subdir")
+    local file_name=$(basename "$file")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     result=$(sudo -u $easydockeruser cp "$file" "$save_dir")
