@@ -456,7 +456,7 @@ migrateCheckAndUpdateIP()
             checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
             
             # Replace old IP with $public_ip in .yml and .env files
-            result=$(sudo find "$$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
+            result=$(sudo find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
