@@ -43,8 +43,8 @@ checkRequirements()
 			ISACT=$( (sudo -u $easydockeruser systemctl is-active docker ) 2>&1 )
 		fi
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
-		ISUFW=$( (sudo -u $easydockeruser ufw status ) 2>&1 )
-		ISUFWD=$( (sudo -u $easydockeruser ufw-docker) 2>&1 )
+		ISUFW=$( (sudo ufw status ) 2>&1 )
+		ISUFWD=$( (sudo ufw-docker) 2>&1 )
 		ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 	fi
 
@@ -134,12 +134,14 @@ checkRequirements()
 	fi
 
 	if [[ $CFG_REQUIREMENT_UFWD == "true" ]]; then
-		### UFW Docker
-		if [[ "$ISUFWD" != *"command not found"* ]]; then
-			isSuccessful "UFW-Docker Fix appears to be installed."
-		else
-			isNotice "UFW-Docker Fix does not appear to be installed."
-			((preinstallneeded++)) 
+		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+			### UFW Docker
+			if [[ "$ISUFWD" != *"command not found"* ]]; then
+				isSuccessful "UFW-Docker Fix appears to be installed."
+			else
+				isNotice "UFW-Docker Fix does not appear to be installed."
+				((preinstallneeded++)) 
+			fi
 		fi
 	fi
 	

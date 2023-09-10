@@ -260,11 +260,8 @@ installTraefik()
         echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
 		echo ""
 
-        result=$(sudo ufw-docker allow $app_name 80/tcp)
-		checkSuccess "Opening port 80 (HTTP) for $app_name with ufw-docker"
-
-        result=$(sudo ufw-docker allow $app_name 443/tcp)
-		checkSuccess "Opening port 443 (HTTPS) for $app_name with ufw-docker"
+        openPort $app_name 80/tcp
+        openPort $app_name 443/tcp
 
 		((menu_number++))
 		echo ""
@@ -354,11 +351,8 @@ installCaddy()
         echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
 		echo ""
 
-        result=$(sudo ufw-docker allow $app_name 80/tcp)
-		checkSuccess "Opening port 80 (HTTP) for $$app_name with ufw-docker"
-
-        result=$(sudo ufw-docker allow $app_name 443/tcp)
-		checkSuccess "Opening port 443 (HTTPS) for $$app_name with ufw-docker"
+        openPort $app_name 80/tcp
+        openPort $app_name 443/tcp
 
 		((menu_number++))
 		echo ""
@@ -458,7 +452,7 @@ installWireguard()
         echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
 		echo ""
 
-		sudo ufw-docker allow wg-easy 51820/udp
+		openPort $app_name 51820/udp
 
 		((menu_number++))
 		echo ""

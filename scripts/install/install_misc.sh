@@ -315,6 +315,13 @@ installSQLiteDatabase()
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
+                setup_table_name=ports
+                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                # Table info here
+                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type, TEXT);")
+                checkSuccess "Creating $setup_table_name table"
+                fi
+
                 setup_table_name=sysupdate
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here

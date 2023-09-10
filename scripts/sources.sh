@@ -16,6 +16,7 @@ source scripts/menu.sh
 source scripts/functions.sh
 source scripts/permissions.sh
 source scripts/database.sh
+source scripts/network.sh
 source scripts/shutdown.sh
 
 source scripts/backup.sh
