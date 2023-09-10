@@ -29,7 +29,7 @@ gitFolderResetAndBackup()
     checkSuccess "Clone the Git repository"
 
     # Copy files back into the install folder
-    result=$(copyFiles "$backup_install_dir/$backupFolder/" "$script_dir")
+    result=$(copyFolders "$backup_install_dir/$backupFolder/" "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
@@ -123,6 +123,35 @@ copyFolder()
         result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$folder")
         checkSuccess "Updating $folder_name with $easydockeruser ownership"
     fi
+}
+
+copyFolders() {
+    local source="$1"
+    local save_dir="$2"
+
+    # Ensure the source path is expanded to a list of subdirectories
+    local subdirs=($(find "$source" -type d -mindepth 1 -maxdepth 1))
+
+    if [ ${#subdirs[@]} -eq 0 ]; then
+        echo "No subdirectories found in the source directory: $source"
+        return
+    fi
+
+    for subdir in "${subdirs[@]}"; do
+        local subdir_name=$(basename "$subdir")
+        local destination="$save_dir/$subdir_name"
+
+        result=$(sudo -u $easydockeruser cp -rf "$subdir" "$destination")
+        checkSuccess "Copying $subdir_name to $destination"
+
+        if [[ $destination == *"$install_path"* ]]; then
+            result=$(sudo -u $easydockeruser chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$destination")
+            checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
+        else
+            result=$(sudo -u $easydockeruser chown -R $easydockeruser:$easydockeruser "$destination")
+            checkSuccess "Updating $subdir_name with $easydockeruser ownership"
+        fi
+    done
 }
 
 copyFile() 
