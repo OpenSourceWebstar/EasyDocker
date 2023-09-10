@@ -572,18 +572,18 @@ migrateScanMigrateToConfigs() {
   for app_name in "${app_names[@]}"; do
     # Capitalize the app name
     app_name_upper="CFG_$(tr '[:lower:]' '[:upper:]' <<< "${app_name}")"
-    #echo "Processing app_name: $app_name" >> "$logs_dir/$docker_log_file" 2>&1
+    #echo "Processing app_name: $app_name" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
 
     # Define the migrate.txt file for the app
     local migrate_file="$install_path/$app_name/migrate.txt"
-    #echo "Migrate file: $migrate_file" >> "$logs_dir/$docker_log_file" 2>&1
+    #echo "Migrate file: $migrate_file" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
 
     # Check if migrate.txt exists and read variables
     if [[ -f "$migrate_file" ]]; then
       while IFS='=' read -r var_name var_value; do
         # Check if the variable should be ignored
         if [[ " ${ignore_vars[*]} " == *"$var_name"* ]]; then
-          #echo "Ignoring variable: $var_name"  >> "$logs_dir/$docker_log_file" 2>&1
+          #echo "Ignoring variable: $var_name"  | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
           continue
         fi
 
@@ -618,7 +618,7 @@ migrateScanMigrateToConfigs() {
               if [[ "$existing_value" != "$var_value" ]]; then
                 # Update the value in the config
                 sudo sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$config_file"
-                #echo "Updated variable $var_name in $config_file to $var_value" >> "$logs_dir/$docker_log_file" 2>&1
+                #echo "Updated variable $var_name in $config_file to $var_value" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
               fi
             fi
           fi

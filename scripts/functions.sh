@@ -111,7 +111,7 @@ function checkSuccess()
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}SUCCESS:${NC} $1"
         if [ -f "$logs_dir/$docker_log_file" ]; then
-            echo "SUCCESS: $1" >> "$logs_dir/$docker_log_file"
+            echo "SUCCESS: $1" | sudo tee -a "$logs_dir/$docker_log_file"
         fi
     else
         echo -e "${RED}ERROR:${NC} $1"
@@ -131,15 +131,15 @@ function checkSuccess()
 
         if [[ "$error_occurred" == [xX] ]]; then
             # Log the error output to the log file
-            echo "ERROR: $1" >> "$logs_dir/$docker_log_file"
-            echo "===================================" >> "$logs_dir/$docker_log_file"
+            echo "ERROR: $1" | sudo tee -a "$logs_dir/$docker_log_file"
+            echo "===================================" | sudo tee -a "$logs_dir/$docker_log_file"
             exit 1  # Exit the script with a non-zero status to stop the current action
         fi
 
         if [[ "$error_occurred" == [mM] ]]; then
             # Log the error output to the log file
-            echo "ERROR: $1" >> "$logs_dir/$docker_log_file"
-            echo "===================================" >> "$logs_dir/$docker_log_file"
+            echo "ERROR: $1" | sudo tee -a "$logs_dir/$docker_log_file"
+            echo "===================================" | sudo tee -a "$logs_dir/$docker_log_file"
             resetToMenu
         fi
     fi
@@ -515,7 +515,7 @@ setupComposeFileNoApp()
         return 1
     fi
 
-    sudo cp "$source_file" "$target_path/docker-compose.yml" >> "$logs_dir/$docker_log_file" 2>&1
+    sudo cp "$source_file" "$target_path/docker-compose.yml" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
@@ -547,7 +547,7 @@ setupComposeFileApp()
         return 1
     fi
 
-    result=$(sudo cp "$source_file" "$target_path/docker-compose.$app_name.yml" >> "$logs_dir/$docker_log_file" 2>&1)
+    result=$(sudo cp "$source_file" "$target_path/docker-compose.$app_name.yml" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
     checkSuccess "Copying compose .yml file for setup."
 
     if [ $? -ne 0 ]; then
