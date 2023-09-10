@@ -51,6 +51,7 @@ checkUpdates()
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
+						scanConfigsForRandomPassword;
                         detectOS;
 						;;
 					*)
