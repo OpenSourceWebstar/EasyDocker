@@ -291,10 +291,10 @@ installJitsiMeet()
         echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
 		echo ""
 
-        result=$(sudo -u $easydockeruser ufw-docker allow jitsimeet-jvb-1 10000/udp)
+        result=$(sudo ufw-docker allow jitsimeet-jvb-1 10000/udp)
 		checkSuccess "Opening port 10000 for jitsimeet-jvb-1 with ufw-docker"
 
-        result=$(sudo -u $easydockeruser ufw-docker allow jitsimeet-jvb-1 4443)
+        result=$(sudo ufw-docker allow jitsimeet-jvb-1 4443)
 		checkSuccess "Opening port 4443 for jitsimeet-jvb-1 with ufw-docker"		
 
 		((menu_number++))

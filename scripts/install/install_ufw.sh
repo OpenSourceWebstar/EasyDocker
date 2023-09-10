@@ -3,7 +3,7 @@
 installUFW()
 {
    if [[ "$CFG_REQUIREMENT_UFW" == "true" ]]; then
-    	ISUFW=$( (ufw status ) 2>&1 )
+    	ISUFW=$( (sudo ufw status ) 2>&1 )
 		if [[ "$ISUFW" == *"command not found"* ]]; then
             echo ""
             echo "##########################################"
@@ -16,9 +16,9 @@ installUFW()
             result=$(yes | sudo -u $easydockeruser apt-get install ufw )
             checkSuccess "Installing UFW package"
 
-            result=$(sudo -u $easydockeruser ufw allow 22)
+            result=$(sudo ufw allow 22)
             checkSuccess "Enabling Port 22 through the firewall"
-            result=$(sudo -u $easydockeruser ufw allow ssh)
+            result=$(sudo ufw allow ssh)
             checkSuccess "Enabling SSH through the firewall"
 
             while true; do
@@ -31,16 +31,16 @@ installUFW()
             done
 
             if [[ "$UFWSSH" == [nN] ]]; then
-                result=$(sudo -u $easydockeruser ufw deny 22)
+                result=$(sudo ufw deny 22)
                 checkSuccess "Enabling Port 22 through the firewall"
-                result=$(sudo -u $easydockeruser ufw deny ssh)
+                result=$(sudo ufw deny ssh)
                 checkSuccess "Enabling SSH through the firewall"
             fi
 
-            result=$(sudo -u $easydockeruser ufw --force enable)
+            result=$(sudo ufw --force enable)
             checkSuccess "Enabling UFW Firewall"
 
-            result=$(yes | sudo -u $easydockeruser ufw logging off)
+            result=$(yes | sudo ufw logging off)
             checkSuccess "Disabling UFW Firewall Logging"
             
             # UFW Logging rules : https://linuxhandbook.com/ufw-logs/
@@ -54,7 +54,7 @@ installUFW()
             done            
             
             if [[ "$UFWP" == [yY] ]]; then
-                result=$(yes | sudo -u $easydockeruser ufw logging medium)
+                result=$(yes | sudo ufw logging medium)
                 checkSuccess "Enabling UFW Firewall Logging"	
             fi
 
@@ -85,7 +85,7 @@ installUFWDocker()
             result=$(sudo chmod +x /usr/local/bin/ufw-docker)
             checkSuccess "Setting permissions for install files"
 
-            result=$(sudo -u $easydockeruser ufw-docker install)
+            result=$(sudo ufw-docker install)
             checkSuccess "Installing UFW Docker"
 
             result=$(sudo -u $easydockeruser systemctl restart ufw)
