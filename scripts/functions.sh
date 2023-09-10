@@ -13,9 +13,9 @@ gitFolderResetAndBackup()
     checkSuccess "Going into the backup install folder"
 
     # Copy folders
-    result=$(sudo -u $easydockeruser cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
+    result=$(copyFile "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
-    result=$(sudo -u $easydockeruser cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
+    result=$(copyFile "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
 
     # Reset git
@@ -29,7 +29,7 @@ gitFolderResetAndBackup()
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
-    result=$(sudo -u $easydockeruser cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
+    result=$(copyFile "$backup_install_dir/$backupFolder/"* "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
@@ -92,8 +92,6 @@ runUpdate()
 
 mkdirFolders() 
 {
-    local owner="$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER"
-
     for dir_path in "$@"; do
         local folder_name=$(basename "$dir_path")
 
@@ -101,11 +99,39 @@ mkdirFolders()
         checkSuccess "Creating $folder_name directory"
         if [[ $folder_name == *"$install_path"* ]]; then
             result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
+            checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
             result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$dir_path")
+            checkSuccess "Updating $folder_name with $easydockeruser ownership"
         fi
-        checkSuccess "Updating $folder_name with $owner ownership"
     done
+}
+
+copyFile() 
+{
+    local checksent="$1"
+    if [[ $checksent == *"-"* ]]; then
+        local flags="$1"
+        local fileorfolder="$2"
+        local save_dir="$3"
+
+        result=$(sudo -u $easydockeruser cp "$flags" "$fileorfolder" "$save_dir")
+        checkSuccess "Coping $fileorfolder to $save_dir"
+    else
+        local fileorfolder="$1"
+        local save_dir="$2"
+
+        result=$(sudo -u $easydockeruser cp "$fileorfolder" "$save_dir")
+        checkSuccess "Coping $fileorfolder to $save_dir"
+    fi
+
+    if [[ $save_dir == *"$install_path"* ]]; then
+        result=$(sudo -u $easydockeruser chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$fileorfolder")
+        checkSuccess "Updating $fileorfolder with $CFG_DOCKER_INSTALL_USER ownership"
+    else
+        result=$(sudo -u $easydockeruser chown $easydockeruser:$easydockeruser "$fileorfolder")
+        checkSuccess "Updating $fileorfolder with $easydockeruser ownership"
+    fi
 }
 
 reloadScripts()
@@ -533,7 +559,8 @@ setupComposeFileNoApp()
         return 1
     fi
 
-    sudo -u $easydockeruser cp "$source_file" "$target_path/docker-compose.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "$source_file" "$target_path/docker-compose.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
@@ -565,8 +592,7 @@ setupComposeFileApp()
         return 1
     fi
 
-    result=$(sudo -u $easydockeruser cp "$source_file" "$target_path/docker-compose.$app_name.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
-    checkSuccess "Copying compose .yml file for setup."
+    copyFile "$source_file" "$target_path/docker-compose.$app_name.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
@@ -848,7 +874,7 @@ scanConfigsForRandomPassword()
 
 setupEnvFile()
 {
-    result=$(cd $install_path$app_name && sudo -u $easydockeruser cp env.example .env)
+    result=$(copyFile $install_path$app_name/env.example $install_path$app_name/.env)
     checkSuccess "Setting up .env file to path"
 }
 

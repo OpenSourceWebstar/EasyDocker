@@ -463,10 +463,10 @@ installAkaunting()
         echo "---- $menu_number. Setting up .env files."
         echo ""
 
-		result=$(sudo -u $easydockeruser cp $install_path$app_name/env/db.env.example $install_path$app_name/env/db.env)
+		result=$(copyFile $install_path$app_name/env/db.env.example $install_path$app_name/env/db.env)
 		checkSuccess "Copying example db.env for setup"
 
-		result=$(sudo -u $easydockeruser cp $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
+		result=$(copyFile $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
 		checkSuccess "Copying example run.env for setup"
 	
 		result=$(sudo -u $easydockeruser sed -i "s/akaunting.example.com/$host_setup/g" $install_path$app_name/env/run.env)
@@ -688,7 +688,7 @@ installMattermost()
         result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_path$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
 
-        result=$(sudo -u $easydockeruser cp $install_path$app_name/env.example $install_path$app_name/.env)
+        result=$(copyFile $install_path$app_name/env.example $install_path$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
 
         result=$(mkdirFolders $install_path$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})

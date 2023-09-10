@@ -70,7 +70,7 @@ installFail2Ban()
             fi
 
             # Jail.local
-		    result=$(sudo -u $easydockeruser cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		    result=$(copyFile $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
             result=$(sudo -u $easydockeruser sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
@@ -147,7 +147,7 @@ installAdguard()
 		setupComposeFileNoApp;
 		editComposeFileDefault;
 
-		result=$(sudo -u $easydockeruser cp $resources_dir/unbound/unbound.conf $install_path$app_name/unbound.conf | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		result=$(copyFile $resources_dir/unbound/unbound.conf $install_path$app_name/unbound.conf | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
 
 		((menu_number++))
@@ -239,7 +239,7 @@ installTraefik()
         checkSuccess "Set permissions to acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
-        result=$(sudo -u $easydockeruser cp "$resources_dir/$app_name/traefik.yml" "$install_path$app_name/etc/traefik.yml")
+        result=$(copyFile "$resources_dir/$app_name/traefik.yml" "$install_path$app_name/etc/traefik.yml")
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
