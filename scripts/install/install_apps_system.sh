@@ -228,7 +228,7 @@ installTraefik()
         result=$(mkdirFolders "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
-        result=$(sudo -u $easydockeruser chown 1000 "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
+        result=$(sudo chown 1000 "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
         checkSuccess "Set permissions for /etc/ and /etc/certs/ Directories"
 
         # Create and secure the acme.json file

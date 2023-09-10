@@ -694,7 +694,7 @@ installMattermost()
         result=$(mkdirFolders $install_path$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
-        result=$(sudo -u $easydockeruser chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)
+        result=$(sudo chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)
 		checkSuccess "Setting folder permissions for $app_name folders"
 
         result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_path$app_name/.env)

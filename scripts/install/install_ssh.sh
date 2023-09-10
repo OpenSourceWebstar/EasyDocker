@@ -246,7 +246,7 @@ updateSSHPermissions()
 
     result=$(sudo -u $easydockeruser chmod +rx $ssh_dir $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding read and write permissions for ssh folders"
-    result=$(sudo -u $easydockeruser chown -R $CFG_DOCKER_MANAGER_USER:$CFG_DOCKER_MANAGER_USER $ssh_dir$CFG_DOCKER_MANAGER_USER)
+    result=$(sudo chown -R $CFG_DOCKER_MANAGER_USER:$CFG_DOCKER_MANAGER_USER $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding chown to dockermanager user for ssh folders"
     result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec sudo -u $easydockeruser chmod 600 {} \;)
     #checkSuccess "Updating all permissions of keys to 600"
