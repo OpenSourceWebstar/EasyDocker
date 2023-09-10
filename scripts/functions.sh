@@ -197,8 +197,8 @@ detectOS()
             done
         fi
 
-        scanConfigsForRandomPassword;
         fixFolderPermissions;
+        scanConfigsForRandomPassword;
         checkRequirements
     else
         checkSuccess "Unable to detect OS."
@@ -414,7 +414,7 @@ viewConfigs()
         nano "$selected_file"
 
         # Update the last modified timestamp of the edited file
-        sudo -u $easydockeruser touch "$selected_file"
+        createTouch "$selected_file"
 
         # Store the updated last modified timestamp in the associative array
         config_name=$(basename "${selected_file}" | sed 's/config_//')
@@ -445,7 +445,7 @@ setupIPsAndHostnames()
             # Public variables
             domain_prefix=$hostname
             domain_var_name="CFG_DOMAIN_${domain_number}"
-            domain_full=$(sudo -u $easydockeruser grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
+            domain_full=$(sudo grep  "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
             host_setup=${domain_prefix}.${domain_full}
             ssl_key=${domain_full}.key
             ssl_crt=${domain_full}.crt
@@ -779,7 +779,7 @@ scanConfigsForRandomPassword()
         for scanned_config_file in "$configs_dir"/*; do
             if [ -f "$scanned_config_file" ]; then
                 # Check if the file contains the placeholder string "RANDOMIZEDPASSWORD"
-                while sudo -u $easydockeruser grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
+                while sudo grep  -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
                     # Generate a unique random password
                     local random_password=$(openssl rand -base64 12 | tr -d '+/=')
 

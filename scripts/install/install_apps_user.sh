@@ -43,7 +43,7 @@ installTileDesk()
 
 		setupComposeFileApp;
 
-		result=$(cd $install_path$app_name && curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
+		result=$(cd $install_path$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
 
 		editComposeFileApp;
@@ -261,22 +261,22 @@ installJitsiMeet()
 
 		# Values are missing from the .env by default for some reason
 		# https://github.com/jitsi/docker-jitsi-meet/commit/12051700562d9826f9e024ad649c4dd9b88f94de#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5
-		result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
+		result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_DOMAIN"
 
-		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
+		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		result=$(echo "JVB_PORT=10000" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
+		result=$(echo "JVB_PORT=10000" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
+		result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		result=$(echo "JVB_TCP_PORT=4443" | sudo -u $easydockeruser tee -a "$install_path$app_name/.env")
+		result=$(echo "JVB_TCP_PORT=4443" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
 
-		result=$(cd "$install_path$app_name" && sudo -u $easydockeruser ./gen-passwords.sh)
+		result=$(cd "$install_path$app_name" && sudo ./gen-passwords.sh)
 		checkSuccess "Running Jitsi Meet gen-passwords.sh script"
 
 		((menu_number++))
@@ -450,7 +450,7 @@ installAkaunting()
 		checkSuccess "Updating port 8080 to $port in docker-compose.yml"
 		
 		# Find the last instance of "networks:" in the file and get its line number
-		last_network=$(sudo -u $easydockeruser grep -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
+		last_network=$(sudo grep  -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
 		if [ -n "$last_network" ]; then
 			result=$(sudo sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
@@ -716,7 +716,7 @@ installMattermost()
 mattermostAddToYMLFile() 
 {
   local file_path="$1"
-  sudo -u $easydockeruser tee -a "$file_path" <<EOF
+  sudo tee -a "$file_path" <<EOF
     labels:
       traefik.enable: true
       traefik.http.routers.mattermost.entrypoints: web,websecure

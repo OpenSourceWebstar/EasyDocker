@@ -160,7 +160,7 @@ checkRequirements()
 		domains=()
 		for domain_num in {1..9}; do
 			domain="CFG_DOMAIN_$domain_num"
-			domain_value=$(sudo -u $easydockeruser grep "^$domain=" $configs_dir$config_file_general | cut -d '=' -f 2 | tr -d '[:space:]')
+			domain_value=$(sudo grep  "^$domain=" $configs_dir$config_file_general | cut -d '=' -f 2 | tr -d '[:space:]')
 			if [ -n "$domain_value" ]; then
 				domains+=("$domain_value")
 			fi
@@ -212,7 +212,7 @@ checkRequirements()
 	if [[ $CFG_REQUIREMENT_SSHREMOTE == "true" ]]; then
 		### Custom SSH Remote Install
 		# Check if the hosts line is empty or not found in the config file
-		ssh_hosts_line=$(sudo -u $easydockeruser grep '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
+		ssh_hosts_line=$(sudo grep  '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
 		if [ -n "$ssh_hosts_line" ]; then
 			ssh_hosts=${ssh_hosts_line#*=}
 			ip_found=0

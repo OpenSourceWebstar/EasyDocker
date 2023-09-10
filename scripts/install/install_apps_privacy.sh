@@ -95,7 +95,7 @@ installMailcow()
 			local ports_to_scan="25|$COWP80C|110|143|$COWP443C|465|587|993|995|4190"
 			local scan_result
 
-			scan_result=$(sudo -u $easydockeruser ss -tlpn | sudo -u $easydockeruser grep -E -w "$ports_to_scan")
+			scan_result=$(sudo -u $easydockeruser ss -tlpn | sudo grep  -E -w "$ports_to_scan")
 
 			if [[ -n "$scan_result" ]]; then
 				isError "Some of the specified ports are not free:"

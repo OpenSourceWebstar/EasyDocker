@@ -2,8 +2,8 @@
 
 migrateCheckForMigrateFiles() {
     # Check if there are files without the specified string
-    full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
-    single_files_without_string=$(sudo -u $easydockeruser ls "$backup_single_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
+    full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    single_files_without_string=$(sudo -u $easydockeruser ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
     # Combine the two lists of files
     files_without_string="$full_files_without_string"$'\n'"$single_files_without_string"
 
@@ -57,7 +57,7 @@ migrateGetAppName()
 migrateCheckForFullMigrateFiles() 
 {
     # Check if there are backup files found
-    local full_backup_files=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
+    local full_backup_files=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     if [ -n "$full_backup_files" ]; then
         migrateshowfull=true
@@ -67,7 +67,7 @@ migrateCheckForFullMigrateFiles()
 migrateListFullMigrateFiles()
 {
     # Find files not containing $CFG_INSTALL_NAME
-    local full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo -u $easydockeruser grep -v "$CFG_INSTALL_NAME")
+    local full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$full_files_without_string" ]; then
@@ -395,9 +395,9 @@ migrateBuildTXT()
     createTouch "$install_path/$app_name/$migrate_file"
     
     # Add MIGRATE options to file
-    sudo -u $easydockeruser echo "MIGRATE_IP=$public_ip" > "$install_path/$app_name/$migrate_file" 2>/dev/null
-    sudo -u $easydockeruser echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" >> "$install_path/$app_name/$migrate_file" 2>/dev/null
-    
+    echo "MIGRATE_IP=$public_ip" | sudo tee -a "$install_path/$app_name/$migrate_file" >/dev/null
+    echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$install_path/$app_name/$migrate_file" >/dev/null
+
     isSuccessful "Created $migrate_file for $app_name"
 }
 
@@ -450,7 +450,7 @@ migrateCheckAndUpdateIP()
     local app_name="$1"
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_ip=$(sudo -u $easydockeruser grep -o 'MIGRATE_IP=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
+        local migrate_ip=$(sudo grep  -o 'MIGRATE_IP=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_ip" != "$public_ip" ]; then
             result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$install_path/$app_name/$migrate_file")
             checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
@@ -469,7 +469,7 @@ migrateCheckAndUpdateInstallName()
     local app_name="$1"
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_install_name=$(sudo -u $easydockeruser grep -o 'MIGRATE_INSTALL_NAME=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
+        local migrate_install_name=$(sudo grep  -o 'MIGRATE_INSTALL_NAME=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_install_name" != "$CFG_INSTALL_NAME" ]; then
             result=$(sudo sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$install_path/$app_name//$migrate_file")
             checkSuccess "Updated MIGRATE_INSTALL_NAME in $migrate_file to $CFG_INSTALL_NAME."
@@ -534,7 +534,7 @@ migrateScanConfigsToMigrate() {
             if [[ -z "${existing_variables[$variable_name]}" ]]; then
               #echo "Adding line to migrate.txt ($migrate_file): $line"
               # Append the line to migrate.txt
-              echo "$line" | sudo -u $easydockeruser tee -a "$migrate_file" >/dev/null
+              echo "$line" | sudo tee -a "$migrate_file" >/dev/null
               # Update the associative array
               existing_variables["$variable_name"]=1
             fi
@@ -598,7 +598,7 @@ migrateScanMigrateToConfigs() {
         for config_file in "$configs_dir"/config_apps_*; do
           if [[ -f "$config_file" ]]; then
             # Search for the app_name_upper in the config file
-            if sudo -u $easydockeruser grep -q "$app_name_upper" "$config_file"; then
+            if sudo grep  -q "$app_name_upper" "$config_file"; then
               section_found=1
               last_cfg_line=""
             fi
@@ -609,11 +609,11 @@ migrateScanMigrateToConfigs() {
             fi
 
             # If the variable is found in this config file, set var_found to 1
-            if sudo -u $easydockeruser grep -q "^$var_name=" "$config_file"; then
+            if sudo grep  -q "^$var_name=" "$config_file"; then
               var_found=1
               found_vars+=("$var_name")
               # Extract the existing value from the config
-              existing_value=$(sudo -u $easydockeruser grep -oP "(?<=^$var_name=).*" "$config_file")
+              existing_value=$(sudo grep  -oP "(?<=^$var_name=).*" "$config_file")
               # Check if the existing value is different from the value in migrate.txt
               if [[ "$existing_value" != "$var_value" ]]; then
                 # Update the value in the config
@@ -637,14 +637,14 @@ migrateScanMigrateToConfigs() {
   for var_name in "${found_vars[@]}"; do
     var_exists=0
     for config_file in "$configs_dir"/config_apps_*; do
-      if [[ -f "$config_file" ]] && sudo -u $easydockeruser grep -q "^$var_name=" "$config_file"; then
+      if [[ -f "$config_file" ]] && sudo grep  -q "^$var_name=" "$config_file"; then
         var_exists=1
         break
       fi
     done
     if [[ $var_exists -eq 0 ]]; then
-        echo "$var_name=${!var_name}" | sudo -u $easydockeruser tee -a "$configs_dir/config_apps_system" >/dev/null
-        echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
+        echo "$var_name=${!var_name}" | sudo tee -a "$configs_dir/config_apps_system" >/dev/null
+        echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
     fi
   done
 

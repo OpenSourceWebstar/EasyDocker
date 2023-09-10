@@ -7,11 +7,8 @@ installDocker()
         if command -v docker &> /dev/null; then
             isSuccessful "Docker is already installed."
         else
-            result=$(curl -fsSL https://get.docker.com -o get-docker.sh)
-            checkSuccess "Downloading Docker"
-
-            result=$(sudo -u $easydockeruser sh get-docker.sh)
-            checkSuccess "Installing Docker"
+            result=$(curl -fsSL https://get.docker.com | sh )
+            checkSuccess "Downloading & Installing Docker"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
                 result=$(sudo -u $easydockeruser systemctl start docker)

@@ -55,7 +55,7 @@ installFail2Ban()
             checkSuccess "Creating config and action.d folders"
 
             # AbuseIPDB
-            result=$(cd $install_path$app_name/config/$app_name/action.d/ && sudo -u $easydockeruser curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
+            result=$(cd $install_path$app_name/config/$app_name/action.d/ && sudo curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
             checkSuccess "Downloading abuseipdb.conf from GitHub"
             
             result=$(sudo sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
