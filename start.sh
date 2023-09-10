@@ -47,12 +47,12 @@ checkUpdates()
 
 						isSuccessful "Starting/Restarting EasyDocker"
 						detectOS;
-						scanConfigsForRandomPassword;
+						
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
                         detectOS;
-						scanConfigsForRandomPassword;
+						
 						;;
 					*)
 						isNotice "Please provide a valid input (y or n)."

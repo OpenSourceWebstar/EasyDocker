@@ -280,6 +280,7 @@ detectOS()
             done
         fi
 
+        scanConfigsForRandomPassword;
         checkRequirements
     else
         checkSuccess "Unable to detect OS."
