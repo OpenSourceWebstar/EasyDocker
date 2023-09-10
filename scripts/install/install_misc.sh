@@ -18,7 +18,7 @@ installSwapfile()
             result=$(sudo -u $easydockeruser fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
             checkSuccess "Allocating $CFG_SWAPFILE_SIZE to the /swapfile"
             
-            result=$(sudo -u $easydockeruser chmod 0600 /swapfile)
+            result=$(sudo chmod 0600 /swapfile)
             checkSuccess "Adding permissions to the /swapfile"
 
             result=$(sudo -u $easydockeruser mkswap /swapfile)

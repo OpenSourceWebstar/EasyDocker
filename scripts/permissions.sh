@@ -19,7 +19,7 @@ runStart()
 {  
     local path="$3"
     cd $script_dir
-    result=$(sudo -u $easydockeruser chmod 0755 start.sh)
+    result=$(sudo chmod 0755 start.sh)
     checkSuccess "Updating Start Script Permissions"
     
     result=$(sudo -u $easydockeruser ./start.sh "" "" "$path")
@@ -29,7 +29,7 @@ runStart()
 runInit() 
 {
     cd $script_dir
-    result=$(sudo -u $easydockeruser chmod 0755 init.sh)
+    result=$(sudo chmod 0755 init.sh)
     checkSuccess "Updating Init Script Permissions"
     
     result=$(sudo -u $easydockeruser ./init.sh run)
@@ -39,7 +39,7 @@ runInit()
 runUpdate() 
 {
     cd $script_dir
-    result=$(sudo -u $easydockeruser chmod 0755 update.sh)
+    result=$(sudo chmod 0755 update.sh)
     checkSuccess "Updating Update Script Permissions"
     
     result=$(sudo -u $easydockeruser ./update.sh)

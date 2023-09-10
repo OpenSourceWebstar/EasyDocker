@@ -233,21 +233,21 @@ removeSSHKeyFromAuthorizedKeysAndDatabase()
 
 updateSSHPermissions()
 {
-    result=$(sudo -u $easydockeruser chmod 700 $ssh_dir$CFG_DOCKER_MANAGER_USER/)
+    result=$(sudo chmod 700 $ssh_dir$CFG_DOCKER_MANAGER_USER/)
     #checkSuccess "Adjusting permissions for $ssh_dir$CFG_DOCKER_MANAGER_USER"
 
     # SSH configuration directory
     auth_key="$ssh_dir$CFG_DOCKER_MANAGER_USER/authorized_keys"
     # Check if the config file already exists
     if [ -f "$auth_key" ]; then
-        result=$(sudo -u $easydockeruser chmod 600 $auth_key)
+        result=$(sudo chmod 600 $auth_key)
         #checkSuccess "Adjusting permissions for authorized_keys"
     fi
 
-    result=$(sudo -u $easydockeruser chmod +rx $ssh_dir $ssh_dir$CFG_DOCKER_MANAGER_USER)
+    result=$(sudo chmod +rx $ssh_dir $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding read and write permissions for ssh folders"
     result=$(sudo chown -R $CFG_DOCKER_MANAGER_USER:$CFG_DOCKER_MANAGER_USER $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding chown to dockermanager user for ssh folders"
-    result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec sudo -u $easydockeruser chmod 600 {} \;)
+    result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec sudo chmod 600 {} \;)
     #checkSuccess "Updating all permissions of keys to 600"
 }

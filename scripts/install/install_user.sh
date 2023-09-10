@@ -35,7 +35,7 @@ installDockerManagerUser()
                 else
                     result=$(createTouch "$config_file")
                     checkSuccess "Creating config file"
-                    result=$(sudo -u $easydockeruser chmod 600 "$config_file")
+                    result=$(sudo chmod 600 "$config_file")
                     checkSuccess "Changing permissions to config file"
                 fi
 

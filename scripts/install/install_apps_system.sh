@@ -235,7 +235,7 @@ installTraefik()
         result=$(createTouch "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
 
-        result=$(sudo -u $easydockeruser chmod 600 "$install_path$app_name/etc/certs/acme.json")
+        result=$(sudo chmod 600 "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it

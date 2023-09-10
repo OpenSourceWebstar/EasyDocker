@@ -54,7 +54,7 @@ installDockerCompose()
             result=$(sudo -u $easydockeruser curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 
-            result=$(sudo -u $easydockeruser chmod +x /usr/local/bin/docker-compose)
+            result=$(sudo chmod +x /usr/local/bin/docker-compose)
             checkSuccess "Make the script executable"
 
             result=$(docker-compose --version)

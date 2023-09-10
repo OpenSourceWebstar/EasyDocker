@@ -143,7 +143,7 @@ installMailcow()
 			result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_path$app_name/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Setting Domain Name in caddy-to-mailcow-ssl.sh"
 			
-			result=$(sudo -u $easydockeruser chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
+			result=$(sudo chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Updating permissions for caddy-to-mailcow-ssl.sh"
 			
 			# Setup crontab

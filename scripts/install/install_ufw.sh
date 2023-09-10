@@ -82,7 +82,7 @@ installUFWDocker()
             result=$(sudo -u $easydockeruser wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker)
             checkSuccess "Downloading UFW Docker installation files"
 
-            result=$(sudo -u $easydockeruser chmod +x /usr/local/bin/ufw-docker)
+            result=$(sudo chmod +x /usr/local/bin/ufw-docker)
             checkSuccess "Setting permissions for install files"
 
             result=$(sudo -u $easydockeruser ufw-docker install)
