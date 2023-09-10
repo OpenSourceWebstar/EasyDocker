@@ -140,16 +140,15 @@ copyFolders()
 
     for subdir in "${subdirs[@]}"; do
         local subdir_name=$(basename "$subdir")
-        local destination="$save_dir/$subdir_name"
 
-        result=$(sudo -u $easydockeruser cp -rf "$subdir" "$destination")
-        checkSuccess "Copying $subdir_name to $destination"
+        result=$(sudo -u $easydockeruser cp -rf "$subdir" "$save_dir")
+        checkSuccess "Copying $subdir_name to $save_dir"
 
-        if [[ $destination == *"$install_path"* ]]; then
-            result=$(sudo -u $easydockeruser chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$destination")
+        if [[ $save_dir == *"$install_path"* ]]; then
+            result=$(sudo -u $easydockeruser chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
-            result=$(sudo -u $easydockeruser chown -R $easydockeruser:$easydockeruser "$destination")
+            result=$(sudo -u $easydockeruser chown -R $easydockeruser:$easydockeruser "$save_dir")
             checkSuccess "Updating $subdir_name with $easydockeruser ownership"
         fi
     done
