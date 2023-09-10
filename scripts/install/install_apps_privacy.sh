@@ -389,7 +389,7 @@ installCozy()
 		result=$(sudo -u $easydockeruser sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
-		result=$(mkdirFolder $install_path/$app_name/db $install_path/$app_name/storage)
+		result=$(mkdirFolders $install_path/$app_name/db $install_path/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
 		setupComposeFileApp;

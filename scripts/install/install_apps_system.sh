@@ -51,7 +51,7 @@ installFail2Ban()
             result=$(cd $install_path$app_name && sudo -u $easydockeruser touch $install_path$app_name/logs/auth.log)
             checkSuccess "Creating Auth.log file"
 
-            result=$(mkdirFolder $install_path$app_name/config/$app_name $install_path$app_name/config/$app_name/action.d)
+            result=$(mkdirFolders $install_path$app_name/config/$app_name $install_path$app_name/config/$app_name/action.d)
             checkSuccess "Creating config and action.d folders"
 
             # AbuseIPDB
@@ -225,7 +225,7 @@ installTraefik()
 		setupComposeFileNoApp;
 		
         # Create necessary directories and set permissions
-        result=$(mkdirFolder "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
+        result=$(mkdirFolders "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
         result=$(sudo -u $easydockeruser chown 1000 "$install_path$app_name/etc" "$install_path$app_name/etc/certs")

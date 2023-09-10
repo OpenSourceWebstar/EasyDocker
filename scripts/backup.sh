@@ -126,14 +126,14 @@ backupZipFile()
     fi
 
     isNotice "The new Backup file will be named : ${BACKUP_FILE_NAME}.zip"
-    result=$(mkdirFolder $BACKUP_SAVE_DIRECTORY)
+    result=$(mkdirFolders $BACKUP_SAVE_DIRECTORY)
     checkSuccess "Creating Backup folder in case it doesn't exist"
     isNotice "Starting Compression, this may take a while"
     if [ "$app_name" == "full" ]; then
         # Create a temporary directory
         temp_dir=$(mktemp -d)
 
-        result=$(mkdirFolder "$temp_dir/$(basename "$base_dir")")
+        result=$(mkdirFolders "$temp_dir/$(basename "$base_dir")")
         checkSuccess "Create the $base_dir inside the temporary directory"
 
         result=$(sudo -u $easydockeruser cd $base_dir && cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")

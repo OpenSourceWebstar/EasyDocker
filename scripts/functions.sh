@@ -6,7 +6,7 @@ gitFolderResetAndBackup()
     # Folder setup
     # Check if the directory specified in $script_dir exists
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
-        result=$(mkdirFolder "$backup_install_dir/$backupFolder")
+        result=$(mkdirFolders "$backup_install_dir/$backupFolder")
         checkSuccess "Create the backup folder"
     fi
     result=$(cd $backup_install_dir)
@@ -21,7 +21,7 @@ gitFolderResetAndBackup()
     # Reset git
     result=$(sudo -u $easydockeruser rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
-    result=$(mkdirFolder "$script_dir")
+    result=$(mkdirFolders "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir"
     checkSuccess "Going into the install folder"
@@ -90,7 +90,7 @@ runUpdate()
     checkSuccess "Running Update Script"
 }
 
-mkdirFolders() 
+mkdirFolderss() 
 {
     local owner="$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER"
 
@@ -524,7 +524,7 @@ setupComposeFileNoApp()
         return 1
     fi
 
-    mkdirFolder "$target_path"
+    mkdirFolders "$target_path"
     if [ $? -ne 0 ]; then
         isError "Failed to create the directory '$target_path'."
         return 1
