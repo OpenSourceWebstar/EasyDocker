@@ -471,7 +471,7 @@ setupComposeFileNoApp()
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
 
     if [ -d "$target_path" ]; then
-        isError "The directory '$target_path' already exists."
+        isWarning "The directory '$target_path' already exists."
         return 1
     fi
 
@@ -502,7 +502,7 @@ setupComposeFileApp()
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
 
     if [ -d "$target_path" ]; then
-        isError "The directory '$target_path' already exists."
+        isWarning "The directory '$target_path' already exists."
         return 1
     fi
 
