@@ -136,6 +136,7 @@ installBackupCrontabApp()
     local name=$1
 
     if ! sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+        echo ""
         isNotice "Automatic Backups for $name are not set up."
         while true; do
             isQuestion "Do you want to set up automatic $name backups (y/n): "
@@ -153,9 +154,6 @@ installBackupCrontabApp()
                 installSetupCrontabTiming $name
             fi
         fi
-
-        # Consume any remaining input (including newline)
-        read -r -t 0.1 leftover_input
     fi
 }
 

@@ -26,7 +26,7 @@ installDocker()
             checkSuccess "Cleaning up"
         fi
 
-        isSuccessful "Docker has been installed and configured. Please log out and log back in for group changes to take effect."
+        isSuccessful "Docker has been installed and configured."
     fi
 }
 

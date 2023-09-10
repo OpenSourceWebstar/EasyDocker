@@ -378,6 +378,7 @@ databaseCycleThroughListAppsCrontab()
         installBackupCrontabApp $name
     done
 
+    echo ""
     isSuccessful "Setting up Crontab backups for application(s) completed."
 
 }
