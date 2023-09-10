@@ -134,7 +134,7 @@ installDockerNetwork()
 
 		isNotice "Network $CFG_NETWORK_NAME not found, creating now"
 		# If the network does not exist, create it with the specified subnet
-network_create=$(sudo -u $easydockeruser cat <<EOF
+network_create=$(cat <<EOF
 docker network create \
   --driver=bridge \
   --subnet=$CFG_NETWORK_SUBNET \

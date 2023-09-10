@@ -201,7 +201,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_CRONTAB == "true" ]]; then
 		### Crontab
-		if [[ "$ISCRON" != *"command not found"* ]] && sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
+		if [[ "$ISCRON" != *"command not found"* ]] && sudo crontab -l -u root | grep -q "cron is set up for root"; then
 			isSuccessful "Crontab is successfully set up."
 		else
 			isNotice "Crontab not installed."
