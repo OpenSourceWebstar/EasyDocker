@@ -389,11 +389,8 @@ installCozy()
 		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
-		result=$(sudo mkdir -p $install_path/$app_name/db $install_path/$app_name/storage)
+		result=$(mkdirFolder $install_path/$app_name/db $install_path/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
-
-		result=$(sudo chown 1000 $install_path/$app_name/db $install_path/$app_name/storage)
-		checkSuccess "Setting permissions for db and storage folders"
 
 		setupComposeFileApp;
 

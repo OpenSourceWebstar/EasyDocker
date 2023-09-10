@@ -682,7 +682,7 @@ installMattermost()
         echo "---- $menu_number. Pulling Mattermost GitHub repo"
         echo ""
 
-        result=$(sudo mkdir -p $install_path$app_name)
+        result=$(mkdirFolder $install_path$app_name)
 		checkSuccess "Creating $app_name install folder"
 
         result=$(sudo git clone https://github.com/mattermost/docker $install_path$app_name)
@@ -691,7 +691,7 @@ installMattermost()
         result=$(sudo cp $install_path$app_name/env.example $install_path$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
 
-        result=$(sudo mkdir -p $install_path$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
+        result=$(mkdirFolder $install_path$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
         result=$(sudo chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)

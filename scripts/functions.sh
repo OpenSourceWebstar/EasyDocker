@@ -6,7 +6,7 @@ gitFolderResetAndBackup()
     # Folder setup
     # Check if the directory specified in $script_dir exists
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
-        result=$(sudo mkdir -p "$backup_install_dir/$backupFolder")
+        result=$(mkdirFolder "$backup_install_dir/$backupFolder")
         checkSuccess "Create the backup folder"
     fi
     result=$(cd $backup_install_dir)
@@ -21,7 +21,7 @@ gitFolderResetAndBackup()
     # Reset git
     result=$(sudo rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
-    result=$(sudo mkdir -p "$script_dir")
+    result=$(mkdirFolder "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir"
     checkSuccess "Going into the install folder"
@@ -88,6 +88,20 @@ runUpdate()
     
     result=$(sudo ./update.sh)
     checkSuccess "Running Update Script"
+}
+
+mkdirFolders() {
+    local owner="$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER"
+
+    for dir_path in "$@"; do
+        local folder_name=$(basename "$dir_path")
+
+        result=$(sudo mkdir -p "$dir_path")
+        echo "Creating $folder_name directory"
+
+        result=$(sudo chown "$owner" "$dir_path")
+        echo "Updating $folder_name with $owner ownership"
+    done
 }
 
 reloadScripts()
@@ -509,7 +523,7 @@ setupComposeFileNoApp()
         return 1
     fi
 
-    sudo mkdir -p "$target_path"
+    mkdirFolder "$target_path"
     if [ $? -ne 0 ]; then
         isError "Failed to create the directory '$target_path'."
         return 1
