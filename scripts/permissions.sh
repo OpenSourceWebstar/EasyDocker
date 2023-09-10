@@ -2,15 +2,17 @@
 
 fixFolderPermissions() 
 {  
-    # Docker install user setup
-    result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
-    checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
+	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        # Docker install user setup
+        result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
+        checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-    result=$(sudo chmod +x $base_dir $install_path)
-    checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+        result=$(sudo chmod +x $base_dir $install_path)
+        checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
-    result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path")
-    checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
+        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path")
+        checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
+    fi
 }
 
 runStart() 
