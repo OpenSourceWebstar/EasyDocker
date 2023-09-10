@@ -148,10 +148,10 @@ installMailcow()
 			
 			# Setup crontab
 			job="0 * * * * /bin/bash $install_path$app_name/caddy-to-mailcow-ssl.sh"
-			if ( crontab -l | grep -q -F "$job" ); then
+			if ( sudo -u $easydockeruser crontab -l | grep -q -F "$job" ); then
 				isNotice "Cron job already exists, ignoring..."
 			else
-			( crontab -l ; echo "$job" ) | crontab -
+			( sudo -u $easydockeruser crontab -l ; echo "$job" ) | sudo -u $easydockeruser crontab -
 				isSuccessful "Cron job added successfully!"
 			fi
 		fi

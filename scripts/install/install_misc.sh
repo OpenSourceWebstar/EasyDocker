@@ -101,19 +101,19 @@ installCrontab()
         # Check to see if already installed
         if [[ "$ISCRON" == *"command not found"* ]]; then
             isNotice "Crontab is not installed, setting up now."
-            result=$(sudo -u $easydockeruser apt update)
+            result=$(sudo apt update)
             checkSuccess "Updating apt for post installation"
-            result=$(sudo -u $easydockeruser apt install cron -y)
+            result=$(sudo apt install cron -y)
             isSuccessful "Installing crontab application"
             result=$(sudo -u $easydockeruser crontab -l)
             isSuccessful "Enabling crontab on the system"
         fi
 
-        search_line="# cron is set up for root"
+        search_line="# cron is set up for $easydockeruser"
         cron_output=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
-            result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for root") | sudo -u $easydockeruser crontab -u root - )
+            result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - )
             checkSuccess "Setting up crontab for root user"
         fi
 
@@ -135,7 +135,7 @@ installBackupCrontabApp()
 {
     local name=$1
 
-    if ! crontab -l | grep -q "$name"; then
+    if ! sudo -u $easydockeruser crontab -l | grep -q "$name"; then
         isNotice "Automatic Backups for $name are not set up."
         while true; do
             isQuestion "Do you want to set up automatic $name backups (y/n): "
@@ -177,7 +177,7 @@ installSetupCrontab() {
     local entry_name=$1
 
     # Check to see if already instealled
-    if ! sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser"; then
         isError "Crontab is not setup"
         return
     fi
@@ -190,7 +190,7 @@ installSetupCrontab() {
 
     local apps_comment="# CRONTAB BACKUP APPS"
     local full_comment="# CRONTAB BACKUP FULL"
-    local existing_crontab=$(crontab -l 2>/dev/null)
+    local existing_crontab=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
     
 
     if ! echo "$existing_crontab" | grep -q "$full_comment"; then
@@ -234,7 +234,7 @@ installSetupCrontabTiming() {
     fi
 
     # Check to see if already setup
-    if ! sudo -u $easydockeruser crontab -l -u root | grep -q "cron is set up for root"; then
+    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser"; then
         isError "Crontab is not setup"
         return 1
     fi
@@ -264,7 +264,7 @@ installSetupCrontabTiming() {
     new_minute_value=$((id * $CFG_BACKUP_CRONTAB_APP_INTERVAL))
 
     # Step 2: Locate the existing crontab entry in the crontab file
-    crontab_entry_to_update=$(crontab -l | grep "$entry_name")
+    crontab_entry_to_update=$(sudo -u $easydockeruser crontab -l | grep "$entry_name")
 
     # Check if the entry exists in the crontab
     if [[ -z "$crontab_entry_to_update" ]]; then
