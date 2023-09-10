@@ -127,7 +127,7 @@ installCrontab()
 # Function to remove all crontab data
 deleteCrontab() 
 {
-    echo "" | crontab -
+    echo "" | sudo crontab -
     echo "All crontab data has been deleted."
 }
 
@@ -162,10 +162,10 @@ installCrontabSSHScan()
     local cron_job="*/5 * * * * cd /docker/install/ && chmod 0775 crontab.sh && ./crontab.sh sshscan"
 
     # Check if the cron job does not exist in the user's crontab
-    if ! crontab -l | grep -qF "$cron_job"; then
-        result=$( (crontab -l 2>/dev/null; echo "$marker") | crontab - )
+    if ! sudo crontab -l | grep -qF "$cron_job"; then
+        result=$( (sudo crontab -l 2>/dev/null; echo "$marker") | sudo crontab - )
         checkSuccess "Add the SSHScan marker to the crontab"
-        result=$( (crontab -l 2>/dev/null; echo "$cron_job") | crontab - )
+        result=$( (sudo crontab -l 2>/dev/null; echo "$cron_job") | sudo crontab - )
         checkSuccess "Adding SSH Scaning to the Crontab"
     else
         isNotice "Cron job for SSH scan already exists. Skipping insertion."

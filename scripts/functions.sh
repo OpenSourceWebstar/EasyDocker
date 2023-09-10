@@ -6,53 +6,53 @@ gitFolderResetAndBackup()
     # Folder setup
     # Check if the directory specified in $script_dir exists
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
-        result=$(mkdir -p "$backup_install_dir/$backupFolder")
+        result=$(sudo mkdir -p "$backup_install_dir/$backupFolder")
         checkSuccess "Create the backup folder"
     fi
     result=$(cd $backup_install_dir)
     checkSuccess "Going into the backup install folder"
 
     # Copy folders
-    result=$(cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
+    result=$(sudo cp -r "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
-    result=$(cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
+    result=$(sudo cp -r "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
 
     # Reset git
-    result=$(rm -rf $script_dir)
+    result=$(sudo rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
-    result=$(mkdir -p "$script_dir")
+    result=$(sudo mkdir -p "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
     cd "$script_dir"
     checkSuccess "Going into the install folder"
-	result=$(git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
+	result=$(sudo git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
-    result=$(cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
+    result=$(sudo cp -rf "$backup_install_dir/$backupFolder/"* "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
-    result=$(zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
+    result=$(sudo zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
-    result=$(rm -r "$backup_install_dir/$backupFolder")
+    result=$(sudo rm -r "$backup_install_dir/$backupFolder")
     checkSuccess "Removing the backup folder"
 
     # Fixing the issue where the git does not use the .gitignore
     result=$(cd $script_dir)
     checkSuccess "Going into the install folder"
-	git rm --cached $configs_dir/$config_file_apps_system > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
-	git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
-	git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
-	git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
-	git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_apps_system > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
+	sudo git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
+	sudo git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
+	sudo git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
-    result=$(git commit -m "Stop tracking ignored files")
+    result=$(sudo git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
 
 	isSuccessful "Custom changes have been discarded successfully"
@@ -63,30 +63,30 @@ runStart()
 {  
     local path="$3"
     cd $script_dir
-    result=$(chmod 0755 start.sh)
+    result=$(sudo chmod 0755 start.sh)
     checkSuccess "Updating Start Script Permissions"
     
-    result=$(./start.sh "" "" "$path")
+    result=$(sudo ./start.sh "" "" "$path")
     checkSuccess "Running Start script"
 }
 
 runInit() 
 {
     cd $script_dir
-    result=$(chmod 0755 init.sh)
+    result=$(sudo chmod 0755 init.sh)
     checkSuccess "Updating Init Script Permissions"
     
-    result=$(./init.sh run)
+    result=$(sudo ./init.sh run)
     checkSuccess "Running Init Script"
 }
 
 runUpdate() 
 {
     cd $script_dir
-    result=$(chmod 0755 update.sh)
+    result=$(sudo chmod 0755 update.sh)
     checkSuccess "Updating Update Script Permissions"
     
-    result=$(./update.sh)
+    result=$(sudo ./update.sh)
     checkSuccess "Running Update Script"
 }
 
@@ -235,6 +235,14 @@ detectOS()
     fi
 }
 
+runCommandForDockerInstallUser() 
+{
+    local remote_command="$1"
+
+    # Run the SSH command using the existing SSH variables
+    result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" 2>/dev/null)
+}
+
 checkConfigFilesExist() 
 {
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
@@ -362,7 +370,7 @@ viewConfigs()
   echo ""
 
   if [ ${#config_files[@]} -eq 0 ]; then
-    echo "No files found in /configs/ folder."
+    isNotice "No files found in /configs/ folder."
     return
   fi
 
@@ -429,7 +437,7 @@ viewConfigs()
       done
 
       if [ -z "$selected_file" ]; then
-        echo "No config found with the selected letter. Please try again."
+        isNotie "No config found with the selected letter. Please try again."
         read -p "Press Enter to continue."
       else
         nano "$selected_file"
@@ -447,7 +455,8 @@ viewConfigs()
         echo ""
       fi
     else
-      echo "Invalid input. Please enter a valid letter or 'x' to exit."
+      isNotice "Invalid input. Please enter a valid letter or 'x' to exit."
+      echo ""
       read -p "Press Enter to continue."
     fi
   done
@@ -465,7 +474,7 @@ setupIPsAndHostnames()
             # Public variables
             domain_prefix=$hostname
             domain_var_name="CFG_DOMAIN_${domain_number}"
-            domain_full=$(grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
+            domain_full=$(sudo grep "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
             host_setup=${domain_prefix}.${domain_full}
             ssl_key=${domain_full}.key
             ssl_crt=${domain_full}.crt
@@ -491,24 +500,24 @@ setupComposeFileNoApp()
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
 
     if [ -d "$target_path" ]; then
-        echo "Error: The directory '$target_path' already exists."
+        isError "The directory '$target_path' already exists."
         return 1
     fi
 
     if [ ! -f "$source_file" ]; then
-        echo "Error: The source file '$source_file' does not exist."
+        isError "The source file '$source_file' does not exist."
         return 1
     fi
 
     sudo mkdir -p "$target_path"
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to create the directory '$target_path'."
+        isError "Failed to create the directory '$target_path'."
         return 1
     fi
 
     sudo cp "$source_file" "$target_path/docker-compose.yml" >> "$logs_dir/$docker_log_file" 2>&1
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
+        isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
     fi
 
@@ -521,12 +530,12 @@ setupComposeFileApp()
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
 
     if [ -d "$target_path" ]; then
-        echo "Error: The directory '$target_path' already exists."
+        isError "The directory '$target_path' already exists."
         return 1
     fi
 
     if [ ! -f "$source_file" ]; then
-        echo "Error: The source file '$source_file' does not exist."
+        isError ""Error: "The source file '$source_file' does not exist."
         return 1
     fi
 
@@ -534,13 +543,15 @@ setupComposeFileApp()
     checkSuccess "Creating install path for $app_name"
     
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to create the directory '$target_path'."
+        isError "Failed to create the directory '$target_path'."
         return 1
     fi
 
-    sudo cp "$source_file" "$target_path/docker-compose.$app_name.yml" >> "$logs_dir/$docker_log_file" 2>&1
+    result=$(sudo cp "$source_file" "$target_path/docker-compose.$app_name.yml" >> "$logs_dir/$docker_log_file" 2>&1)
+    checkSuccess "Copying compose .yml file for setup."
+
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
+        isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
     fi
 
@@ -549,37 +560,47 @@ setupComposeFileApp()
 
 dockerDownUpDefault()
 {
-    
-    if [[ "$OS" == "1" ]]; then
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "cd $install_path$app_name && docker-compose down")
-        checkSuccess "Shutting down container for $app_name"
+    cd $install_path$app_name
+    if [[ "$OS" == [123] ]]; then
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            result=$(runCommandForDockerInstallUser "docker-compose down")
+            checkSuccess "Shutting down container for $app_name"
 
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "cd $install_path$app_name && docker-compose up -d")
-        checkSuccess "Starting up container for $app_name"
+            result=$(runCommandForDockerInstallUser "docker-compose up -d")
+            checkSuccess "Starting up container for $app_name"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            result=$(sudo docker-compose down)
+            checkSuccess "Shutting down container for $app_name"
+
+            result=$(sudo docker-compose up -d)
+            checkSuccess "Starting up container for $app_name"
+        fi
     else
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "cd $install_path$app_name && sudo docker-compose down")
-        checkSuccess "Shutting down container for $app_name"
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            result=$(runCommandForDockerInstallUser "docker-compose down")
+            checkSuccess "Shutting down container for $app_name"
 
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "cd $install_path$app_name && sudo docker-compose up -d")
-        checkSuccess "Starting up container for $app_name"
+            result=$(runCommandForDockerInstallUser "docker-compose up -d")
+            checkSuccess "Starting up container for $app_name"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            result=$(sudo docker-compose down)
+            checkSuccess "Shutting down container for $app_name"
+
+            result=$(sudo docker-compose up -d)
+            checkSuccess "Starting up container for $app_name"
+        fi
     fi
 }
 
 dockerUpDownAdditionalYML()
 {
     cd $install_path$app_name
-    if [[ "$OS" == "1" ]]; then
+    if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-            "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-            "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+            result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
@@ -590,12 +611,10 @@ dockerUpDownAdditionalYML()
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-            "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-            "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+            result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
@@ -686,12 +705,33 @@ editEnvFileDefault()
         -e "s/PUBLICIPHERE/$public_ip/g" \
         -e "s/IPADDRESSHERE/$ip_setup/g" \
         -e "s/IPWHITELIST/$CFG_IPS_WHITELIST/g" \
-        -e "s/PORTHERE/80/g" \
+        -e "s/PORTHERE/$port/g" \
         -e "s/SECONDPORT/$port_2/g" \
         "$env_file")
     checkSuccess "Updating .env file for $app_name"
 
     isSuccessful "Updated the .env file"
+}
+
+editCustomFile() 
+{
+    local customfile="$1"
+    local custompath="$2"
+    local custompathandfile="$custompath/$customfile"
+
+    result=$(sudo sed -i \
+        -e "s/DOMAINNAMEHERE/$domain_full/g" \
+        -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
+        -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
+        -e "s/PUBLICIPHERE/$public_ip/g" \
+        -e "s/IPADDRESSHERE/$ip_setup/g" \
+        -e "s/IPWHITELIST/$CFG_IPS_WHITELIST/g" \
+        -e "s/PORTHERE/$port/g" \
+        -e "s/SECONDPORT/$port_2/g" \
+        "$custompathandfile")
+    checkSuccess "Updating $customfile file for $app_name"
+
+    isSuccessful "Updated the $customfile file"
 }
 
 passwordValidation()
@@ -746,6 +786,17 @@ emailValidation()
     done
 }
 
+removeEmptyLineAtFileEnd() 
+{
+  local file_path="$1"
+  local last_line=$(tail -n 1 "$file_path")
+  
+  if [ -z "$last_line" ]; then
+    result=$(sudo sed -i '$d' "$file_path")
+    checkSuccess "Removed the empty line at the end of $file_path"
+  fi
+}
+
 scanConfigsForRandomPassword() 
 {
     if [[ "$CFG_REQUIREMENT_PASSWORDS" == "true" ]]; then
@@ -758,15 +809,15 @@ scanConfigsForRandomPassword()
         for scanned_config_file in "$configs_dir"/*; do
             if [ -f "$scanned_config_file" ]; then
                 # Check if the file contains the placeholder string "RANDOMIZEDPASSWORD"
-                while grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
+                while sudo grep -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do
                     # Generate a unique random password
                     local random_password=$(openssl rand -base64 12 | tr -d '+/=')
 
                     # Capture the content before "RANDOMIZEDPASSWORD"
-                    local config_content=$(sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$scanned_config_file")
+                    local config_content=$(sudo sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$scanned_config_file")
 
                     # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
-                    sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
+                    sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$scanned_config_file"
 
                     # Display the update message with the captured content and file name
                     #isSuccessful "Updated $config_content in $(basename "$scanned_config_file") with a new password: $random_password"
@@ -779,7 +830,7 @@ scanConfigsForRandomPassword()
 
 setupEnvFile()
 {
-    result=$(cd $install_path$app_name && cp env.example .env)
+    result=$(cd $install_path$app_name && sudo cp env.example .env)
     checkSuccess "Setting up .env file to path"
 }
 
@@ -787,8 +838,7 @@ dockerStopAllApps()
 {
     isNotice "Please wait for docker containers to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "docker stop $(docker ps -a -q)")
+        result=$(runCommandForDockerInstallUser "docker stop $(docker ps -a -q)")
         checkSuccess "Stopping all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker stop $(docker ps -a -q))
@@ -800,8 +850,7 @@ dockerStartAllApps()
 {
     isNotice "Please wait for docker containers to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "docker restart $(docker ps -a -q)")
+        result=$(runCommandForDockerInstallUser "docker restart $(docker ps -a -q)")
         checkSuccess "Starting up all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker restart $(docker ps -a -q))
@@ -813,8 +862,7 @@ dockerAppDown()
 {
     isNotice "Please wait for $app_name container to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
+        result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
         checkSuccess "Shutting down $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
@@ -826,8 +874,7 @@ dockerAppUp()
 {
     isNotice "Please wait for $app_name container to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-        "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
+        result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
         checkSuccess "Starting up $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)

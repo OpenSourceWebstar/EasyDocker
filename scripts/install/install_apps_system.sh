@@ -51,22 +51,21 @@ installFail2Ban()
             result=$(cd $install_path$app_name && sudo touch $install_path$app_name/logs/auth.log)
             checkSuccess "Creating Auth.log file"
 
-            result=$(mkdir -p $install_path$app_name/config/$app_name $install_path$app_name/config/$app_name/action.d)
+            result=$(sudo mkdir -p $install_path$app_name/config/$app_name $install_path$app_name/config/$app_name/action.d)
             checkSuccess "Creating config and action.d folders"
 
             # AbuseIPDB
-            result=$(cd $install_path$app_name/config/$app_name/action.d/ && curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
+            result=$(cd $install_path$app_name/config/$app_name/action.d/ && sudo curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
             checkSuccess "Downloading abuseipdb.conf from GitHub"
             
-            result=$(sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
+            result=$(sudo sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/action.d/abuseipdb.conf)
             checkSuccess "Setting up abuseipdb_apikey"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null; \
-                "docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf")
+                result=$(runCommandForDockerInstallUser "docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf")
                 checkSuccess "Copying abuseipdb.conf file"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                result=$(docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf)
+                result=$(sudo docker cp $install_path$app_name/config/$app_name/action.d/abuseipdb.conf $app_name:/etc/$app_name/action.d/abuseipdb.conf)
                 checkSuccess "Copying abuseipdb.conf file"
             fi
 
@@ -74,10 +73,10 @@ installFail2Ban()
 		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local >> $logs_dir/$docker_log_file 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
-            result=$(sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
+            result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up AbuseIPDB API Key in jail.local file"
 
-            result=$(sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_path$app_name/config/$app_name/jail.local)
+            result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_path$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up IP Whitelist in jail.local file"
 
 		    dockerDownUpDefault;
@@ -226,7 +225,7 @@ installTraefik()
 		setupComposeFileNoApp;
 		
         # Create necessary directories and set permissions
-        result=$(mkdir -p "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
+        result=$(sudo mkdir -p "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
         result=$(sudo chown 1000 "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
@@ -236,7 +235,7 @@ installTraefik()
         result=$(sudo touch "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
 
-        result=$(chmod 600 "$install_path$app_name/etc/certs/acme.json")
+        result=$(sudo chmod 600 "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
@@ -244,7 +243,7 @@ installTraefik()
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
-        result=$(sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_path$app_name/etc/traefik.yml")
+        result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_path$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
 		editComposeFileDefault;

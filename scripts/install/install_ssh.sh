@@ -221,7 +221,7 @@ removeSSHKeyFromAuthorizedKeysAndDatabase()
         local auth_key_file="$ssh_directory/authorized_keys"  # Define auth_key_file here
 
         # Remove the key from the authorized_keys file
-        result=$(sed -i "/$key_filename/d" "$auth_key_file")
+        result=$(sudo sed -i "/$key_filename/d" "$auth_key_file")
         checkSuccess "SSH public key '$key_filename' removed from authorized_keys file."
 
         # Remove the key from the database
@@ -248,6 +248,6 @@ updateSSHPermissions()
     #checkSuccess "Adding read and write permissions for ssh folders"
     result=$(sudo chown -R $CFG_DOCKER_MANAGER_USER:$CFG_DOCKER_MANAGER_USER $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding chown to dockermanager user for ssh folders"
-    result=$(find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec chmod 600 {} \;)
+    result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec chmod 600 {} \;)
     #checkSuccess "Updating all permissions of keys to 600"
 }

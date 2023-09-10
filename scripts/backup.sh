@@ -126,28 +126,28 @@ backupZipFile()
     fi
 
     isNotice "The new Backup file will be named : ${BACKUP_FILE_NAME}.zip"
-    result=$(mkdir -p $BACKUP_SAVE_DIRECTORY)
+    result=$(sudo mkdir -p $BACKUP_SAVE_DIRECTORY)
     checkSuccess "Creating Backup folder in case it doesn't exist"
     isNotice "Starting Compression, this may take a while"
     if [ "$app_name" == "full" ]; then
         # Create a temporary directory
         temp_dir=$(mktemp -d)
 
-        result=$(mkdir -p "$temp_dir/$(basename "$base_dir")")
+        result=$(sudo mkdir -p "$temp_dir/$(basename "$base_dir")")
         checkSuccess "Create the $base_dir inside the temporary directory"
 
-        result=$(cd $base_dir && cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")
+        result=$(sudo cd $base_dir && cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")
         checkSuccess "Copy the data to the temporary directory"
 
-        result=$(cd "$temp_dir" && zip -r -MM -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$(basename "$base_dir")")
+        result=$(sudo cd "$temp_dir" && zip -r -MM -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$(basename "$base_dir")")
         checkSuccess "Create the zip command to include duplicates in the zip file"
 
-        result=$(rm -r "$temp_dir")
+        result=$(sudo rm -r "$temp_dir")
         checkSuccess "Remove the temporary directory"
 
         #checkSuccess "Compressing $app_name folder into an encrypted zip file"
     elif [ "$app_name" != "full" ]; then
-        result=$(cd $install_path && zip -r -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$app_name")
+        result=$(cd $install_path && sudo zip -r -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$app_name")
         checkSuccess "Compressing $app_name folder into an encrypted zip file"
     fi
 }
@@ -161,10 +161,10 @@ backupCleanFiles()
     fi
 
     if [ "$app_name" == "full" ]; then
-        result=$(find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
+        result=$(sudo find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
         checkSuccess "Deleting Backups older than $CFG_BACKUP_KEEPDAYS days"
     elif  [ "$app_name" != "full" ]; then
-        result=$(find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
+        result=$(sudo find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
         checkSuccess "Deleting Backups older than $CFG_BACKUP_KEEPDAYS days"
     fi
 }
@@ -179,7 +179,7 @@ backupFindLatestFile()
 
     if [ "$app_name" == "full" ]; then
         cd $BACKUP_SAVE_DIRECTORY
-        LatestBackupFile=$(ls -t *"$backupDate.zip" | head -n 1)
+        LatestBackupFile=$(sudo ls -t *"$backupDate.zip" | head -n 1)
         isNotice "Latest backup found file: $LatestBackupFile"
         if [ -z "$LatestBackupFile" ]; then
             isNotice "No backup files found for $app_name on $backupDate."
@@ -188,7 +188,7 @@ backupFindLatestFile()
         fi
     elif [ "$app_name" != "full" ]; then
         cd $BACKUP_SAVE_DIRECTORY
-        LatestBackupFile=$(find . -maxdepth 1 -type f -regex ".*${app_name}.*${backupDate}\.zip" | sort -r | head -n 1)
+        LatestBackupFile=$(sudo find . -maxdepth 1 -type f -regex ".*${app_name}.*${backupDate}\.zip" | sort -r | head -n 1)
         if [ -z "$LatestBackupFile" ]; then
             isNotice "No backup files found for $app_name on $backupDate."
         else
@@ -211,10 +211,10 @@ backupTransferFile()
             if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP" true; then
                 checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_1_IP"
                 if [ "$app_name" == "full" ]; then
-                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
+                    result=$(sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
                     checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
                 elif [ "$app_name" != "full" ]; then
-                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
+                    result=$(sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
                     checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
                 fi
             else
@@ -222,10 +222,10 @@ backupTransferFile()
             fi
         else
             if [ "$app_name" == "full" ]; then
-                result=$(sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
+                result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
                 checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
             elif [ "$app_name" != "full" ]; then
-                result=$(sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
+                result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
                 checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
             fi
         fi
@@ -238,10 +238,10 @@ backupTransferFile()
             if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP" true; then
                 checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_2_IP"
                 if [ "$app_name" == "full" ]; then
-                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
+                    result=$(sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
                     checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
                 elif [ "$app_name" != "full" ]; then
-                    result=$(scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
+                    result=$(sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
                     checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
                 fi
             else
@@ -249,10 +249,10 @@ backupTransferFile()
             fi
         else
             if [ "$app_name" == "full" ]; then
-                result=$(sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
+                result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
                 checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
             elif [ "$app_name" != "full" ]; then
-                result=$(sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
+                result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" sudo scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
                 checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
             fi
         fi

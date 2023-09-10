@@ -41,13 +41,15 @@ uninstallApp()
 
 dockerDownRemove()
 {
-    # This can error for many reasons so no checkSuccess
-    if [[ "$OS" == "1" ]]; then
-        result=$(cd $install_path$app_name && docker-compose down -v --rmi all --remove-orphans)
-        isSuccessful "Shutting down & Removing all $app_name container data"
-    else
-        result=$(cd $install_path$app_name && sudo docker-compose down -v --rmi all --remove-orphans)
-        isSuccessful "Shutting down & Removing all $app_name container data"
+    cd $install_path$app_name
+    if [[ "$OS" == [123] ]]; then
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            result=$(runCommandForDockerInstallUser "docker-compose down -v --rmi all --remove-orphans")
+            isSuccessful "Shutting down & Removing all $app_name container data"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            result=$(sudo docker-compose down -v --rmi all --remove-orphans)
+            isSuccessful "Shutting down & Removing all $app_name container data"
+        fi
     fi
 }
 

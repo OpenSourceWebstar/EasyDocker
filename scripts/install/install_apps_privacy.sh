@@ -95,7 +95,7 @@ installMailcow()
 			local ports_to_scan="25|$COWP80C|110|143|$COWP443C|465|587|993|995|4190"
 			local scan_result
 
-			scan_result=$(ss -tlpn | grep -E -w "$ports_to_scan")
+			scan_result=$(sudo ss -tlpn | sudo grep -E -w "$ports_to_scan")
 
 			if [[ -n "$scan_result" ]]; then
 				isError "Some of the specified ports are not free:"
@@ -264,7 +264,7 @@ installOwnCloud()
 
 if [[ "$public" == "true" ]]; then	
 cd $install_path$app_name
-cat << EOF > $install_path$app_name/.env
+sudo cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
@@ -276,7 +276,7 @@ fi
 
 if [[ "$public" == "false" ]]; then	
 cd $install_path$app_name
-cat << EOF > $install_path$app_name/.env
+sudo cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
@@ -389,7 +389,7 @@ installCozy()
 		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
-		result=$(mkdir -p $install_path/$app_name/db $install_path/$app_name/storage)
+		result=$(sudo mkdir -p $install_path/$app_name/db $install_path/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
 		result=$(sudo chown 1000 $install_path/$app_name/db $install_path/$app_name/storage)
@@ -397,13 +397,13 @@ installCozy()
 
 		setupComposeFileApp;
 
-		result=$(sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"
 
-		result=$(sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
 
-		result=$(sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
 		editComposeFileApp;
@@ -658,7 +658,7 @@ installSearXNG()
 		done
 
 		# Perform the required operation on the file once it exists
-		result=$(sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
+		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
 		dockerDownUpDefault;

@@ -53,25 +53,27 @@ installTileDesk()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		if [[ "$OS" == "1" ]]; then
-			result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
-			checkSuccess "Shutting down docker-compose.$app_name.yml"
-			if [[ "$public" == "true" ]]; then
-				result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-				checkSuccess "Starting public docker-compose.$app_name.yml"
-			else
-				result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-				checkSuccess "Starting standard docker-compose.$app_name.yml"
-			fi
-		else
-			result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
-			checkSuccess "Shutting down docker-compose.$app_name.yml"
-			if [[ "$public" == "true" ]]; then
-				result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-				checkSuccess "Starting public docker-compose.$app_name.yml"
-			else
-				result=$(docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-				checkSuccess "Starting standard docker-compose.$app_name.yml"
+		if [[ "$OS" == [123] ]]; then
+			if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+				result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+				checkSuccess "Shutting down docker-compose.$app_name.yml"
+				if [[ "$public" == "true" ]]; then
+					result=$(runCommandForDockerInstallUser "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+					checkSuccess "Starting public docker-compose.$app_name.yml"
+				else
+					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+					checkSuccess "Starting standard docker-compose.$app_name.yml"
+				fi
+			elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+				result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+				checkSuccess "Shutting down docker-compose.$app_name.yml"
+				if [[ "$public" == "true" ]]; then
+					result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					checkSuccess "Starting public docker-compose.$app_name.yml"
+				else
+					result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					checkSuccess "Starting standard docker-compose.$app_name.yml"
+				fi
 			fi
 		fi
 
@@ -232,7 +234,7 @@ installJitsiMeet()
 		checkSuccess "Unzip downloaded file"
 		result=$(sudo mv $install_path$app_name/docker-jitsi-meet-$latest_tag/* $install_path$app_name)
 		checkSuccess "Moving all files from zip file to install directory"
-		result=$(sudo rm -rf $install_path$app_name/$latest_tag.zip && rm -rf $install_path$app_name/$latest_tag/)
+		result=$(sudo rm -rf $install_path$app_name/$latest_tag.zip && sudo rm -rf $install_path$app_name/$latest_tag/)
 		checkSuccess "Removing downloaded zip file as no longer needed"
 		
 		((menu_number++))
@@ -259,22 +261,22 @@ installJitsiMeet()
 
 		# Values are missing from the .env by default for some reason
 		# https://github.com/jitsi/docker-jitsi-meet/commit/12051700562d9826f9e024ad649c4dd9b88f94de#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5
-		result=$(echo "XMPP_DOMAIN=meet.jitsi" >> $install_path$app_name/.env)
+		result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_DOMAIN"
-		
-		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" >> $install_path$app_name/.env)
+
+		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		result=$(echo "JVB_PORT=10000" >> $install_path$app_name/.env)
+		result=$(echo "JVB_PORT=10000" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		result=$(echo "JVB_TCP_MAPPED_PORT=4443" >> $install_path$app_name/.env)
+		result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		result=$(echo "JVB_TCP_PORT=4443" >> $install_path$app_name/.env)
+		result=$(echo "JVB_TCP_PORT=4443" | sudo tee -a "$install_path$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
-		
-		result=$(cd $install_path$app_name && ./gen-passwords.sh)
+
+		result=$(cd "$install_path$app_name" && sudo ./gen-passwords.sh)
 		checkSuccess "Running Jitsi Meet gen-passwords.sh script"
 
 		((menu_number++))
@@ -448,9 +450,9 @@ installAkaunting()
 		checkSuccess "Updating port 8080 to $port in docker-compose.yml"
 		
 		# Find the last instance of "networks:" in the file and get its line number
-		last_network=$(grep -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
+		last_network=$(sudo grep -n 'networks:' "$install_path$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
 		if [ -n "$last_network" ]; then
-			result=$(sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
+			result=$(sudo sed -i "${last_network},${last_network}+2s/^/# /" "$install_path$app_name/docker-compose.yml")
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
 		fi
 		
@@ -461,10 +463,10 @@ installAkaunting()
         echo "---- $menu_number. Setting up .env files."
         echo ""
 
-		result=$(cp $install_path$app_name/env/db.env.example $install_path$app_name/env/db.env)
+		result=$(sudo cp $install_path$app_name/env/db.env.example $install_path$app_name/env/db.env)
 		checkSuccess "Copying example db.env for setup"
 
-		result=$(cp $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
+		result=$(sudo cp $install_path$app_name/env/run.env.example $install_path$app_name/env/run.env)
 		checkSuccess "Copying example run.env for setup"
 	
 		result=$(sudo sed -i "s/akaunting.example.com/$host_setup/g" $install_path$app_name/env/run.env)
@@ -484,11 +486,18 @@ installAkaunting()
 		if [ -f "$install_path$app_name/SETUPINITIALIZED" ]; then
 			isNotice "Running setup as initial setup file not found."
 
-			result=$(touch $install_path$app_name/SETUPINITIALIZED)
+			result=$(sudo touch $install_path$app_name/SETUPINITIALIZED)
 			checkSuccess "Creating initizilation file"
 
-			result=$(cd $install_path$app_name && AKAUNTING_SETUP=true docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-			checkSuccess "Starting $app_name up with initial setup flag"
+			if [[ "$OS" == [123] ]]; then
+				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+					result=$(runCommandForDockerInstallUser "cd $install_path$app_name && AKAUNTING_SETUP=true docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)")
+					isSuccessful "Starting $app_name up with initial setup flag"
+				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+					result=$(cd $install_path$app_name && AKAUNTING_SETUP=true sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					isSuccessful "Starting $app_name up with initial setup flag"
+				fi
+			fi
 		else
 			isNotice "It seems $app_name is already setup, using the normal up command"
 			dockerUpDownAdditionalYML;
@@ -673,7 +682,7 @@ installMattermost()
         echo "---- $menu_number. Pulling Mattermost GitHub repo"
         echo ""
 
-        result=$(mkdir -p $install_path$app_name)
+        result=$(sudo mkdir -p $install_path$app_name)
 		checkSuccess "Creating $app_name install folder"
 
         result=$(sudo git clone https://github.com/mattermost/docker $install_path$app_name)
@@ -704,133 +713,79 @@ installMattermost()
         echo "---- $menu_number. Running the docker-compose.yml to install and start Mattermost"
         echo ""
 
+mattermostAddToYMLFile() 
+{
+  local file_path="$1"
+  sudo tee -a "$file_path" <<EOF
+    labels:
+      traefik.enable: true
+      traefik.http.routers.mattermost.entrypoints: web,websecure
+      traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`) # Update to your domain
+      traefik.http.routers.mattermost.tls: true
+      traefik.http.routers.mattermost.tls.certresolver: production
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
+
+  postgres:
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.105
+
+  networks:
+    vpn:
+      external: true
+EOF
+}
+
 		DCN=docker-compose.nginx.yml
 		DCWN=docker-compose.without-nginx.yml
 
 		isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
 		read -rp "" MATN
     	if [[ "$MATN" == [nN] ]]; then
-			if [[ "$OS" == "1" ]]; then
-				result=$(docker-compose -f docker-compose.yml -f $DCWN down)
-				checkSuccess "Shutting down nginx container"
-				result=$(docker-compose -f docker-compose.yml -f $DCN up -d)
-				checkSuccess "Starting up nginx container"
-				
-			else
-				result=$(sudo docker-compose -f docker-compose.yml -f $DCWN down)
-				checkSuccess "Shutting down nginx container"
-				result=$(sudo docker-compose -f docker-compose.yml -f $DCN up -d)
-				checkSuccess "Starting up nginx container"
+			if [[ "$OS" == [123] ]]; then
+				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN down")
+					checkSuccess "Shutting down nginx container"
+
+					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCN up -d")
+					checkSuccess "Starting up nginx container"
+				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+					result=$(sudo docker-compose -f docker-compose.yml -f $DCWN down)
+					checkSuccess "Shutting down nginx container"
+
+					result=$(sudo docker-compose -f docker-compose.yml -f $DCN up -d)
+					checkSuccess "Starting up nginx container"
+				fi
 			fi
 		fi
 
-    	if [[ "$MATN" == [yY] ]]; then
-
-			if [[ "$OS" == "1" ]]; then
+		if [[ "$MATN" == [yY] ]]; then
+			if [[ "$OS" == [123] ]]; then
 				if grep -q "vpn:" $install_path$app_name/$DCWN; then
 					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
 				else			
-					# Check if the file has an empty line at the end
-					last_line=$(tail -n 1 $install_path$app_name/$DCWN)
-					if [ -z "$last_line" ]; then
-						result=$(sed -i '$d' $install_path$app_name/$DCWN)
-						checkSuccess "Remove the empty line at the end of $DCWN file )"
-					fi
-
-					# Append the text to the file
-					echo "    labels:" >> $install_path$app_name/$DCWN
-					#echo "      caddy: DOMAINSUBNAMEHERE" >> $install_path$app_name/$DCWN
-					#echo "      caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"" >> $install_path$app_name/$DCWN
-					echo "      traefik.enable: true" >> $install_path$app_name/$DCWN
-					echo "      traefik.http.routers.mattermost.entrypoints: web,websecure" >> $install_path$app_name/$DCWN
-					echo "      traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`) # Update to your domain" >> "$install_path$app_name/$DCWN"
-					echo "      traefik.http.routers.mattermost.tls: true" >> $install_path$app_name/$DCWN
-					echo "      traefik.http.routers.mattermost.tls.certresolver: production" >> $install_path$app_name/$DCWN
-					echo "    networks:" >> $install_path$app_name/$DCWN
-					echo "      vpn:" >> $install_path$app_name/$DCWN
-					echo "         ipv4_address: IPADDRESSHERE" >> $install_path$app_name/$DCWN
-					echo "" >> $install_path$app_name/$DCWN
-					echo "  postgres:" >> $install_path$app_name/$DCWN
-					echo "    networks:" >> $install_path$app_name/$DCWN
-					echo "      vpn:" >> $install_path$app_name/$DCWN
-					echo "         ipv4_address: 10.8.1.105" >> $install_path$app_name/$DCWN
-					echo "" >> $install_path$app_name/$DCWN
-					echo "networks:" >> $install_path$app_name/$DCWN
-					echo "  vpn:" >> $install_path$app_name/$DCWN
-					echo "    external: true" >> $install_path$app_name/$DCWN
-
-					# Perform the replacements using a single sed command
-					result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g;
-								s/DOMAINSUBNAMEHERE/$host_setup/g;
-								s/DOMAINPREFIXHERE/$domain_prefix/g;
-								s/PUBLICIPHERE/$public_ip/g;
-								s/IPADDRESSHERE/$ip_setup/g;
-								s/PORTHERE/$port/g;" "$install_path$app_name/$DCWN")
-
-					# Check the success of the sed command and call the checkSuccess function
-					checkSuccess "Updating configuration in $DCWN"
+					removeEmptyLineAtFileEnd "$install_path$app_name/$DCWN"
+					mattermostAddToYMLFile "$install_path$app_name/$DCWN"
+					editCustomFile "$install_path$app_name" "$DCWN"
 				fi
 
-				result=$(cd $install_path$app_name && docker-compose -f docker-compose.yml -f $DCWN down)
-				checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
-				result=$(cd $install_path$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d)
-				checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
-
-			else
-				if grep -q "vpn:" $install_path$app_name/$DCWN; then
-					echo "The compose file already contains custom edits....cancelling...."
-					exit 0
-				else
-					# Check if the file has an empty line at the end
-					last_line=$(tail -n 1 $install_path$app_name/$DCWN)
-					if [ -z "$last_line" ]; then
-						result=$(sed -i '$d' $install_path$app_name/$DCWN)
-						checkSuccess "Remove the empty line at the end of $DCWN file )"
-					fi
-
-					# Append the text to the file
-					echo "    labels:" >> $install_path$app_name/$DCWN
-					#echo "      caddy: DOMAINSUBNAMEHERE" >> $install_path$app_name/$DCWN
-					#echo "      caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"" >> $install_path$app_name/$DCWN
-					echo "      traefik.enable: true" >> $install_path$app_name/$DCWN
-					echo "      traefik.http.routers.mattermost.entrypoints: web,websecure" >> $install_path$app_name/$DCWN
-					echo "      traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`) # Update to your domain" >> "$install_path$app_name/$DCWN"
-					echo "      traefik.http.routers.mattermost.tls: true" >> $install_path$app_name/$DCWN
-					echo "      traefik.http.routers.mattermost.tls.certresolver: production" >> $install_path$app_name/$DCWN
-					echo "    networks:" >> $install_path$app_name/$DCWN
-					echo "      vpn:" >> $install_path$app_name/$DCWN
-					echo "         ipv4_address: IPADDRESSHERE" >> $install_path$app_name/$DCWN
-					echo "" >> $install_path$app_name/$DCWN
-					echo "  postgres:" >> $install_path$app_name/$DCWN
-					echo "    networks:" >> $install_path$app_name/$DCWN
-					echo "      vpn:" >> $install_path$app_name/$DCWN
-					echo "         ipv4_address: IPADDRESSHERE" >> $install_path$app_name/$DCWN
-					echo "" >> $install_path$app_name/$DCWN
-					echo "networks:" >> $install_path$app_name/$DCWN
-					echo "  vpn:" >> $install_path$app_name/$DCWN
-					echo "    external: true" >> $install_path$app_name/$DCWN
-
-					# Perform the replacements using a single sed command
-					result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g;
-								s/DOMAINSUBNAMEHERE/$host_setup/g;
-								s/DOMAINPREFIXHERE/$domain_prefix/g;
-								s/PUBLICIPHERE/$public_ip/g;
-								s/IPADDRESSHERE/$ip_setup/g;
-								s/PORTHERE/$port/g;" "$install_path$app_name/$DCWN")
-
-					# Check the success of the sed command and call the checkSuccess function
-					checkSuccess "Updating configuration in $DCWN"
-				fi
-
-				# Check if the Docker Compose files exist
+				cd $install_path$app_name 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
-					isSuccessful "Docker Compose files have been found"
-					result=$(cd $install_path$app_name && docker-compose -f docker-compose.yml -f "$DCWN" down)
-					checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
-					result=$(cd $install_path$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d)
-					checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
-				else
-					isError "Docker Compose files not found, will not be shutting down!"
+					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+						result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN down")
+						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
+
+						result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN up -d")
+						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
+					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+						result=$(sudo docker-compose -f docker-compose.yml -f $DCWN down)
+						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
+						
+						result=$(sudo docker-compose -f docker-compose.yml -f $DCWN up -d)
+						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
+					fi
 				fi
 			fi
 		fi

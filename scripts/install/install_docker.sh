@@ -125,8 +125,7 @@ installDockerUser()
 installDockerNetwork()
 {
 	# Check if the network already exists
-    if ! sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost \
-    "docker network ls | grep -q \"$CFG_NETWORK_NAME\"" 2>/dev/null; then
+    if ! runCommandForDockerInstallUser "docker network ls | grep -q \"$CFG_NETWORK_NAME\""; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
@@ -135,7 +134,7 @@ installDockerNetwork()
 
 		isNotice "Network $CFG_NETWORK_NAME not found, creating now"
 		# If the network does not exist, create it with the specified subnet
-result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 2>/dev/null <<EOF
+network_create=$(sudo cat <<EOF
 docker network create \
   --driver=bridge \
   --subnet=$CFG_NETWORK_SUBNET \
@@ -145,6 +144,7 @@ docker network create \
   $CFG_NETWORK_NAME
 EOF
 )
+        result=$(runCommandForDockerInstallUser $network_create)
         checkSuccess "Creating docker network"
 	fi
 }
@@ -250,14 +250,15 @@ installDockerRootless()
             result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
-result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no $CFG_DOCKER_INSTALL_USER@localhost 'bash -s' << EOF
+rootless_install=$(cat <<EOF
     curl -fsSL https://get.docker.com/rootless | sh && \
     systemctl --user start docker && \
     systemctl --user enable docker && \
     exit
 EOF
 )
-checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
+            result=$(runCommandForDockerInstallUser $rootless_install)
+            checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
 
             result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"

@@ -29,10 +29,10 @@ checkUpdates()
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
 		# Update Git to ignore changes in file permissions
-		git config core.fileMode false
+		sudo git config core.fileMode false
 		# Update Git with email address
-		git config --global user.name "$CFG_INSTALL_NAME"
-		git config --global user.email "$CFG_EMAIL"
+		sudo git config --global user.name "$CFG_INSTALL_NAME"
+		sudo git config --global user.email "$CFG_EMAIL"
 		
 
 		# Check if there are uncommitted changes

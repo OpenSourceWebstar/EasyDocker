@@ -21,12 +21,14 @@ dockerDownShutdown()
     cd $install_path$app_name
 
     if [ -e $install_path$app_name/docker-compose.yml ]; then
-        if [[ "$OS" == "1" ]]; then
-            result=$(docker-compose down)
-            checkSuccess "Shutting down container for $app_name"
-        else
-            result=$(sudo docker-compose down)
-            checkSuccess "Shutting down container for $app_name"
+        if [[ "$OS" == [123] ]]; then
+            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                result=$(runCommandForDockerInstallUser "docker-compose down")
+                isSuccessful "Shutting down container for $app_name"
+            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                result=$(sudo docker-compose down)
+                isSuccessful "Shutting down container for $app_name"
+            fi
         fi
         dockerDownShutdownSuccessMessage;
     fi
