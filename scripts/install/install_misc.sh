@@ -155,7 +155,7 @@ installBackupCrontabApp()
         fi
 
         # Consume any remaining input (including newline)
-        read -r leftover_input
+        read -r -t 0.1 leftover_input
     fi
 }
 
