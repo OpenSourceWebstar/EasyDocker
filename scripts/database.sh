@@ -355,7 +355,6 @@ databaseCycleThroughListAppsCrontab()
     echo "############################################"
     echo "######     Backup Crontab Install     ######"
     echo "############################################"
-    echo ""
 
     app_names=("full")  # To Inject full to setup crontab also
     while IFS= read -r name; do

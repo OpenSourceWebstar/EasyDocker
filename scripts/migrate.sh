@@ -29,6 +29,7 @@ migrateCheckForMigrateFiles() {
             # Question and Options
             isQuestion "Please select from the availables options above, or press 'c' to continue: "
             read -p "" migrationmainoptions
+            echo ""
             case $migrationmainoptions in
                 f|F)
                     migrateListFullMigrateFiles;
