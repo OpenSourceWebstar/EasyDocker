@@ -125,12 +125,13 @@ copyFolder()
     fi
 }
 
-copyFolders() {
+copyFolders() 
+{
     local source="$1"
     local save_dir="$2"
 
     # Ensure the source path is expanded to a list of subdirectories
-    local subdirs=($(find "$source" -type d -mindepth 1 -maxdepth 1))
+    local subdirs=($(find "$source" -mindepth 1 -maxdepth 1 -type d))
 
     if [ ${#subdirs[@]} -eq 0 ]; then
         echo "No subdirectories found in the source directory: $source"
