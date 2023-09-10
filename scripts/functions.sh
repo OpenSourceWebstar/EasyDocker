@@ -13,13 +13,13 @@ gitFolderResetAndBackup()
     checkSuccess "Going into the backup install folder"
 
     # Copy folders
-    result=$(copyFile "$configs_dir" "$backup_install_dir/$backupFolder")
+    result=$(copyFile -rf "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
-    result=$(copyFile "$logs_dir" "$backup_install_dir/$backupFolder")
+    result=$(copyFile -rf "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
 
     # Reset git
-    result=$(sudo -u $easydockeruser rm -rf $script_dir)
+    result=$(copyFile-rf $script_dir)
     checkSuccess "Deleting all Git files"
     result=$(mkdirFolders "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"	
@@ -29,7 +29,7 @@ gitFolderResetAndBackup()
     checkSuccess "Clone the Git repository"
 
     # Copy folders back into the install folder
-    result=$(copyFile "$backup_install_dir/$backupFolder/"* "$script_dir")
+    result=$(copyFile -rf "$backup_install_dir/$backupFolder/*" "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     # Zip up folder for safe keeping and remove folder
@@ -114,7 +114,7 @@ copyFile()
         local flags="$1"
         local fileorfolder="$2"
         local save_dir="$3"
-
+        
         result=$(sudo -u $easydockeruser cp "$flags" "$fileorfolder" "$save_dir")
         checkSuccess "Coping $fileorfolder to $save_dir"
     else
