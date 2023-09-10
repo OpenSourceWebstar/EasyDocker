@@ -8,7 +8,7 @@ portExistsInDatabase()
     local type="$3"
 
     if [ -f "$base_dir/$db_file" ] && [ -n "$app_name" ]; then
-        table_name=port
+        table_name=ports
         existing_portdata=$(sudo -u $easydockeruser sqlite3 "$base_dir/$db_file" "SELECT port FROM $table_name WHERE port = '$port' AND type = '$type';")
         if [ -n "$existing_portdata" ]; then
             return 0  # Port exists in the database
