@@ -144,7 +144,7 @@ docker network create \
   $CFG_NETWORK_NAME
 EOF
 )
-        result=$(runCommandForDockerInstallUser $network_create)
+        result=$(runCommandForDockerInstallUser "$network_create")
         checkSuccess "Creating docker network"
 	fi
 }
@@ -257,7 +257,7 @@ rootless_install=$(cat <<EOF
     exit
 EOF
 )
-            result=$(runCommandForDockerInstallUser $rootless_install)
+            result=$(runCommandForDockerInstallUser "$rootless_install")
             checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
 
             result=$(sudo -u $easydockeruser cp $sysctl $sysctl.bak)
