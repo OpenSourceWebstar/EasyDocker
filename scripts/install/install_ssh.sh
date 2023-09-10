@@ -167,7 +167,7 @@ addSSHKeyToAuthorizedKeysAndDatabase()
     if [ -f "$key_file" ]; then
         # Ensure the authorized_keys file is empty or create it if it doesn't exist
         if [ ! -f "$auth_key_file" ]; then
-            sudo -u $easydockeruser touch "$auth_key_file"
+            createTouch "$auth_key_file"
         fi
 
         # Check if the key already exists in the file

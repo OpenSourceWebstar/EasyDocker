@@ -223,7 +223,7 @@ installJitsiMeet()
 		checkSuccess "Creating $app_name container installation folder"
 		result=$(sudo -u $easydockeruser rm -rf $install_path$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"
-		result=$(sudo -u $easydockeruser touch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
+		result=$(createTouch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
 		checkSuccess "Create logging txt file"
 		
 
@@ -486,7 +486,7 @@ installAkaunting()
 		if [ -f "$install_path$app_name/SETUPINITIALIZED" ]; then
 			isNotice "Running setup as initial setup file not found."
 
-			result=$(sudo -u $easydockeruser touch $install_path$app_name/SETUPINITIALIZED)
+			result=$(createTouch $install_path$app_name/SETUPINITIALIZED)
 			checkSuccess "Creating initizilation file"
 
 			if [[ "$OS" == [123] ]]; then

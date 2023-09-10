@@ -48,7 +48,7 @@ installFail2Ban()
         if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
-            result=$(cd $install_path$app_name && sudo -u $easydockeruser touch $install_path$app_name/logs/auth.log)
+            result=$(cd $install_path$app_name && createTouch $install_path$app_name/logs/auth.log)
             checkSuccess "Creating Auth.log file"
 
             result=$(mkdirFolders $install_path$app_name/config/$app_name $install_path$app_name/config/$app_name/action.d)
@@ -232,7 +232,7 @@ installTraefik()
         checkSuccess "Set permissions for /etc/ and /etc/certs/ Directories"
 
         # Create and secure the acme.json file
-        result=$(sudo -u $easydockeruser touch "$install_path$app_name/etc/certs/acme.json")
+        result=$(createTouch "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
 
         result=$(sudo -u $easydockeruser chmod 600 "$install_path$app_name/etc/certs/acme.json")
@@ -338,7 +338,7 @@ installCaddy()
 		
 		setupComposeFileNoApp;
 		
-		sudo -u $easydockeruser touch $install_path$app_name/Caddyfile
+		createTouch $install_path$app_name/Caddyfile
 		
 		editComposeFileDefault;
 
@@ -846,7 +846,7 @@ installDashy()
         echo "---- $menu_number. Setting up conf.yml file."
         echo ""
 
-        result=$(sudo -u $easydockeruser touch "$install_path$app_name/conf.yml")
+        result=$(createTouch "$install_path$app_name/conf.yml")
         checkSuccess "Creating base conf.yml file"
         result=$(sudo -u $easydockeruser cat "$resources_dir/$app_name/conf.yml" > "$install_path$app_name/conf.yml")
         checkSuccess "Copy contents of conf.yml configuration file"

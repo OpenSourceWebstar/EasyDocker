@@ -160,3 +160,22 @@ copyFiles()
         fi
     done
 }
+
+createTouch() 
+{
+    local file="$1"
+    local file_name=$(basename "$file")
+    local file_dir=$(dirname "$file")
+    local clean_dir=$(echo "$file" | sed 's#//*#/#g')
+
+    result=$(sudo touch "$clean_dir")
+    checkSuccess "Touching $file_name to $file_dir"
+
+    if [[ $clean_dir == *"$install_path"* ]]; then
+        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
+        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+    else
+        result=$(sudo chown $easydockeruser:$easydockeruser "$file")
+        checkSuccess "Updating $file_name with $easydockeruser ownership"
+    fi
+}
