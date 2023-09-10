@@ -70,7 +70,7 @@ installFail2Ban()
             fi
 
             # Jail.local
-		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local >> $logs_dir/$docker_log_file 2>&1)
+		    result=$(sudo cp $resources_dir/$app_name/jail.local $install_path$app_name/config/$app_name/jail.local | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
             result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
@@ -147,7 +147,7 @@ installAdguard()
 		setupComposeFileNoApp;
 		editComposeFileDefault;
 
-		result=$(sudo cp $resources_dir/unbound/unbound.conf $install_path$app_name/unbound.conf >> $logs_dir/$docker_log_file 2>&1)
+		result=$(sudo cp $resources_dir/unbound/unbound.conf $install_path$app_name/unbound.conf | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
 
 		((menu_number++))

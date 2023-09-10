@@ -58,12 +58,12 @@ installArch()
 
         isNotice "Installing Prerequisite Packages..."
 
-        sudo pacman -Sy git curl wget --noconfirm >> $logs_dir/$docker_log_file 2>&1
+        sudo pacman -Sy git curl wget --noconfirm | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
 
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Installing Docker-CE (Community Edition)..."
 
-            sudo pacman -Sy docker --noconfirm >> $logs_dir/$docker_log_file 2>&1
+            sudo pacman -Sy docker --noconfirm | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
 
             echo "- docker-ce version is now:"
             DOCKERV=$(docker -v)

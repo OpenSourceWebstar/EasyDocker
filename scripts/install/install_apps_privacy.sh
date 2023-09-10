@@ -117,7 +117,7 @@ installMailcow()
 		result=$(sudo git clone https://github.com/mailcow/mailcow-dockerized $install_path/mailcow)
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 
-		result=$(sudo cp $script_dir/containers/docker-compose.$app_name.yml $install_path$app_name/docker-compose.$app_name.yml >> $logs_dir/$docker_log_file 2>&1)
+		result=$(sudo cp $script_dir/containers/docker-compose.$app_name.yml $install_path$app_name/docker-compose.$app_name.yml | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
 
 		((menu_number++))
@@ -137,7 +137,7 @@ installMailcow()
 		
 		if [[ "$using_caddy" == "false" ]]; then
 			# Setup SSL Transfer scripts
-			result=$(sudo cp $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_path$app_name/caddy-to-mailcow-ssl.sh >> $logs_dir/$docker_log_file 2>&1)
+			result=$(sudo cp $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_path$app_name/caddy-to-mailcow-ssl.sh | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
 			result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_path$app_name/caddy-to-mailcow-ssl.sh)
@@ -368,7 +368,7 @@ installCozy()
 		result=$(sudo git clone https://github.com/vsellier/easy-cozy.git $install_path/$app_name)
 		checkSuccess "Cloning the Easy-Cozy from GitHub"
 		
-		result=$(sudo cp $install_path/$app_name/env.template $install_path/$app_name/.env >> $logs_dir/$docker_log_file 2>&1)
+		result=$(sudo cp $install_path/$app_name/env.template $install_path/$app_name/.env | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
 		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
@@ -885,13 +885,13 @@ installActual()
 			result=$(sudo mkdir -p $install_path$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
-			result=$(sudo cp $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json >> $logs_dir/$docker_log_file 2>&1)
+			result=$(sudo cp $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying config.json to actual-data folder"
 
-			result=$(sudo cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem >> $logs_dir/$docker_log_file 2>&1)
+			result=$(sudo cp $ssl_dir/$ssl_crt $install_path$app_name/actual-data/cert.pem | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying cert to actual-data folder"
 
-			result=$(sudo cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem >> $logs_dir/$docker_log_file 2>&1)
+			result=$(sudo cp $ssl_dir/$ssl_key $install_path$app_name/actual-data/key.pem | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying key to actual-data folder"
 			
 		else

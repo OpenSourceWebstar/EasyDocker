@@ -159,7 +159,7 @@ installDockerCheck()
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Checking Docker service status. Waiting if not found."
             while [[ "$ISACT" != "active" ]] && [[ $X -le 10 ]]; do
-                sudo systemctl start docker >> $logs_dir/$docker_log_file 2>&1
+                sudo systemctl start docker | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
                 sleep 10s &
                 pid=$! # Process Id of the previous running command
                 spin='-\|/'
