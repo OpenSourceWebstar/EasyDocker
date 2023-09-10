@@ -143,7 +143,7 @@ function isNotice()
 
 function isQuestion() 
 {
-    echo -e -n "${BLUE}QUESTION:${NC} $1"
+    echo -e -n "${BLUE}QUESTION:${NC} $1\n"
 }
 
 function isOptionMenu() 
