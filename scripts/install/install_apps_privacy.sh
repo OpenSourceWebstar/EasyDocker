@@ -264,7 +264,7 @@ installOwnCloud()
 
 if [[ "$public" == "true" ]]; then	
 cd $install_path$app_name
-sudo -u $easydockeruser cat << EOF > $install_path$app_name/.env
+sudo cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
@@ -276,7 +276,7 @@ fi
 
 if [[ "$public" == "false" ]]; then	
 cd $install_path$app_name
-sudo -u $easydockeruser cat << EOF > $install_path$app_name/.env
+sudo cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE

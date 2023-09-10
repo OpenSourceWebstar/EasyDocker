@@ -842,7 +842,7 @@ installDashy()
 
         result=$(createTouch "$install_path$app_name/conf.yml")
         checkSuccess "Creating base conf.yml file"
-        result=$(sudo -u $easydockeruser cat "$resources_dir/$app_name/conf.yml" > "$install_path$app_name/conf.yml")
+        result=$(sudo cat "$resources_dir/$app_name/conf.yml" > "$install_path$app_name/conf.yml")
         checkSuccess "Copy contents of conf.yml configuration file"
 
 		((menu_number++))
