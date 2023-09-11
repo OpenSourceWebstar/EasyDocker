@@ -11,13 +11,13 @@ databaseInstallApp() {
 
     # Check if the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-        isError "Database file not found: $base_dir/$db_file"
+        isNotice "Database file not found: $base_dir/$db_file"
         return 1
     fi
 
     # Check if the app_name is provided
     if [ -z "$app_name" ]; then
-        isError "App name not provided."
+        isNotice "App name not provided. Will not continue..."
         return 1
     fi
 
@@ -47,12 +47,12 @@ databaseUninstallApp()
 
     # Check if the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-        isError "Database file not found: $base_dir/$db_file"
+        isNotice "Database file not found: $base_dir/$db_file"
         return 1
     fi
 
     if [ -z "$app_name" ]; then
-        isError "App name not provided."
+        isNotice "App name not provided. Will not continue..."
         return 1
     fi
 
@@ -224,7 +224,7 @@ databaseListInstalledApps()
 
     # Check if the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-        isError "Database file not found: $base_dir/$db_file"
+        isNotice "Database file not found: $base_dir/$db_file"
         return 1
     fi
 
@@ -294,7 +294,7 @@ databaseCycleThroughListApps()
 
         # Check if the database file exists
         if [ ! -f "$base_dir/$db_file" ]; then
-            isError "Database file not found: $base_dir/$db_file"
+            isNotice "Database file not found: $base_dir/$db_file"
             return 1
         fi
 
@@ -347,7 +347,7 @@ databaseCycleThroughListAppsCrontab()
 
     # Check if the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-        isError "Database file not found: $base_dir/$db_file"
+        isNotice "Database file not found: $base_dir/$db_file"
         return 1
     fi
 
@@ -369,7 +369,7 @@ databaseCycleThroughListAppsCrontab()
 
     # Check if the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-        isError "Database file not found: $base_dir/$db_file"
+        isNotice "Database file not found: $base_dir/$db_file"
         return 1
     fi
 
@@ -401,7 +401,7 @@ databaseSSHScanForKeys()
 
     # Check if database file is available
     if [ ! -f "$base_dir/$db_file" ] ; then
-        checkSuccess "Database file not found. Make sure it's installed."
+        isNotice "Database file not found. Make sure it's installed."
         return 1
     fi
 
@@ -434,7 +434,7 @@ databaseDisplayTables()
 
         # Ensure the database file exists
         if [ ! -f "$base_dir/$db_file" ]; then
-            isError "Database file not found: $base_dir/$db_file"
+            isNotice "Database file not found: $base_dir/$db_file"
             return
         fi
 
@@ -492,7 +492,7 @@ databaseEmptyTable()
 
     # Ensure the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-      isError "Database file not found: $base_dir/$db_file"
+      isNotice "Database file not found: $base_dir/$db_file"
       return
     fi
 

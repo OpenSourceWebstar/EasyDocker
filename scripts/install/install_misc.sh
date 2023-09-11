@@ -248,7 +248,7 @@ installSetupCrontabTiming() {
 
     # Ensure the database file exists
     if [ ! -f "$base_dir/$db_file" ]; then
-      isError "Database file not found: $base_dir/$db_file"
+      isNotice "Database file not found: $base_dir/$db_file"
       return
     fi
 
@@ -258,7 +258,7 @@ installSetupCrontabTiming() {
 
     # Check if the entry exists in the database
     if [[ -z "$id" ]]; then
-        isError "Entry '$entry_name' not found in the database."
+        isNotice "Entry '$entry_name' not found in the database."
     fi
 
     # Calculate the new minute value based on the ID
