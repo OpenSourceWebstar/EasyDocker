@@ -87,6 +87,7 @@ migrateListFullMigrateFiles()
     # Prompt user for each file
     local selected_files=()
     for full_backup_file in $full_files_without_string; do
+        echo ""
         isQuestion "Do you want to restore $full_backup_file? (y/n): "
         read -p "" fullmigrateoption
         case $fullmigrateoption in
