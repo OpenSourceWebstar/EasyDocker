@@ -531,19 +531,18 @@ setupComposeFileApp()
 
 dockerDownUpDefault()
 {
-    cd $install_path$app_name
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
             result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose --quiet-pull up -d")
             checkSuccess "Starting up container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(sudo -u $easydockeruser docker-compose up -d)
+            result=$(sudo -u $easydockeruser docker-compose --quiet-pull up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     else
@@ -551,13 +550,13 @@ dockerDownUpDefault()
             result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose --quiet-pull up -d")
             checkSuccess "Starting up container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(sudo -u $easydockeruser docker-compose up -d)
+            result=$(sudo -u $easydockeruser docker-compose --quiet-pull up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     fi
@@ -570,13 +569,13 @@ dockerUpDownAdditionalYML()
             result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml --quiet-pull up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml --quiet-pull up -d)
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         fi
     else
@@ -584,7 +583,7 @@ dockerUpDownAdditionalYML()
             result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
 
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml --quiet-pull --quiet-pull up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
