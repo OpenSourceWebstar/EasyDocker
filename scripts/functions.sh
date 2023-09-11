@@ -832,7 +832,7 @@ dockerStopAllApps()
 {
     isNotice "Please wait for docker containers to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "docker stop $(docker ps -a -q)")
+        result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
         checkSuccess "Stopping all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo -u $easydockeruser docker stop $(docker ps -a -q))
@@ -844,7 +844,7 @@ dockerStartAllApps()
 {
     isNotice "Please wait for docker containers to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "docker restart $(docker ps -a -q)")
+        result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo -u $easydockeruser docker restart $(docker ps -a -q))
