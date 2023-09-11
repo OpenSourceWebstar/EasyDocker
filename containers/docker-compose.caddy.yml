@@ -15,7 +15,7 @@ services:
     environment:
       - CADDY_INGRESS_NETWORKS=caddy
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./caddy_data:/data
     restart: unless-stopped
 

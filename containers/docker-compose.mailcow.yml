@@ -21,9 +21,9 @@ services:
       command: --restart-containers ${COMPOSE_PROJECT_NAME}-postfix-mailcow-1,${COMPOSE_PROJECT_NAME}-nginx-mailcow-1,${COMPOSE_PROJECT_NAME}-dovecot-mailcow-1
         #network_mode: none
       volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
           - /docker/traefik/etc/certs:/traefik:ro
           - ./data/assets/ssl/:/output:rw
-          - /var/run/docker.sock:/var/run/docker.sock:ro
       restart: always
       environment:
           # only change this, if you're using another domain for mailcow's web frontend compared to the standard config

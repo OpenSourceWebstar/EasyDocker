@@ -17,6 +17,7 @@ services:
       - TRUSTED_HOSTS=DOMAINSUBNAMEHERE
       - memory_limit=500
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./kimai-public/:/opt/kimai/public
       # - var:/opt/kimai/var
       # - ./ldap.conf:/etc/openldap/ldap.conf:z

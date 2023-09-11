@@ -40,6 +40,7 @@ services:
       #traefik.http.routers.owncloud.tls: true
       #traefik.http.routers.owncloud.tls.certresolver: production
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./files:/mnt/data
     networks:
       vpn:

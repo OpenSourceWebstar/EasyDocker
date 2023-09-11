@@ -30,6 +30,7 @@ services:
       - DNSSEC="true"
       - DNSMASQ_LISTENING=single
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./pihole-dnsmasq-unbound:/etc/pihole:rw
       - ./pihole-unbound:/etc/dnsmasq:rw
     restart: unless-stopped

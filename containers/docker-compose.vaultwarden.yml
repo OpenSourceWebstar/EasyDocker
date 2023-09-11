@@ -12,6 +12,7 @@ services:
     ports:
       - 8201:80
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./vaultwarden-ssl/:/ssl/
       - ./vaultwarden-data:/data
     environment:

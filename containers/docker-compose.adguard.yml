@@ -45,6 +45,7 @@ services:
       #traefik.tcp.routers.adguard-dot.service: adguard
       #traefik.tcp.services.adguard.loadbalancer.server.port: 53
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - "./work:/opt/adguardhome/work"
       - "./conf:/opt/adguardhome/conf"
     networks:

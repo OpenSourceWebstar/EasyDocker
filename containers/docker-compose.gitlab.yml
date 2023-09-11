@@ -41,8 +41,8 @@ services:
     image: gitlab/gitlab-runner:latest
     container_name: gitlab-runner
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./runner/config/:/etc/gitlab-runner:Z
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       vpn:
         ipv4_address: 10.8.1.115

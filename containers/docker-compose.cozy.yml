@@ -12,6 +12,8 @@ services:
       #traefik.http.routers.cozy.rule: HostRegexp:${COZY_TLD},{subdomain:.*}.${COZY_TLD}
       #traefik.http.routers.cozy.tls: true
       #traefik.http.routers.cozy.tls.certresolver: production
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

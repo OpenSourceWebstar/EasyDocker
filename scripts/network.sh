@@ -26,7 +26,7 @@ openPort()
 
     # Check if the port already exists in the database
     if portExistsInDatabase "$app_name" "$port" "$type"; then
-        isError "Port $port and type $type already exists in the database.."
+        isNotice "Port $port and type $type already opened."
         return
     fi
 

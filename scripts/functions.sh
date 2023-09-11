@@ -612,6 +612,14 @@ editComposeFileDefault()
         "$compose_file")
     checkSuccess "Updating Compose file for $app_name"
 
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        result=$(sudo sed -i \
+            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            "$compose_file")
+        checkSuccess "Updating Compose file for $app_name"
+    fi
+
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
             result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
@@ -646,6 +654,14 @@ editComposeFileApp()
         -e "s/SECONDPORT/$port_2/g" \
         "$compose_file")
     checkSuccess "Updating Compose file for $app_name (Using additional yml file)"
+
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        result=$(sudo sed -i \
+            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            "$compose_file")
+        checkSuccess "Updating Compose file for $app_name"
+    fi
 
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
@@ -700,6 +716,14 @@ editCustomFile()
         -e "s/SECONDPORT/$port_2/g" \
         "$custompathandfile")
     checkSuccess "Updating $customfile file for $app_name"
+
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        result=$(sudo sed -i \
+            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            "$custompathandfile")
+        checkSuccess "Updating Compose file for $app_name"
+    fi
 
     isSuccessful "Updated the $customfile file"
 }

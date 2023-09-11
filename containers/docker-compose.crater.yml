@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./:/var/www
       - ./docker-compose/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:rw,delegated
     networks:

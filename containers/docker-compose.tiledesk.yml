@@ -26,6 +26,8 @@ services:
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
   mongo:
     volumes:
       - ./tiledesk-datadb:/data/db

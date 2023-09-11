@@ -34,6 +34,8 @@ services:
       #traefik.http.routers.killbill.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
       #traefik.http.routers.killbill.tls: true
       #traefik.http.routers.killbill.tls.certresolver: production
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

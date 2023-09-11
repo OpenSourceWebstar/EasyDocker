@@ -14,6 +14,7 @@ services:
       - TZ=Etc/UTC
       - VERBOSITY=-vv #optional
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/:/config
       - ./logs/:/var/log:ro
       #- ./logs/airsonic/:/remotelogs/airsonic:ro #optional
