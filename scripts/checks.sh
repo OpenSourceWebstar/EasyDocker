@@ -40,7 +40,7 @@ checkRequirements()
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 			ISACT=$(runCommandForDockerInstallUser "docker info --format '{{.ID}}'")
 		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-			ISACT=$( (sudo -u $easydockeruser systemctl is-active docker ) 2>&1 )
+			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
 		fi
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
 		ISUFW=$( (sudo ufw status ) 2>&1 )
