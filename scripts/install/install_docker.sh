@@ -20,10 +20,6 @@ installDocker()
                 result=$(sudo -u $easydockeruser usermod -aG docker $USER)
                 checkSuccess "Adding user to 'docker' group"
             fi
-
-            # Clean up the installation script
-            result=$(rm get-docker.sh)
-            checkSuccess "Cleaning up"
         fi
 
         isSuccessful "Docker has been installed and configured."
@@ -51,7 +47,7 @@ installDockerCompose()
         ######################################        
         
         if [[ "$OS" == [123] ]]; then
-            result=$(sudo -u $easydockeruser curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
+            result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 
             result=$(sudo chmod +x /usr/local/bin/docker-compose)

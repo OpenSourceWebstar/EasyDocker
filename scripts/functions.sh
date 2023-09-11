@@ -388,7 +388,7 @@ viewConfigs()
     read -p "" selected_letter
 
     if [[ "$selected_letter" == "x" ]]; then
-      echo "Exiting."
+      isNotice "Exiting."
       return
     elif [[ "$selected_letter" =~ [A-Za-z] ]]; then
       selected_file=""
