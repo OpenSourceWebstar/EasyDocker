@@ -856,10 +856,10 @@ dockerAppDown()
 {
     isNotice "Please wait for $app_name container to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop")
+        result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep \"$app_name\" | xargs docker stop")
         checkSuccess "Shutting down $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo -u $easydockeruser docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker stop)
+        result=$(sudo -u $easydockeruser docker ps -a --format '{{.Names}}' | grep \"$app_name\" | xargs docker stop)
         checkSuccess "Shutting down $app_name container"
     fi
 }
@@ -868,10 +868,10 @@ dockerAppUp()
 {
     isNotice "Please wait for $app_name container to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart")
+        result=$(runCommandForDockerInstallUser "docker ps -a --format '{{.Names}}' | grep \"$app_name\" | xargs docker restart")
         checkSuccess "Starting up $app_name container"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo -u $easydockeruser docker ps -a --format '{{.Names}}' | grep "$app_name" | xargs docker restart)
+        result=$(sudo -u $easydockeruser docker ps -a --format '{{.Names}}' | grep \"$app_name\" | xargs docker restart)
         checkSuccess "Starting up $app_name container"
     fi
 }
