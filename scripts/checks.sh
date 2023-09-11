@@ -37,15 +37,18 @@ checkRequirements()
 	fi
 
 	if [[ "$OS" == [123] ]]; then
-		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-			ISACT=$(runCommandForDockerInstallUser "docker info --format '{{.ID}}'")
-		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
-		fi
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
 		ISUFW=$( (sudo ufw status ) 2>&1 )
 		ISUFWD=$( (sudo ufw-docker) 2>&1 )
 		ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
+		ISUSER=$( (sudo id -u "$CFG_DOCKER_INSTALL_USER"))
+		if [[ "$ISUSER" == *"no such user"* ]]; then
+			if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+				ISACT=$(runCommandForDockerInstallUser "docker info --format '{{.ID}}'")
+			elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+				ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
+			fi
+		fi
 	fi
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then

@@ -100,7 +100,7 @@ installDockerUser()
                             break
                             ;;
                         [Nn]*)
-                            echo "No changes were made to PermitRootLogin."
+                            #echo "No changes were made to PermitRootLogin."
                             break
                             ;;
                         *)
