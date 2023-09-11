@@ -13,7 +13,7 @@ installUFW()
             echo "---- $menu_number. Installing using linux package installer"
             echo ""
 
-            result=$(yes | sudo -u $easydockeruser apt-get install ufw )
+            result=$(yes | sudo apt-get install ufw )
             checkSuccess "Installing UFW package"
 
             result=$(sudo ufw allow 22)

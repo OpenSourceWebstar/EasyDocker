@@ -190,7 +190,7 @@ installDockerRootless()
             # slirp4netns update and install
             if ! command -v slirp4netns &> /dev/null; then
                 isNotice "slirp4netns is not installed. Installing..."
-                result=$(sudo -u $easydockeruser apt-get install -y slirp4netns)
+                result=$(sudo apt-get install -y slirp4netns)
                 checkSuccess "Installing slirp4netns"
             else
                 isNotice "slirp4netns is already installed"
@@ -199,9 +199,9 @@ installDockerRootless()
                 if [[ "$installed_version" != "$latest_version" ]]; then
                     isNotice "slirp4netns version $installed_version is outdated."
                     isNotice "Installing version $latest_version..."
-                    result=$(sudo -u $easydockeruser apt-get update)
+                    result=$(sudo apt-get update)
                     checkSuccess "Updating apt packages"
-                    result=$(sudo -u $easydockeruser apt-get install -y slirp4netns)
+                    result=$(sudo apt-get install -y slirp4netns)
                     checkSuccess "Installing slirp4netns"
                 else
                     isSuccessful "slirp4netns version $installed_version is up to date"
