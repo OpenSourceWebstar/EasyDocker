@@ -632,7 +632,7 @@ editComposeFileDefault()
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
             result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
-            checkSuccess "Disable Traefik options for private setup)"
+            checkSuccess "Disable Traefik options for private setup"
         fi
     fi
 
@@ -673,7 +673,7 @@ editComposeFileApp()
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
             result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
-            checkSuccess "Disable Traefik options for private setup)"
+            checkSuccess "Disable Traefik options for private setup"
         fi
     fi
 

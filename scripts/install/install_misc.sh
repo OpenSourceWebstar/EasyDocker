@@ -120,7 +120,7 @@ installCrontab()
         export VISUAL=nano
         export EDITOR=nano
 
-        installCrontabSSHScan;
+        #installCrontabSSHScan;
     fi
 }
 
@@ -203,6 +203,7 @@ installSetupCrontab() {
     if [ "$entry_name" = "full" ]; then
         existing_crontab=$(echo "$existing_crontab" | sed "/$full_comment/a\\
 $crontab_entry")
+        echo ""
         checkSuccess "Add the new backup entry to the existing crontab"
     else
         # Check if the apps comment exists in the crontab
@@ -213,6 +214,7 @@ $crontab_entry")
         fi
         existing_crontab=$(echo "$existing_crontab" | sed "/$apps_comment/a\\
 $crontab_entry")
+        echo ""
         checkSuccess "Insert the non-full entry after the apps comment"
     fi
 

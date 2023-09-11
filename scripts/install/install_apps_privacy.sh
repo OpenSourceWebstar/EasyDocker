@@ -878,7 +878,7 @@ installActual()
 		if [ -f "$ssl_dir$ssl_key" ]; then
 			checkSuccess "Self Signed SSL Certificate found, installing...."
 
-			result=$(sudo -u $easydockeruser mkdir -p $install_path$app_name/actual-data)
+			result=$(mkdirFolders -p $install_path$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
 			result=$(copyFile $script_dir/resources/$app_name/config.json $install_path$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
