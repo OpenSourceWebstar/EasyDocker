@@ -197,6 +197,7 @@ detectOS()
             done
         fi
 
+        installDockerUser;
         scanConfigsForRandomPassword;
         fixFolderPermissions;
         checkRequirements
