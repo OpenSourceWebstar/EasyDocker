@@ -81,7 +81,7 @@ installFail2Ban()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -161,7 +161,7 @@ installAdguard()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -266,7 +266,7 @@ installTraefik()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -356,7 +356,7 @@ installCaddy()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -455,7 +455,7 @@ installWireguard()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -568,7 +568,7 @@ installPihole()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
         echo ""
@@ -652,7 +652,7 @@ installPortainer()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -722,7 +722,7 @@ installWatchtower()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -797,7 +797,7 @@ installDuplicati()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -886,7 +886,7 @@ installDashy()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""

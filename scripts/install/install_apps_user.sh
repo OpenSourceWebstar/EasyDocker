@@ -82,7 +82,7 @@ installTileDesk()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -164,7 +164,7 @@ installGitLab()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -305,7 +305,7 @@ installJitsiMeet()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;		
+        openAppPorts;		
 
 		((menu_number++))
 		echo ""
@@ -386,7 +386,7 @@ installKillbill()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -525,7 +525,7 @@ installAkaunting()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -606,7 +606,7 @@ installKimai()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -833,7 +833,7 @@ EOF
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
         echo ""

@@ -56,7 +56,7 @@ installTest()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""

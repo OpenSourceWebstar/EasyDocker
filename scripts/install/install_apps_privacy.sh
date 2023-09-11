@@ -194,7 +194,7 @@ installMailcow()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -305,7 +305,7 @@ fi
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -444,7 +444,7 @@ installCozy()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -525,7 +525,7 @@ installTrilium()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -606,7 +606,7 @@ installIPInfo()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -699,7 +699,7 @@ installSearXNG()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -780,7 +780,7 @@ installSpeedtest()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -861,7 +861,7 @@ installVaultwarden()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -962,7 +962,7 @@ installActual()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        OpenAppPorts;
+        openAppPorts;
 
 		((menu_number++))
 		echo ""
