@@ -457,6 +457,7 @@ databaseDisplayTables()
         echo ""
 
         if [[ "$table_name" == "x" ]]; then
+            echo ""
             echo "Exiting."
         return
         elif sudo sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$table_name\b"; then

@@ -38,6 +38,7 @@ installUFW()
                 checkSuccess "Enabling SSH through the firewall"
             fi
 
+            echo ""
             result=$(sudo ufw --force enable)
             checkSuccess "Enabling UFW Firewall"
 
@@ -55,14 +56,13 @@ installUFW()
             done            
             
             if [[ "$UFWP" == [yY] ]]; then
+                echo ""
                 result=$(yes | sudo ufw logging medium)
                 checkSuccess "Enabling UFW Firewall Logging"	
             fi
 
-	        ((menu_number++))
             echo ""
-            echo "---- $menu_number. UFW has been installed, you can use ufw status to see the status"
-            echo "    NOTE - The UFW-Docker package is NEEDED as docker ignores the UFW Firewall"
+            isSuccessful "UFW Firewall has been installed, you can use ufw status to see the status"
             echo ""
 
             menu_number=0   
