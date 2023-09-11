@@ -537,13 +537,13 @@ dockerDownUpDefault()
             result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -q -d")
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(sudo -u $easydockeruser docker-compose up -q -d)
+            result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     else
@@ -551,13 +551,13 @@ dockerDownUpDefault()
             result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -q -d")
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
 
-            result=$(sudo -u $easydockeruser docker-compose up -q -d)
+            result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     fi
