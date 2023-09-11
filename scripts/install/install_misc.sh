@@ -113,7 +113,7 @@ installCrontab()
         cron_output=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
-            result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - )
+            result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - 2>/dev/null )
             checkSuccess "Setting up crontab for $easydockeruser user"
         fi
 
@@ -178,7 +178,7 @@ installSetupCrontab() {
     local entry_name=$1
 
     # Check to see if already instealled
-    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser"; then
+    if ! sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
         isError "Crontab is not setup"
         return
     fi
@@ -196,6 +196,7 @@ installSetupCrontab() {
 
     if ! echo "$existing_crontab" | grep -q "$full_comment"; then
         existing_crontab=$(echo -e "$existing_crontab\n$full_comment")
+        echo ""
         checkSuccess "Check if the full comment exists in the crontab"
     fi
 
@@ -235,7 +236,7 @@ installSetupCrontabTiming() {
     fi
 
     # Check to see if already setup
-    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser"; then
+    if ! sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
         isError "Crontab is not setup"
         return 1
     fi

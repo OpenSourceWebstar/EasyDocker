@@ -200,7 +200,7 @@ detectOS()
         installDockerUser;
         scanConfigsForRandomPassword;
         fixFolderPermissions;
-        checkRequirements
+        checkRequirements;
     else
         checkSuccess "Unable to detect OS."
         exit 1

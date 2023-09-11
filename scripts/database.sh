@@ -340,7 +340,7 @@ databaseCycleThroughListAppsCrontab()
     fi
 
     # Check to see if crontab is not installed
-    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser"; then
+    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser" > /dev/null 2>&1; then
         isNotice "Crontab is not setup, skipping until its found."
         return 1
     fi

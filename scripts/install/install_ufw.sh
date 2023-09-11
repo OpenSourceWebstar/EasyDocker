@@ -5,6 +5,7 @@ installUFW()
    if [[ "$CFG_REQUIREMENT_UFW" == "true" ]]; then
     	ISUFW=$( (sudo ufw status ) 2>&1 )
 		if [[ "$ISUFW" == *"command not found"* ]]; then
+        	((menu_number++))
             echo ""
             echo "##########################################"
             echo "###     Install UFW Firewall           ###"
@@ -58,10 +59,13 @@ installUFW()
                 checkSuccess "Enabling UFW Firewall Logging"	
             fi
 
+	        ((menu_number++))
             echo ""
             echo "---- $menu_number. UFW has been installed, you can use ufw status to see the status"
             echo "    NOTE - The UFW-Docker package is NEEDED as docker ignores the UFW Firewall"
-            echo ""       
+            echo ""
+
+            menu_number=0   
             cd
         fi
     fi
