@@ -77,6 +77,13 @@ installTileDesk()
 			fi
 		fi
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -151,6 +158,13 @@ installGitLab()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -286,13 +300,12 @@ installJitsiMeet()
 
 		dockerDownUpDefault;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
-		echo ""
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
 
-        openPort jitsimeet-jvb-1 10000/udp
-        openPort jitsimeet-jvb-1 4443		
+        OpenAppPorts;		
 
 		((menu_number++))
 		echo ""
@@ -367,6 +380,13 @@ installKillbill()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -500,6 +520,13 @@ installAkaunting()
 			dockerUpDownAdditionalYML;
 		fi
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -573,6 +600,13 @@ installKimai()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -793,6 +827,13 @@ EOF
         echo ""
 
 		databaseInstallApp;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
         echo ""

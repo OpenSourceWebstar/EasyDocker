@@ -617,6 +617,22 @@ databasePortInsert()
     fi
 }
 
+databasePortRemove()
+{
+    local app_name="$1"
+    local portdata="$2"
+
+    # Split the portdata into port and type
+    IFS='/' read -r port type <<< "$portdata"
+
+    if [ -f "$base_dir/$db_file" ] && [ -n "$app_name" ]; then
+        table_name=ports
+        result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
+        checkSuccess "Deleting port $port and type $type for $app_name to the $table_name table."
+    fi
+}
+
+
 databaseBackupInsert()
 {
     local app_name="$1"

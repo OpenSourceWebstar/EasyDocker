@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Function to check if a port and type combination already exists in the database
 portExistsInDatabase()
 {
     local app_name="$1"
@@ -17,6 +16,21 @@ portExistsInDatabase()
     return 1  # Port does not exist in the database
 }
 
+openAppPorts()
+{
+    if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
+        openPort $app_name 80/tcp
+        openPort $app_name 443/tcp
+    elif [[ "$app_name" == "wireguard" ]]; then
+        openPort $app_name 51820/udp
+    elif [[ "$app_name" == "jitsimeet" ]]; then
+        openPort jitsimeet-jvb-1 10000/udp
+        openPort jitsimeet-jvb-1 4443
+    else
+        isNotice "No ports needed to be opened."
+    fi
+}
+
 openPort()
 {
     local app_name="$1" # $app_name if ufw-docker, number if ufw
@@ -30,7 +44,6 @@ openPort()
         return
     fi
 
-    # If the port doesn't exist in the database, continue with inserting and configuring
     databasePortInsert "$app_name" "$portdata"
 
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
@@ -39,5 +52,44 @@ openPort()
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         result=$(sudo ufw-docker allow "$app_name" "$port")
         checkSuccess "Opening port $port for $$app_name in the UFW-Docker Firewall"
+    fi
+}
+
+closePort()
+{
+    local app_name="$1" # $app_name if ufw-docker, number if ufw
+    local portdata="$2" # port/type if ufw-docker, empty if ufw
+
+    IFS='/' read -r port type <<< "$portdata"
+
+    # Check if the port already exists in the database
+    if portExistsInDatabase "$app_name" "$port" "$type"; then
+        databasePortRemove "$app_name" "$portdata"
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            result=$(sudo ufw deny "$port")
+            checkSuccess "Closing port $port for $app_name in the UFW Firewall"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            result=$(sudo ufw-docker deny "$app_name" "$port")
+            checkSuccess "Closing port $port for $$app_name in the UFW-Docker Firewall"
+        fi
+    else
+        isNotice "Unable to find port in the database...skipping..."
+    fi
+
+
+}
+
+CloseAppPorts()
+{
+    if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
+        closePort $app_name 80/tcp
+        closePort $app_name 443/tcp
+    elif [[ "$app_name" == "wireguard" ]]; then
+        closePort $app_name 51820/udp
+    elif [[ "$app_name" == "jitsimeet" ]]; then
+        closePort jitsimeet-jvb-1 10000/udp
+        closePort jitsimeet-jvb-1 4443
+    else
+        isNotice "No ports needed to be closed."
     fi
 }

@@ -76,6 +76,13 @@ installFail2Ban()
             isNotice "No API key found, please provide one if you want to use AbuseIPDB"
         fi
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -148,6 +155,13 @@ installAdguard()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -247,13 +261,12 @@ installTraefik()
 
 		dockerDownUpDefault;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
-		echo ""
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
 
-        openPort $app_name 80/tcp
-        openPort $app_name 443/tcp
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -338,13 +351,12 @@ installCaddy()
 
 		dockerDownUpDefault;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
-		echo ""
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
 
-        openPort $app_name 80/tcp
-        openPort $app_name 443/tcp
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -430,7 +442,6 @@ installWireguard()
 
         result=$(sudo sysctl -p)
 		checkSuccess "Apply changes made to the System's Kernel "
-		
 
 		((menu_number++))
 		echo ""
@@ -439,12 +450,12 @@ installWireguard()
 
 		dockerDownUpDefault;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Allowing $app_name through the UFW Firewall"
-		echo ""
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
 
-		openPort $app_name 51820/udp
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -552,6 +563,13 @@ installPihole()
             fi
         fi
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up database records"
@@ -629,6 +647,13 @@ installPortainer()
 		dockerDownUpDefault;
 		dockerDownUpDefault
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -691,6 +716,13 @@ installWatchtower()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -759,6 +791,13 @@ installDuplicati()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -841,6 +880,13 @@ installDashy()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""

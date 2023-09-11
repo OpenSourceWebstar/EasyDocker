@@ -51,6 +51,13 @@ installTest()
 
 		dockerDownUpDefault;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."

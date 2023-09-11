@@ -25,6 +25,13 @@ uninstallApp()
 
 	((menu_number++))
     echo ""
+    echo "---- $menu_number. Closing ports if required"
+    echo ""
+
+    CloseAppPorts;
+
+	((menu_number++))
+    echo ""
     echo "---- $menu_number. Marking app as uninstalled in the database"
     echo ""
 

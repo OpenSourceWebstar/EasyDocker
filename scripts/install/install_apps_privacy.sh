@@ -189,6 +189,13 @@ installMailcow()
 
 		dockerUpDownAdditionalYML;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -292,6 +299,13 @@ fi
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -425,6 +439,13 @@ installCozy()
 			checkSuccess "Setting up applications for $app_name for $cozy_user_1"
 		fi
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -499,6 +520,13 @@ installTrilium()
 
 		dockerDownUpDefault;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -572,6 +600,13 @@ installIPInfo()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -659,6 +694,13 @@ installSearXNG()
 
 		dockerDownUpDefault;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -733,6 +775,13 @@ installSpeedtest()
 
 		dockerDownUpDefault;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
+
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
@@ -806,6 +855,13 @@ installVaultwarden()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
@@ -900,6 +956,13 @@ installActual()
         echo ""
 
 		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        OpenAppPorts;
 
 		((menu_number++))
 		echo ""
