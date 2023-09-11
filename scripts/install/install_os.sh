@@ -24,7 +24,7 @@ installDebianUbuntu()
             isNotice "Installing Prerequisite Packages..."
             result=$(sudo apt update 2>/dev/null)
             checkSuccess "Running application update"
-            installed_apps="apt install curl wget git zip htop sqlite3 pv sshpass rsync acl p7zip*)
+            installed_apps="apt install curl wget git zip htop sqlite3 pv sshpass rsync acl p7zip*"
             result=$(sudo $installed_apps -y 2>/dev/null)
             checkSuccess "Installing system applications"
         else
