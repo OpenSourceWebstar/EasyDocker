@@ -393,34 +393,34 @@ restoreExtractFile()
         cd $RESTORE_SAVE_DIRECTORY
         # Local
         if [[ "$restorefull" == [lL] ]]; then
-            result=$(sudo -u $easydockeruser unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            result=$(sudo unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d /)
             checkSuccess "Decrypting $chosen_backup_file (Local)"
         fi
         # Remote
         if [[ "$restorefull" == [rR] ]]; then
-            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
             checkSuccess "Decrypting $chosen_backup_file (Remote)"
         fi
         # Remote Migrate
         if [[ "$restorefull" == [mM] ]]; then
-            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
             checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"
         fi
     else
         cd $RESTORE_SAVE_DIRECTORY
         # Local
         if [[ "$restoresingle" == [lL] ]]; then
-            result=$(sudo -u $easydockeruser unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
+            result=$(sudo unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
             checkSuccess "Decrypting $chosen_backup_file (Local)"
         fi
         # Remote
         if [[ "$restoresingle" == [rR] ]]; then
-            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
+            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
             checkSuccess "Decrypting $chosen_backup_file (Remote)"
         fi
         # Remote Migrate
         if [[ "$restoresingle" == [mM] ]]; then
-            result=$(sudo -u $easydockeruser unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
+            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_path)
             checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"
         fi
     fi
@@ -429,10 +429,10 @@ restoreExtractFile()
 restoreCleanFiles()
 {
     if [[ "$restorefull" == [lLrRmM] ]]; then
-        result=$(sudo -u $easydockeruser rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
+        result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
         checkSuccess "Clearing unneeded restore data"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        result=$(sudo -u $easydockeruser rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
+        result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
         checkSuccess "Clearing unneeded restore data"
     fi
 }
