@@ -318,7 +318,7 @@ viewLogs()
             ;;
         5)
             isNotice "Showing the full content of $docker_log_file:"
-            cat "$logs_dir/$docker_log_file"
+            nano "$logs_dir/$docker_log_file"
             ;;
         6)
             isNotice "Exiting"
@@ -471,7 +471,7 @@ setupComposeFileNoApp()
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
 
     if [ -d "$target_path" ]; then
-        isWarning "The directory '$target_path' already exists."
+        isNotice "The directory '$target_path' already exists."
         return 1
     fi
 
@@ -502,7 +502,7 @@ setupComposeFileApp()
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
 
     if [ -d "$target_path" ]; then
-        isWarning "The directory '$target_path' already exists."
+        isNotice "The directory '$target_path' already exists."
         return 1
     fi
 

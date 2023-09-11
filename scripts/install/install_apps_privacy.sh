@@ -263,27 +263,26 @@ installOwnCloud()
         echo ""
 
 if [[ "$public" == "true" ]]; then	
-cd $install_path$app_name
-sudo cat << EOF > $install_path$app_name/.env
+
+runCommandForDockerInstallUser "cd $install_path$app_name && cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
 ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
 ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
 HTTP_PORT=$port
-EOF
+EOF"
 fi
 
 if [[ "$public" == "false" ]]; then	
-cd $install_path$app_name
-sudo cat << EOF > $install_path$app_name/.env
+runCommandForDockerInstallUser "cd $install_path$app_name && cat << EOF > $install_path$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
 ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
 ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
 HTTP_PORT=$port
-EOF
+EOF"
 fi
 		editEnvFileDefault;
 

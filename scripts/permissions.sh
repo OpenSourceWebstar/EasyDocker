@@ -122,7 +122,7 @@ copyFile()
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     result=$(sudo cp "$file" "$save_dir")
-    checkSuccess "Coping $file_name to $save_dir"
+    checkSuccess "Copying $file_name to $save_dir"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
