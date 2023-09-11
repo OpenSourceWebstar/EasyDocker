@@ -656,11 +656,14 @@ migrateScanMigrateToConfigs() {
 }
 
 migrateUpdateFiles()
-{
+{            
     local app_name="$1"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path$app_name")
+        checkSuccess "Updating ownership on migrated folder $app_name to $CFG_DOCKER_INSTALL_USER"
         local compose_file="$install_path$app_name/docker-compose.yml"
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+
         result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
             "$compose_file")
