@@ -654,3 +654,23 @@ migrateScanMigrateToConfigs() {
   # Clear variables used in the function
   unset ignore_vars app_names found_vars section_found last_cfg_line var_found var_exists
 }
+
+migrateUpdateFiles()
+{
+    local app_name="$1"
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        local compose_file="$install_path$app_name/docker-compose.yml"
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        result=$(sudo sed -i \
+            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            "$compose_file")
+        checkSuccess "Updating Compose file for $app_name"
+    fi
+
+    if [[ $app_name == "traefik" ]]; then
+        result=$(sudo chmod 600 "$install_path$app_name/etc/certs/acme.json")
+        checkSuccess "Set permissions to acme.json file for $app_name"
+        result=$(sudo chmod 600 "$install_path$app_name/etc/traefik.yml")
+        checkSuccess "Set permissions to traefik.yml file for $app_name"
+    fi
+}

@@ -78,7 +78,7 @@ restoreStart()
         migrateScanFoldersForUpdates;
         migrateScanConfigsToMigrate;
         migrateScanMigrateToConfigs;
-        app_name=$stored_app_name
+        migrateUpdateFiles $stored_app_name;
     fi
     
     ((menu_number++))
