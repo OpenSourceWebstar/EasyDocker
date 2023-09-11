@@ -866,6 +866,7 @@ dockerAppDown()
 
 dockerAppUp()
 {
+    local app_name="$1"
     isNotice "Please wait for $app_name container to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")

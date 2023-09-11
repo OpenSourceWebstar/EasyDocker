@@ -79,6 +79,7 @@ restoreStart()
         migrateScanConfigsToMigrate;
         migrateScanMigrateToConfigs;
         migrateUpdateFiles $stored_app_name;
+        app_name=$stored_app_name
     fi
     
     ((menu_number++))
@@ -89,7 +90,7 @@ restoreStart()
     if [ "$stored_app_name" == "full" ]; then
         dockerStartAllApps;
     else
-        dockerAppUp;
+        dockerAppUp $stored_app_name;
     fi
 
     ((menu_number++))
