@@ -208,6 +208,7 @@ $crontab_entry")
         # Check if the apps comment exists in the crontab
         if ! echo "$existing_crontab" | grep -q "$apps_comment"; then
             existing_crontab=$(echo -e "$existing_crontab\n$apps_comment")
+            echo ""
             checkSuccess "Insert the full entry after the full comment"
         fi
         existing_crontab=$(echo "$existing_crontab" | sed "/$apps_comment/a\\
