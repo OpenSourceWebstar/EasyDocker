@@ -379,10 +379,10 @@ restoreDeleteDockerFolder()
             exclude_options+=" --exclude='$folder'"
         done
         # Run rsync command to delete everything in base_dir except the specified folders
-        result=$(sudo -u $easydockeruser rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
+        result=$(sudo rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
         checkSuccess "Deleting the $app_name Docker install folder $base_dir"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        result=$(sudo -u $easydockeruser rm -rf $install_path$app_name)
+        result=$(sudo rm -rf $install_path$app_name)
         checkSuccess "Deleting the $app_name Docker install folder in $install_path$app_name"
     fi
 }
