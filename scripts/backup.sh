@@ -167,6 +167,67 @@ backupCleanFiles()
         result=$(sudo find "$BACKUP_SAVE_DIRECTORY" -type f -mtime +"$CFG_BACKUP_KEEPDAYS" -delete)
         checkSuccess "Deleting Backups older than $CFG_BACKUP_KEEPDAYS days"
     fi
+
+    local backup_location="$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$CFG_INSTALL_NAME/$backup_folder"
+    local backup_location_clean="$(echo "$backup_location" | sed 's/\/\//\//g')"
+    local date_format="20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]"
+
+    if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ]; then
+        if [ "$app_name" == "full" ]; then
+            local backup_folder="full"
+            # List files in the remote directory
+            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
+            files_to_remove=$(echo "$result" | grep -E "$date_format")
+
+            while read -r file_to_remove; do
+            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "rm $backup_directory/$file_to_remove"
+            echo "Removed file: $file_to_remove"
+            done <<< "$files_to_remove"
+
+            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
+        elif [ "$app_name" != "full" ]; then
+            local backup_folder="single"
+            # List files in the remote directory
+            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
+            files_to_remove=$(echo "$result" | grep -E "$date_format")
+
+            while read -r file_to_remove; do
+            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "rm $backup_directory/$file_to_remove"
+            echo "Removed file: $file_to_remove"
+            done <<< "$files_to_remove"
+            
+            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
+        fi
+
+    if [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
+        if [ "$app_name" == "full" ]; then
+            local backup_folder="full"
+            # List files in the remote directory
+            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
+            files_to_remove=$(echo "$result" | grep -E "$date_format")
+
+            while read -r file_to_remove; do
+            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "rm $backup_directory/$file_to_remove"
+            echo "Removed file: $file_to_remove"
+            done <<< "$files_to_remove"
+
+            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
+        elif [ "$app_name" != "full" ]; then
+            local backup_folder="single"
+            # List files in the remote directory
+            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
+            files_to_remove=$(echo "$result" | grep -E "$date_format")
+
+            while read -r file_to_remove; do
+            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "rm $backup_directory/$file_to_remove"
+            echo "Removed file: $file_to_remove"
+            done <<< "$files_to_remove"
+            
+            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
+        fi
+    fi
+
+
 }
 
 backupFindLatestFile()
@@ -205,55 +266,61 @@ backupTransferFile()
         exit
     fi
 
+    if [ "$app_name" == "full" ]; then
+        local backup_folder="full"
+    elif [ "$app_name" != "full" ]; then
+        local backup_folder="single"
+    fi
+
+    local backup_location="$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$CFG_INSTALL_NAME/$backup_folder"
+    local backup_location_clean="$(echo "$backup_location" | sed 's/\/\//\//g')"
+
     if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ]; then
         isNotice "Remote backup enabled, transfering file : $LatestBackupFile"
         if [ "$CFG_BACKUP_REMOTE_1_TYPE" == "SSH" ]; then
             if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP" true; then
-                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_1_IP"
-                if [ "$app_name" == "full" ]; then
-                    result=$(sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
-                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
-                elif [ "$app_name" != "full" ]; then
-                    result=$(sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
-                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
+                checkSuccess "SSH connection to $CFG_BACKUP_REMOTE_1_IP is established."
+                result=$(sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$backup_location_clean")
+                checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
+            else
+                checkSuccess "Unable to connect to SSH for $CFG_BACKUP_REMOTE_1_IP"
+            fi
+        elif [ "$CFG_BACKUP_REMOTE_1_TYPE" == "LOGIN" ]; then
+            if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "mkdir -p \"$backup_location_clean\""; then
+                isSuccessful "Creating remote folders"
+                isNotice "Transfer of $app_name to $CFG_BACKUP_REMOTE_2_IP. Please wait... it may take a while..."
+                if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP:$backup_location_clean"; then
+                    isSuccessful "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
+                else
+                    isError "SCP failed to upload file to $backup_location_clean"
                 fi
             else
-                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_1_IP"
-            fi
-        else
-            if [ "$app_name" == "full" ]; then
-                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/full")
-                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
-            elif [ "$app_name" != "full" ]; then
-                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/single")
-                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
+                isError "SSH connection to $CFG_BACKUP_REMOTE_1_IP failed."
             fi
         fi
     fi
-
 
     if [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
         isNotice "Remote backup enabled, transfering file : $LatestBackupFile"
         if [ "$CFG_BACKUP_REMOTE_2_TYPE" == "SSH" ]; then
             if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP" true; then
-                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_2_IP"
-                if [ "$app_name" == "full" ]; then
-                    result=$(sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
-                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
-                elif [ "$app_name" != "full" ]; then
-                    result=$(sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
-                    checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+                checkSuccess "SSH connection to $CFG_BACKUP_REMOTE_2_IP is established."
+                result=$(sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$backup_location_clean")
+                checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+            else
+                checkSuccess "Unable to connect to SSH for $CFG_BACKUP_REMOTE_2_IP"
+            fi
+        elif [ "$CFG_BACKUP_REMOTE_2_TYPE" == "LOGIN" ]; then
+            if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "mkdir -p \"$backup_location_clean\""; then
+                isSuccessful "Creating remote folders"
+                isNotice "Transfer of $app_name to $CFG_BACKUP_REMOTE_2_IP. Please wait... it may take a while..."
+                if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP:$backup_location_clean"; then
+                    isSuccessful "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+                else
+                    isError "SCP failed to upload file to $backup_location_clean"
                 fi
             else
-                checkSuccess "Testing SSH connection to $CFG_BACKUP_REMOTE_2_IP"
-            fi
-        else
-            if [ "$app_name" == "full" ]; then
-                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/full")
-                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
-            elif [ "$app_name" != "full" ]; then
-                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" sudo -u $easydockeruser scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/single")
-                checkSuccess "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
+                isError "SSH connection to $CFG_BACKUP_REMOTE_2_IP failed."
             fi
         fi
     fi
