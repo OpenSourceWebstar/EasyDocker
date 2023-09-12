@@ -91,7 +91,7 @@ checkRequirements()
 	if [[ $CFG_REQUIREMENT_DOCKER_CE == "true" ]]; then
 		### Docker CE
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-			if [[ -n "$ISACT" ]]; then
+			if [[ "$ISACT" != "/usr/bin/docker" ]]; then
 				isSuccessful "Docker appears to be installed and running."
 			else
 				isNotice "Docker does not appear to be installed."
