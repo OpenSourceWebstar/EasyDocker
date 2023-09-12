@@ -371,17 +371,14 @@ restoreFullBackupList()
                     continue
                     ;;
             esac
-
-            if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
-                remote_backup_list=$(sshpass -p "CFG_BACKUP_REMOTE_1_PASS" ssh "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls -1 \"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
-            elif [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
-                remote_backup_list=$(sshpass -p "CFG_BACKUP_REMOTE_2_PASS" ssh "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls -1 \"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
-            fi
         done
 
-        #elif [[ "$CFG_RESTORE_REMOTE_TYPE" == "SSH" ]]; then
-        #    remote_backup_list=$(ssh "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP" "ls -1 \"$CFG_RESTORE_REMOTE_BACKUP_DIRECTORY\full\"/*.zip 2>/dev/null")
-        #fi
+        if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
+            echo "remote_backup_list CFG_BACKUP_REMOTE_1_ENABLED"
+            remote_backup_list=$(sshpass -p "CFG_BACKUP_REMOTE_1_PASS" ssh "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls -1 \"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
+        elif [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
+            remote_backup_list=$(sshpass -p "CFG_BACKUP_REMOTE_2_PASS" ssh "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls -1 \"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
+        fi
 
         # Function to display a numbered list of backup files from the remote host
         select_remote_backup_file() {
@@ -405,7 +402,7 @@ restoreFullBackupList()
                 return 1
             fi
         }
-
+        echo "select_remote_backup_file"
         # Main script starts here
         select_remote_backup_file || return 1
 
