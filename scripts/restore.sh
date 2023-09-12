@@ -290,31 +290,35 @@ restoreFullBackupList()
         # SSH command to list backup files on the remote host
         while true; do
             echo ""
-            echo "Select a remote backup location:"
-            
+            isNotice "Please select a remote backup location"
+            isNotice "TIP: These are defined in the config_backup file."
+            echo ""
             # Check if Remote 1 is enabled and display accordingly
             if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
-                echo "1. Remote Backup Server 1 (Enabled)"
+                isOption "1. Remote Backup Server 1 (Enabled)"
             else
-                echo "1. Remote Backup Server 1 (Disabled)"
+                isOption "1. Remote Backup Server 1 (Disabled)"
             fi
             
             # Check if Remote 2 is enabled and display accordingly
             if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
-                echo "2. Remote 2 (Enabled)"
+                isOption "2. Remote Backup Server 2 (Enabled)"
             else
-                echo "2. Remote 2 (Disabled)"
+                isOption "2. Remote Backup Server 2 (Disabled)"
             fi
             
-            echo "x. Exit"
-            read -rp "Enter your choice: " select_remote
+            isOption "x. Exit"
+            echo ""
+            isQuestion "Enter your choice: "
+            read -rp "" select_remote
 
             case "$select_remote" in
                 1)
                     if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
                         remote_config_var_prefix="CFG_BACKUP_REMOTE_1"
                     else
-                        echo "Remote Backup Server 1 is disabled. Please select another option."
+                        echo ""
+                        isNotice "Remote Backup Server 1 is disabled. Please select another option."
                         continue
                     fi
                     ;;
@@ -322,16 +326,17 @@ restoreFullBackupList()
                     if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
                         remote_config_var_prefix="CFG_BACKUP_REMOTE_2"
                     else
-                        echo "Remote 2 is disabled. Please select another option."
+                        echo ""
+                        isNotice "Remote 2 is disabled. Please select another option."
                         continue
                     fi
                     ;;
                 x|X)
-                    echo "Exiting..."
+                    isNotice "Exiting..."
                     exit
                     ;;
                 *)
-                    echo "Invalid option. Please select a valid option."
+                    isNotice "Invalid option. Please select a valid option."
                     continue
                     ;;
             esac
@@ -339,7 +344,7 @@ restoreFullBackupList()
             # Now you can access the selected remote configuration using $remote_config_var_prefix
             remote_backup_list=$(sshpass -p "${!remote_config_var_prefix}_PASS" ssh "${!remote_config_var_prefix}_USER"@"${!remote_config_var_prefix}_IP" "ls -1 \"${!remote_config_var_prefix}_BACKUP_DIRECTORY/full\"/*.zip 2>/dev/null")
         done
-        
+
         #elif [[ "$CFG_RESTORE_REMOTE_TYPE" == "SSH" ]]; then
         #    remote_backup_list=$(ssh "$CFG_RESTORE_REMOTE_USER"@"$CFG_RESTORE_REMOTE_IP" "ls -1 \"$CFG_RESTORE_REMOTE_BACKUP_DIRECTORY\full\"/*.zip 2>/dev/null")
         #fi
