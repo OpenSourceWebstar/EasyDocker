@@ -315,18 +315,14 @@ restoreFullBackupList()
 
             case "$select_remote" in
                 1)
-                    if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
-                        remote_config_var_prefix="CFG_BACKUP_REMOTE_1"
-                    else
+                    if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == false ]; then
                         echo ""
                         isNotice "Remote Backup Server 1 is disabled. Please select another option."
                         continue
                     fi
                     ;;
                 2)
-                    if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
-                        remote_config_var_prefix="CFG_BACKUP_REMOTE_2"
-                    else
+                    if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == false ]; then
                         echo ""
                         isNotice "Remote 2 is disabled. Please select another option."
                         continue
@@ -356,23 +352,31 @@ restoreFullBackupList()
             case "$select_option" in
                 1)
                     restore_install_name="$CFG_INSTALL_NAME"
-                    echo "Restoring using $restore_install_name"
+                    echo ""
+                    isNotice "Restoring using $restore_install_name"
                     ;;
                 2)
-                    read -rp "Enter the Install Name you would like to restore from: " restore_install_name
-                    echo "Restoring using $restore_install_name"
+                    echo ""
+                    isQuestion "Enter the Install Name you would like to restore from: "
+                    read -rp "" restore_install_name
+                    isNotice "Restoring using $restore_install_name"
                     ;;
                 x|X)
-                    echo "Exiting..."
+                    isNotice "Exiting..."
                     resetToMenu;
                     ;;
                 *)
-                    echo "Invalid option. Please select a valid option."
+                    echo ""
+                    isNotice "Invalid option. Please select a valid option."
                     continue
                     ;;
             esac
-            # Now you can access the selected remote configuration using $remote_config_var_prefix
-            remote_backup_list=$(sshpass -p "${!remote_config_var_prefix}_PASS" ssh "${!remote_config_var_prefix}_USER@${!remote_config_var_prefix}_IP" "ls -1 \"${!remote_config_var_prefix}_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
+
+            if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
+                remote_backup_list=$(sshpass -p "CFG_BACKUP_REMOTE_1_PASS" ssh "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls -1 \"$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
+            elif [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
+                remote_backup_list=$(sshpass -p "CFG_BACKUP_REMOTE_2_PASS" ssh "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls -1 \"$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
+            fi
         done
 
         #elif [[ "$CFG_RESTORE_REMOTE_TYPE" == "SSH" ]]; then
