@@ -350,7 +350,8 @@ restoreFullBackupList()
             echo ""
             isOption "x. Exit"
             echo ""
-            read -rp "Enter your choice: " select_option
+            isQuestion "Enter your choice: "
+            read -rp "" select_option
 
             case "$select_option" in
                 1)
@@ -371,7 +372,7 @@ restoreFullBackupList()
                     ;;
             esac
             # Now you can access the selected remote configuration using $remote_config_var_prefix
-            remote_backup_list=$(sshpass -p "${!remote_config_var_prefix}_PASS" ssh "${!remote_config_var_prefix}_USER"@"${!remote_config_var_prefix}_IP" "ls -1 \"${!remote_config_var_prefix}_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
+            remote_backup_list=$(sshpass -p "${!remote_config_var_prefix}_PASS" ssh "${!remote_config_var_prefix}_USER@${!remote_config_var_prefix}_IP" "ls -1 \"${!remote_config_var_prefix}_BACKUP_DIRECTORY/$restore_install_name/full\"/*.zip 2>/dev/null")
         done
 
         #elif [[ "$CFG_RESTORE_REMOTE_TYPE" == "SSH" ]]; then
