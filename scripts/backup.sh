@@ -173,61 +173,64 @@ backupCleanFiles()
     local date_format="20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]"
 
     if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ]; then
-        if [ "$app_name" == "full" ]; then
-            local backup_folder="full"
-            # List files in the remote directory
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
-            files_to_remove=$(echo "$result" | grep -E "$date_format")
+        if [ "$CFG_BACKUP_REMOTE_1_BACKUP_CLEAN" == "true" ]; then
+            if [ "$app_name" == "full" ]; then
+                local backup_folder="full"
+                # List files in the remote directory
+                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
+                files_to_remove=$(echo "$result" | grep -E "$date_format")
 
-            while read -r file_to_remove; do
-            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "rm $backup_directory/$file_to_remove"
-            echo "Removed file: $file_to_remove"
-            done <<< "$files_to_remove"
+                while read -r file_to_remove; do
+                sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "rm $backup_directory/$file_to_remove"
+                echo "Removed file: $file_to_remove"
+                done <<< "$files_to_remove"
 
-            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
-        elif [ "$app_name" != "full" ]; then
-            local backup_folder="single"
-            # List files in the remote directory
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
-            files_to_remove=$(echo "$result" | grep -E "$date_format")
+                isSuccessful "Removed all files older than $CFG_BACKUP_REMOTE_1_BACKUP_KEEPDAYS days"
+            elif [ "$app_name" != "full" ]; then
+                local backup_folder="single"
+                # List files in the remote directory
+                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
+                files_to_remove=$(echo "$result" | grep -E "$date_format")
 
-            while read -r file_to_remove; do
-            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "rm $backup_directory/$file_to_remove"
-            echo "Removed file: $file_to_remove"
-            done <<< "$files_to_remove"
-            
-            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
-        fi
-
-    if [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
-        if [ "$app_name" == "full" ]; then
-            local backup_folder="full"
-            # List files in the remote directory
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
-            files_to_remove=$(echo "$result" | grep -E "$date_format")
-
-            while read -r file_to_remove; do
-            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "rm $backup_directory/$file_to_remove"
-            echo "Removed file: $file_to_remove"
-            done <<< "$files_to_remove"
-
-            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
-        elif [ "$app_name" != "full" ]; then
-            local backup_folder="single"
-            # List files in the remote directory
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
-            files_to_remove=$(echo "$result" | grep -E "$date_format")
-
-            while read -r file_to_remove; do
-            sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "rm $backup_directory/$file_to_remove"
-            echo "Removed file: $file_to_remove"
-            done <<< "$files_to_remove"
-            
-            isSuccessful "Removed all files older than $CFG_BACKUP_KEEPDAYS days"
+                while read -r file_to_remove; do
+                sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "rm $backup_directory/$file_to_remove"
+                echo "Removed file: $file_to_remove"
+                done <<< "$files_to_remove"
+                
+                isSuccessful "Removed all files older than $CFG_BACKUP_REMOTE_1_BACKUP_KEEPDAYS days"
+            fi
         fi
     fi
 
+    if [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
+        if [ "$CFG_BACKUP_REMOTE_2_BACKUP_CLEAN" == "true" ]; then
+            if [ "$app_name" == "full" ]; then
+                local backup_folder="full"
+                # List files in the remote directory
+                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
+                files_to_remove=$(echo "$result" | grep -E "$date_format")
 
+                while read -r file_to_remove; do
+                sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "rm $backup_directory/$file_to_remove"
+                echo "Removed file: $file_to_remove"
+                done <<< "$files_to_remove"
+
+                isSuccessful "Removed all files older than $CFG_BACKUP_REMOTE_2_BACKUP_KEEPDAYS days"
+            elif [ "$app_name" != "full" ]; then
+                local backup_folder="single"
+                # List files in the remote directory
+                result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
+                files_to_remove=$(echo "$result" | grep -E "$date_format")
+
+                while read -r file_to_remove; do
+                sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "rm $backup_directory/$file_to_remove"
+                echo "Removed file: $file_to_remove"
+                done <<< "$files_to_remove"
+                
+                isSuccessful "Removed all files older than $CFG_BACKUP_REMOTE_2_BACKUP_KEEPDAYS days"
+            fi
+        fi
+    fi
 }
 
 backupFindLatestFile()
