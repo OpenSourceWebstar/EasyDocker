@@ -335,6 +335,7 @@ restoreRemoteMenu()
 
                     remote_user="${CFG_BACKUP_REMOTE_1_USER}"
                     remote_ip="${CFG_BACKUP_REMOTE_1_IP}"
+                    remote_port="${CFG_BACKUP_REMOTE_1_PORT}"
                     remote_pass="${CFG_BACKUP_REMOTE_1_PASS}"
                     remote_directory="${CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY}"
                     ;;
@@ -347,6 +348,7 @@ restoreRemoteMenu()
 
                     remote_user="${CFG_BACKUP_REMOTE_2_USER}"
                     remote_ip="${CFG_BACKUP_REMOTE_2_IP}"
+                    remote_port="${CFG_BACKUP_REMOTE_2_PORT}"
                     remote_pass="${CFG_BACKUP_REMOTE_2_PASS}"
                     remote_directory="${CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY}"
                     ;;
@@ -382,13 +384,15 @@ restoreRemoteMenu()
                 1)
                     restore_install_name="$CFG_INSTALL_NAME"
                     echo ""
-                    isNotice "Restoring using $restore_install_name"
+                    isNotice "Restoring using Install Name : $restore_install_name"
+                    echo ""
                     ;;
                 2)
                     echo ""
                     isQuestion "Enter the Install Name you would like to restore from: "
                     read -rp "" restore_install_name
-                    isNotice "Restoring using $restore_install_name"
+                    isNotice "Restoring using Install Name :  $restore_install_name"
+                    echo ""
                     ;;
                 x|X)
                     isNotice "Exiting..."
@@ -412,7 +416,7 @@ restoreRemoteMenu()
     selectInstallName
 
     # Execute the SSH command based on the selected remote and restore_install_name
-    remote_backup_list=$(sshpass -p "${remote_pass}" ssh "${remote_user}@${remote_ip}" "ls -1 \"${remote_directory}/${restore_install_name}/$backup_type\"/*.zip 2>/dev/null")
+    remote_backup_list=$(sshRemote "$remote_pass" "$remote_port" "${remote_user}@${remote_ip}" "ls -1 \"${remote_directory}/${restore_install_name}/$backup_type\"/*.zip 2>/dev/null")
 
     # Function to display a numbered list of backup files from the remote host
     select_remote_backup_file() {
