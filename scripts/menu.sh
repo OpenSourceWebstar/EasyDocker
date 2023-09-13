@@ -163,7 +163,6 @@ mainMenu()
    				echo "Please select 'l' for local restore."
     			echo "Please select 'r' for remote restore."
 				echo ""
-				echo ""
 				isOptionMenu "Single Restore - App (l/r): "
 				read -rp "" restoresingle
 				isOptionMenu "Full Restore - Docker Folder (l/r): "

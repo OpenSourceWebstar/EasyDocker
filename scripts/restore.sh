@@ -231,6 +231,8 @@ restoreSingleBackupList()
             echo "" 
             isNotice "Invalid input for application selection."
         fi
+    elif [[ "$restoresingle" == [rR] ]]; then
+        restoreRemoteMenu single
     fi
 }
 
@@ -287,171 +289,178 @@ restoreFullBackupList()
             isNotice "Invalid input for backup file selection."
         fi
     elif [[ "$restorefull" == [rR] ]]; then
-        # Function for the remote backup location menu
-        selectRemoteLocation() {
-            while true; do
-                echo ""
-                isNotice "Please select a remote backup location"
-                isNotice "TIP: These are defined in the config_backup file."
-                echo ""
-                
-                # Check if Remote 1 is enabled and display accordingly
-                if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
-                    isOption "1. Backup Server 1 - '$CFG_BACKUP_REMOTE_1_USER'@'$CFG_BACKUP_REMOTE_1_IP' (Enabled)"
-                else
-                    isOption "1. Backup Server 1 (Disabled)"
-                fi
-                
-                # Check if Remote 2 is enabled and display accordingly
-                if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
-                    isOption "2. Backup Server 2 - '$CFG_BACKUP_REMOTE_2_USER'@'$CFG_BACKUP_REMOTE_2_IP' (Enabled)"
-                else
-                    isOption "2. Backup Server 2 (Disabled)"
-                fi
-                
-                echo ""
-                isOption "x. Exit"
-                echo ""
-                isQuestion "Enter your choice: "
-                read -rp "" select_remote
+        restoreRemoteMenu full
+    fi
+}        
 
-                case "$select_remote" in
-                    1)
-                        if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == false ]; then
-                            echo ""
-                            isNotice "Remote Backup Server 1 is disabled. Please select another option."
-                            continue
-                        fi
+restoreRemoteMenu()
+{
+    local backup_type="$1"
 
-                        remote_user="${CFG_BACKUP_REMOTE_1_USER}"
-                        remote_ip="${CFG_BACKUP_REMOTE_1_IP}"
-                        remote_pass="${CFG_BACKUP_REMOTE_1_PASS}"
-                        remote_directory="${CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY}"
-                        ;;
-                    2)
-                        if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == false ]; then
-                            echo ""
-                            isNotice "Remote Backup Server 2 is disabled. Please select another option."
-                            continue
-                        fi
-
-                        remote_user="${CFG_BACKUP_REMOTE_2_USER}"
-                        remote_ip="${CFG_BACKUP_REMOTE_2_IP}"
-                        remote_pass="${CFG_BACKUP_REMOTE_2_PASS}"
-                        remote_directory="${CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY}"
-                        ;;
-                    x|X)
-                        isNotice "Exiting..."
-                        resetToMenu;
-                        ;;
-                    *)
-                        isNotice "Invalid option. Please select a valid option."
-                        continue
-                        ;;
-                esac
-
-                break  # Exit the loop when a valid selection is made
-            done
-        }
-
-        # Function for the Install Name selection menu
-        selectInstallName() {
-            while true; do
-                echo ""
-                isNotice "Please select the Install Name : "
-                echo ""
-                isOption "1. Restore using local $CFG_INSTALL_NAME"
-                isOption "2. Specify a different Install Name for restoration"
-                echo ""
-                isOption "x. Exit"
-                echo ""
-                isQuestion "Enter your choice: "
-                read -rp "" select_option
-
-                case "$select_option" in
-                    1)
-                        restore_install_name="$CFG_INSTALL_NAME"
-                        echo ""
-                        isNotice "Restoring using $restore_install_name"
-                        ;;
-                    2)
-                        echo ""
-                        isQuestion "Enter the Install Name you would like to restore from: "
-                        read -rp "" restore_install_name
-                        isNotice "Restoring using $restore_install_name"
-                        ;;
-                    x|X)
-                        isNotice "Exiting..."
-                        resetToMenu;
-                        ;;
-                    *)
-                        echo ""
-                        isNotice "Invalid option. Please select a valid option."
-                        continue
-                        ;;
-                esac
-
-                break  # Exit the loop when a valid selection is made
-            done
-        }
-
-        # Call the remote backup location menu function
-        selectRemoteLocation
-
-        # Call the Install Name selection menu function
-        selectInstallName
-
-        # Execute the SSH command based on the selected remote and restore_install_name
-        remote_backup_list=$(sshpass -p "${remote_pass}" ssh "${remote_user}@${remote_ip}" "ls -1 \"${remote_directory}/${restore_install_name}/full\"/*.zip 2>/dev/null")
-
-        # Function to display a numbered list of backup files from the remote host
-        select_remote_backup_file() {
+    selectRemoteLocation()
+    {
+        while true; do
             echo ""
-            echo "##########################################"
-            echo "###   Available Full Backup Files (Remote)"
-            echo "##########################################"
+            isNotice "Please select a remote backup location"
+            isNotice "TIP: These are defined in the config_backup file."
             echo ""
-            remote_backup_list=()
-            local count=1
-            while IFS= read -r remote_backup_file; do
-                if [ -n "$remote_backup_file" ]; then
-                    remote_backup_list+=("$remote_backup_file")
-                    isOption "$count. $(basename "$remote_backup_file")"
-                    ((count++))
-                fi
-            done <<< "$remote_backup_list"
-            if [ "${#remote_backup_list[@]}" -eq 0 ]; then
-                echo ""
-                isNotice "No backup files found on the remote host."
-                return 1
-            fi
-        }
-        echo "select_remote_backup_file"
-        # Main script starts here
-        select_remote_backup_file || return 1
-
-        # Read the user's choice number for backup file
-        echo ""
-        isQuestion "Select a backup file (number): "
-        read -p "" chosen_backup_number
-
-        # Validate the user's choice number for backup file
-        if [[ "$chosen_backup_number" =~ ^[0-9]+$ ]]; then
-            selected_backup_index=$((chosen_backup_number - 1))
-
-            if [ "$selected_backup_index" -ge 0 ] && [ "$selected_backup_index" -lt "${#remote_backup_list[@]}" ]; then
-                chosen_backup_file=$(basename "${remote_backup_list[selected_backup_index]}")
-                echo ""
-                isNotice "You selected: $chosen_backup_file"
-                restoreStart $selected_app_name $chosen_backup_file
+            
+            # Check if Remote 1 is enabled and display accordingly
+            if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == true ]; then
+                isOption "1. Backup Server 1 - '$CFG_BACKUP_REMOTE_1_USER'@'$CFG_BACKUP_REMOTE_1_IP' (Enabled)"
             else
-                echo ""
-                isNotice "Invalid backup file selection."
+                isOption "1. Backup Server 1 (Disabled)"
             fi
+            
+            # Check if Remote 2 is enabled and display accordingly
+            if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == true ]; then
+                isOption "2. Backup Server 2 - '$CFG_BACKUP_REMOTE_2_USER'@'$CFG_BACKUP_REMOTE_2_IP' (Enabled)"
+            else
+                isOption "2. Backup Server 2 (Disabled)"
+            fi
+            
+            echo ""
+            isOption "x. Exit"
+            echo ""
+            isQuestion "Enter your choice: "
+            read -rp "" select_remote
+
+            case "$select_remote" in
+                1)
+                    if [ "${CFG_BACKUP_REMOTE_1_ENABLED}" == false ]; then
+                        echo ""
+                        isNotice "Remote Backup Server 1 is disabled. Please select another option."
+                        continue
+                    fi
+
+                    remote_user="${CFG_BACKUP_REMOTE_1_USER}"
+                    remote_ip="${CFG_BACKUP_REMOTE_1_IP}"
+                    remote_pass="${CFG_BACKUP_REMOTE_1_PASS}"
+                    remote_directory="${CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY}"
+                    ;;
+                2)
+                    if [ "${CFG_BACKUP_REMOTE_2_ENABLED}" == false ]; then
+                        echo ""
+                        isNotice "Remote Backup Server 2 is disabled. Please select another option."
+                        continue
+                    fi
+
+                    remote_user="${CFG_BACKUP_REMOTE_2_USER}"
+                    remote_ip="${CFG_BACKUP_REMOTE_2_IP}"
+                    remote_pass="${CFG_BACKUP_REMOTE_2_PASS}"
+                    remote_directory="${CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY}"
+                    ;;
+                x|X)
+                    isNotice "Exiting..."
+                    resetToMenu;
+                    ;;
+                *)
+                    isNotice "Invalid option. Please select a valid option."
+                    continue
+                    ;;
+            esac
+
+            break  # Exit the loop when a valid selection is made
+        done
+    }
+
+    # Function for the Install Name selection menu
+    selectInstallName() {
+        while true; do
+            echo ""
+            isNotice "Please select the Install Name : "
+            echo ""
+            isOption "1. Restore using local $CFG_INSTALL_NAME"
+            isOption "2. Specify a different Install Name for restoration"
+            echo ""
+            isOption "x. Exit"
+            echo ""
+            isQuestion "Enter your choice: "
+            read -rp "" select_option
+
+            case "$select_option" in
+                1)
+                    restore_install_name="$CFG_INSTALL_NAME"
+                    echo ""
+                    isNotice "Restoring using $restore_install_name"
+                    ;;
+                2)
+                    echo ""
+                    isQuestion "Enter the Install Name you would like to restore from: "
+                    read -rp "" restore_install_name
+                    isNotice "Restoring using $restore_install_name"
+                    ;;
+                x|X)
+                    isNotice "Exiting..."
+                    resetToMenu;
+                    ;;
+                *)
+                    echo ""
+                    isNotice "Invalid option. Please select a valid option."
+                    continue
+                    ;;
+            esac
+
+            break  # Exit the loop when a valid selection is made
+        done
+    }
+
+    # Call the remote backup location menu function
+    selectRemoteLocation
+
+    # Call the Install Name selection menu function
+    selectInstallName
+
+    # Execute the SSH command based on the selected remote and restore_install_name
+    remote_backup_list=$(sshpass -p "${remote_pass}" ssh "${remote_user}@${remote_ip}" "ls -1 \"${remote_directory}/${restore_install_name}/$backup_type\"/*.zip 2>/dev/null")
+
+    # Function to display a numbered list of backup files from the remote host
+    select_remote_backup_file() {
+        echo ""
+        echo "##########################################"
+        echo "###   Available Full Backup Files (Remote)"
+        echo "##########################################"
+        echo ""
+        remote_backup_list=()
+        local count=1
+        while IFS= read -r remote_backup_file; do
+            if [ -n "$remote_backup_file" ]; then
+                remote_backup_list+=("$remote_backup_file")
+                isOption "$count. $(basename "$remote_backup_file")"
+                ((count++))
+            fi
+        done <<< "$remote_backup_list"
+        if [ "${#remote_backup_list[@]}" -eq 0 ]; then
+            echo ""
+            isNotice "No backup files found on the remote host."
+            return 1
+        fi
+    }
+    echo "select_remote_backup_file"
+    # Main script starts here
+    select_remote_backup_file || return 1
+
+    # Read the user's choice number for backup file
+    echo ""
+    isQuestion "Select a backup file (number): "
+    read -p "" chosen_backup_number
+
+    # Validate the user's choice number for backup file
+    if [[ "$chosen_backup_number" =~ ^[0-9]+$ ]]; then
+        selected_backup_index=$((chosen_backup_number - 1))
+
+        if [ "$selected_backup_index" -ge 0 ] && [ "$selected_backup_index" -lt "${#remote_backup_list[@]}" ]; then
+            chosen_backup_file=$(basename "${remote_backup_list[selected_backup_index]}")
+            echo ""
+            isNotice "You selected: $chosen_backup_file"
+            restoreStart $selected_app_name $chosen_backup_file
         else
             echo ""
-            isNotice "Invalid input for backup file selection."
+            isNotice "Invalid backup file selection."
         fi
+    else
+        echo ""
+        isNotice "Invalid input for backup file selection."
     fi
 }
 
