@@ -238,6 +238,62 @@ checkConfigFilesExist()
     fi
 }
 
+checkConfigFilesMissingVariables()
+{
+    # Define the URLs for remote config files
+    REMOTE_CONFIG_DIR="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
+    REMOTE_CONFIG_URLS=$(curl -s "$REMOTE_CONFIG_DIR" | grep -o 'href="[^"]*config_[^"]*"')
+
+    # Define the local config directory
+    local configs_dir="/path/to/local/configs/"
+
+    # Initialize an array to store missing variables
+    missing_variables=()
+
+    # Loop through remote config URLs
+    for remote_config_url in $REMOTE_CONFIG_URLS; do
+        # Extract the filename
+        filename=$(echo "$remote_config_url" | grep -o 'config_[^"]*')
+        
+        # Check if the local config file exists
+        if [ -f "$configs_dir$filename" ]; then
+            # Extract remote and local variables
+            remote_variables=$(curl -s "${REMOTE_CONFIG_DIR}${filename}" | grep -o 'CFG_[^=]*')
+            local_variables=$(grep -o 'CFG_[^=]*' "$configs_dir$filename")
+
+            # Loop through remote variables
+            for remote_var in $remote_variables; do
+                # Check if the variable is missing locally
+                if ! echo "$local_variables" | grep -q "$remote_var"; then
+                    missing_variables+=("$remote_var")
+                fi
+            done
+        fi
+    done
+
+    # Check if there are missing variables
+    if [ ${#missing_variables[@]} -gt 0 ]; then
+        echo "The following config variables are missing in your local config files:"
+        for missing_var in "${missing_variables[@]}"; do
+            echo "  - $missing_var"
+        done
+        read -rp "Do you want to add the missing variables to the local config files? (y/n): " add_variables_choice
+        if [ "$add_variables_choice" == "y" ]; then
+            for missing_var in "${missing_variables[@]}"; do
+                # Get the remote config line
+                remote_config_line=$(curl -s "${REMOTE_CONFIG_DIR}${filename}" | grep "$missing_var")
+                # Add the missing variable to the local config file
+                echo "$remote_config_line" >> "$configs_dir$filename"
+            done
+            echo "Missing variables added to the local config files."
+        else
+            echo "You chose not to add the missing variables."
+        fi
+    else
+        echo "No missing config variables found."
+    fi
+}
+
 checkConfigFilesEdited()
 {
     # Flag to control the loop

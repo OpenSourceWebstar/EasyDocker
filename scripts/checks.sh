@@ -53,6 +53,7 @@ checkRequirements()
 	fi
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
+		checkConfigFilesMissingVariables;
 		checkConfigFilesExist;
 		checkConfigFilesEdited;
 	fi

@@ -67,7 +67,7 @@ backupStart()
 
 	((menu_number++))
     echo ""
-    echo "---- $menu_number. Cleaning backup files older than $CFG_BACKUP_KEEPDAYS days"
+    echo "---- $menu_number. Cleaning old backup files"
     echo ""
 
     backupCleanFiles;
@@ -177,6 +177,8 @@ backupCleanFiles()
             local backup_location="$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$CFG_INSTALL_NAME/$backup_folder"
             local backup_location_clean="$(echo "$backup_location" | sed 's/\/\//\//g')"
             local date_format="20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]"
+
+            isNotice "Cleaning of old files now starting for $CFG_BACKUP_REMOTE_1_IP"
             if [ "$app_name" == "full" ]; then
                 local backup_folder="full"
                 result=$(sshRemote "$CFG_BACKUP_REMOTE_1_PASS" $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "ls $backup_directory")
@@ -210,6 +212,8 @@ backupCleanFiles()
             local backup_location="$CFG_BACKUP_REMOTE_2_BACKUP_DIRECTORY/$CFG_INSTALL_NAME/$backup_folder"
             local backup_location_clean="$(echo "$backup_location" | sed 's/\/\//\//g')"
             local date_format="20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]"
+
+            isNotice "Cleaning of old files now starting for $CFG_BACKUP_REMOTE_2_IP"
             if [ "$app_name" == "full" ]; then
                 local backup_folder="full"
                 result=$(sshRemote "$CFG_BACKUP_REMOTE_2_PASS" $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "ls $backup_directory")
