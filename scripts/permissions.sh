@@ -207,6 +207,6 @@ zipFile()
     result=$(sudo zip -r -MM -e -P $passphrase $zip_file $zip_directory)
     checkSuccess "Zipped up $(basename "$zip_file")"
 
-    result=$(sudo chown $easydockeruser:$easydockeruser "$file")
-    checkSuccess "Updating $file_name with $easydockeruser ownership"
+    result=$(sudo chown $easydockeruser:$easydockeruser "$zip_file")
+    checkSuccess "Updating $(basename "$zip_file") with $easydockeruser ownership"
 }
