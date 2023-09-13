@@ -291,7 +291,7 @@ backupTransferFile()
         elif [ "$CFG_BACKUP_REMOTE_1_TYPE" == "LOGIN" ]; then
             if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "mkdir -p \"$backup_location_clean\""; then
                 isSuccessful "Creating remote folders"
-                isNotice "Transfer of $app_name to $CFG_BACKUP_REMOTE_2_IP. Please wait... it may take a while..."
+                isNotice "Transfer of $app_name to $CFG_BACKUP_REMOTE_1_IP. Please wait... it may take a while..."
                 if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$LatestBackupFile" "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP:$backup_location_clean"; then
                     isSuccessful "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
                 else
