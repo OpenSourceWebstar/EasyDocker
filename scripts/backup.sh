@@ -136,18 +136,18 @@ backupZipFile()
         result=$(mkdirFolders "$temp_dir/$(basename "$base_dir")")
         checkSuccess "Create the $base_dir inside the temporary directory"
 
-        result=$(sudo -u $easydockeruser cd $base_dir && sudo -u $easydockeruser cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")
+        result=$(cd $base_dir && sudo cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")
         checkSuccess "Copy the data to the temporary directory"
 
-        result=$(sudo -u $easydockeruser cd "$temp_dir" && sudo -u $easydockeruser zip -r -MM -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$(basename "$base_dir")")
+        result=$(cd "$temp_dir" && zipFile "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$(basename "$base_dir")")
         checkSuccess "Create the zip command to include duplicates in the zip file"
 
-        result=$(sudo -u $easydockeruser rm -r "$temp_dir")
+        result=$(sudo rm -r "$temp_dir")
         checkSuccess "Remove the temporary directory"
 
         #checkSuccess "Compressing $app_name folder into an encrypted zip file"
     elif [ "$app_name" != "full" ]; then
-        result=$(cd $install_path && sudo -u $easydockeruser zip -r -e -P "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$app_name")
+        result=$(cd $install_path && zipFile "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$app_name")
         checkSuccess "Compressing $app_name folder into an encrypted zip file"
     fi
 }

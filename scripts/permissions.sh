@@ -196,3 +196,17 @@ updateFile()
         checkSuccess "Updating $file_name with $easydockeruser ownership"
     fi
 }
+
+zipFile() 
+{
+    local passphrase="$1"
+    local zip_file="$2"
+    local zip_directory="$3"
+
+    # Run the SSH command using the existing SSH variables
+    result=$(sudo zip -r -MM -e -P $passphrase $zip_file $zip_directory)
+    checkSuccess "Zipped up $(basename "$zip_file")"
+
+    result=$(sudo chown $easydockeruser:$easydockeruser "$file")
+    checkSuccess "Updating $file_name with $easydockeruser ownership"
+}
