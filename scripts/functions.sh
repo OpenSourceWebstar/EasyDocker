@@ -267,7 +267,7 @@ checkConfigFilesMissingVariables()
                 case "$choice" in
                     1)
                         echo ""
-                        result=$(echo "$var_line" >> "$local_config_file" > /dev/null 2>&1)
+                        echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
                         checkSuccess "Adding the $var_line to '$local_config_filename':"
                         ;;
                     2)
@@ -275,8 +275,8 @@ checkConfigFilesMissingVariables()
                         isQuestion "Enter your value for $remote_var: "
                         read -p " " custom_value
                         echo ""
-                        result=$(echo "${remote_var}=$custom_value" >> "$local_config_file" > /dev/null 2>&1)
-                        checkSuccess "Adding the ${remote_var}=$custom_value to '$local_config_filename':"
+                        echo "CFG_${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                        checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$local_config_filename':"
                         ;;
                     [xX])
                         # User chose to skip
@@ -299,10 +299,9 @@ checkConfigFilesMissingVariables()
 checkConfigFilesExist() 
 {
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-        local files_to_check=("$config_file_apps_system" "$config_file_apps_privacy" "$config_file_apps_user" "$config_file_backup" "$config_file_general" "$config_file_restore" "$config_file_requirements")
         local file_found_count=0
 
-        for file in "${files_to_check[@]}"; do
+        for file in "${config_files_all[@]}"; do
             if [ -f "$configs_dir/$file" ]; then
                 ((file_found_count++))
             else
@@ -311,7 +310,7 @@ checkConfigFilesExist()
             fi
         done
 
-        if [ "$file_found_count" -eq "${#files_to_check[@]}" ]; then
+        if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
             isSuccessful "All config files are found in the configs folder."
         else
             isFatalError "Not all config files were found in $configs_dir."

@@ -8,7 +8,6 @@ source configs/config_apps_user
 source configs/config_backup
 source configs/config_general
 source configs/config_requirements
-source configs/config_restore
 
 source scripts/variables.sh
 source scripts/checks.sh
