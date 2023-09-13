@@ -244,9 +244,6 @@ checkConfigFilesMissingVariables()
     REMOTE_CONFIG_DIR="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
     REMOTE_CONFIG_URLS=$(curl -s "$REMOTE_CONFIG_DIR" | grep -o 'href="[^"]*config_[^"]*"')
 
-    # Define the local config directory
-    local configs_dir="/path/to/local/configs/"
-
     # Initialize an array to store missing variables
     missing_variables=()
 
