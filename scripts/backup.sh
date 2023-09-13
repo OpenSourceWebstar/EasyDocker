@@ -102,6 +102,8 @@ backupExistsCheck()
                 fi
                 isNotice "Please provide a valid input."
             done
+        else
+            isSuccessful "No backup files found to replace."
         fi
     elif [ "$app_name" != "full" ]; then
         if [ -f "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" ]; then
@@ -113,6 +115,8 @@ backupExistsCheck()
                 fi
                 isNotice "Please provide a valid input."
             done
+        else
+            isSuccessful "No backup files found to replace."
         fi
     fi
 }
