@@ -566,26 +566,25 @@ migrateCheckAndUpdateIP()
     fi
 }
 
-
-migrateCheckAndUpdateInstallName() 
-{
+migrateCheckAndUpdateInstallName() {
     local app_name="$1"
-    
+
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
         local migrate_file="$install_path/$app_name/$migrate_file"
-        local migrate_ip_line_number=$(sudo sed -n '/MIGRATE_IP=/=' "$migrate_file")
-        local migrate_install_name_present=$(sudo grep -q "MIGRATE_INSTALL_NAME=" "$migrate_file" && echo "1" || echo "0")
-        
-        if [ -n "$migrate_ip_line_number" ] && [ "$migrate_install_name_present" != "1" ]; then
-            result=$(sudo sed -i "${migrate_ip_line_number}a MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" "$migrate_file")
-            checkSuccess "Adding MIGRATE_INSTALL_NAME into $(basename "$migrate_file")."
-        elif [ "$migrate_install_name_present" != "1" ]; then
+        local existing_migrate_install_name=$(sudo grep -o 'MIGRATE_INSTALL_NAME=.*' "$migrate_file" | cut -d '=' -f 2)
+
+        if [ -z "$existing_migrate_install_name" ]; then
+            # If MIGRATE_INSTALL_NAME is not found, add it to the end of the file
             result=$(sudo echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$migrate_file" > /dev/null)
-            checkSuccess "Adding MIGRATE_INSTALL_NAME to the end of $(basename "$migrate_file") as MIGRATE_IP was not found."
+            checkSuccess "Added MIGRATE_INSTALL_NAME to $(basename "$migrate_file")."
+        elif [ "$existing_migrate_install_name" != "$CFG_INSTALL_NAME" ]; then
+            # If the existing MIGRATE_INSTALL_NAME is different, update it
+            result=$(sudo sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$migrate_file")
+            checkSuccess "Updated MIGRATE_INSTALL_NAME in $(basename "$migrate_file") to $CFG_INSTALL_NAME."
+        #else
+            #checkNotice "MIGRATE_INSTALL_NAME in $(basename "$migrate_file") is already set to $CFG_INSTALL_NAME."
         fi
-        
-        #checkSuccess "Updated MIGRATE_INSTALL_NAME in $(basename "$migrate_file") to $CFG_INSTALL_NAME."
     else
         isError "$(basename "$migrate_file") not found in $app_name."
     fi
@@ -664,7 +663,10 @@ migrateScanConfigsToMigrate()
 }
 
 # Function to apply variables from migrate.txt to config files
-migrateScanMigrateToConfigs() {
+migrateScanMigrateToConfigs() 
+{
+  isNotice "Scanning migrate.txt files... this may take a moment..."
+  
   # Variables to ignore
   local ignore_vars=("MIGRATE_IP" "MIGRATE_INSTALL_NAME")
 
