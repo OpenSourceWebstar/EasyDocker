@@ -486,12 +486,13 @@ migrateGenerateTXTAll()
 migrateBuildTXT()
 {
     local app_name=$1
-    
+
     # Create a migrate.txt file with IP and InstallName
     createTouch "$install_path/$app_name/$migrate_file"
-    
-    # Add MIGRATE options to file
+
+    # Add MIGRATE_IP options to $migrate_file for $app_name
     echo "MIGRATE_IP=$public_ip" | sudo tee -a "$install_path/$app_name/$migrate_file" >/dev/null
+    # Add MIGRATE_INSTALL_NAME options to $migrate_file for $app_name
     echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$install_path/$app_name/$migrate_file" >/dev/null
 
     isSuccessful "Created $migrate_file for $app_name"
@@ -541,17 +542,22 @@ migrateGenerateTXTSingle()
     isSuccessful "Generating $migrate_file for $app_name completed."
 }
 
-migrateCheckAndUpdateIP()
+migrateCheckAndUpdateIP() 
 {
     local app_name="$1"
+    
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_ip=$(sudo grep  -o 'MIGRATE_IP=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
+        local migrate_file="$install_path/$app_name/$migrate_file"
+        local migrate_ip=$(sudo grep -o 'MIGRATE_IP=.*' "$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_ip" != "$public_ip" ]; then
-            result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$install_path/$app_name/$migrate_file")
-            checkSuccess "Updated MIGRATE_IP in $migrate_file to $public_ip."
-            
-            # Replace old IP with $public_ip in .yml and .env files
+            if ! sudo grep -q "MIGRATE_IP=" "$migrate_file"; then
+                result=$(sudo sed -i "1s/^/MIGRATE_IP=$public_ip\n/" "$migrate_file")
+                checkSuccess "Adding missing MIGRATE_IP for $app_name : $(basename "$migrate_file")."
+            else
+                result=$(sudo sed -i "s#MIGRATE_IP=.*#MIGRATE_IP=$public_ip#" "$migrate_file")
+                checkSuccess "Updated MIGRATE_IP for $app_name : $(basename "$migrate_file") to $public_ip."
+            fi
             result=$(sudo find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
@@ -560,23 +566,34 @@ migrateCheckAndUpdateIP()
     fi
 }
 
-migrateCheckAndUpdateInstallName()
+
+migrateCheckAndUpdateInstallName() 
 {
     local app_name="$1"
+    
     # Check if the migrate.txt file exists
     if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_install_name=$(sudo grep  -o 'MIGRATE_INSTALL_NAME=.*' "$install_path/$app_name/$migrate_file" | cut -d '=' -f 2)
-        if [ "$migrate_install_name" != "$CFG_INSTALL_NAME" ]; then
-            result=$(sudo sed -i "s/MIGRATE_INSTALL_NAME=.*/MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME/" "$install_path/$app_name//$migrate_file")
-            checkSuccess "Updated MIGRATE_INSTALL_NAME in $migrate_file to $CFG_INSTALL_NAME."
+        local migrate_file="$install_path/$app_name/$migrate_file"
+        local migrate_ip_line_number=$(sudo sed -n '/MIGRATE_IP=/=' "$migrate_file")
+        local migrate_install_name_present=$(sudo grep -q "MIGRATE_INSTALL_NAME=" "$migrate_file" && echo "1" || echo "0")
+        
+        if [ -n "$migrate_ip_line_number" ] && [ "$migrate_install_name_present" != "1" ]; then
+            result=$(sudo sed -i "${migrate_ip_line_number}a MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" "$migrate_file")
+            checkSuccess "Adding MIGRATE_INSTALL_NAME into $(basename "$migrate_file")."
+        elif [ "$migrate_install_name_present" != "1" ]; then
+            result=$(sudo echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$migrate_file" > /dev/null)
+            checkSuccess "Adding MIGRATE_INSTALL_NAME to the end of $(basename "$migrate_file") as MIGRATE_IP was not found."
         fi
+        
+        #checkSuccess "Updated MIGRATE_INSTALL_NAME in $(basename "$migrate_file") to $CFG_INSTALL_NAME."
     else
-        isError "$migrate_file not found in $app_name."
+        isError "$(basename "$migrate_file") not found in $app_name."
     fi
 }
 
 # Function to apply variables from config files to migrate.txt
-migrateScanConfigsToMigrate() {
+migrateScanConfigsToMigrate() 
+{
   # Find all subdirectories under the installation path and use them as app names
   local app_names=()
 
@@ -740,7 +757,7 @@ migrateScanMigrateToConfigs() {
     done
     if [[ $var_exists -eq 0 ]]; then
         echo "$var_name=${!var_name}" | sudo tee -a "$configs_dir/config_apps_system" >/dev/null
-        echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
+        #echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
     fi
   done
 
