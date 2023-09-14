@@ -234,15 +234,9 @@ installTraefik()
         result=$(mkdirFolders "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
-        result=$(sudo chown 1000 "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
-        checkSuccess "Set permissions for /etc/ and /etc/certs/ Directories"
-
         # Create and secure the acme.json file
         result=$(createTouch "$install_path$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
-
-        result=$(sudo chmod 600 "$install_path$app_name/etc/certs/acme.json")
-        checkSuccess "Set permissions to acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
         result=$(copyFile "$resources_dir/$app_name/traefik.yml" "$install_path$app_name/etc/traefik.yml")
