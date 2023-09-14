@@ -1,20 +1,5 @@
 #!/bin/bash
 
-fixFolderPermissions() 
-{
-	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        # Docker install user setup
-        result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
-        checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
-
-        result=$(sudo chmod +x $base_dir $install_path)
-        checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
-
-        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path")
-        checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
-    fi
-}
-
 runStart() 
 {  
     local path="$3"
@@ -44,6 +29,77 @@ runUpdate()
     
     result=$(sudo ./update.sh)
     checkSuccess "Running Update Script"
+}
+
+fixFolderPermissions() 
+{
+	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        # Docker install user setup
+        result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
+        checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
+
+        result=$(sudo chmod +x $base_dir $install_path)
+        checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+
+        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path")
+        checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
+    fi
+}
+
+fixPermissionsBeforeStart()
+{
+    local app_name="$1"
+	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        changeRootOwnedFilesAndFolders $install_dir $CFG_DOCKER_INSTALL_USER
+        changeRootOwnedFile $base_dir/$db_file $sudo_user_name
+    fi
+
+    if [[ $app_name == "traefik" ]] || [[ $app_name == "full" ]]; then
+        result=$(sudo chmod 600 "$install_path/traefik/etc/certs/acme.json")
+        checkSuccess "Set permissions to acme.json file for $app_name"
+        result=$(sudo chmod 600 "$install_path/traefik/etc/traefik.yml")
+        checkSuccess "Set permissions to traefik.yml file for $app_name"
+    fi
+}
+
+
+
+changeRootOwnedFilesAndFolders() 
+{
+    local install_dir="$1"
+    local user_name="$2"
+
+    # Check if the install directory exists
+    if [ ! -d "$install_dir" ]; then
+        echo "Install directory '$install_dir' does not exist."
+        return 1
+    fi
+
+    isNotice "Updating ownership of $install_dir...this may take a while depending on the size/amount of files..."
+
+    result=$(sudo find "$install_dir" -type f -user root -exec sudo chown "$user_name:$user_name" {} \;)
+    checkSuccess "Find files owned by root and change ownership"
+
+    result=$(sudo find "$install_dir" -type d -user root -exec sudo chown "$user_name:$user_name" {} \;)
+    checkSuccess "Find directories owned by root and change ownership"
+
+    echo "Ownership of root-owned files and directories in '$install_dir' has been changed to '$user_name'."
+}
+
+changeRootOwnedFile()
+{
+    local file_full="$1" # Includes path
+    local file_name=$(basename "$file")
+    local user_name="$2"
+
+    # Check if the file exists
+    if [ ! -f "$file_full" ]; then
+        echo "File '$file_full' does not exist."
+        return 1
+    fi
+
+    result=$(sudo sudo chown "$user_name:$user_name" "$file_full")
+    checkSuccess "Updating $file_name to be owned by $user_name"
 }
 
 mkdirFolders() 
@@ -182,7 +238,7 @@ createTouch()
     fi
 }
 
-updateFile() 
+updateFileOwnership() 
 {
     local file="$1"
     local file_name=$(basename "$file")

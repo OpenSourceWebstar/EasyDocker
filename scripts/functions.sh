@@ -440,7 +440,9 @@ viewLogs()
                 app_name="${app_list[index]}"
                 viewLogsAppMenu "$app_name"  # Call the app-specific menu
             else
+                echo ""
                 isNotice "Invalid app selection. Please select a valid app."
+                viewLogs;
             fi
             ;;
         e)
@@ -980,15 +982,22 @@ dockerStartAllApps()
     fi
 }
 
-dockerAppDown()
-{
+dockerAppDown() {
     isNotice "Please wait for $app_name container to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
-        checkSuccess "Shutting down $app_name container"
+        if [ -d "$install_path$app_name" ]; then
+            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
+            checkSuccess "Shutting down $app_name container"
+        else
+            isNotice "Directory $install_path$app_name does not exist. Container not found."
+        fi
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(cd $install_path$app_name && docker-compose down)
-        checkSuccess "Shutting down $app_name container"
+        if [ -d "$install_path$app_name" ]; then
+            result=$(cd "$install_path$app_name" && docker-compose down)
+            checkSuccess "Shutting down $app_name container"
+        else
+            isNotice "Directory $install_path$app_name does not exist. Container not found."
+        fi
     fi
 }
 

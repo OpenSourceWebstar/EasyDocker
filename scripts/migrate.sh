@@ -25,6 +25,7 @@ migrateCheckForMigrateFiles() {
             if [[ $migrateshowfull == "true" ]]; then
                 isOption "f: Full Backups"
             fi
+            isOption "m: Move migration files to storage."
             echo ""
             # Question and Options
             isQuestion "Please select from the availables options above, or press 'c' to continue: "
@@ -35,6 +36,9 @@ migrateCheckForMigrateFiles() {
                     ;;
                 s|S)
                     migrateListSingleMigrateFiles;
+                    ;;
+                m|M)
+                    migrateRestoreFilesMoveToMigrate;
                     ;;
                 c|C)
                     return
@@ -51,7 +55,7 @@ migrateGetAppName()
 {
     selected_file=$(sudo -u $easydockeruser echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
     selected_app_name=$(sudo -u $easydockeruser echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
-    echo "$selected_app_name"
+    #echo "$selected_app_name"
 }
 
 migrateCheckForFullMigrateFiles() 
@@ -119,6 +123,7 @@ migrateCheckForSingleMigrateFiles()
         migrateshowsingle=true
     fi
 }
+
 migrateListSingleMigrateFiles() {
     # Find files not containing $CFG_INSTALL_NAME
     local single_files_without_string=$(sudo -u $easydockeruser ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
@@ -217,6 +222,96 @@ migrateRestoreFileMoveToMigrate()
         fi
     fi
   fi
+}
+
+migrateRestoreFilesMoveToMigrate()
+{
+    # Find files not containing $CFG_INSTALL_NAME
+    local full_files_without_string=$(sudo -u $easydockeruser ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+
+    # Output list of filenames found
+    if [ -n "$full_files_without_string" ]; then
+        echo ""
+        isNotice "The following Full backup files were found:"
+        echo ""
+        while IFS= read -r file; do
+            isOption "$file"
+        done <<< "$full_files_without_string"
+        echo ""
+    else
+        isNotice "No Full backup files were found."
+        return
+    fi
+
+
+    # Prompt user for each file
+    local selected_files=()
+    for full_backup_file in $full_files_without_string; do
+        isQuestion "Do you want to move $full_backup_file to the migrate folder for storage? (y/n): "
+        read -p "" fullmovemigrateoption
+        case $fullmovemigrateoption in
+            y|Y)
+                selected_files+=("$full_backup_file")
+                ;;
+            n|N)
+                ;;
+            *)
+                isNotice "Invalid option. Skipping $full_backup_file."
+                ;;
+        esac
+    done
+
+
+    # Restore selected files
+    for full_backup_file in "${selected_files[@]}"; do
+        echo ""
+        result=$(sudo mv $backup_full_dir/$full_backup_file "$migrate_full_dir")
+        checkSuccess "Moving $full_backup_file to $migrate_full_dir"
+    done
+
+    local single_files_without_string=$(sudo -u $easydockeruser ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+
+    # Output list of filenames found
+    if [ -n "$single_files_without_string" ]; then
+        echo ""
+        isNotice "The following single backup files were found:"
+        echo ""
+        while IFS= read -r file; do
+            isOption "$file"
+        done <<< "$single_files_without_string"
+        echo ""
+    else
+        echo ""
+        isNotice "No single backup files were found."
+        return
+    fi
+
+
+    # Prompt user for each file
+    local selected_files=()
+    for single_backup_file in $single_files_without_string; do
+        echo ""
+        isQuestion "Do you want to move $single_backup_file to the migrate folder for storage? (y/n): "
+        read -p "" singlemovemigrateoption
+        case $singlemovemigrateoption in
+            y|Y)
+                selected_files+=("$single_backup_file")
+                ;;
+            n|N)
+                ;;
+            *)
+                isNotice "Invalid option. Skipping $single_backup_file."
+                ;;
+        esac
+    done
+
+
+    # Restore selected files
+    for single_backup_file in "${selected_files[@]}"; do
+        echo ""
+        result=$(sudo mv $backup_single_dir/$single_backup_file "$migrate_single_dir")
+        checkSuccess "Moving $single_backup_file to $migrate_single_dir"
+    done
 }
 
 migrateRestoreFileMoveFromMigrate() {
@@ -670,10 +765,5 @@ migrateUpdateFiles()
         checkSuccess "Updating Compose file for $app_name"
     fi
 
-    if [[ $app_name == "traefik" ]]; then
-        result=$(sudo chmod 600 "$install_path$app_name/etc/certs/acme.json")
-        checkSuccess "Set permissions to acme.json file for $app_name"
-        result=$(sudo chmod 600 "$install_path$app_name/etc/traefik.yml")
-        checkSuccess "Set permissions to traefik.yml file for $app_name"
-    fi
+    fixPermissionsBeforeStart $app_name
 }

@@ -102,6 +102,6 @@ sshRemote()
     local ssh_command="$4"
 
     # Run the SSH command using the existing SSH variables
-    result=$(sudo sshpass -p "$ssh_pass" sudo ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $ssh_port $ssh_login $ssh_command)
-    checkSuccess "Running Remote SSH Command"
+    sudo sshpass -p "$ssh_pass" sudo ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $ssh_port $ssh_login $ssh_command
+    #checkSuccess "Running Remote SSH Command : $ssh_command"
 }
