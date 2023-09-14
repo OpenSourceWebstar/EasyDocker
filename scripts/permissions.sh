@@ -50,19 +50,21 @@ fixPermissionsBeforeStart()
 {
     local app_name="$1"
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        # Mainly for "full"
         changeRootOwnedFilesAndFolders $install_dir $CFG_DOCKER_INSTALL_USER
         changeRootOwnedFile $base_dir/$db_file $sudo_user_name
     fi
 
+    # This is where custom app specific permissions are needed
     if [[ $app_name == "traefik" ]] || [[ $app_name == "full" ]]; then
         result=$(sudo chmod 600 "$install_path/traefik/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for $app_name"
         result=$(sudo chmod 600 "$install_path/traefik/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for $app_name"
+        updateFileOwnership "$install_path/traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership "$install_path/traefik/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
     fi
 }
-
-
 
 changeRootOwnedFilesAndFolders() 
 {
@@ -71,7 +73,7 @@ changeRootOwnedFilesAndFolders()
 
     # Check if the install directory exists
     if [ ! -d "$install_dir" ]; then
-        echo "Install directory '$install_dir' does not exist."
+        isError "Install directory '$install_dir' does not exist."
         return 1
     fi
 
@@ -83,7 +85,7 @@ changeRootOwnedFilesAndFolders()
     result=$(sudo find "$install_dir" -type d -user root -exec sudo chown "$user_name:$user_name" {} \;)
     checkSuccess "Find directories owned by root and change ownership"
 
-    echo "Ownership of root-owned files and directories in '$install_dir' has been changed to '$user_name'."
+    isSuccessful "Ownership of root-owned files and directories in '$install_dir' has been changed to '$user_name'."
 }
 
 changeRootOwnedFile()
@@ -94,7 +96,7 @@ changeRootOwnedFile()
 
     # Check if the file exists
     if [ ! -f "$file_full" ]; then
-        echo "File '$file_full' does not exist."
+        isError "File '$file_full' does not exist."
         return 1
     fi
 
@@ -243,10 +245,11 @@ updateFileOwnership()
     local file="$1"
     local file_name=$(basename "$file")
     local clean_dir=$(echo "$file" | sed 's#//*#/#g')
+    local user_name="$2"
 
     if [[ $clean_dir == *"$install_path"* ]]; then
-        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
-        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+        result=$(sudo chown $user_name:$user_name "$file")
+        checkSuccess "Updating $file_name with $user_name ownership"
     else
         result=$(sudo chown $easydockeruser:$easydockeruser "$file")
         checkSuccess "Updating $file_name with $easydockeruser ownership"

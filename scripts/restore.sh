@@ -68,14 +68,12 @@ restoreStart()
 
     restoreExtractFile;
 
-    if [ "$stored_app_name" == "full" ]; then
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Updating file permissions for full restore."
-        echo ""
+    ((menu_number++))
+    echo ""
+    echo "---- $menu_number. Updating file permissions for restore."
+    echo ""
 
-        fixPermissionsBeforeStart $stored_app_name
-    fi
+    fixPermissionsBeforeStart $stored_app_name
 
     if [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
         ((menu_number++))
