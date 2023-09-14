@@ -6,6 +6,7 @@ version: '3'
 services:
     # Frontend
     web:
+        container_name: jitsimeet
         image: jitsi/web:stable
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro

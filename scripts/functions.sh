@@ -356,57 +356,105 @@ checkConfigFilesEdited()
     done
 }
 
-# Function to view log file with different options
-viewLogs()
+viewLogsAppMenu() 
 {
-    if [ ! -f "$logs_dir/$docker_log_file" ]; then
-        isError "Log file not found: $docker_log_file"
-        return 1
-    fi
-
+    local app_name="$1"
     echo ""
-    echo "#################################"
-    echo "###     Log Viewer Options    ###"
-    echo "#################################"
+    isNotice "Viewing logs for $app_name:"
     echo ""
     isOption "1. Show last 20 lines"
     isOption "2. Show last 50 lines"
     isOption "3. Show last 100 lines"
     isOption "4. Show last 200 lines"
     isOption "5. Show full log"
+    isOption "x. Back to main menu"
+    echo ""
+    isQuestion "Enter your choice (1-5, x): "
+    read -p "" app_log_choice
+    case "$app_log_choice" in
+        1)
+            runCommandForDockerInstallUser "docker logs $app_name --tail 20"
+            isQuestion "Press Enter to continue..."
+            read -p "" continueafterlogs
+            viewLogsAppMenu "$app_name"
+            ;;
+        2)
+            runCommandForDockerInstallUser "docker logs $app_name --tail 50"
+            isQuestion "Press Enter to continue..."
+            read -p "" continueafterlogs
+            viewLogsAppMenu "$app_name"
+            ;;
+        3)
+            runCommandForDockerInstallUser "docker logs $app_name --tail 100"
+            isQuestion "Press Enter to continue..."
+            read -p "" continueafterlogs
+            viewLogsAppMenu "$app_name"
+            ;;
+        4)
+            runCommandForDockerInstallUser "docker logs $app_name --tail 200"
+            isQuestion "Press Enter to continue..."
+            read -p "" continueafterlogs
+            viewLogsAppMenu "$app_name"
+            ;;
+        5)
+            runCommandForDockerInstallUser "docker logs $app_name"
+            isQuestion "Press Enter to continue..."
+            read -p "" continueafterlogs
+            viewLogsAppMenu "$app_name"
+            ;;
+        x)
+            viewLogs;  # Return to the viewLogs submenu
+            ;;
+        *)
+            isNotice "Invalid choice. Please select a valid option (1-5, x)."
+            viewLogsAppMenu "$app_name"
+            ;;
+    esac
+}
+
+viewLogs() 
+{
+    echo ""
+    echo "##########################################"
+    echo "###    View Logs for Installed Apps    ###"
+    echo "##########################################"
+    echo ""
+    
+    # List installed apps and add them as numbered options
+    local app_list=($(sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;"))
+    for ((i = 0; i < ${#app_list[@]}; i++)); do
+        isOption "$((i + 1)). View logs for ${app_list[i]}"
+    done
+
+    isOption "e. View easydocker.log"
     isOption "x. Exit"
     echo ""
 
-    isQuestion "Enter your choice (1-5): "
+    isQuestion "Enter your choice (1-${#app_list[@]}, e, x): "
     read -p "" log_choice
 
     case "$log_choice" in
-        1)
-            isNotice "Showing last 20 lines of $docker_log_file:"
-            tail -n 20 "$logs_dir/$docker_log_file"
+        [1-9]|[1-9][0-9]|10)
+            index=$((log_choice - 1))
+            if [ "$index" -ge 0 ] && [ "$index" -lt "${#app_list[@]}" ]; then
+                app_name="${app_list[index]}"
+                viewLogsAppMenu "$app_name"  # Call the app-specific menu
+            else
+                isNotice "Invalid app selection. Please select a valid app."
+            fi
             ;;
-        2)
-            isNotice "Showing last 50 lines of $docker_log_file:"
-            tail -n 50 "$logs_dir/$docker_log_file"
+        e)
+            isNotice "Viewing easydocker.log:"
+            nano "$logs_dir/easydocker.log"
+            viewLogs;
             ;;
-        3)
-            isNotice "Showing last 100 lines of $docker_log_file:"
-            tail -n 100 "$logs_dir/$docker_log_file"
-            ;;
-        4)
-            isNotice "Showing last 200 lines of $docker_log_file:"
-            tail -n 200 "$logs_dir/$docker_log_file"
-            ;;
-        5)
-            isNotice "Showing the full content of $docker_log_file:"
-            nano "$logs_dir/$docker_log_file"
-            ;;
-        6)
+        x)
             isNotice "Exiting"
             return
             ;;
         *)
-            isNotice "Invalid choice. Please select a valid option (1-5)."
+            isNotice "Invalid choice. Please select a valid option (1-${#app_list[@]}, e, x)."
+            viewLogs;
             ;;
     esac
 }

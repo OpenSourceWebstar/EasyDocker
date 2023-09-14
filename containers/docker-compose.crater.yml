@@ -6,6 +6,7 @@ networks:
 
 services:
   app:
+    container_name: crater
     build:
       args:
         user: crater-user
@@ -60,7 +61,7 @@ services:
       #traefik.http.routers.nginx.tls.certresolver: production
     networks:
       vpn:
-         ipv4_address: 10.8.1.12
+         ipv4_address: IPADDRESSHERE
 
   cron:
     build:

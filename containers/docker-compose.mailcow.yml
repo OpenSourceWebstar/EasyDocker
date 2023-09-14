@@ -4,6 +4,7 @@ networks:
     external: true
 services:
     nginx-mailcow:
+      container_name: mailcow
       networks:
         vpn:
           ipv4_address: IPADDRESSHERE

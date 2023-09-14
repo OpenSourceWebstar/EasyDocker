@@ -54,6 +54,7 @@ services:
 
 # Coturn
   coturn:
+    container_name: coturn
     build:
       context: ../
       dockerfile: ./docker/coturn/debian/Dockerfile

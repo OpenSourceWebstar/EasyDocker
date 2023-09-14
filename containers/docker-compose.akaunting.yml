@@ -4,6 +4,7 @@ networks:
     external: true
 services:
   akaunting:
+    container_name: akaunting
     labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
