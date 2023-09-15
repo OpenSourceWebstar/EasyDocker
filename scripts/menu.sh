@@ -286,15 +286,6 @@ mainMenu()
 	done
 }
 
-# Function to display an option menu and read user input
-isOptionMenu() 
-{
-    local prompt="$1"
-    local value
-    read -rp "$prompt" value
-    echo "$value"
-}
-
 # Function to scan for apps in a specific category
 scanCategory() 
 {
@@ -309,9 +300,12 @@ scanCategory()
 
     for app_dir in "$category_dir"/*; do
         if [ -d "$app_dir" ]; then
-            app_name=$(basename "$app_dir")
-            isOptionMenu "$app_name (u/s/r/i): "
-            # You can store the user's choice in a variable or process it here
+			local app_name=$(basename "$app_dir")
+            local app_description=$(grep -Po '(?<=# Description : ).*' "$app_dir/install.sh")
+
+            isOptionMenu "$app_description (u/s/r/i): "
+			read -rp "" $app_name
+
         fi
     done
 }
