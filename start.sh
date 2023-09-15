@@ -44,7 +44,7 @@ checkUpdates()
 					[yY])
 						gitFolderResetAndBackup;
 						fixFolderPermissions;
-						sourceScripts;
+						sourceScripts $install_dir;
 
 						isSuccessful "Starting/Restarting EasyDocker"
 						detectOS;
@@ -66,7 +66,7 @@ checkUpdates()
 		if [[ $update_done != "true" ]]; then
 			gitFolderResetAndBackup;
 			fixFolderPermissions;
-			sourceScripts;
+			sourceScripts $install_dir;
 
 			isSuccessful "Starting/Restarting EasyDocker"
 			detectOS;
