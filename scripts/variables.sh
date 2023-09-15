@@ -30,13 +30,10 @@ db_file=database.db
 migrate_file=migrate.txt
 
 # Configs
-config_file_apps_system=config_apps_system
-config_file_apps_privacy=config_apps_privacy
-config_file_apps_user=config_apps_user
 config_file_backup=config_backup
 config_file_general=config_general
 config_file_requirements=config_requirements
-config_files_all=("$config_file_apps_system" "$config_file_apps_privacy" "$config_file_apps_user" "$config_file_backup" "$config_file_general" "$config_file_requirements")
+config_files_all=("$config_file_backup" "$config_file_general" "$config_file_requirements")
 ip_file=ips_hostname
 
 # Menu

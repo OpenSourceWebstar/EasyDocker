@@ -41,9 +41,6 @@ gitFolderResetAndBackup()
     # Fixing the issue where the git does not use the .gitignore
     result=$(cd $script_dir)
     checkSuccess "Going into the install folder"
-	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_apps_system > /dev/null 2>&1
-	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_apps_privacy > /dev/null 2>&1
-	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_apps_user > /dev/null 2>&1
 	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
 	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
 	sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
@@ -63,6 +60,11 @@ reloadScripts()
 {
     # Reloading all scripts after clone
     for file in $script_dir*.sh; do
+        [ -f "$file" ] && . "$file"
+    done
+
+    # Load all configs after clone
+    for file in $configs_dir*config; do
         [ -f "$file" ] && . "$file"
     done
 }

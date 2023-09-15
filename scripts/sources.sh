@@ -29,9 +29,5 @@ source scripts/install/install_misc.sh
 source scripts/install/install_user.sh
 source scripts/install/install_ssh.sh
 
-source scripts/install/install_apps_system.sh
-source scripts/install/install_apps_privacy.sh
-source scripts/install/install_apps_user.sh
-
 source scripts/install/uninstall.sh
 

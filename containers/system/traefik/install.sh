@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Description : Traefik - Reverse Proxy *RECOMMENDED*
+
+installTraefik()
+{
+    app_name=$CFG_TRAEFIK_APP_NAME
+    host_name=$CFG_TRAEFIK_HOST_NAME
+    domain_number=$CFG_TRAEFIK_DOMAIN_NUMBER
+    public=$CFG_TRAEFIK_PUBLIC
+	port=$CFG_TRAEFIK_PORT
+
+    if [[ "$traefik" == *[uU]* ]]; then
+        uninstallApp;
+    fi
+
+    if [[ "$traefik" == *[sS]* ]]; then
+        shutdownApp;
+    fi
+
+    if [[ "$traefik" == *[rR]* ]]; then      
+        dockerDownUpDefault;
+    fi
+
+    if [[ "$traefik" == *[iI]* ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###         Install $app_name"
+        echo "##########################################"
+        echo ""
+
+		((menu_number++))
+        echo ""
+		echo "---- $menu_number. Checking custom DNS entry and IP for setup"
+		echo ""
+
+		setupIPsAndHostnames;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo ""
+
+		setupComposeFileNoApp;
+		
+        # Create necessary directories and set permissions
+        result=$(mkdirFolders "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
+        checkSuccess "Create /etc/ and /etc/certs Directories"
+
+        # Create and secure the acme.json file
+        result=$(createTouch "$install_path$app_name/etc/certs/acme.json")
+        checkSuccess "Created acme.json file for $app_name"
+
+        # Copy the Traefik configuration file and customize it
+        result=$(copyFile "$resources_dir/$app_name/traefik.yml" "$install_path$app_name/etc/traefik.yml")
+        checkSuccess "Copy Traefik configuration file for $app_name"
+
+        # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
+        result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_path$app_name/etc/traefik.yml")
+        checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
+
+		editComposeFileDefault;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		dockerDownUpDefault;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Opening ports if required"
+        echo ""
+
+        openAppPorts;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Restarting $app_name after firewall changes"
+        echo ""
+
+		dockerDownUpDefault;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo ""
+        echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$port/"
+        echo "    Local : http://$ip_setup:$port/"
+        echo ""
+
+		menu_number=0
+        sleep 3s
+        cd
+    fi
+    traefik=n
+}
