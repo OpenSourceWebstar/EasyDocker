@@ -235,7 +235,7 @@ scanCategory()
 			local install_file="$app_dir/install.sh"
             local app_description=$(grep -Po '(?<=# Description : ).*' "$install_file")
 
-            isOptionMenu "$app_description (u/s/r/i): "
+            isOptionMenu "$app_description (c/u/s/r/i): "
 			read -rp "" $app_name
         fi
     done
