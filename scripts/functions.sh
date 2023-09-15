@@ -63,8 +63,17 @@ reloadScripts()
         [ -f "$file" ] && . "$file"
     done
     
-    # Load all configs after clone
-    for file in $configs_dir*config; do
+    loadContainerFiles;
+}
+
+loadContainerFiles()
+{
+    # Load all configs in containers folder
+    for file in $containers_dir*config; do
+        [ -f "$file" ] && . "$file"
+    done
+    # Load all scripts in containers folder
+    for file in $containers_dir*install.sh; do
         [ -f "$file" ] && . "$file"
     done
 }

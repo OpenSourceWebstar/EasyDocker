@@ -2,9 +2,8 @@
 
 source init.sh
 
-source configs/config_apps_system
-source configs/config_apps_privacy
-source configs/config_apps_user
+
+
 source configs/config_backup
 source configs/config_general
 source configs/config_requirements
@@ -31,3 +30,4 @@ source scripts/install/install_ssh.sh
 
 source scripts/install/uninstall.sh
 
+loadContainerFiles;
