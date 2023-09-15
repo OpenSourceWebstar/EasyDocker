@@ -28,7 +28,6 @@ configs_dir="$script_dir/configs/"
 resources_dir="$script_dir/resources/"
 containers_dir="$script_dir/containers/"
 scripts_dir="$script_dir/scripts/"
-install_dir="$scripts_dir/install/"
 logs_dir=$script_dir/logs/
 
 initializeScript()
