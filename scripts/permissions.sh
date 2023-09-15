@@ -55,7 +55,7 @@ fixPermissionsBeforeStart()
     local app_name="$1"
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         # Mainly for "full"
-        changeRootOwnedFilesAndFolders $install_dir $CFG_DOCKER_INSTALL_USER
+        changeRootOwnedFilesAndFolders $script_dir $CFG_DOCKER_INSTALL_USER
         changeRootOwnedFile $base_dir/$db_file $sudo_user_name
     fi
 
