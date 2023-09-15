@@ -43,7 +43,8 @@ checkUpdates()
 				case $customupdatesfound in
 					[yY])
 						gitFolderResetAndBackup;
-						loadScripts;
+						fixFolderPermissions;
+						sourceScripts;
 
 						isSuccessful "Starting/Restarting EasyDocker"
 						detectOS;
@@ -64,7 +65,8 @@ checkUpdates()
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
 			gitFolderResetAndBackup;
-			loadScripts;
+			fixFolderPermissions;
+			sourceScripts;
 
 			isSuccessful "Starting/Restarting EasyDocker"
 			detectOS;

@@ -56,10 +56,23 @@ gitFolderResetAndBackup()
     update_done=true
 }
 
-loadScripts()
+sourceScripts() 
 {
-    # Load all scripts
-    find "$script_dir" -type f -name '*.sh' -exec . {} \;
+    local current_dir="$1"
+    for script_file in "$current_dir"/*.sh; do
+        if [ -f "$script_file" ]; then
+            # Source the script
+            . "$script_file"
+            echo "SCRIPT FILE : $script_file"
+        fi
+    done
+
+    # Traverse subdirectories
+    for sub_dir in "$current_dir"/*/; do
+        if [ -d "$sub_dir" ]; then
+            sourceScripts "$sub_dir"
+        fi
+    done
 }
 
 function userExists() {
