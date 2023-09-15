@@ -86,6 +86,8 @@ initializeScript()
 
 	# Custom command check
 	if grep -q "easydocker" $sudo_bashrc; then
+		echo ""
+		echo ""
 		echo "Custom command 'easydocker' is already installed. You can already use 'easydocker'."
 		echo ""
 		echo "You can now use the command under the $sudo_user_name."

@@ -45,7 +45,7 @@ gitFolderResetAndBackup()
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
-    sudo -u $easydockeruser find "$containers_dir" -type f -name 'config' -exec git rm --cached {} \; > /dev/null 2>&1  
+    sudo -u $easydockeruser find "$containers_dir" -type f -name '*.config' -exec git rm --cached {} \; > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
