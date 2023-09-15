@@ -131,11 +131,13 @@ startPreInstall()
 startScan()
 {
 	databasePathInsert $initial_path_save
-	migrateCheckForMigrateFiles;
-	migrateGenerateTXTAll;
-	migrateScanFoldersForUpdates;
-	migrateScanConfigsToMigrate;
-	migrateScanMigrateToConfigs;
+	if [[ $CFG_REQUIREMENT_MIGRATE == "true" ]]; then
+		migrateCheckForMigrateFiles;
+		migrateGenerateTXTAll;
+		migrateScanFoldersForUpdates;
+		migrateScanConfigsToMigrate;
+		migrateScanMigrateToConfigs;
+	fi
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
     databaseAppScan;

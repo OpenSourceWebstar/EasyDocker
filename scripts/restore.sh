@@ -788,12 +788,26 @@ restoreMigrate()
 restoreInitialize()
 {
     if [[ "$restorefull" == [lLrRmM] ]]; then
-        BACKUP_SAVE_DIRECTORY="$backup_full_dir"
-        RESTORE_SAVE_DIRECTORY="$restore_full_dir"
-        restoreFullBackupList;
+        if [[ "$CFG_REQUIREMENT_MIGRATE" == "false" ]]; then
+            migrateEnableConfig;
+            BACKUP_SAVE_DIRECTORY="$backup_full_dir"
+            RESTORE_SAVE_DIRECTORY="$restore_full_dir"
+            restoreFullBackupList;
+        elif [[ "$CFG_REQUIREMENT_MIGRATE" == "true" ]]; then
+            BACKUP_SAVE_DIRECTORY="$backup_full_dir"
+            RESTORE_SAVE_DIRECTORY="$restore_full_dir"
+            restoreFullBackupList;
+        fi
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        BACKUP_SAVE_DIRECTORY="$backup_single_dir"
-        RESTORE_SAVE_DIRECTORY="$restore_single_dir"
-        restoreSingleBackupList;
+        if [[ "$CFG_REQUIREMENT_MIGRATE" == "false" ]]; then
+            migrateEnableConfig;
+            BACKUP_SAVE_DIRECTORY="$backup_single_dir"
+            RESTORE_SAVE_DIRECTORY="$restore_single_dir"
+            restoreSingleBackupList;
+        elif [[ "$CFG_REQUIREMENT_MIGRATE" == "true" ]]; then
+            BACKUP_SAVE_DIRECTORY="$backup_single_dir"
+            RESTORE_SAVE_DIRECTORY="$restore_single_dir"
+            restoreSingleBackupList;
+        fi
     fi
 }
