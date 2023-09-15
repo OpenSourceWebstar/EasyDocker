@@ -50,7 +50,7 @@ mainMenu()
 				echo ""
 
 				scanCategory "system"
-				
+				startInstall;
 				;;
 			p)
 				showInstallInstructions;
@@ -62,7 +62,7 @@ mainMenu()
 				echo ""
 
 				scanCategory "privacy"
-				
+				startInstall;
 				;;
 			u)
 				showInstallInstructions;
@@ -74,7 +74,7 @@ mainMenu()
 				echo ""
 
 				scanCategory "user"
-
+				startInstall;
 				;;
 			o)
 				showInstallInstructions;
@@ -86,7 +86,7 @@ mainMenu()
 				echo ""
 
 				scanCategory "old"
-
+				startInstall;
 				;;
 			b)
 
@@ -237,7 +237,6 @@ scanCategory()
 
             isOptionMenu "$app_description (u/s/r/i): "
 			read -rp "" $app_name
-			startInstall;
         fi
     done
 }
