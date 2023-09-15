@@ -2,8 +2,6 @@
 
 source init.sh
 
-
-
 source configs/config_backup
 source configs/config_general
 source configs/config_requirements

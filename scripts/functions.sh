@@ -42,10 +42,10 @@ gitFolderResetAndBackup()
     result=$(cd $script_dir)
     checkSuccess "Going into the install folder"
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_restore > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
+    sudo -u $easydockeruser find "$containers_dir" -type f -name 'config' -exec git rm --cached {} \; > /dev/null 2>&1  
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
@@ -56,26 +56,10 @@ gitFolderResetAndBackup()
     update_done=true
 }
 
-reloadScripts()
+loadScripts()
 {
-    # Reloading all scripts after clone
-    for file in $script_dir*.sh; do
-        [ -f "$file" ] && . "$file"
-    done
-    
-    loadContainerFiles;
-}
-
-loadContainerFiles()
-{
-    # Load all configs in containers folder
-    for file in $containers_dir*config; do
-        [ -f "$file" ] && . "$file"
-    done
-    # Load all scripts in containers folder
-    for file in $containers_dir*install.sh; do
-        [ -f "$file" ] && . "$file"
-    done
+    # Load all scripts
+    find "$script_dir" -type f -name '*.sh' -exec . {} \;
 }
 
 function userExists() {
@@ -210,7 +194,6 @@ detectOS()
         
         installDockerUser;
         scanConfigsForRandomPassword;
-        fixFolderPermissions;
         checkRequirements;
     else
         checkSuccess "Unable to detect OS."
@@ -601,20 +584,24 @@ viewAppConfigs() {
         return
     fi
 
+    app_names=()
+    for app_config_file in "${app_config_files[@]}"; do
+        app_name=$(dirname "$app_config_file")
+        app_name=$(basename "$app_name")
+        app_names+=("$app_name")
+    done
+
     PS3="Select an app to edit the config (or x to exit): "
-    while true; do
-        select app_name in "${app_config_files[@]}" "x. Exit"; do
-            if [[ "$REPLY" == "x" ]]; then
-                isNotice "Exiting."
-                return
-            elif [ -f "$app_name" ]; then
-                app_name=$(dirname "$app_name")
-                editAppConfig "$(basename "$app_name")"
-                break
-            else
-                isNotice "Invalid selection. Please choose a valid option or 'x' to exit."
-            fi
-        done
+    select app_name in "${app_names[@]}" "x. Exit"; do
+        if [[ "$REPLY" == "x" ]]; then
+            isNotice "Exiting."
+            return
+        elif [[ "${app_names[@]}" =~ "$app_name" ]]; then
+            editAppConfig "$app_name"
+            break
+        else
+            isNotice "Invalid selection. Please choose a valid option or 'x' to exit."
+        fi
     done
 }
 
