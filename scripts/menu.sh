@@ -48,26 +48,29 @@ mainMenu()
 				echo "###          System Apps          ###"
 				echo "#####################################"
 				echo ""
-				isOptionMenu "Fail2Ban - Connection Security (u/s/r/i): "
-				read -rp "" fail2ban
-				isOptionMenu "Traefik - Reverse Proxy *RECOMMENDED* (u/s/r/i): "
-				read -rp "" traefik
-				isOptionMenu "Caddy - Reverse Proxy *NOT RECOMMENDED* (u/s/r/i): "
-				read -rp "" caddy
-				isOptionMenu "Wireguard Easy - VPN Server (u/s/r/i): "
-				read -rp "" wireguard
-				isOptionMenu "Adguard & Unbound - DNS Server *RECOMMENDED* (u/s/r/i): "
-				read -rp "" adguard
-				isOptionMenu "Pi-Hole & Unbound - DNS Server *NOT RECOMMENDED* (u/s/r/i): "
-				read -rp "" pihole
-				isOptionMenu "Portainer - Docker Management (u/s/r/i): "
-				read -rp "" portainer
-				isOptionMenu "Watchtower - Docker Updater (u/s/r/i): "
-				read -rp "" watchtower
-				isOptionMenu "Dashy - Docker Dashboard (u/s/r/i): "
-				read -rp "" dashy
+
+				scanCategory "system"
+
+				#isOptionMenu "Fail2Ban - Connection Security (u/s/r/i): "
+				#read -rp "" fail2ban
+				#isOptionMenu "Traefik - Reverse Proxy *RECOMMENDED* (u/s/r/i): "
+				#read -rp "" traefik
+				#isOptionMenu "Caddy - Reverse Proxy *NOT RECOMMENDED* (u/s/r/i): "
+				#read -rp "" caddy
+				#isOptionMenu "Wireguard Easy - VPN Server (u/s/r/i): "
+				#read -rp "" wireguard
+				#isOptionMenu "Adguard & Unbound - DNS Server *RECOMMENDED* (u/s/r/i): "
+				#read -rp "" adguard
+				#isOptionMenu "Pi-Hole & Unbound - DNS Server *NOT RECOMMENDED* (u/s/r/i): "
+				#read -rp "" pihole
+				#isOptionMenu "Portainer - Docker Management (u/s/r/i): "
+				#read -rp "" portainer
+				#isOptionMenu "Watchtower - Docker Updater (u/s/r/i): "
+				#read -rp "" watchtower
+				#isOptionMenu "Dashy - Docker Dashboard (u/s/r/i): "
+				#read -rp "" dashy
 				
-   				startInstall;
+   				#startInstall;
 				
 				;;
 			p)
@@ -78,21 +81,25 @@ mainMenu()
 				echo "###          Privacy Apps         ###"
 				echo "#####################################"
 				echo ""
-				isOptionMenu "Searxng - Search Engine (u/s/r/i): "
-				read -rp "" searxng
-				isOptionMenu "LibreSpeed - Internet Speed Test (u/s/r/i): "
-				read -rp "" speedtest
-				isOptionMenu "IPInfo - Show IP Address  (u/s/r/i): "
-				read -rp "" ipinfo
-				isOptionMenu "Trilium - Note Manager (u/s/r/i): "
-				read -rp "" trilium
-				isOptionMenu "Vaultwarden - Password Manager (u/s/r/i): "
-				read -rp "" vaultwarden
-				isOptionMenu "Actual - Money Budgetting (u/s/r/i): "
-				read -rp "" actual
-				isOptionMenu "Mailcow - Mail Server *UNFINISHED* (u/s/r/i): "
-				read -rp "" mailcow
-    			startInstall;
+
+				scanCategory "privacy"
+				
+				#isOptionMenu "Searxng - Search Engine (u/s/r/i): "
+				#read -rp "" searxng
+				#isOptionMenu "LibreSpeed - Internet Speed Test (u/s/r/i): "
+				#read -rp "" speedtest
+				#isOptionMenu "IPInfo - Show IP Address  (u/s/r/i): "
+				#read -rp "" ipinfo
+				#isOptionMenu "Trilium - Note Manager (u/s/r/i): "
+				#read -rp "" trilium
+				#isOptionMenu "Vaultwarden - Password Manager (u/s/r/i): "
+				#read -rp "" vaultwarden
+				#isOptionMenu "Actual - Money Budgetting (u/s/r/i): "
+				#read -rp "" actual
+				#isOptionMenu "Mailcow - Mail Server *UNFINISHED* (u/s/r/i): "
+				#read -rp "" mailcow
+
+    			#startInstall; 
 				
 				;;
 			u)
@@ -103,24 +110,27 @@ mainMenu()
 				echo "###           User Apps           ###"
 				echo "#####################################"
 				echo ""
-				isOptionMenu "Jitsi Meet - Video Conferencing (u/s/r/i): "
-				read -rp "" jitsimeet
-				isOptionMenu "OwnCloud - File & Document Cloud (u/s/r/i): "
-				read -rp "" owncloud
-				isOptionMenu "Killbill - Payment Processing (u/s/r/i): "
-				read -rp "" killbill
-				isOptionMenu "Mattermost - Collaboration Platform (u/s/r/i): "
-				read -rp "" mattermost
-				isOptionMenu "Kimai - Online-Timetracker (u/s/r/i): "
-				read -rp "" kimai
-				isOptionMenu "Tiledesk - Live Chat Platform *UNFINISHED* (u/s/r/i): "
-				read -rp "" tiledesk
-				isOptionMenu "GitLab - DevOps Platform *UNFINISHED* (u/s/r/i): "
-				read -rp "" gitlab
-				isOptionMenu "Akaunting - Invoicing Solution *UNFINISHED* (u/s/r/i): "
-				read -rp "" akaunting
 
-    			startInstall;
+				scanCategory "user"
+
+				#isOptionMenu "Jitsi Meet - Video Conferencing (u/s/r/i): "
+				#read -rp "" jitsimeet
+				#isOptionMenu "OwnCloud - File & Document Cloud (u/s/r/i): "
+				#read -rp "" owncloud
+				#isOptionMenu "Killbill - Payment Processing (u/s/r/i): "
+				#read -rp "" killbill
+				#isOptionMenu "Mattermost - Collaboration Platform (u/s/r/i): "
+				#read -rp "" mattermost
+				#isOptionMenu "Kimai - Online-Timetracker (u/s/r/i): "
+				#read -rp "" kimai
+				#isOptionMenu "Tiledesk - Live Chat Platform *UNFINISHED* (u/s/r/i): "
+				#read -rp "" tiledesk
+				#isOptionMenu "GitLab - DevOps Platform *UNFINISHED* (u/s/r/i): "
+				#read -rp "" gitlab
+				#isOptionMenu "Akaunting - Invoicing Solution *UNFINISHED* (u/s/r/i): "
+				#read -rp "" akaunting
+
+    			#startInstall;
 
 				;;
 			o)
@@ -131,10 +141,13 @@ mainMenu()
 				echo "###         Old/Unfinished        ###"
 				echo "#####################################"
 				echo ""
-				isOptionMenu "USER - Cozy - Cloud Platfrom (u/s/r/i): "
-				read -rp "" cozy
-				isOptionMenu "SYSTEM - Duplicati - Backups (u/s/r/i): "
-				read -rp "" duplicati
+
+				scanCategory "old"
+
+				#isOptionMenu "USER - Cozy - Cloud Platfrom (u/s/r/i): "
+				#read -rp "" cozy
+				#isOptionMenu "SYSTEM - Duplicati - Backups (u/s/r/i): "
+				#read -rp "" duplicati
 
 				startInstall
 
@@ -271,4 +284,34 @@ mainMenu()
 				;;
 		esac
 	done
+}
+
+# Function to display an option menu and read user input
+isOptionMenu() 
+{
+    local prompt="$1"
+    local value
+    read -rp "$prompt" value
+    echo "$value"
+}
+
+# Function to scan for apps in a specific category
+scanCategory() 
+{
+    local category="$1"
+    local category_dir="$containers_dir/$category"
+
+    echo ""
+    echo "#####################################"
+    echo "###          $category Apps          ###"
+    echo "#####################################"
+    echo ""
+
+    for app_dir in "$category_dir"/*; do
+        if [ -d "$app_dir" ]; then
+            app_name=$(basename "$app_dir")
+            isOptionMenu "$app_name (u/s/r/i): "
+            # You can store the user's choice in a variable or process it here
+        fi
+    done
 }
