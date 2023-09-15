@@ -472,7 +472,26 @@ viewLogs()
     esac
 }
 
-viewConfigs()
+
+editAppConfig() 
+{
+    local app_name="$1"
+    local app_dir="$containers_dir/$app_name"
+
+    if [ -d "$app_dir" ]; then
+        config_file="$app_dir/config"
+
+        if [ -f "$config_file" ]; then
+            nano "$config_file"
+        else
+            echo "Config file not found for $app_name."
+        fi
+    else
+        echo "App folder not found for $app_name."
+    fi
+}
+
+viewEasyDockerConfigs()
 {
     local config_files=("$configs_dir"*)  # List all files in the /configs/ folder
     
@@ -564,6 +583,68 @@ viewConfigs()
             echo ""
             read -p "Press Enter to continue."
         fi
+    done
+}
+
+# Function to view App configs
+viewAppConfigs() {
+    echo ""
+    echo "#################################"
+    echo "###        App Configs        ###"
+    echo "#################################"
+    echo ""
+
+    app_config_files=("$containers_dir"/*/config)
+
+    if [ ${#app_config_files[@]} -eq 0 ]; then
+        isNotice "No app config files found in $containers_dir."
+        return
+    fi
+
+    PS3="Select an app to edit the config (or x to exit): "
+    while true; do
+        select app_name in "${app_config_files[@]}" "x. Exit"; do
+            if [[ "$REPLY" == "x" ]]; then
+                isNotice "Exiting."
+                return
+            elif [ -f "$app_name" ]; then
+                app_name=$(dirname "$app_name")
+                editAppConfig "$(basename "$app_name")"
+                break
+            else
+                isNotice "Invalid selection. Please choose a valid option or 'x' to exit."
+            fi
+        done
+    done
+}
+
+# Main function for viewing configs
+viewConfigs() {
+    while true; do
+        echo ""
+        echo "#################################"
+        echo "###    Manage Config Files    ###"
+        echo "#################################"
+        echo ""
+        
+        PS3="Select an option (1. EasyDocker configs, 2. App configs, or x to exit): "
+        select option in "EasyDocker configs" "App configs" "Exit"; do
+            case "$option" in
+                "EasyDocker configs")
+                    viewEasyDockerConfigs
+                    ;;
+                "App configs")
+                    viewAppConfigs
+                    ;;
+                "Exit")
+                    isNotice "Exiting."
+                    return
+                    ;;
+                *)
+                    isNotice "Invalid option. Please choose a valid option or 'x' to exit."
+                    ;;
+            esac
+        done
     done
 }
 
