@@ -10,6 +10,11 @@ installDuplicati()
     public=$CFG_DUPLICATI_PUBLIC
 	port=$CFG_DUPLICATI_PORT
 
+
+    if [[ "$duplicati" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$duplicati" == *[uU]* ]]; then
         uninstallApp;
     fi

@@ -10,6 +10,10 @@ installTileDesk()
     public=$CFG_TILEDESK_PUBLIC
 	port=$CFG_TILEDESK_PORT
 
+    if [[ "$tiledesk" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$tiledesk" == *[uU]* ]]; then
 		uninstallApp;
 	fi

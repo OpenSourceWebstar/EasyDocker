@@ -10,6 +10,10 @@ installKimai()
     public=$CFG_KIMAI_PUBLIC
 	port=$CFG_KIMAI_PORT
 
+    if [[ "$kimai" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$kimai" == *[uU]* ]]; then
 		uninstallApp;
 	fi

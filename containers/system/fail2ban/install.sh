@@ -6,6 +6,10 @@ installFail2Ban()
 {
 	app_name=$CFG_FAIL2BAN_APP_NAME
 
+    if [[ "$fail2ban" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$fail2ban" == *[uU]* ]]; then
         uninstallApp;
     fi

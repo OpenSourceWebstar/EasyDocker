@@ -10,6 +10,10 @@ installGitLab()
     public=$CFG_GITLAB_PUBLIC
 	port=$CFG_GITLAB_PORT
 	port_2=$CFG_GITLAB_PORT_2
+    
+    if [[ "$gitlab" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
 
 	if [[ "$gitlab" == *[uU]* ]]; then
 		uninstallApp;

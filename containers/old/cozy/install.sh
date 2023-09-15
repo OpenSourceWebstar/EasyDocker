@@ -17,6 +17,10 @@ installCozy()
 	cozy_user_1_apps_enabled=true
 	cozy_user_1_apps="banks contacts"
 
+    if [[ "$cozy" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$cozy" == *[uU]* ]]; then
         uninstallApp;
     fi

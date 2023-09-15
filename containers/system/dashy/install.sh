@@ -9,7 +9,11 @@ installDashy()
     domain_number=$CFG_DASHY_DOMAIN_NUMBER
     public=$CFG_DASHY_PUBLIC
 	port=$CFG_DASHY_PORT
-    
+
+    if [[ "$dashy" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$dashy" == *[uU]* ]]; then
         uninstallApp;
     fi

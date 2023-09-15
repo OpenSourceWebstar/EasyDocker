@@ -11,6 +11,10 @@ installMailcow()
 	easy_setup=$CFG_MAILCOW_EASY_SETUP
 	using_caddy=$CFG_MAILCOW_USING_CADDY
 
+    if [[ "$mailcow" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$mailcow" == *[uU]* ]]; then
 		uninstallApp;
 	fi

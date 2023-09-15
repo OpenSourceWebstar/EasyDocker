@@ -9,6 +9,10 @@ installJitsiMeet()
     domain_number=$CFG_JITSIMEET_DOMAIN_NUMBER
     public=$CFG_JITSIMEET_PUBLIC
 	git_url=$CFG_JITSIMEET_GIT
+    
+    if [[ "$jitsimeet" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
 
 	if [[ "$jitsimeet" == *[uU]* ]]; then
 		uninstallApp;

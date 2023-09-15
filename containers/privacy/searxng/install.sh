@@ -9,7 +9,11 @@ installSearXNG()
     domain_number=$CFG_SEARXNG_DOMAIN_NUMBER
     public=$CFG_SEARXNG_PUBLIC
 	port=$CFG_SEARXNG_PORT
-	
+
+    if [[ "$searxng" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$searxng" == *[uU]* ]]; then
 		uninstallApp;
 	fi

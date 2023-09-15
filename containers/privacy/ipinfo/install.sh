@@ -10,6 +10,10 @@ installIPInfo()
     public=$CFG_IPINFO_PUBLIC
 	port=$CFG_IPINFO_PORT
 
+    if [[ "$ipinfo" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$ipinfo" == *[uU]* ]]; then
 		uninstallApp;
 	fi

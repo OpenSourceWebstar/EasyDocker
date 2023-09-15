@@ -10,6 +10,10 @@ installTest()
     public=true
     port=9999
 
+    if [[ "$test" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$test" == *[uU]* ]]; then
         uninstallApp;
     fi

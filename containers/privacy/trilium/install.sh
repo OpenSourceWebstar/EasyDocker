@@ -10,6 +10,10 @@ installTrilium()
     public=$CFG_TRILIUM_PUBLIC
 	port=$CFG_TRILIUM_PORT
 
+    if [[ "$trilium" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$trilium" == *[uU]* ]]; then
         uninstallApp;
     fi

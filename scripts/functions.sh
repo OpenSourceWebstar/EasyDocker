@@ -566,6 +566,25 @@ viewConfigs()
   done
 }
 
+editAppConfig() 
+{
+    local app_name="$1"
+    local app_dir
+    app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+
+    if [ -n "$app_dir" ]; then
+        config_file="$app_dir/config"
+        
+        if [ -f "$config_file" ]; then
+            nano "$config_file"
+        else
+            isError "Config file not found for $app_name."
+        fi
+    else
+        isError "App folder not found for $app_name."
+    fi
+}
+
 setupIPsAndHostnames() 
 {
     found_match=false

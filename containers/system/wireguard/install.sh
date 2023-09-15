@@ -10,6 +10,10 @@ installWireguard()
     public=$CFG_WIREGUARD_PUBLIC
 	port=$CFG_WIREGUARD_PORT
     
+    if [[ "$wireguard" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$wireguard" == *[uU]* ]]; then
         uninstallApp;
     fi

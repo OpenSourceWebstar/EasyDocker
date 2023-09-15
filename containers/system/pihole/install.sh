@@ -10,6 +10,10 @@ installPihole()
     public=$CFG_PIHOLE_PUBLIC
 	port=$CFG_PIHOLE_PORT
 
+    if [[ "$pihole" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$pihole" == *[uU]* ]]; then
         uninstallApp;
     fi

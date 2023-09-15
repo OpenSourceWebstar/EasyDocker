@@ -10,6 +10,10 @@ installPortainer()
     public=$CFG_PORTAINER_PUBLIC
 	port=$CFG_PORTAINER_PORT
 
+    if [[ "$portainer" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$portainer" == *[uU]* ]]; then
         uninstallApp;
     fi

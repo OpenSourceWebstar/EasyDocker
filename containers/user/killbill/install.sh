@@ -9,6 +9,10 @@ installKillbill()
     domain_number=$CFG_KILLBILL_DOMAIN_NUMBER
     public=$CFG_KILLBILL_PUBLIC
 	port=$CFG_KILLBILL_PORT
+    
+    if [[ "$killbill" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
 
 	if [[ "$killbill" == *[uU]* ]]; then
 		uninstallApp;

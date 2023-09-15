@@ -10,6 +10,10 @@ installTraefik()
     public=$CFG_TRAEFIK_PUBLIC
 	port=$CFG_TRAEFIK_PORT
 
+    if [[ "$traefik" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$traefik" == *[uU]* ]]; then
         uninstallApp;
     fi

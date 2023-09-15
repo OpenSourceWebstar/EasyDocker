@@ -11,6 +11,10 @@ installMattermost()
 	port=$CFG_MATTERMOST_PORT
 	easy_setup=$CFG_MATTERMOST_EASY_SETUP
 
+    if [[ "$mattermost" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$mattermost" == *[uU]* ]]; then
 		uninstallApp;
 	fi

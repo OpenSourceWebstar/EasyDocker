@@ -10,6 +10,10 @@ installSpeedtest()
     public=$CFG_SPEEDTEST_PUBLIC
 	port=$CFG_SPEEDTEST_PORT
 
+    if [[ "$speedtest" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$speedtest" == *[uU]* ]]; then
 		uninstallApp;
 	fi

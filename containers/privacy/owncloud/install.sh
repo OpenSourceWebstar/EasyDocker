@@ -11,6 +11,10 @@ installOwnCloud()
 	port=$CFG_OWNCLOUD_PORT
 	owncloud_version=$CFG_OWNCLOUD_VERSION
 
+    if [[ "$owncloud" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$owncloud" == *[uU]* ]]; then
 		uninstallApp;
 	fi

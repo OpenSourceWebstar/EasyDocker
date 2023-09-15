@@ -10,6 +10,10 @@ installAdguard()
     public=$CFG_ADGUARD_PUBLIC
 	port=$CFG_ADGUARD_PORT
 
+    if [[ "$adguard" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$adguard" == *[uU]* ]]; then
         uninstallApp;
     fi

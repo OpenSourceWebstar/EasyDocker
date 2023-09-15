@@ -9,6 +9,10 @@ installActual()
     domain_number=$CFG_ACTUAL_DOMAIN_NUMBER
     public=$CFG_ACTUAL_PUBLIC
 	port=$CFG_ACTUAL_PORT
+    
+    if [[ "$actual" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
 
 	if [[ "$actual" == *[uU]* ]]; then
 		uninstallApp;

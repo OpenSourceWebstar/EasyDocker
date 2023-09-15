@@ -6,6 +6,10 @@ installWatchtower()
 {
     app_name=$CFG_WATCHTOWER_APP_NAME
 
+    if [[ "$watchtower" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$watchtower" == *[uU]* ]]; then
         uninstallApp;
     fi

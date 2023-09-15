@@ -10,6 +10,10 @@ installVaultwarden()
     public=$CFG_VAULTWARDEN_PUBLIC
 	port=$CFG_VAULTWARDEN_PORT
 
+    if [[ "$vaultwarden" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
 	if [[ "$vaultwarden" == *[uU]* ]]; then
 		uninstallApp;
 	fi

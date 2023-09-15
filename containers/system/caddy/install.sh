@@ -9,6 +9,10 @@ installCaddy()
     domain_number=$CFG_CADDY_DOMAIN_NUMBER
     public=$CFG_CADDY_PUBLIC
 
+    if [[ "$caddy" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
+
     if [[ "$caddy" == *[uU]* ]]; then
         uninstallApp;
     fi

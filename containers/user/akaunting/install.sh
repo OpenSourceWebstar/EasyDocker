@@ -9,6 +9,10 @@ installAkaunting()
     domain_number=$CFG_AKAUNTING_DOMAIN_NUMBER
     public=$CFG_AKAUNTING_PUBLIC
 	port=$CFG_AKAUNTING_PORT
+    
+    if [[ "$akaunting" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
 
 	if [[ "$akaunting" == *[uU]* ]]; then
 		uninstallApp;
