@@ -1,5 +1,37 @@
 #!/bin/bash
 
+setupIPsAndHostnames()
+{
+    found_match=false
+    while read -r line; do
+        local hostname=$(echo "$line" | awk '{print $1}')
+        local ip=$(echo "$line" | awk '{print $2}')
+        
+        if [ "$hostname" = "$host_name" ]; then
+            found_match=true
+            # Public variables
+            domain_prefix=$hostname
+            domain_var_name="CFG_DOMAIN_${domain_number}"
+            domain_full=$(sudo grep  "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
+            host_setup=${domain_prefix}.${domain_full}
+            ssl_key=${domain_full}.key
+            ssl_crt=${domain_full}.crt
+            ip_setup=$ip
+            
+            if [[ "$public" == "true" ]]; then
+                isSuccessful "Using $host_setup for public domain."
+                checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
+                echo ""
+            fi
+        fi
+    done < "$configs_dir$ip_file"
+    
+    if ! "$found_match"; then  # Changed the condition to check if no match is found
+        checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"
+        echo ""
+    fi
+}
+
 portExistsInDatabase()
 {
     local app_name="$1"

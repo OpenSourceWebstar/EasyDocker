@@ -454,8 +454,7 @@ viewLogs()
     esac
 }
 
-editAppConfig() 
-{
+editAppConfig() {
     local app_name="$1"
     local config_file
     local app_dir
@@ -471,7 +470,36 @@ editAppConfig()
         config_file="$app_dir/$app_name.config"
 
         if [ -f "$config_file" ]; then
+            # Calculate the checksum of the original file
+            original_checksum=$(md5sum "$config_file")
+
+            # Open the file with nano for editing
             nano "$config_file"
+
+            # Calculate the checksum of the edited file
+            edited_checksum=$(md5sum "$config_file")
+
+            # Compare the checksums to check if changes were made
+            if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                # Ask the user if they want to reinstall the application
+                isQuestion "Changes have been made to the $app_name configuration. Do you want to reinstall the $app_name application? (y/n): "
+                read -p "" reinstall_choice
+
+                if [[ "$reinstall_choice" =~ [yY] ]]; then
+                    # Convert the first letter of app_name to uppercase
+                    app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                    installFuncName="install${app_name_ucfirst}"
+                    if type "$installFuncName" &>/dev/null; then
+                        variable_name="$app_name"
+                        declare "$variable_name=i"
+                        "$installFuncName" 
+                    else
+                        isNotice "Installation function not found for $app_name."
+                    fi
+                fi
+            else
+                isNotice "No changes were made to the $app_name configuration."
+            fi
         else
             echo "Config file not found for $app_name."
         fi
@@ -479,7 +507,6 @@ editAppConfig()
         echo "App folder not found for $app_name."
     fi
 }
-
 
 viewEasyDockerConfigs()
 {
@@ -576,43 +603,6 @@ viewEasyDockerConfigs()
     done
 }
 
-# Function to view App configs
-viewAppConfigs() {
-    echo ""
-    echo "#################################"
-    echo "###        App Configs        ###"
-    echo "#################################"
-    echo ""
-
-    app_config_files=("$containers_dir"/*/config)
-
-    if [ ${#app_config_files[@]} -eq 0 ]; then
-        isNotice "No app config files found in $containers_dir."
-        return
-    fi
-
-    app_names=()
-    for app_config_file in "${app_config_files[@]}"; do
-        app_name=$(dirname "$app_config_file")
-        app_name=$(basename "$app_name")
-        app_names+=("$app_name")
-    done
-
-    PS3="Select an app to edit the config (or x to exit): "
-    select app_name in "${app_names[@]}" "x. Exit"; do
-        if [[ "$REPLY" == "x" ]]; then
-            isNotice "Exiting."
-            return
-        elif [[ "${app_names[@]}" =~ "$app_name" ]]; then
-            editAppConfig "$app_name"
-            break
-        else
-            isNotice "Invalid selection. Please choose a valid option or 'x' to exit."
-        fi
-    done
-}
-
-# Main function for viewing configs
 viewConfigs() 
 {
     while true; do
@@ -645,36 +635,138 @@ viewConfigs()
     done
 }
 
-setupIPsAndHostnames()
+viewAppConfigs() 
 {
-    found_match=false
-    while read -r line; do
-        local hostname=$(echo "$line" | awk '{print $1}')
-        local ip=$(echo "$line" | awk '{print $2}')
-        
-        if [ "$hostname" = "$host_name" ]; then
-            found_match=true
-            # Public variables
-            domain_prefix=$hostname
-            domain_var_name="CFG_DOMAIN_${domain_number}"
-            domain_full=$(sudo grep  "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
-            host_setup=${domain_prefix}.${domain_full}
-            ssl_key=${domain_full}.key
-            ssl_crt=${domain_full}.crt
-            ip_setup=$ip
-            
-            if [[ "$public" == "true" ]]; then
-                isSuccessful "Using $host_setup for public domain."
-                checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
-                echo ""
-            fi
-        fi
-    done < "$configs_dir$ip_file"
-    
-    if ! "$found_match"; then  # Changed the condition to check if no match is found
-        checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"
+    while true; do
         echo ""
+        echo "#################################"
+        echo "###        App Categories     ###"
+        echo "#################################"
+        echo ""
+        isOption "1. System Apps"
+        isOption "2. Privacy Apps"
+        isOption "3. User Apps"
+        echo ""
+        isQuestion "Please select an option (1/2/3 or 'x' to exit): "
+        read -p "" view_app_category_option
+        case "$view_app_category_option" in
+        1)
+            viewAppCategoryConfigs "system"
+            ;;
+        2)
+            viewAppCategoryConfigs "privacy"
+            ;;
+        3)
+            viewAppCategoryConfigs "user"
+            ;;
+        x)
+            isNotice "Exiting."
+            return
+            ;;
+        *)
+            isNotice "Invalid selection. Please choose a valid category or 'x' to exit."
+            ;;
+        esac
+    done
+}
+
+viewAppCategoryConfigs() 
+{
+    local category="$1"
+
+    if [[ -z "$category" ]]; then
+        echo "Usage: viewAppCategoryConfigs <category>"
+        return 1
     fi
+
+    local category_dir="$containers_dir/$category"
+
+    if [[ ! -d "$category_dir" ]]; then
+        echo "Category '$category' does not exist in '$containers_dir'."
+        return 1
+    fi
+
+    local installed_apps=()
+    local other_apps=()
+
+    # Collect all app_name folders and categorize them into installed and others
+    while IFS= read -r -d $'\0' app_name_dir; do
+        app_name=$(basename "$app_name_dir")
+        # Check if the app_name is installed based on the database query
+        results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
+        if [[ -n "$results" ]]; then
+            installed_apps+=("$app_name *INSTALLED")
+        else
+            other_apps+=("$app_name")
+        fi
+    done < <(find "$category_dir" -mindepth 1 -maxdepth 1 -type d -print0)
+
+    if [[ ${#installed_apps[@]} -eq 0 && ${#other_apps[@]} -eq 0 ]]; then
+        echo "No app_name folders found in category '$category'."
+        return 1
+    fi
+
+    local category_name=$(basename "$category_dir")
+    local category_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${category_name:0:1})${category_name:1}"
+
+    echo ""
+    echo "#################################"
+    echo "###    $category_name_ucfirst Applications"
+    echo "#################################"
+
+    PS3="Select an application: "
+
+    select_app=""
+
+    while [[ -z "$select_app" ]]; do
+        echo ""
+        # Display *INSTALLED* apps first and then others
+        for ((i = 0; i < ${#installed_apps[@]}; i++)); do
+            app_option="${installed_apps[i]}"
+            isOption "$((i + 1)). $app_option"
+        done
+
+        for ((i = 0; i < ${#other_apps[@]}; i++)); do
+            app_option="${other_apps[i]}"
+            isOption "$((i + 1 + ${#installed_apps[@]})). $app_option"
+        done
+        
+        echo ""
+        isQuestion "Enter the number of the app to edit or 'b' to go back or 'x' to exit: "
+        read -p "" selected_number
+        
+        if [[ "$selected_number" == "b" ]]; then
+            return
+        elif [[ "$selected_number" == "x" ]]; then
+            isNotice "Exiting."
+            resetToMenu;
+        elif [[ "$selected_number" =~ ^[0-9]+$ ]]; then
+            if ((selected_number >= 1 && selected_number <= (${#installed_apps[@]} + ${#other_apps[@]}))); then
+                if ((selected_number <= ${#installed_apps[@]})); then
+                    # Selected an *INSTALLED* app
+                    selected_index=$((selected_number - 1))
+                    app_option="${installed_apps[selected_index]}"
+                else
+                    # Selected an app from the other category
+                    selected_index=$((selected_number - ${#installed_apps[@]} - 1))
+                    app_option="${other_apps[selected_index]}"
+                fi
+
+                # Remove the "*INSTALLED" suffix if it's present
+                app_name="${app_option%% *INSTALLED}"
+                editAppConfig "$app_name"
+                select_app="$app_name"
+            else
+                isNotice "Invalid number. Please select a valid number or 'x' to exit."
+                echo ""
+                read -p "Press Enter to continue."
+            fi
+        else
+            isNotice "Invalid input. Please enter a valid number or 'x' to exit."
+            echo ""
+            read -p "Press Enter to continue."
+        fi
+    done
 }
 
 setupComposeFileNoApp()
