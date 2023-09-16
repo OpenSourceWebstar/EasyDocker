@@ -10,6 +10,7 @@ source scripts/variables.sh
 source scripts/checks.sh
 source scripts/menu.sh
 source scripts/functions.sh
+source scripts/update.sh
 source scripts/docker.sh
 source scripts/configs.sh
 source scripts/logs.sh
