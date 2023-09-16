@@ -56,23 +56,10 @@ gitFolderResetAndBackup()
     update_done=true
 }
 
-sourceScripts() 
+loadContainerFiles() 
 {
-    local current_dir="$1"
-    for script_file in "$current_dir"/*.sh; do
-        if [ -f "$script_file" ]; then
-            # Source the script
-            . "$script_file"
-            echo "SCRIPT FILE : $script_file"
-        fi
-    done
-
-    # Traverse subdirectories
-    for sub_dir in "$current_dir"/*/; do
-        if [ -d "$sub_dir" ]; then
-            sourceScripts "$sub_dir"
-        fi
-    done
+    find "$containers_dir" -type d \( -name 'resources' -o -name 'old' \) -prune -o -type f \( -name '*config' \) -exec sh -c '. "$0" && echo "$0"' {} \;
+    find "$containers_dir" -type d \( -name 'resources' -o -name 'old' \) -prune -o -type f \( -name '*.sh' \) -exec sh -c '. "$0" && echo "$0"' {} \;
 }
 
 function userExists() {
@@ -1207,3 +1194,4 @@ resetToMenu()
     mainMenu
     return 1
 }
+

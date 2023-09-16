@@ -27,3 +27,5 @@ source scripts/install/install_user.sh
 source scripts/install/install_ssh.sh
 
 source scripts/install/uninstall.sh
+
+loadContainerFiles

@@ -232,7 +232,7 @@ scanCategory()
     for app_dir in "$category_dir"/*; do
         if [ -d "$app_dir" ]; then
 			local app_name=$(basename "$app_dir")
-			local install_file="$app_dir/install.sh"
+			local install_file="$app_dir/$app_name.sh"
             local app_description=$(grep -Po '(?<=# Description : ).*' "$install_file")
 
             isOptionMenu "$app_description (c/u/s/r/i): "
