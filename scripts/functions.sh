@@ -64,6 +64,11 @@ gitFolderResetAndBackup()
     update_done=true
 }
 
+sourceScripts()
+{
+    source scripts/sources.sh
+}
+
 function userExists() {
     if id "$1" &>/dev/null; then
         return 0 # User exists
