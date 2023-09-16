@@ -45,7 +45,8 @@ fixFolderPermissions()
         checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
 
         # Easydocker user permissions
-        result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$install_path")
+        #result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$install_path")
+        result=$(find "$install_path" -type d ! -path "$containers_dir" -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \;)
         checkSuccess "Updating $install_path with $sudo_user_name read permissions"
     fi
 }
@@ -53,6 +54,8 @@ fixFolderPermissions()
 fixPermissionsBeforeStart()
 {
     local app_name="$1"
+    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         # Mainly for "full"
         changeRootOwnedFilesAndFolders $script_dir $CFG_DOCKER_INSTALL_USER
@@ -60,13 +63,13 @@ fixPermissionsBeforeStart()
     fi
 
     # This is where custom app specific permissions are needed
-    if [[ $app_name == "traefik" ]] || [[ $app_name == "full" ]]; then
+    if [[ $app_name == "traefik" ]]; then
+        updateFileOwnership "$app_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership "$app_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
         result=$(sudo chmod 600 "$install_path/traefik/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for $app_name"
         result=$(sudo chmod 600 "$install_path/traefik/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for $app_name"
-        updateFileOwnership "$install_path/traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-        updateFileOwnership "$install_path/traefik/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
     fi
 }
 
