@@ -169,9 +169,14 @@ editAppConfig() {
             # Compare the checksums to check if changes were made
             if [[ "$original_checksum" != "$edited_checksum" ]]; then
                 # Ask the user if they want to reinstall the application
-                isQuestion "Changes have been made to the $app_name configuration. Do you want to reinstall the $app_name application? (y/n): "
-                read -p "" reinstall_choice
-
+                while true; do
+                    isQuestion "Changes have been made to the $app_name configuration. Do you want to reinstall the $app_name application? (y/n): "
+                    read -p "" reinstall_choice
+                    if [[ -n "$reinstall_choice" ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input."
+                done
                 if [[ "$reinstall_choice" =~ [yY] ]]; then
                     # Convert the first letter of app_name to uppercase
                     app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"

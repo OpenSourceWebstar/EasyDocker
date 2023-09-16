@@ -56,7 +56,7 @@ installTraefik()
         checkSuccess "Created acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
-        result=$(copyResource "traefik.yml" "/etc/traefik.yml")
+        result=$(copyResource "$app_name" "traefik.yml" "/etc/traefik.yml")
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates

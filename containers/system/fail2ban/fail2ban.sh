@@ -66,7 +66,7 @@ installFail2Ban()
             checkSuccess "Setting up abuseipdb_apikey"
 
             # Jail.local
-		    result=$(copyResource "jail.local" "config/$app_name/jail.local" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		    result=$(copyResource "$app_name" "jail.local" "config/$app_name/jail.local" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
             result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_path$app_name/config/$app_name/jail.local)
