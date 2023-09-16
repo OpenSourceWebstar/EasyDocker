@@ -56,11 +56,10 @@ gitFolderResetAndBackup()
     update_done=true
 }
 
-loadContainerFiles() 
-{
-    find "$containers_dir" -type d \( -name 'resources' -o -name 'old' \) -prune -o -type f \( -name '*config' \) -exec sh -c '. "$0" && echo "$0"' {} \;
-    find "$containers_dir" -type d \( -name 'resources' -o -name 'old' \) -prune -o -type f \( -name '*.sh' \) -exec sh -c '. "$0" && echo "$0"' {} \;
-}
+
+
+
+
 
 function userExists() {
     if id "$1" &>/dev/null; then
@@ -455,14 +454,21 @@ viewLogs()
     esac
 }
 
-
 editAppConfig() 
 {
     local app_name="$1"
-    local app_dir="$containers_dir/$app_name"
+    local config_file
+    local app_dir
 
-    if [ -d "$app_dir" ]; then
-        config_file="$app_dir/config"
+    if [[ "$app_name" == "" ]]; then
+        return
+    fi
+
+    # Use find to search for the app_name folder within $containers_dir
+    app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+
+    if [ -n "$app_dir" ]; then
+        config_file="$app_dir/$app_name.config"
 
         if [ -f "$config_file" ]; then
             nano "$config_file"
@@ -473,6 +479,7 @@ editAppConfig()
         echo "App folder not found for $app_name."
     fi
 }
+
 
 viewEasyDockerConfigs()
 {
@@ -606,52 +613,36 @@ viewAppConfigs() {
 }
 
 # Main function for viewing configs
-viewConfigs() {
+viewConfigs() 
+{
     while true; do
         echo ""
         echo "#################################"
         echo "###    Manage Config Files    ###"
         echo "#################################"
         echo ""
-        
-        PS3="Select an option (1. EasyDocker configs, 2. App configs, or x to exit): "
-        select option in "EasyDocker configs" "App configs" "Exit"; do
-            case "$option" in
-                "EasyDocker configs")
-                    viewEasyDockerConfigs
-                    ;;
-                "App configs")
-                    viewAppConfigs
-                    ;;
-                "Exit")
-                    isNotice "Exiting."
-                    return
-                    ;;
-                *)
-                    isNotice "Invalid option. Please choose a valid option or 'x' to exit."
-                    ;;
-            esac
-        done
+        isOption "1. EasyDocker configs"
+        isOption "2. App configs"
+        echo ""
+        isQuestion "Please select an option (1 or 2, or 'x' to exit): "
+        read -p "" view_config_option
+        case "$view_config_option" in
+        1)
+            viewEasyDockerConfigs
+            ;;
+        2)
+            viewAppConfigs
+            ;;
+        x)
+            echo ""
+            isNotice "Exiting."
+            return
+            ;;
+        *)
+            isNotice "Invalid option. Please choose a valid option or 'x' to exit."
+            ;;
+        esac
     done
-}
-
-editAppConfig()
-{
-    local app_name="$1"
-    local app_dir
-    app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    
-    if [ -n "$app_dir" ]; then
-        config_file="$app_dir/config"
-        
-        if [ -f "$config_file" ]; then
-            nano "$config_file"
-        else
-            isError "Config file not found for $app_name."
-        fi
-    else
-        isError "App folder not found for $app_name."
-    fi
 }
 
 setupIPsAndHostnames()
