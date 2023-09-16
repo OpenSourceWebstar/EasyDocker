@@ -86,28 +86,28 @@ installMattermost()
         echo "---- $menu_number. Pulling Mattermost GitHub repo"
         echo ""
 
-        result=$(mkdirFolders $install_path$app_name)
+        result=$(mkdirFolders $install_dir$app_name)
 		checkSuccess "Creating $app_name install folder"
 
-        result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_path$app_name)
+        result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_dir$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
 
-        result=$(copyFile $install_path$app_name/env.example $install_path$app_name/.env)
+        result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
 
-        result=$(mkdirFolders $install_path$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
+        result=$(mkdirFolders $install_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
-        result=$(sudo chown -R 2000:2000 $install_path$app_name/volumes/app/mattermost)
+        result=$(sudo chown -R 2000:2000 $install_dir$app_name/volumes/app/mattermost)
 		checkSuccess "Setting folder permissions for $app_name folders"
 
-        result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_path$app_name/.env)
+        result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_dir$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
 		
-        result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_path$app_name/.env)
+        result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTP_PORT to $MATP80C"	
 				
-        result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_path$app_name/.env)
+        result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $MATP443C"	
 		
 		editEnvFileDefault;
@@ -174,15 +174,15 @@ EOF
 
 		if [[ "$MATN" == [yY] ]]; then
 			if [[ "$OS" == [123] ]]; then
-				if grep -q "vpn:" $install_path$app_name/$DCWN; then
+				if grep -q "vpn:" $install_dir$app_name/$DCWN; then
 					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
 				else			
-					removeEmptyLineAtFileEnd "$install_path$app_name/$DCWN"
-					mattermostAddToYMLFile "$install_path$app_name/$DCWN"
-					editCustomFile "$install_path$app_name" "$DCWN"
+					removeEmptyLineAtFileEnd "$install_dir$app_name/$DCWN"
+					mattermostAddToYMLFile "$install_dir$app_name/$DCWN"
+					editCustomFile "$install_dir$app_name" "$DCWN"
 				fi
 
-				cd $install_path$app_name 
+				cd $install_dir$app_name 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
 					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 						result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN down")
@@ -217,7 +217,7 @@ EOF
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""

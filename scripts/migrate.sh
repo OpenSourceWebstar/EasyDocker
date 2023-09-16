@@ -490,13 +490,13 @@ migrateGenerateTXTAll()
     echo ""
 
     # Loop through subdirectories
-    for folder in "$install_path"/*; do
+    for folder in "$install_dir"/*; do
         # Extract the folder name from the full path
         app_name=$(basename "$folder")
-        if [ -d "$install_path/$app_name" ]; then
+        if [ -d "$install_dir/$app_name" ]; then
 
             # Check if a migrate.txt file exists in the current directory
-            if [ ! -f "$install_path/$app_name/$migrate_file" ]; then
+            if [ ! -f "$install_dir/$app_name/$migrate_file" ]; then
                 migrateBuildTXT $app_name;
             fi
         fi
@@ -510,12 +510,12 @@ migrateBuildTXT()
     local app_name=$1
 
     # Create a migrate.txt file with IP and InstallName
-    createTouch "$install_path/$app_name/$migrate_file"
+    createTouch "$install_dir/$app_name/$migrate_file"
 
     # Add MIGRATE_IP options to $migrate_file for $app_name
-    echo "MIGRATE_IP=$public_ip" | sudo tee -a "$install_path/$app_name/$migrate_file" >/dev/null
+    echo "MIGRATE_IP=$public_ip" | sudo tee -a "$install_dir/$app_name/$migrate_file" >/dev/null
     # Add MIGRATE_INSTALL_NAME options to $migrate_file for $app_name
-    echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$install_path/$app_name/$migrate_file" >/dev/null
+    echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$install_dir/$app_name/$migrate_file" >/dev/null
 
     isSuccessful "Created $migrate_file for $app_name"
 }
@@ -523,10 +523,10 @@ migrateBuildTXT()
 migrateScanFoldersForUpdates()
 {
     # Loop through all directories in the install path
-    for folder in "$install_path"/*; do
+    for folder in "$install_dir"/*; do
         # Extract the folder name from the full path
         local app_name=$(basename "$folder")
-        if [ -d "$install_path/$app_name" ]; then
+        if [ -d "$install_dir/$app_name" ]; then
             migrateCheckAndUpdateIP $app_name;
             migrateCheckAndUpdateInstallName $app_name;
         fi
@@ -539,9 +539,9 @@ migrateGenerateTXTSingle()
 {
     local app_name=$1
     # Check if the specified directory exists
-    if [ -d "$install_path/$app_name" ]; then
+    if [ -d "$install_dir/$app_name" ]; then
         # Check if a migrate.txt file already exists in the specified directory
-        if [ ! -f "$install_path/$app_name/$migrate_file" ]; then
+        if [ ! -f "$install_dir/$app_name/$migrate_file" ]; then
             migrateBuildTXT $app_name;
         else
             isNotice "$migrate_file already exists for $app_name."
@@ -569,8 +569,8 @@ migrateCheckAndUpdateIP()
     local app_name="$1"
     
     # Check if the migrate.txt file exists
-    if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_file="$install_path/$app_name/$migrate_file"
+    if [ -f "$install_dir/$app_name/$migrate_file" ]; then
+        local migrate_file="$install_dir/$app_name/$migrate_file"
         local migrate_ip=$(sudo grep -o 'MIGRATE_IP=.*' "$migrate_file" | cut -d '=' -f 2)
         if [ "$migrate_ip" != "$public_ip" ]; then
             if ! sudo grep -q "MIGRATE_IP=" "$migrate_file"; then
@@ -580,7 +580,7 @@ migrateCheckAndUpdateIP()
                 result=$(sudo sed -i "s#MIGRATE_IP=.*#MIGRATE_IP=$public_ip#" "$migrate_file")
                 checkSuccess "Updated MIGRATE_IP for $app_name : $(basename "$migrate_file") to $public_ip."
             fi
-            result=$(sudo find "$install_path/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
+            result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
@@ -592,8 +592,8 @@ migrateCheckAndUpdateInstallName() {
     local app_name="$1"
 
     # Check if the migrate.txt file exists
-    if [ -f "$install_path/$app_name/$migrate_file" ]; then
-        local migrate_file="$install_path/$app_name/$migrate_file"
+    if [ -f "$install_dir/$app_name/$migrate_file" ]; then
+        local migrate_file="$install_dir/$app_name/$migrate_file"
         local existing_migrate_install_name=$(sudo grep -o 'MIGRATE_INSTALL_NAME=.*' "$migrate_file" | cut -d '=' -f 2)
 
         if [ -z "$existing_migrate_install_name" ]; then
@@ -618,8 +618,8 @@ migrateScanConfigsToMigrate()
   # Find all subdirectories under the installation path and use them as app names
   local app_names=()
 
-  # Loop through the contents of the install_path directory
-  for item in "$install_path"/*; do
+  # Loop through the contents of the install_dir directory
+  for item in "$install_dir"/*; do
     if [[ -d "$item" ]]; then
       # If it's a directory, add its basename to app_names
       app_names+=("$(basename "$item")")
@@ -632,7 +632,7 @@ migrateScanConfigsToMigrate()
     #echo "Processing app_name: $app_name"
 
     # Define the migrate.txt file for the app
-    local migrate_file="$install_path/$app_name/migrate.txt"
+    local migrate_file="$install_dir/$app_name/migrate.txt"
     #echo "Migrate file: $migrate_file"
 
     # Read the content of migrate.txt into an array
@@ -695,8 +695,8 @@ migrateScanMigrateToConfigs()
   # Find all subdirectories under the installation path and use them as app names
   local app_names=()
 
-  # Loop through the contents of the install_path directory
-  for item in "$install_path"/*; do
+  # Loop through the contents of the install_dir directory
+  for item in "$install_dir"/*; do
     if [[ -d "$item" ]]; then
       # If it's a directory, add its basename to app_names
       app_names+=("$(basename "$item")")
@@ -712,7 +712,7 @@ migrateScanMigrateToConfigs()
     #echo "Processing app_name: $app_name" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
     # Define the migrate.txt file for the app
-    local migrate_file="$install_path/$app_name/migrate.txt"
+    local migrate_file="$install_dir/$app_name/migrate.txt"
     #echo "Migrate file: $migrate_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
 
     # Check if migrate.txt exists and read variables
@@ -795,9 +795,9 @@ migrateUpdateFiles()
 {            
     local app_name="$1"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path$app_name")
+        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir$app_name")
         checkSuccess "Updating ownership on migrated folder $app_name to $CFG_DOCKER_INSTALL_USER"
-        local compose_file="$install_path$app_name/docker-compose.yml"
+        local compose_file="$install_dir$app_name/docker-compose.yml"
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
         result=$(sudo sed -i \

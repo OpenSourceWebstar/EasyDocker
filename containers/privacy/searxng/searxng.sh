@@ -63,13 +63,13 @@ installSearXNG()
 		dockerDownUpDefault;
 
 		# Loop to check for the existence of the file every second
-		while [ ! -f "$install_path$app_name/searxng-data/settings.yml" ]; do
+		while [ ! -f "$install_dir$app_name/searxng-data/settings.yml" ]; do
 			isNotice "Waiting for the file to appear..."
 			read -t 1 # Wait for 1 second
 		done
 
 		# Perform the required operation on the file once it exists
-		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_path$app_name/searxng-data/settings.yml")
+		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_dir$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
 		dockerDownUpDefault;
@@ -90,7 +90,7 @@ installSearXNG()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""

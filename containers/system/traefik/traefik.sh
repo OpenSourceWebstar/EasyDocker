@@ -48,11 +48,11 @@ installTraefik()
 		setupComposeFileNoApp;
 		
         # Create necessary directories and set permissions
-        result=$(mkdirFolders "$install_path$app_name/etc" "$install_path$app_name/etc/certs")
+        result=$(mkdirFolders "$install_dir$app_name/etc" "$install_dir$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
         # Create and secure the acme.json file
-        result=$(createTouch "$install_path$app_name/etc/certs/acme.json")
+        result=$(createTouch "$install_dir$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
@@ -60,7 +60,7 @@ installTraefik()
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
-        result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_path$app_name/etc/traefik.yml")
+        result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
 		editComposeFileDefault;
@@ -102,7 +102,7 @@ installTraefik()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""

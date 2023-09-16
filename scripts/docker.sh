@@ -10,7 +10,7 @@ runCommandForDockerInstallUser()
 
 setupComposeFileNoApp()
 {
-    local target_path="$install_path$app_name"
+    local target_path="$install_dir$app_name"
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
     
     if [ -d "$target_path" ]; then
@@ -41,7 +41,7 @@ setupComposeFileNoApp()
 
 setupComposeFileApp()
 {
-    local target_path="$install_path$app_name"
+    local target_path="$install_dir$app_name"
     local source_file="$script_dir/containers/docker-compose.$app_name.yml"
     
     if [ -d "$target_path" ]; then
@@ -76,10 +76,10 @@ dockerDownUpDefault()
 {
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
             
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose down)
@@ -90,10 +90,10 @@ dockerDownUpDefault()
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
             
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose down)
@@ -109,10 +109,10 @@ dockerUpDownAdditionalYML()
 {
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
             
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
@@ -123,10 +123,10 @@ dockerUpDownAdditionalYML()
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
             
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q -q up -d")
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q -q up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
@@ -140,7 +140,7 @@ dockerUpDownAdditionalYML()
 
 editComposeFileDefault()
 {
-    local compose_file="$install_path$app_name/docker-compose.yml"
+    local compose_file="$install_dir$app_name/docker-compose.yml"
     
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -183,7 +183,7 @@ editComposeFileDefault()
 
 editComposeFileApp()
 {
-    local compose_file="$install_path$app_name/docker-compose.$app_name.yml"
+    local compose_file="$install_dir$app_name/docker-compose.$app_name.yml"
     
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -224,7 +224,7 @@ editComposeFileApp()
 
 editEnvFileDefault()
 {
-    local env_file="$install_path$app_name/.env"
+    local env_file="$install_dir$app_name/.env"
     
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -272,7 +272,7 @@ editCustomFile()
 
 setupEnvFile()
 {
-    result=$(copyFile $install_path$app_name/env.example $install_path$app_name/.env)
+    result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
     checkSuccess "Setting up .env file to path"
 }
 
@@ -303,18 +303,18 @@ dockerStartAllApps()
 dockerAppDown() {
     isNotice "Please wait for $app_name container to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        if [ -d "$install_path$app_name" ]; then
-            result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose down")
+        if [ -d "$install_dir$app_name" ]; then
+            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down $app_name container"
         else
-            isNotice "Directory $install_path$app_name does not exist. Container not found."
+            isNotice "Directory $install_dir$app_name does not exist. Container not found."
         fi
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        if [ -d "$install_path$app_name" ]; then
-            result=$(cd "$install_path$app_name" && docker-compose down)
+        if [ -d "$install_dir$app_name" ]; then
+            result=$(cd "$install_dir$app_name" && docker-compose down)
             checkSuccess "Shutting down $app_name container"
         else
-            isNotice "Directory $install_path$app_name does not exist. Container not found."
+            isNotice "Directory $install_dir$app_name does not exist. Container not found."
         fi
     fi
 }
@@ -324,10 +324,10 @@ dockerAppUp()
     local app_name="$1"
     isNotice "Please wait for $app_name container to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "cd $install_path$app_name && docker-compose up -d")
+        result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
         checkSuccess "Starting up $app_name container"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(cd $install_path$app_name && docker-compose up -d)
+        result=$(cd $install_dir$app_name && docker-compose up -d)
         checkSuccess "Starting up $app_name container"
     fi
 }

@@ -151,7 +151,7 @@ backupZipFile()
 
         #checkSuccess "Compressing $app_name folder into an encrypted zip file"
     elif [ "$app_name" != "full" ]; then
-        result=$(cd $install_path && zipFile "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$app_name")
+        result=$(cd $install_dir && zipFile "$CFG_BACKUP_PASSPHRASE" "$BACKUP_SAVE_DIRECTORY/$BACKUP_FILE_NAME.zip" "$app_name")
         checkSuccess "Compressing $app_name folder into an encrypted zip file"
     fi
 }

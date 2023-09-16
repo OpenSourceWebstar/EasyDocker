@@ -95,13 +95,13 @@ databaseAppScan()
     echo ""
 
     # Check if the folder exists
-    if [ ! -d "$install_path" ]; then
-        checkSuccess "Install path not found or not a directory: $install_path"
+    if [ ! -d "$install_dir" ]; then
+        checkSuccess "Install path not found or not a directory: $install_dir"
         return 1
     fi
 
     # Scan the folder and retrieve folder names
-    folder_names=$(sudo find "$install_path" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+    folder_names=$(sudo find "$install_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
     # Check if no folders are found
     if [ -z "$folder_names" ]; then
@@ -120,8 +120,8 @@ databaseAppScan()
     while IFS='|' read -r folder_name status; do
         if [[ -n "$folder_name" ]]; then
         existing_folder_names+=("$folder_name")
-            # Check if the folder exists in the install_path
-            if [ -d "$install_path/$folder_name" ]; then
+            # Check if the folder exists in the install_dir
+            if [ -d "$install_dir/$folder_name" ]; then
                 if (( status != 1 )); then 
                     isNotice "The folder for $folder_name has been found. Updating status to Installed in the Database"
                     # Update the database to set the status to 1 (installed) and unset the uninstall_date

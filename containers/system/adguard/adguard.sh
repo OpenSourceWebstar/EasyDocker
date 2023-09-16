@@ -81,7 +81,7 @@ installAdguard()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
 		echo "    NOTICE : Setup is needed in order to get Adguard online"

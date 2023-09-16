@@ -46,7 +46,7 @@ installCaddy()
 		
 		setupComposeFileNoApp;
 		
-		createTouch $install_path$app_name/Caddyfile
+		createTouch $install_dir$app_name/Caddyfile
 		
 		editComposeFileDefault;
 
@@ -87,7 +87,7 @@ installCaddy()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""

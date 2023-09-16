@@ -38,15 +38,15 @@ fixFolderPermissions()
         result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-        result=$(sudo chmod +x $base_dir $install_path)
+        result=$(sudo chmod +x $base_dir $install_dir)
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
-        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_path")
-        checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
+        result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir")
+        checkSuccess "Updating $install_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
         # Easydocker user permissions
-        result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$install_path")
-        checkSuccess "Updating $install_path with $sudo_user_name read permissions"
+        result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$install_dir")
+        checkSuccess "Updating $install_dir with $sudo_user_name read permissions"
     fi
 }
 
@@ -63,11 +63,11 @@ fixPermissionsBeforeStart()
 
     # This is where custom app specific permissions are needed
     if [[ $app_name == "traefik" ]]; then
-        updateFileOwnership "$app_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-        updateFileOwnership "$app_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-        result=$(sudo chmod 600 "$app_dir/etc/certs/acme.json")
+        updateFileOwnership "$install_dir$app_name/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership "$install_dir$app_name/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
+        result=$(sudo chmod 600 "$install_dir$app_name/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for $app_name"
-        result=$(sudo chmod 600 "$app_dir/etc/traefik.yml")
+        result=$(sudo chmod 600 "$install_dir$app_name/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for $app_name"
     fi
 }
@@ -118,7 +118,7 @@ mkdirFolders()
 
         result=$(sudo mkdir -p "$dir_path")
         checkSuccess "Creating $folder_name directory"
-        if [[ $clean_dir == *"$install_path"* ]]; then
+        if [[ $clean_dir == *"$install_dir"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
             checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
@@ -138,7 +138,7 @@ copyFolder()
     result=$(sudo cp -rf "$folder" "$save_dir")
     checkSuccess "Coping $folder_name to $save_dir"
 
-    if [[ $clean_dir == *"$install_path"* ]]; then
+    if [[ $clean_dir == *"$install_dir"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$folder_name")
         checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
@@ -167,7 +167,7 @@ copyFolders()
         result=$(sudo cp -rf "$subdir" "$save_dir")
         checkSuccess "Copying $subdir_name to $save_dir"
 
-        if [[ $clean_dir == *"$install_path"* ]]; then
+        if [[ $clean_dir == *"$install_dir"* ]]; then
             result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
@@ -190,8 +190,8 @@ copyResource()
         echo "App folder '$app_name' not found in '$containers_dir'."
     fi
 
-    result=$(sudo cp "$app_dir/resources/$file_name" "$install_path$app_name$save_path")
-    checkSuccess "Copying $file_name to $install_path$app_name$save_path"
+    result=$(sudo cp "$app_dir/resources/$file_name" "$install_dir$app_name$save_path")
+    checkSuccess "Copying $file_name to $install_dir$app_name$save_path"
 }
 
 copyFile() 
@@ -205,7 +205,7 @@ copyFile()
     result=$(sudo cp "$file" "$save_dir")
     checkSuccess "Copying $file_name to $save_dir"
 
-    if [[ $clean_dir == *"$install_path"* ]]; then
+    if [[ $clean_dir == *"$install_dir"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
         checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
     else
@@ -234,7 +234,7 @@ copyFiles()
         result=$(sudo cp -f "$file" "$save_dir")
         checkSuccess "Copying $file_name to $save_dir"
 
-        if [[ $clean_dir == *"$install_path"* ]]; then
+        if [[ $clean_dir == *"$install_dir"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$file_name")
             checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
@@ -254,7 +254,7 @@ createTouch()
     result=$(sudo touch "$clean_dir")
     checkSuccess "Touching $file_name to $file_dir"
 
-    if [[ $clean_dir == *"$install_path"* ]]; then
+    if [[ $clean_dir == *"$install_dir"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
         checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
@@ -270,7 +270,7 @@ updateFileOwnership()
     local clean_dir=$(echo "$file" | sed 's#//*#/#g')
     local user_name="$2"
 
-    if [[ $clean_dir == *"$install_path"* ]]; then
+    if [[ $clean_dir == *"$install_dir"* ]]; then
         result=$(sudo chown $user_name:$user_name "$file")
         checkSuccess "Updating $file_name with $user_name ownership"
     else

@@ -47,7 +47,7 @@ installTileDesk()
 
 		setupComposeFileApp;
 
-		result=$(cd $install_path$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
+		result=$(cd $install_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
 
 		editComposeFileApp;
@@ -104,7 +104,7 @@ installTileDesk()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""

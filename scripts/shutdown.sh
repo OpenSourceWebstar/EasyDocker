@@ -18,9 +18,9 @@ shutdownApp()
 
 dockerDownShutdown()
 {
-    cd $install_path$app_name
+    cd $install_dir$app_name
 
-    if [ -e $install_path$app_name/docker-compose.yml ]; then
+    if [ -e $install_dir$app_name/docker-compose.yml ]; then
         if [[ "$OS" == [123] ]]; then
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
                 result=$(runCommandForDockerInstallUser "docker-compose down")

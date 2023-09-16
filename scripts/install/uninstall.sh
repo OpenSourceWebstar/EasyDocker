@@ -48,7 +48,7 @@ uninstallApp()
 
 dockerDownRemove()
 {
-    cd $install_path$app_name
+    cd $install_dir$app_name
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
             result=$(runCommandForDockerInstallUser "docker-compose down -v --rmi all --remove-orphans")
@@ -62,6 +62,6 @@ dockerDownRemove()
 
 dockerDeleteData()
 {
-    result=$(sudo rm -rf $install_path$app_name)
+    result=$(sudo rm -rf $install_dir$app_name)
     checkSuccess "Deleting $app_name install folder"
 }

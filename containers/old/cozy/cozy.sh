@@ -52,42 +52,42 @@ installCozy()
         echo "---- $menu_number. Pulling from $app_name GitHub."
         echo ""
 
-		result=$(sudo -u $easydockeruser git clone https://github.com/vsellier/easy-cozy.git $install_path/$app_name)
+		result=$(sudo -u $easydockeruser git clone https://github.com/vsellier/easy-cozy.git $install_dir/$app_name)
 		checkSuccess "Cloning the Easy-Cozy from GitHub"
 		
-		result=$(copyFile $install_path/$app_name/env.template $install_path/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		result=$(copyFile $install_dir/$app_name/env.template $install_dir/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
-		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_path/$app_name/db|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_dir/$app_name/db|g" $install_dir/$app_name/.env)
 		checkSuccess "Update database directory to the correct install path"
 
-		result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_path/$app_name/storage/g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_dir/$app_name/storage/g" $install_dir/$app_name/.env)
 		checkSuccess "Update storage directory to the correct install path"
 
-		result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_path/$app_name/acme|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_dir/$app_name/acme|g" $install_dir/$app_name/.env)
 		checkSuccess "Update acme directory to the correct install path"
 
-		result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_dir/$app_name/.env)
 		checkSuccess "Update the domain name to $domain_full"
 
-		result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_dir/$app_name/.env)
 		checkSuccess "Update the email to $CFG_EMAIL"
 
-		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_path/$app_name/.env)
+		result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_dir/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
-		result=$(mkdirFolders $install_path/$app_name/db $install_path/$app_name/storage)
+		result=$(mkdirFolders $install_dir/$app_name/db $install_dir/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
 		setupComposeFileApp;
 
-		result=$(sudo sed -i '35,$ d' $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i '35,$ d' $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"
 
-		result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
 
-		result=$(sudo sed -i "s|labels:|#labels:|g" $install_path/$app_name/docker-compose.yml)
+		result=$(sudo sed -i "s|labels:|#labels:|g" $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
 		editComposeFileApp;
@@ -112,7 +112,7 @@ installCozy()
         echo ""
 
 		# Setting up a single instance of Cozy
-		result=$(cd $install_path/$app_name && sudo -u $easydockeruser ./create-instance.sh $cozy_user_1)
+		result=$(cd $install_dir/$app_name && sudo -u $easydockeruser ./create-instance.sh $cozy_user_1)
 		checkSuccess "Creating instance of $app_name for $cozy_user_1"
 
 		if [[ "$cozy_user_1_apps_enabled" == true ]]; then
@@ -136,7 +136,7 @@ installCozy()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_path$app_name"
+        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""
