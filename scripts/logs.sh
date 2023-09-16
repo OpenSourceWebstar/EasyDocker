@@ -13,7 +13,7 @@ viewLogsAppMenu()
     isOption "5. Show full log"
     isOption "x. Back to main menu"
     echo ""
-    isQuestion "Enter your choice (1-5, x): "
+    isQuestion "Enter your choice (1-5, or 'x' to exit): "
     read -p "" app_log_choice
     case "$app_log_choice" in
         1)
@@ -50,7 +50,7 @@ viewLogsAppMenu()
             viewLogs;  # Return to the viewLogs submenu
         ;;
         *)
-            isNotice "Invalid choice. Please select a valid option (1-5, x)."
+            isNotice "Invalid choice. Please select a valid option (1-5, or 'x' to exit)."
             viewLogsAppMenu "$app_name"
         ;;
     esac
@@ -74,7 +74,7 @@ viewLogs()
     isOption "x. Exit"
     echo ""
     
-    isQuestion "Enter your choice (1-${#app_list[@]}, e, x): "
+    isQuestion "Enter your choice (1-${#app_list[@]}, e or 'x' to exit): "
     read -p "" log_choice
     
     case "$log_choice" in
@@ -99,7 +99,7 @@ viewLogs()
             return
         ;;
         *)
-            isNotice "Invalid choice. Please select a valid option (1-${#app_list[@]}, e, x)."
+            isNotice "Invalid choice. Please select a valid option (1-${#app_list[@]}, e or 'x' to exit)."
             viewLogs;
         ;;
     esac

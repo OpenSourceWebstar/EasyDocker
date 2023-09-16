@@ -1,24 +1,28 @@
 #!/bin/bash
 
-# Function to check missing config variables in local config files against remote config files
 checkConfigFilesMissingVariables()
 {
+    checkEasyDockerConfigFilesMissingVariables;
+    checkApplicationsConfigFilesMissingVariables;
+}
+
+# Function to check missing config variables in local config files against remote config files
+checkEasyDockerConfigFilesMissingVariables()
+{
+    isNotice "Scanning EasyDocker config files...please wait"
     local local_configs=("$configs_dir"config_*)
     remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
     
-    # Find all .config files within the $container_dir directory and its subfolders
-    container_configs=($(find "$containers_dir" -type f -name '*.config'))
-    
-    # Loop through all config files
-    for local_config_file in "${local_configs[@]}" "${container_configs[@]}"; do
+    for local_config_file in "${local_configs[@]}"; do
         local_config_filename=$(basename "$local_config_file")
+        #echo "Checking local config file: $local_config_filename"  # Debug line output
         
         # Extract config variables from the local file
         local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$local_config_file" | sed 's/=$//'))
         
         # Generate the remote URL based on the local config file name
         remote_url="$remote_config_dir$local_config_filename"
-        
+    
         # Download the remote config file
         tmp_file=$(mktemp)
         curl -s "$remote_url" -o "$tmp_file"
@@ -29,16 +33,16 @@ checkConfigFilesMissingVariables()
         # Filter out empty variable names from the remote variables
         remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
         remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
-        
+
         # Compare local and remote variables
         for remote_var in "${remote_variables[@]}"; do
             if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
                 var_line=$(grep "${remote_var}=" "$tmp_file")
                 
                 echo ""
-                echo "########################################"
-                echo "###   Missing Config Variable Found  ###"
-                echo "########################################"
+                echo "####################################################"
+                echo "###   Missing EasyDocker Config Variable Found   ###"
+                echo "####################################################"
                 echo ""
                 isNotice "Variable '$remote_var' is missing in the local config file '$local_config_filename'."
                 echo ""
@@ -65,7 +69,7 @@ checkConfigFilesMissingVariables()
                         checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$local_config_filename':"
                     ;;
                     [xX])
-                        # Exit
+                        # User chose to skip
                     ;;
                     *)
                         echo "Invalid choice. Skipping."
@@ -74,11 +78,86 @@ checkConfigFilesMissingVariables()
             fi
         done
         
-        isNotice "Cleaning up temporary files...please wait..."
         rm "$tmp_file"
     done
     
-    echo ""
+    isSuccessful "Config variable check completed."  # Indicate completion
+}
+
+checkApplicationsConfigFilesMissingVariables()
+{
+    isNotice "Scanning Application config files...please wait"
+    local remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/containers/"
+    local container_configs=("$containers_dir"*/**/*.config)  # Match .config files in subdirectories
+
+    for container_config_file in "${container_configs[@]}"; do
+        container_config_relative_path=${container_config_file#$containers_dir}  # Extract relative path
+        container_config_filename=$(basename "$container_config_file")
+
+        # Extract config variables from the local file
+        local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
+
+        # Generate the remote URL based on the relative path
+        remote_url="$remote_config_dir$container_config_relative_path"
+
+            # Download the remote config file
+            tmp_file=$(mktemp)
+            curl -s "$remote_url" -o "$tmp_file"
+
+            # Extract config variables from the remote file
+            remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$tmp_file" | sed 's/=$//'))
+
+            # Filter out empty variable names from the remote variables
+            remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
+            remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+
+            # Compare local and remote variables
+            for remote_var in "${remote_variables[@]}"; do
+                if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
+                    var_line=$(grep "${remote_var}=" "$tmp_file")
+
+                    echo ""
+                    echo "####################################################"
+                    echo "###   Missing Application Config Variable Found  ###"
+                    echo "####################################################"
+                    echo ""
+                    isNotice "Variable '$remote_var' is missing in the local config file '$container_config_relative_path'."
+                    echo ""
+                    isOption "1. Add the '$var_line' to the '$container_config_relative_path'"
+                    isOption "2. Add the '$remote_var' with my own value"
+                    isOption "x. Skip"
+                    echo ""
+
+                    isQuestion "Enter your choice (1 or 2) or 'x' to skip : "
+                    read -rp "" choice
+
+                    case "$choice" in
+                        1)
+                            echo ""
+                            echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            checkSuccess "Adding the $var_line to '$container_config_relative_path':"
+                            ;;
+                        2)
+                            echo ""
+                            isQuestion "Enter your value for $remote_var: "
+                            read -p " " custom_value
+                            echo ""
+                            echo "CFG_${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$container_config_relative_path':"
+                            ;;
+                        [xX])
+                            # User chose to skip
+                            ;;
+                        *)
+                            echo "Invalid choice. Skipping."
+                            ;;
+                    esac
+                fi
+            done
+
+            rm "$tmp_file"
+    done
+
     isSuccessful "Config variable check completed."  # Indicate completion
 }
 
@@ -171,7 +250,9 @@ editAppConfig() {
             if [[ "$original_checksum" != "$edited_checksum" ]]; then
                 # Ask the user if they want to reinstall the application
                 while true; do
-                    isQuestion "Changes have been made to the $app_name configuration. Do you want to reinstall the $app_name application? (y/n): "
+                    echo ""
+                    isNotice "Changes have been made to the $app_name configuration."
+                    isQuestion "Do you want to reinstall the $app_name application? (y/n): "
                     read -p "" reinstall_choice
                     if [[ -n "$reinstall_choice" ]]; then
                         break

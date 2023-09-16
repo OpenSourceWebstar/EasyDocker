@@ -23,9 +23,8 @@ migrate_dir="$base_dir/migrate"
 migrate_full_dir="$migrate_dir/full"
 migrate_single_dir="$migrate_dir/single"
 # Install Scripts
-script_dir="$base_dir/install/"
+script_dir="$base_dir/install"
 configs_dir="$script_dir/configs/"
-resources_dir="$script_dir/resources/"
 containers_dir="$script_dir/containers/"
 scripts_dir="$script_dir/scripts/"
 logs_dir=$script_dir/logs/

@@ -39,6 +39,13 @@ installWatchtower()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
+
+		fixPermissionsBeforeStart;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 

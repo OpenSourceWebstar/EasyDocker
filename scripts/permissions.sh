@@ -188,7 +188,7 @@ copyResource()
         echo "App folder '$app_name' not found in '$containers_dir'."
     fi
 
-    result=$(sudo cp "$app_dir/$file_name" "$install_path$app_name$save_path")
+    result=$(sudo cp "$app_dir/resources/$file_name" "$install_path$app_name$save_path")
     checkSuccess "Copying $file_name to $install_path$app_name$save_path"
 }
 

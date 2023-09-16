@@ -76,6 +76,13 @@ installJitsiMeet()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
+
+		fixPermissionsBeforeStart;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Setting up .env file for setup"
         echo ""
 

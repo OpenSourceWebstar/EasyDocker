@@ -56,6 +56,13 @@ installGitLab()
 
 		dockerDownUpDefault;
 
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
+
+		fixPermissionsBeforeStart;
+
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Opening ports if required"
