@@ -1,7 +1,5 @@
 #!/bin/bash
 
-##!/bin/bash
-
 # Function to check missing config variables in local config files against remote config files
 checkConfigFilesMissingVariables()
 {
@@ -67,7 +65,7 @@ checkConfigFilesMissingVariables()
                         checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$local_config_filename':"
                     ;;
                     [xX])
-                        # User chose to skip
+                        # Exit
                     ;;
                     *)
                         echo "Invalid choice. Skipping."
@@ -76,7 +74,7 @@ checkConfigFilesMissingVariables()
             fi
         done
         
-        # Clean up the temporary file
+        isNotice "Cleaning up temporary files...please wait..."
         rm "$tmp_file"
     done
     
@@ -181,6 +179,8 @@ editAppConfig() {
                     isNotice "Please provide a valid input."
                 done
                 if [[ "$reinstall_choice" =~ [yY] ]]; then
+                    # Run to see if edits have removed any variables
+                    checkConfigFilesMissingVariables;
                     # Convert the first letter of app_name to uppercase
                     app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
                     installFuncName="install${app_name_ucfirst}"
