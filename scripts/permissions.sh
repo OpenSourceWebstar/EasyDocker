@@ -45,8 +45,7 @@ fixFolderPermissions()
         checkSuccess "Updating $install_path with $CFG_DOCKER_INSTALL_USER ownership"
 
         # Easydocker user permissions
-        #result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$install_path")
-        result=$(find "$install_path" -type d ! -path "$containers_dir" -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \;)
+        result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$install_path")
         checkSuccess "Updating $install_path with $sudo_user_name read permissions"
     fi
 }
