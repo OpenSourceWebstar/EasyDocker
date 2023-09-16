@@ -1,22 +1,25 @@
 #!/bin/bash
 
+##!/bin/bash
+
 # Function to check missing config variables in local config files against remote config files
 checkConfigFilesMissingVariables()
 {
     local local_configs=("$configs_dir"config_*)
     remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
     
-    for local_config_file in "${local_configs[@]}"; do
+    # Find all .config files within the $container_dir directory and its subfolders
+    container_configs=($(find "$containers_dir" -type f -name '*.config'))
+    
+    # Loop through all config files
+    for local_config_file in "${local_configs[@]}" "${container_configs[@]}"; do
         local_config_filename=$(basename "$local_config_file")
-        #echo "Checking local config file: $local_config_filename"  # Debug line output
         
         # Extract config variables from the local file
         local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$local_config_file" | sed 's/=$//'))
         
         # Generate the remote URL based on the local config file name
         remote_url="$remote_config_dir$local_config_filename"
-        
-        #echo "Checking remote config file: $local_config_filename"  # Debug line output
         
         # Download the remote config file
         tmp_file=$(mktemp)
