@@ -53,7 +53,7 @@ installDashy()
         echo "---- $menu_number. Setting up conf.yml file."
         echo ""
 
-        result=$(copyFile "$resources_dir/$app_name/conf.yml" "$install_path$app_name/conf.yml")
+        result=$(copyResource "conf.yml" "conf.yml")
         checkSuccess "Copy contents of conf.yml configuration file"
 
 		((menu_number++))

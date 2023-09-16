@@ -175,6 +175,23 @@ copyFolders()
     done
 }
 
+copyResource() 
+{
+    local app_name="$1"
+    local file_name="$2"
+    local save_path="$3"
+
+    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+
+    # Check if the app_name folder was found
+    if [ -z "$app_dir" ]; then
+        echo "App folder '$app_name' not found in '$containers_dir'."
+    fi
+
+    result=$(sudo cp "$app_dir/$file_name" "$install_path$app_name$save_path")
+    checkSuccess "Copying $file_name to $install_path$app_name$save_path"
+}
+
 copyFile() 
 {
     local file="$1"
