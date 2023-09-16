@@ -53,7 +53,6 @@ fixFolderPermissions()
 fixPermissionsBeforeStart()
 {
     local app_name="$1"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
 
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         # Mainly for "full"

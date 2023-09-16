@@ -11,7 +11,8 @@ runCommandForDockerInstallUser()
 setupComposeFileNoApp()
 {
     local target_path="$install_dir$app_name"
-    local source_file="$script_dir/containers/docker-compose.$app_name.yml"
+    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    local source_file="$app_dir/docker-compose.yml"
     
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."
@@ -42,7 +43,8 @@ setupComposeFileNoApp()
 setupComposeFileApp()
 {
     local target_path="$install_dir$app_name"
-    local source_file="$script_dir/containers/docker-compose.$app_name.yml"
+    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    local source_file="$app_dir/docker-compose.yml"
     
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."

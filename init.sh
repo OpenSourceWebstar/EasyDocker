@@ -9,7 +9,7 @@ sudo_bashrc="/home/$sudo_user_name/.bashrc"
 
 # Directories
 base_dir=/docker
-install_path=$base_dir/containers/
+install_dir=$base_dir/containers/
 ssl_dir=$base_dir/ssl/
 ssh_dir=$base_dir/ssh/
 backup_dir="$base_dir/backups"
@@ -58,7 +58,7 @@ initializeScript()
 	fi
 
 	# Setup folder structure
-	folders=("$base_dir" "$install_path" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
+	folders=("$base_dir" "$install_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			sudo mkdir "$folder"
