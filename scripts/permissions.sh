@@ -65,9 +65,9 @@ fixPermissionsBeforeStart()
     if [[ $app_name == "traefik" ]]; then
         updateFileOwnership "$app_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
         updateFileOwnership "$app_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-        result=$(sudo chmod 600 "$install_path/traefik/etc/certs/acme.json")
+        result=$(sudo chmod 600 "$app_dir/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for $app_name"
-        result=$(sudo chmod 600 "$install_path/traefik/etc/traefik.yml")
+        result=$(sudo chmod 600 "$app_dir/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for $app_name"
     fi
 }
