@@ -88,14 +88,8 @@ gitFolderResetAndBackup()
     result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
     # Use find to locate files and folders ending with ".config" and copy them to the temporary directory
-    sudo find "$containers_dir" -type f -name '*.config' -exec sudo cp -t "$backup_install_dir/$backupFolder" {} +
-    sudo find "$containers_dir" -type d -name '*.config' -exec sudo cp -rt "$backup_install_dir/$backupFolder" {} +
-    sleep 100000
-
-    result=$(copyFolder "$containers_dir" "$backup_install_dir/$backupFolder")
+    result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$containers_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the containers to the backup folder"
-    
-
 
     # Reset git
     result=$(sudo -u $easydockeruser rm -rf $script_dir)
