@@ -87,7 +87,16 @@ gitFolderResetAndBackup()
     checkSuccess "Copy the configs to the backup folder"
     result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
+    # Use find to locate files and folders ending with ".config" and copy them to the temporary directory
+    sudo find "$containers_dir" -type f -name '*.config' -exec sudo cp -t "$backup_install_dir/$backupFolder" {} +
+    sudo find "$containers_dir" -type d -name '*.config' -exec sudo cp -rt "$backup_install_dir/$backupFolder" {} +
+    sleep 100000
+
+    result=$(copyFolder "$containers_dir" "$backup_install_dir/$backupFolder")
+    checkSuccess "Copy the containers to the backup folder"
     
+
+
     # Reset git
     result=$(sudo -u $easydockeruser rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
@@ -105,8 +114,13 @@ gitFolderResetAndBackup()
     # Zip up folder for safe keeping and remove folder
     result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
-    result=$(sudo rm -rf "$backup_install_dir/$backupFolder")
-    checkSuccess "Removing the backup folder"
+    # Find and remove all files and folders except .zip files
+    sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +
+    # Change to the zip directory
+    sudo cd "$backup_install_dir"
+    # Delete all zip files except the latest 5
+    sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm
+
     
     # Fixing the issue where the git does not use the .gitignore
     result=$(cd $script_dir)
@@ -118,7 +132,7 @@ gitFolderResetAndBackup()
     sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
-    sudo -u $easydockeruser git clean -f "*.config"
+    sudo -u $easydockeruser git clean -f "*.config" > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
@@ -126,3 +140,4 @@ gitFolderResetAndBackup()
     isSuccessful "Custom changes have been discarded successfully"
     update_done=true
 }
+gitFolderResetAndBackup
