@@ -111,7 +111,7 @@ gitFolderResetAndBackup()
     # Find and remove all files and folders except .zip files
     sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +
     # Change to the zip directory
-    sudo cd "$backup_install_dir"
+    cd "$backup_install_dir"
     # Delete all zip files except the latest 5
     sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm
 
