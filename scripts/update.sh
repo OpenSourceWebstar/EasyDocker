@@ -27,6 +27,7 @@ checkUpdates()
 		# Update Git with email address
 		sudo -u $easydockeruser git config --global user.name "$CFG_INSTALL_NAME"
 		sudo -u $easydockeruser git config --global user.email "$CFG_EMAIL"
+        gitUntrackFiles;
 
 		# Check if there are uncommitted changes
 		if [[ $(git status --porcelain) ]]; then
@@ -115,7 +116,14 @@ gitFolderResetAndBackup()
     result=$(cd "$backup_install_dir" && sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm)
     checkSuccess "Cleaning up install backup folders."
 
-    
+    gitUntrackFiles;
+
+    isSuccessful "Custom changes have been discarded successfully"
+    update_done=true
+}
+
+gitUntrackFiles()
+{
     # Fixing the issue where the git does not use the .gitignore
     cd $script_dir
     sudo git config core.fileMode false
@@ -129,7 +137,4 @@ gitFolderResetAndBackup()
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
-    
-    isSuccessful "Custom changes have been discarded successfully"
-    update_done=true
 }
