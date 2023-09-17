@@ -36,7 +36,7 @@ checkUpdates()
 				read -p "" customupdatesfound
 				case $customupdatesfound in
 					[yY])
-						gitFolderResetAndBackup;
+						gitCheckConfigs;
 						fixFolderPermissions;
 						sourceScripts;
 
@@ -58,7 +58,7 @@ checkUpdates()
 
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
-			gitFolderResetAndBackup;
+			gitCheckConfigs;
 			fixFolderPermissions;
 			sourceScripts;
 
