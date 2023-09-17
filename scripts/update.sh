@@ -27,7 +27,6 @@ checkUpdates()
 		# Update Git with email address
 		sudo -u $easydockeruser git config --global user.name "$CFG_INSTALL_NAME"
 		sudo -u $easydockeruser git config --global user.email "$CFG_EMAIL"
-        gitUntrackFiles;
 
 		# Check if there are uncommitted changes
 		if [[ $(git status --porcelain) ]]; then
