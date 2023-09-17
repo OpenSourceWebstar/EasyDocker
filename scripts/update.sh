@@ -140,4 +140,3 @@ gitFolderResetAndBackup()
     isSuccessful "Custom changes have been discarded successfully"
     update_done=true
 }
-gitFolderResetAndBackup
