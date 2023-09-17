@@ -116,16 +116,9 @@ gitFolderResetAndBackup()
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
-    sudo -u $easydockeruser find "$containers_dir" -type f -name '*.config' -exec git -C "$containers_dir" rm --cached -- {} \; > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
-    # Loop through the files in $containers_dir and identify config files
-    for config_file in "$containers_dir"/*.config; do
-        if [ -f "$config_file" ]; then
-            # Remove the file from Git index (staging area)
-            sudo -u $easydockeruser git rm --cached "$config_file" > /dev/null 2>&1
-        fi
-    done
+    sudo -u $easydockeruser git clean -f "*.config"
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
