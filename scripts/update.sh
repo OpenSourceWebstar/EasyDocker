@@ -88,7 +88,7 @@ gitFolderResetAndBackup()
     result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
     # Use find to locate files and folders ending with ".config" and copy them to the temporary directory
-    result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$containers_dir" "$backup_install_dir/$backupFolder")
+    result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$containers_dir" "$backup_install_dir/$backupFolder/containers")
     checkSuccess "Copy the containers to the backup folder"
 
     # Reset git
@@ -109,16 +109,15 @@ gitFolderResetAndBackup()
     result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
     # Find and remove all files and folders except .zip files
-    sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +
-    # Change to the zip directory
-    cd "$backup_install_dir"
+    result=$(sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +)
+    checkSuccess "Cleaning up install backup folders."
     # Delete all zip files except the latest 5
-    sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm
+    result=$(cd "$backup_install_dir" && sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm)
+    checkSuccess "Cleaning up install backup folders."
 
     
     # Fixing the issue where the git does not use the .gitignore
-    result=$(cd $script_dir)
-    checkSuccess "Going into the install folder"
+    cd $script_dir
     sudo git config core.fileMode false
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
