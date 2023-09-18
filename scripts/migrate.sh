@@ -588,7 +588,8 @@ migrateCheckAndUpdateIP()
     fi
 }
 
-migrateCheckAndUpdateInstallName() {
+migrateCheckAndUpdateInstallName() 
+{
     local app_name="$1"
 
     # Check if the migrate.txt file exists
@@ -693,7 +694,8 @@ migrateScanConfigsToMigrate()
   unset app_names migrate_file migrate_lines existing_variables
 }
 
-migrateScanMigrateToConfigs() {
+migrateScanMigrateToConfigs() 
+{
   isNotice "Scanning migrate.txt files... this may take a moment..."
 
   # Variables to ignore
