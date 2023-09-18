@@ -214,7 +214,7 @@ gitUntrackFiles()
     sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
-    sudo -u $easydockeruser git clean -f "*.config" > /dev/null 2>&1
+    #sudo -u $easydockeruser git clean -f "*.config" > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
