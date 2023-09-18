@@ -38,6 +38,7 @@ checkUpdates()
 					[yY])
                         remove_changes=true
 						gitCheckConfigs;
+                        scanConfigsFixLineEnding;
 						fixFolderPermissions;
 						sourceScripts;
 
@@ -49,6 +50,7 @@ checkUpdates()
 						isNotice "Custom changes will be kept, continuing..."
                         remove_changes=false
                         gitCheckConfigs;
+                        scanConfigsFixLineEnding;
 						fixFolderPermissions;
 						sourceScripts;
                         
@@ -65,6 +67,7 @@ checkUpdates()
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
 			gitCheckConfigs;
+            scanConfigsFixLineEnding;
 			fixFolderPermissions;
 			sourceScripts;
 

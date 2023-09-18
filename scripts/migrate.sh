@@ -612,7 +612,6 @@ migrateCheckAndUpdateInstallName() {
     fi
 }
 
-# Function to apply variables from config files to migrate.txt
 migrateScanConfigsToMigrate() 
 {
   # Find all subdirectories under the installation path and use them as app names
@@ -651,44 +650,52 @@ migrateScanConfigsToMigrate()
       existing_variables["$variable_name"]=1
     done
 
-    # Loop through all config files matching the pattern config_apps_*
-    for config_file in "$configs_dir"/config_apps_*; do
-      if [[ -f "$config_file" ]]; then
-        #echo "Processing config file: $config_file"
-        # Read the config file line by line
-        while IFS= read -r line; do
-          # Check if the line matches the pattern CFG_APP_NAME* (contains CFG_APP_NAME)
-          if [[ "$line" =~ $app_name_upper ]]; then
-            #echo "Found line in $config_file: $line"
+    # Look for config files within the $app_name subfolder of containers_dir
+    local app_config_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
 
-            # Extract the variable name (content before '=')
-            variable_name="${line%%=*}"
+    if [[ -n "$app_config_dir" ]]; then
+      for config_file in "$app_config_dir"/*.config; do
+        if [[ -f "$config_file" ]]; then
+          #echo "Processing config file: $config_file"
+          # Read the config file line by line
+          while IFS= read -r line; do
+            # Check if the line matches the pattern CFG_APP_NAME* (contains CFG_APP_NAME)
+            if [[ "$line" =~ $app_name_upper ]]; then
+              #echo "Found line in $config_file: $line"
 
-            # Check if the variable name (content before '=') is not in migrate.txt
-            if [[ -z "${existing_variables[$variable_name]}" ]]; then
-              #echo "Adding line to migrate.txt ($migrate_file): $line"
-              # Append the line to migrate.txt
-              echo "$line" | sudo tee -a "$migrate_file" >/dev/null
-              # Update the associative array
-              existing_variables["$variable_name"]=1
+              # Extract the variable name (content before '=')
+              variable_name="${line%%=*}"
+
+              # Check if the variable name (content before '=') is not in migrate.txt
+              if [[ -z "${existing_variables[$variable_name]}" ]]; then
+                isSuccessful "Adding $line to ${app_name}'s migrate.txt file"
+                # Append the line to migrate.txt
+                echo "$line" | sudo tee -a "$migrate_file" >/dev/null
+                # Update the associative array
+                existing_variables["$variable_name"]=1
+              fi
             fi
-          fi
-        done < "$config_file"
-      fi
-    done
+          done < "$config_file"
+        fi
+      done
+    fi
   done
 
-  isSuccessful "App config values have been updated in migrate.txt files"
+  # Uncomment the following line if you want to print a success message
+  #isSuccessful "App config values have been updated in migrate.txt files"
+
+  # Print debug information
+  #echo "Debug Information:"
+  #echo "app_names: ${app_names[@]}"
+  #echo "existing_variables: ${!existing_variables[@]}"
 
   # Clear variables used in the function
   unset app_names migrate_file migrate_lines existing_variables
 }
 
-# Function to apply variables from migrate.txt to config files
-migrateScanMigrateToConfigs() 
-{
+migrateScanMigrateToConfigs() {
   isNotice "Scanning migrate.txt files... this may take a moment..."
-  
+
   # Variables to ignore
   local ignore_vars=("MIGRATE_IP" "MIGRATE_INSTALL_NAME")
 
@@ -709,86 +716,67 @@ migrateScanMigrateToConfigs()
   for app_name in "${app_names[@]}"; do
     # Capitalize the app name
     app_name_upper="CFG_$(tr '[:lower:]' '[:upper:]' <<< "${app_name}")"
-    #echo "Processing app_name: $app_name" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    #echo "Processing app_name: $app_name"
 
     # Define the migrate.txt file for the app
     local migrate_file="$install_dir/$app_name/migrate.txt"
-    #echo "Migrate file: $migrate_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    #echo "Migrate file: $migrate_file"
 
     # Check if migrate.txt exists and read variables
     if [[ -f "$migrate_file" ]]; then
       while IFS='=' read -r var_name var_value; do
         # Check if the variable should be ignored
         if [[ " ${ignore_vars[*]} " == *"$var_name"* ]]; then
-          #echo "Ignoring variable: $var_name"  | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+          #echo "Ignoring variable: $var_name"
           continue
         fi
-
-        # Initialize a flag to indicate whether the app_name_upper section was found
-        section_found=0
-        last_cfg_line=""
 
         # Initialize a flag to indicate if the variable was found in any config file
         var_found=0
 
-        # Loop through all config files matching the pattern config_apps_*
-        for config_file in "$configs_dir"/config_apps_*; do
-          if [[ -f "$config_file" ]]; then
-            # Search for the app_name_upper in the config file
-            if sudo grep  -q "$app_name_upper" "$config_file"; then
-              section_found=1
-              last_cfg_line=""
-            fi
+        # Find the app_config_dir based on the app_name
+        local app_config_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+        #echo "App config dir for $app_name: $app_config_dir"
 
-            # If the app_name_upper section was found and the line is not empty, store it
-            if [[ $section_found -eq 1 ]] && [[ -n "$last_cfg_line" ]]; then
-              last_cfg_line="$last_cfg_line"$'\n'"$var_name=$var_value"
-            fi
+        if [[ -n "$app_config_dir" ]]; then
+          # Define the app_config_file using the app_config_dir
+          local app_config_file="$app_config_dir/$app_name.config"
+          #echo "App config file for $app_name: $app_config_file"
 
+          # Check if the app_config_file exists
+          if [[ -f "$app_config_file" ]]; then
             # If the variable is found in this config file, set var_found to 1
-            if sudo grep  -q "^$var_name=" "$config_file"; then
+            if grep -q "^$var_name=" "$app_config_file"; then
               var_found=1
               found_vars+=("$var_name")
               # Extract the existing value from the config
-              existing_value=$(sudo grep  -oP "(?<=^$var_name=).*" "$config_file")
+              existing_value=$(grep -oP "(?<=^$var_name=).*" "$app_config_file")
               # Check if the existing value is different from the value in migrate.txt
               if [[ "$existing_value" != "$var_value" ]]; then
                 # Update the value in the config
-                sudo sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$config_file"
-                #echo "Updated variable $var_name in $config_file to $var_value" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$app_config_file"
+                isSuccessful "Updated variable $var_name in $(basename $app_config_file) to $var_value"
               fi
             fi
+          else
+            # If the variable is not found in the config file, add it
+            echo "$var_name=$var_value" >> "$app_config_file"
+            found_vars+=("$var_name")
+            isSuccessful "Added variable $var_name=$var_value to $(basename $app_config_file)"
           fi
-        done
-
-        # If the app_name_upper section was found and the variable is not found in any config file, add it
-        if [[ $section_found -eq 1 ]] && [[ -n "$last_cfg_line" ]] && [[ $var_found -eq 0 ]]; then
-          # Add the variable to the last_cfg_line
-          last_cfg_line="$last_cfg_line"$'\n'"$var_name=$var_value"
+        else
+          echo "App config directory not found for $app_name"
         fi
       done < "$migrate_file"
     fi
   done
 
-  # Add variables from migrate.txt to system config only if they do not exist in any config file
-  for var_name in "${found_vars[@]}"; do
-    var_exists=0
-    for config_file in "$configs_dir"/config_apps_*; do
-      if [[ -f "$config_file" ]] && sudo grep  -q "^$var_name=" "$config_file"; then
-        var_exists=1
-        break
-      fi
-    done
-    if [[ $var_exists -eq 0 ]]; then
-        echo "$var_name=${!var_name}" | sudo tee -a "$configs_dir/config_apps_system" >/dev/null
-        #echo "Stored variable $var_name=${!var_name} in config_apps_system" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1 >/dev/null
-    fi
-  done
+  # No longer needed to store variables in config_apps_system
 
   isSuccessful "Variables from migrate.txt have been applied to config files"
 
   # Clear variables used in the function
-  unset ignore_vars app_names found_vars section_found last_cfg_line var_found var_exists
+  unset ignore_vars app_names found_vars var_found
 }
 
 migrateUpdateFiles()

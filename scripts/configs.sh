@@ -575,3 +575,15 @@ scanConfigsForRandomPassword()
         isSuccessful "Random password generation and update completed successfully."
     fi
 }
+
+scanConfigsFixLineEnding()
+{
+    for config_file in "$configs_dir"/*.config; do
+      if [[ -f "$config_file" ]]; then
+        # Check if the file doesn't end with a newline character
+        if [[ $(tail -c 1 "$config_file" | wc -l) -eq 0 ]]; then
+          echo >> "$config_file"  # Add a newline character to the end of the file
+        fi
+      fi
+    done
+}
