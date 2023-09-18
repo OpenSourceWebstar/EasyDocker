@@ -36,6 +36,7 @@ checkUpdates()
 				read -p "" customupdatesfound
 				case $customupdatesfound in
 					[yY])
+                        remove_changes=true
 						gitCheckConfigs;
 						fixFolderPermissions;
 						sourceScripts;
@@ -46,6 +47,7 @@ checkUpdates()
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
+                        remove_changes=false
                         gitCheckConfigs;
 						fixFolderPermissions;
 						sourceScripts;
@@ -108,8 +110,8 @@ gitCheckConfigs()
                 echo "Valid config found in backup file: $zip_file"
                 while true; do
                     isQuestion "Do you want to restore the latest config backup? (y/n): "
-                    read -p "" defaultconfigound
-                    case $defaultconfigound in
+                    read -p "" defaultconfigfound
+                    case $defaultconfigfound in
                         [yY])
                             gitUseExistingBackup $zip_file
                             ;;
@@ -136,7 +138,9 @@ gitCheckConfigs()
             echo "No valid configs found in any backup file. Unable to restore install backup as they all contain default values."
         fi
     else
-        gitFolderResetAndBackup
+        if [[ $remove_changes == "true" ]]; then
+            gitFolderResetAndBackup;
+        fi
     fi
 }
 
@@ -215,15 +219,17 @@ gitUntrackFiles()
 
 gitReset()
 {
-    # Reset git
-    result=$(sudo -u $easydockeruser rm -rf $script_dir)
-    checkSuccess "Deleting all Git files"
-    result=$(mkdirFolders "$script_dir")
-    checkSuccess "Create the directory if it doesn't exist"
-    cd "$script_dir"
-    checkSuccess "Going into the install folder"
-    result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
-    checkSuccess "Clone the Git repository"
+    if [[ $customupdatesfound == [nN] ]]; then
+        # Reset git
+        result=$(sudo -u $easydockeruser rm -rf $script_dir)
+        checkSuccess "Deleting all Git files"
+        result=$(mkdirFolders "$script_dir")
+        checkSuccess "Create the directory if it doesn't exist"
+        cd "$script_dir"
+        checkSuccess "Going into the install folder"
+        result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
+        checkSuccess "Clone the Git repository"
+    fi
 }
 
 gitCleanInstallBackups()
