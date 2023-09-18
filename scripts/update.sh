@@ -46,6 +46,10 @@ checkUpdates()
 						;;
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
+                        gitCheckConfigs;
+						fixFolderPermissions;
+						sourceScripts;
+                        
                         detectOS;
 						
 						;;
@@ -70,35 +74,69 @@ checkUpdates()
 	fi
 }
 
-gitCheckConfigs()
+gitCheckConfigs() 
 {
-    # If it's default config
+    # Check if the local configuration file contains "Change-Me"
     if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
-        # Check if any .zip files exist in the folder
-        if [ "$(find "$folder" -type f -name 'backup_*.zip' | wc -l)" -gt 0 ]; then
-            # Get the most recent .zip file based on the file name
-            most_recent_zip="$(find "$folder" -type f -name 'backup_*.zip' | sort | tail -n 1)"
-			isNotice "Default config values have been found, but a config backup has been found."
-			while true; do
-				isQuestion "Do you want to restore the latest config backup? (y/n): "
-				read -p "" defaultconfigound
-				case $defaultconfigound in
-					[yY])
-                        gitUseExistingBackup $most_recent_zip;
-						;;
-					[nN])
-						isNotice "Custom changes will be kept, continuing..."
-                        continue
-						;;
-					*)
-						isNotice "Please provide a valid input (y or n)."
-						;;
-				esac
-			done
-            echo "The most recent config backup file is: $most_recent_zip"
+        echo "Local configuration file contains 'Change-Me'."
+        # Flag to track if any valid configs were found
+        valid_configs_found=false
+
+        # Get a list of all backup zip files in the directory, sorted by date (latest first)
+        backup_files=($(find "$backup_install_dir" -type f -name 'backup_*.zip' | sort -r))
+        
+        # Check if any backup files were found
+        if [ ${#backup_files[@]} -eq 0 ]; then
+            echo "No backup files found."
+            return
+        fi
+
+        for zip_file in "${backup_files[@]}"; do
+            echo "Processing backup file: $zip_file"
+            # Create a temporary directory to extract the zip file contents
+            temp_dir=$(mktemp -d)
+
+            # Extract the zip file contents
+            unzip -q "$zip_file" -d "$temp_dir"
+
+            # Find the path of $config_file_general within the extracted files
+            config_file_path=$(find "$temp_dir" -type f -name "$config_file_general")
+
+            # Check if $config_file_general exists and does not contain "Change-Me"
+            if [ -n "$config_file_path" ] && ! grep -q "Change-Me" "$config_file_path"; then
+                valid_configs_found=true
+                echo "Valid config found in backup file: $zip_file"
+                while true; do
+                    isQuestion "Do you want to restore the latest config backup? (y/n): "
+                    read -p "" defaultconfigound
+                    case $defaultconfigound in
+                        [yY])
+                            gitUseExistingBackup $zip_file
+                            ;;
+                        [nN])
+                            isNotice "Custom changes will be kept, continuing..."
+                            break
+                            ;;
+                        *)
+                            isNotice "Please provide a valid input (y or n)."
+                            ;;
+                    esac
+                done
+                break  # Exit the loop if a valid backup is found
+            else
+                echo "Config file not found or contains 'Change-Me' in backup file: $zip_file"
+            fi
+
+            # Clean up the temporary directory
+            rm -rf "$temp_dir"
+        done
+
+        # If no valid configs were found in any backup file, display a message
+        if [ "$valid_configs_found" = false ]; then
+            echo "No valid configs found in any backup file. Unable to restore install backup as they all contain default values."
         fi
     else
-        gitFolderResetAndBackup;
+        gitFolderResetAndBackup
     fi
 }
 
@@ -108,27 +146,15 @@ gitUseExistingBackup()
     local backup_file_without_zip=$(basename "$backup_file" .zip)
     update_done=false
     
-    # Copy folders
     result=$(sudo unzip -o $backup_file -d $backup_install_dir)
     checkSuccess "Copy the configs to the backup folder"
-    # Move files into the install folder
-    result=$(mv "$backup_install_dir$backup_install_dir$backup_file_without_zip" "$backup_install_dir")
-    checkSuccess "Copy the backed up folders back into the installation directory"
-    result=$(cd $backup_install_dir && sudo rm -rf ./docker)
-    checkSuccess "Remove unneeded folder after extraction"
 
     gitReset;
     
-    # Copy files back into the install folder
-    result=$(copyFolders "$backup_install_dir/$backup_file_without_zip/" "$script_dir")
+    result=$(cp -r "$backup_install_dir$backup_install_dir/$backup_file_without_zip/"* "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
     
-    # Find and remove all files and folders except .zip files
-    result=$(sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +)
-    checkSuccess "Cleaning up install backup folders."
-    # Delete all zip files except the latest 5
-    result=$(cd "$backup_install_dir" && sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm)
-    checkSuccess "Cleaning up install backup folders."
+    gitCleanInstallBackups;
 
     gitUntrackFiles;
 
@@ -139,8 +165,7 @@ gitUseExistingBackup()
 gitFolderResetAndBackup()
 {
     update_done=false
-    # Folder setup
-    # Check if the directory specified in $script_dir exists
+
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
         result=$(mkdirFolders "$backup_install_dir/$backupFolder")
         checkSuccess "Create the backup folder"
@@ -148,30 +173,22 @@ gitFolderResetAndBackup()
     result=$(cd $backup_install_dir)
     checkSuccess "Going into the backup install folder"
 
-    # Copy folders
     result=$(copyFolder "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
     result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
-    # Use find to locate files and folders ending with ".config" and copy them to the temporary directory
     result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$containers_dir" "$backup_install_dir/$backupFolder/containers")
     checkSuccess "Copy the containers to the backup folder"
 
     gitReset;
     
-    # Copy files back into the install folder
     result=$(copyFolders "$backup_install_dir/$backupFolder/" "$script_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
-    
-    # Zip up folder for safe keeping and remove folder
+
     result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
-    # Find and remove all files and folders except .zip files
-    result=$(sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +)
-    checkSuccess "Cleaning up install backup folders."
-    # Delete all zip files except the latest 5
-    result=$(cd "$backup_install_dir" && sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs rm)
-    checkSuccess "Cleaning up install backup folders."
+
+    gitCleanInstallBackups;
 
     gitUntrackFiles;
 
@@ -207,4 +224,12 @@ gitReset()
     checkSuccess "Going into the install folder"
     result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
     checkSuccess "Clone the Git repository"
+}
+
+gitCleanInstallBackups()
+{
+    result=$(sudo find "$backup_install_dir" -mindepth 1 -type f ! -name '*.zip' -o -type d ! -name '*.zip' -exec sudo rm -rf {} +)
+    checkSuccess "Cleaning up install backup folders."
+    result=$(cd "$backup_install_dir" && sudo find . -maxdepth 1 -type f -name '*.zip' | sudo xargs ls -t | tail -n +6 | sudo xargs -r rm)
+    checkSuccess "Deleting old install backup and keeping the latest 5."
 }
