@@ -30,6 +30,7 @@ db_file=database.db
 migrate_file=migrate.txt
 
 # Configs
+update_done=false
 config_file_backup=config_backup
 config_file_general=config_general
 config_file_requirements=config_requirements
