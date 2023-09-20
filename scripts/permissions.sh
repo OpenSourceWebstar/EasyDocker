@@ -191,6 +191,12 @@ copyResource()
 
     result=$(sudo cp "$app_dir/resources/$file_name" "$install_dir/$app_name/$save_path")
     checkSuccess "Copying $file_name to $install_dir/$app_name/$save_path"
+
+    result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir/$app_name/$save_path")
+    checkSuccess "Updating $save_path with $CFG_DOCKER_INSTALL_USER ownership"
+    
+    result=$(sudo chown -R $easydockeruser:$easydockeruser "$install_dir/$app_name/$save_path")
+    checkSuccess "Updating $save_path with $easydockeruser ownership"
 }
 
 copyFile() 
