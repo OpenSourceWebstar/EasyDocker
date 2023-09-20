@@ -16,77 +16,97 @@ appConfig:
 # Main content - An array of sections, each containing an array of items
 sections:
 
-- name: System Applications
-  icon: fas fa-rocket
-  items:
+#### system category
+#- name: System Applications
+#  icon: fas fa-rocket
+#  items:
   
-  - title: WireGuard
-    description: For VPN connections
-    icon: hl-adguard-home
-    url: http://10.8.1.2:51821/
-    statusCheck: true
-    target: newtab
-  - title: Pi-Hole
-    description: DNS Server with AdBlocking and Unbound
-    icon: hl-pi-hole
-    url: http://10.8.1.3/
-    statusCheck: true
-    target: newtab
-  - title: Portainer
-    description: Docker service management panel
-    icon: hl-portainer
-    url: http://10.8.1.4:9000/
-    statusCheck: true
-    target: newtab
-  - title: Duplicati
-    description: Docker backup system
-    icon: hl-docker
-    url: http://10.8.1.6:8200/
-    statusCheck: true
-    target: newtab
+  #### wireguard app
+  #- title: WireGuard
+  #  description: For VPN connections
+  #  icon: hl-adguard-home
+  #  url: http://10.8.1.2:51821/
+  #  statusCheck: true
+  #  target: newtab
 
-- name: Privacy Apps
-  icon: fas fa-rocket
-  items:
+  #### pihole app
+  #- title: Pi-Hole
+  #  description: DNS Server with AdBlocking and Unbound
+  #  icon: hl-pi-hole
+  #  url: http://10.8.1.3/
+  #  statusCheck: true
+  #  target: newtab
 
-  - title: VaultWarden
-    description: Password Manager
-    icon: hl-bitwarden
-    url: http://10.8.1.7/
-    statusCheck: true
-    target: newtab
-  - title: SearNGX
-    description: Privacy based Search Engine
-    icon: h1-opensearch
-    url: http://10.8.1.8/
-    statusCheck: true
-    target: newtab
-  - title: SpeedTest
-    description: Used for testing the speed of your internet
-    icon: h1-openspeedtest
-    url: http://10.8.1.13:4001/
-    statusCheck: true
-    target: newtab
+  #### portainer app
+  #- title: Portainer
+  #  description: Docker service management panel
+  #  icon: hl-portainer
+  #  url: http://10.8.1.4:9000/
+  #  statusCheck: true
+  #  target: newtab
 
-- name: User Apps
-  icon: fas fa-rocket
-  items:
+  #### duplicati app
+  #- title: Duplicati
+  #  description: Docker backup system
+  #  icon: hl-docker
+  #  url: http://10.8.1.6:8200/
+  #  statusCheck: true
+  #  target: newtab
 
-  - title: Kimai
-    description: Time Management client Platform
-    icon: fas fa-rocket
-    url: http://10.8.1.9/
-    statusCheck: true
-    target: newtab
- - title: Mattermost
-    description: Project Management & Chat Platform
-    icon: fas fa-rocket
-    url: http://10.8.1.10/
-    statusCheck: true
-    target: newtab
-  - title: Crater
-    description: Client Invoicing Platform
-    icon: fas fa-rocket
-    url: http://10.8.1.12/
-    statusCheck: true
-    target: newtab
+#### privacy category
+#- name: Privacy Apps
+#  icon: fas fa-rocket
+#  items:
+
+  #### vaultwarden app
+  #- title: VaultWarden
+  #  description: Password Manager
+  #  icon: hl-bitwarden
+  #  url: http://10.8.1.7/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### searxng app
+  #- title: SearXNG
+  #  description: Privacy based Search Engine
+  #  icon: h1-opensearch
+  #  url: http://10.8.1.8/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### speedtest app
+  #- title: SpeedTest
+  #  description: Used for testing the speed of your internet
+  #  icon: h1-openspeedtest
+  #  url: http://10.8.1.13:4001/
+  #  statusCheck: true
+  #  target: newtab
+
+#### user category
+#- name: User Apps
+#  icon: fas fa-rocket
+#  items:
+
+  #### kimai app
+  #- title: Kimai
+  #  description: Time Management client Platform
+  #  icon: fas fa-rocket
+  #  url: http://10.8.1.9/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### mattermost app
+  #- title: Mattermost
+  #  description: Project Management & Chat Platform
+  #  icon: fas fa-rocket
+  #  url: http://10.8.1.10/
+  #  statusCheck: true
+  #  target: newtab
+  
+  #### crater app
+  #- title: Crater
+  #  description: Client Invoicing Platform
+  #  icon: fas fa-rocket
+  #  url: http://10.8.1.12/
+  #  statusCheck: true
+  #  target: newtab

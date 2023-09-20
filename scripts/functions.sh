@@ -144,6 +144,80 @@ detectOS()
     fi
 }
 
+
+dashyUpdateConf()
+{
+    # Hardcoded path to Dashy's conf.yml file
+    conf_file="${install_dir}dashy/conf.yml"
+    echo "$conf_file"
+    # Function to uncomment category section and edit the conf.yml directly
+    uncomment_category() {
+        found_category=false
+        while IFS= read -r -i line; do
+            if $found_category; then
+                if [[ $line == "####"* ]]; then
+                    found_category=false
+                else
+                    line="${line//#/}"
+                    echo "$line" >> "$conf_file"
+                fi
+            else
+                if [[ $line == "#### $category_name category" ]]; then
+                    found_category=true
+                fi
+                echo "$line" >> "$conf_file"
+            fi
+        done < "$conf_file"
+    }
+    
+    # Function to uncomment app section and edit the conf.yml directly
+    uncomment_app() {
+        found_app=false
+        while IFS= read -r -i line; do
+            if $found_app; then
+                if [[ $line == "####"* ]]; then
+                    found_app=false
+                else
+                    line="${line//#/}"
+                    echo "$line" >> "$conf_file"
+                fi
+            else
+                if [[ $line == "#### $app_name app" ]]; then
+                    found_app=true
+                fi
+                echo "$line" >> "$conf_file"
+            fi
+        done < "$conf_file"
+    }
+    
+    # Check if Dashy app is installed
+    if [[ -f "$conf_file" ]]; then
+        # Loop through category folders
+        for category_folder in "$install_dir"/*/; do
+            # Get the category name from the folder name
+            category_name=$(basename "$category_folder")
+            
+            # Loop through app folders within the category
+            for app_folder in "$category_folder"/*/; do
+                # Get the app name from the folder name
+                app_name=$(basename "$app_folder")
+                
+                # Uncomment the category and app sections and edit the conf.yml directly
+                uncomment_category
+                uncomment_app
+                
+                echo "Enabled app: $app_name in category: $category_name"
+            done
+        done
+    else
+        isNotice "Dashy app not found...skipping application setup..."
+    fi
+}
+
+# Call the enable_dashy_app function to enable the Dashy app
+#dashyUpdateConf
+#sleep 100000000
+
 passwordValidation()
 {
     # Password Setup for DB with complexity checking
