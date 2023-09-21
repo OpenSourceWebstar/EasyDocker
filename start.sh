@@ -72,10 +72,10 @@ startScan()
 	fi
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
+	dashyUpdateConf;
     databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";
-	dashyUpdateConf;
 }
 
 startInstall() 
