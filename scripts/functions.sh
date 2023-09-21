@@ -336,7 +336,6 @@ showInstallInstructions()
     isNotice "Please select 'u' to uninstall."
     isNotice "Please select 's' to shutdown."
     isNotice "Please select 'r' to restart."
-    echo ""
 }
 
 completeMessage()

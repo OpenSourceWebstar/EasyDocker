@@ -28,6 +28,8 @@ checkUpdates()
 		sudo -u $easydockeruser git config --global user.name "$CFG_INSTALL_NAME"
 		sudo -u $easydockeruser git config --global user.email "$CFG_EMAIL"
 
+        gitUntrackFiles;
+
 		# Check if there are uncommitted changes
 		if [[ $(git status --porcelain) ]]; then
 			isNotice "There are uncommitted changes in the repository."
@@ -219,7 +221,13 @@ gitUntrackFiles()
     sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
-    sudo -u $easydockeruser git clean -f "*.config" > /dev/null 2>&1
+    # Get a list of .config files recursively in $containers_dir
+    config_files=($(find "$containers_dir" -type f -name "*.config"))
+
+    # Loop through the list and untrack each file
+    for config_file in "${config_files[@]}"; do
+        sudo -u $easydockeruser git rm --cached "$config_file" > /dev/null 2>&1
+    done
     isSuccessful "Removing configs and logs from git for git changes"
     result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
