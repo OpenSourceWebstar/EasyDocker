@@ -16,12 +16,12 @@ appConfig:
 # Main content - An array of sections, each containing an array of items
 sections:
 
-#### system category
+#### category system 
 #- name: System Applications
 #  icon: fas fa-rocket
 #  items:
   
-  #### wireguard app
+  #### app wireguard
   #- title: WireGuard
   #  description: For VPN connections
   #  icon: hl-adguard-home
@@ -29,7 +29,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### pihole app
+  #### app pihole
   #- title: Pi-Hole
   #  description: DNS Server with AdBlocking and Unbound
   #  icon: hl-pi-hole
@@ -37,7 +37,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### portainer app
+  #### app portainer
   #- title: Portainer
   #  description: Docker service management panel
   #  icon: hl-portainer
@@ -45,7 +45,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### duplicati app
+  #### app duplicati
   #- title: Duplicati
   #  description: Docker backup system
   #  icon: hl-docker
@@ -53,12 +53,12 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-#### privacy category
+#### category privacy
 #- name: Privacy Apps
 #  icon: fas fa-rocket
 #  items:
 
-  #### vaultwarden app
+  #### app vaultwarden
   #- title: VaultWarden
   #  description: Password Manager
   #  icon: hl-bitwarden
@@ -66,7 +66,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### searxng app
+  #### app searxng
   #- title: SearXNG
   #  description: Privacy based Search Engine
   #  icon: h1-opensearch
@@ -74,7 +74,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### speedtest app
+  #### app speedtest
   #- title: SpeedTest
   #  description: Used for testing the speed of your internet
   #  icon: h1-openspeedtest
@@ -82,12 +82,12 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-#### user category
+#### category user
 #- name: User Apps
 #  icon: fas fa-rocket
 #  items:
 
-  #### kimai app
+  #### app kimai
   #- title: Kimai
   #  description: Time Management client Platform
   #  icon: fas fa-rocket
@@ -95,7 +95,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### mattermost app
+  #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
   #  icon: fas fa-rocket
@@ -103,7 +103,7 @@ sections:
   #  statusCheck: true
   #  target: newtab
   
-  #### crater app
+  #### app crater
   #- title: Crater
   #  description: Client Invoicing Platform
   #  icon: fas fa-rocket

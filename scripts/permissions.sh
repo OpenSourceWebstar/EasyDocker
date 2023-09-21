@@ -194,9 +194,6 @@ copyResource()
 
     result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir/$app_name/$save_path")
     checkSuccess "Updating $save_path with $CFG_DOCKER_INSTALL_USER ownership"
-    
-    result=$(sudo chown -R $easydockeruser:$easydockeruser "$install_dir/$app_name/$save_path")
-    checkSuccess "Updating $save_path with $easydockeruser ownership"
 }
 
 copyFile() 
@@ -296,4 +293,24 @@ zipFile()
 
     result=$(sudo chown $easydockeruser:$easydockeruser "$zip_file")
     checkSuccess "Updating $(basename "$zip_file") with $easydockeruser ownership"
+}
+
+moveFile() 
+{
+    local file="$1"
+    local file_name=$(basename "$file")
+    local save_dir="$2"
+    local save_dir_file=$(basename "$save_dir")
+    local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
+
+    result=$(sudo mv "$file" "$save_dir")
+    checkSuccess "Moving $file_name to $save_dir"
+
+    if [[ $clean_dir == *"$install_dir"* ]]; then
+        result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
+        checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
+    else
+        result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
+        checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
+    fi
 }

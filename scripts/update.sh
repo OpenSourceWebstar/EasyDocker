@@ -37,6 +37,7 @@ checkUpdates()
 				case $customupdatesfound in
 					[yY])
                         remove_changes=true
+                        dashyUpdateConf
 						gitCheckConfigs;
                         scanConfigsFixLineEnding;
 						fixFolderPermissions;
@@ -49,6 +50,7 @@ checkUpdates()
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
                         remove_changes=false
+                        dashyUpdateConf
                         gitCheckConfigs;
                         scanConfigsFixLineEnding;
 						fixFolderPermissions;
@@ -66,6 +68,7 @@ checkUpdates()
 
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
+            dashyUpdateConf
 			gitCheckConfigs;
             scanConfigsFixLineEnding;
 			fixFolderPermissions;
