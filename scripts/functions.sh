@@ -251,7 +251,7 @@ dashyUpdateConf()
             result=$(runCommandForDockerInstallUser "docker restart dashy")
             checkSuccess "Restarting dashy docker container"
         else
-            isSuccessful "No changes made to the dashy config file."
+            isSuccessful "No new changes made to the dashy config file."
         fi
     #else
         #isNotice "Dashy app not found...skipping application setup..."

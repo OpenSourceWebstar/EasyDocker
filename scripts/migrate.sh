@@ -47,7 +47,6 @@ migrateCheckForMigrateFiles()
             esac
         else
             isSuccessful "No backup files found for migration."
-            echo ""
         fi
     fi
 }
