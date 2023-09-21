@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Wireguard Easy - VPN Server
+# Description : Wireguard Easy - VPN Server (c/u/s/r/i):
 
 installWireguard()
 {

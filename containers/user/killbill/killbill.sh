@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Killbill - Payment Processing
+# Description : Killbill - Payment Processing (c/u/s/r/i):
 
 installKillbill()
 {

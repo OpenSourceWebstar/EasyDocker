@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Portainer - Docker Management
+# Description : Portainer - Docker Management (c/u/s/r/i):
 
 installPortainer()
 {

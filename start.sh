@@ -75,6 +75,7 @@ startScan()
     databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab;
+	dashyUpdateConf
 }
 
 startInstall() 

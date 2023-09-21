@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Traefik - Reverse Proxy *RECOMMENDED*
+# Description : Traefik - Reverse Proxy *RECOMMENDED* (c/u/s/r/i):
 
 installTraefik()
 {

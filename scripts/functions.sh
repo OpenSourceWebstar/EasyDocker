@@ -149,23 +149,50 @@ dashyUpdateConf()
     # Hardcoded path to Dashy's conf.yml file
     conf_file="${install_dir}dashy/conf.yml"
 
+    local original_md5
+    original_md5=$(md5sum "$conf_file")
+
+    # Initialize changes_made flag as false
+    changes_made=false
+
+    # Copy the default dashy conf.yml configuration file
     result=$(copyResource "dashy" "conf.yml" "conf.yml")
     checkSuccess "Copy default dashy conf.yml configuration file"
 
-# Function to uncomment lines using sed
-uncomment_lines() {
-    local app_name="$1"
-    local pattern="#### $app_name app$"
+    # Function to uncomment lines using sed based on line numbers under the pattern
+    uncomment_lines() {
+        local app_name="$1"
+        local pattern="#### app $app_name"
+        local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
 
-    if grep -q "$pattern" "$conf_file"; then
-        echo "Enabled app: $app_name"
+        if [ -n "$start_line" ]; then
+            # Uncomment lines under the app section based on line numbers
+            sed -i "$((start_line+1))s/#- title/- title/" "$conf_file"
+            sed -i "$((start_line+2))s/#  description/  description/" "$conf_file"
+            sed -i "$((start_line+3))s/#  icon/  icon/" "$conf_file"
+            sed -i "$((start_line+4))s/#  url/  url/" "$conf_file"
+            sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
+            sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
+        #else
+            #isNotice "App not found: $app_name"
+        fi
+    }
 
-        # Uncomment lines under the app section (lines starting with #)
-        sed -i "/$pattern/,/^####/ s/^#//" "$conf_file"
-    else
-        echo "App not found: $app_name"
-    fi
-}
+    # Function to uncomment category lines using sed based on line numbers under the pattern
+    uncomment_category_lines() {
+        local category_name="$1"
+        local pattern="#### category $category_name"
+        local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
+
+        if [ -n "$start_line" ]; then
+            # Uncomment lines under the category section based on line numbers
+            sed -i "$((start_line+1))s/^#- name/- name/" "$conf_file"
+            sed -i "$((start_line+2))s/^#  icon/  icon/" "$conf_file"
+            sed -i "$((start_line+3))s/^#  items/  items/" "$conf_file"
+        #else
+            #isNotice "Category not found: $category_name"
+        fi
+    }
 
     # Check if Dashy app is installed
     if [[ -f "$conf_file" ]]; then
@@ -181,12 +208,47 @@ uncomment_lines() {
         isNotice "Dashy app not found...skipping application setup..."
     fi
 
-    nano $conf_file
+    # Function to get the category name from the full path of an app
+    get_category_name() {
+        local app_path="$1"
+        local category_name=$(basename "$(dirname "$app_path")")
+        echo "$category_name"
+    }
+
+    # Collect all installed app paths
+    installed_app_paths=()
+    while IFS= read -r -d $'\0' app_name_dir; do
+        app_name_path="$app_name_dir"
+        installed_app_paths+=("$app_name_path")
+    done < <(find "$containers_dir" -mindepth 2 -maxdepth 2 -type d -print0)
+
+    # Get unique category names related to installed apps
+    installed_categories=()
+    for app_path in "${installed_app_paths[@]}"; do
+        category_name=$(get_category_name "$app_path")
+        # Add the category to the list if not already present
+        if [[ ! " ${installed_categories[@]} " =~ " $category_name " ]]; then
+            installed_categories+=("$category_name")
+        fi
+    done
+
+    # Call the uncomment_category_lines function for each installed category
+    for category_name in "${installed_categories[@]}"; do
+        uncomment_category_lines "$category_name"
+    done
+
+    local updated_md5
+    updated_md5=$(md5sum "$conf_file")
+
+    # Check if changes were made to the file
+    if [ "$original_md5" != "$updated_md5" ]; then
+        isNotice "Changes made to dashy config file...restarting dashy..."
+        result=$(runCommandForDockerInstallUser "docker restart dashy")
+        checkSuccess "Restarting dashy docker container"
+    else
+        isSuccessful "No changes made to the dashy config file."
+    fi
 }
-
-
-
-#sleep 100000000
 
 passwordValidation()
 {
@@ -258,11 +320,15 @@ showInstallInstructions()
     echo "###       Usage Instructions      ###"
     echo "#####################################"
     echo ""
-    isNotice "Please select 'c' for each item you would like to edit the config."
-    isNotice "Please select 'i' for each item you would like to install."
-    isNotice "Please select 'u' for each item you would like to uninstall."
-    isNotice "Please select 's' for each item you would like to shutdown."
-    isNotice "Please select 'r' for each item you would like to restart."
+    isNotice "TIP - You can use multiple options at once, but it will be in the order above"
+    echo ""
+    isNotice "Please select 'c' to edit the config."
+    isNotice "Please select 't' to use the tools."
+    isNotice "Please select 'i' to install."
+    isNotice "Please select 'u' to uninstall."
+    isNotice "Please select 's' to shutdown."
+    isNotice "Please select 'r' to restart."
+    echo ""
 }
 
 completeMessage()

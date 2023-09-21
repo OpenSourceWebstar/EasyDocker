@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Trilium - Note Manager
+# Description : Trilium - Note Manager (c/u/s/r/i):
 
 installTrilium()
 {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : OwnCloud - File & Document Cloud
+# Description : OwnCloud - File & Document Cloud (c/u/s/r/i):
 
 installOwnCloud()
 {

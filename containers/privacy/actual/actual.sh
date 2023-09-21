@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Test - It just works!
+# Description : Test - It just works! (c/u/s/r/i):
 
 installTest()
 {

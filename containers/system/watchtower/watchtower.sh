@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Watchtower - Docker Updater
+# Description : Watchtower - Docker Updater (c/u/s/r/i):
 
 installWatchtower()
 {

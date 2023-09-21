@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Tiledesk - Live Chat Platform *UNFINISHED*
+# Description : Tiledesk - Live Chat Platform *UNFINISHED* (c/u/s/r/i):
 
 installTileDesk()
 {

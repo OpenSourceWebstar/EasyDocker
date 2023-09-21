@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : IPInfo - Show IP Address
+# Description : IPInfo - Show IP Address (c/u/s/r/i):
 
 installIPInfo()
 {

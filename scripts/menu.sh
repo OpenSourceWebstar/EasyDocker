@@ -235,8 +235,39 @@ scanCategory()
 			local install_file="$app_dir/$app_name.sh"
             local app_description=$(grep -Po '(?<=# Description : ).*' "$install_file")
 
-            isOptionMenu "$app_description (c/u/s/r/i): "
+            isOptionMenu "$app_description "
 			read -rp "" $app_name
         fi
     done
+}
+
+dashyToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###         Dashy Tools           ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. System Apps"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" choice
+
+		case $choice in
+			1)
+				dashyUpdateConf
+				;;
+			x)
+				exitScript;
+
+				;;
+			*)
+				echo "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
 }

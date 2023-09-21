@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Jitsi Meet - Video Conferencing
+# Description : Jitsi Meet - Video Conferencing (c/u/s/r/i):
 
 installJitsiMeet()
 {

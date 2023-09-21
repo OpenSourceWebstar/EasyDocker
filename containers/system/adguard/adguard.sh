@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Adguard & Unbound - DNS Server
+# Description : Adguard & Unbound - DNS Server (c/u/s/r/i):
 
 installAdguard()
 {

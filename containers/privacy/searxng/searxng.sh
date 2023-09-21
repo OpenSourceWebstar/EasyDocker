@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Searxng - Search Engine
+# Description : Searxng - Search Engine (c/u/s/r/i):
 
 installSearXNG()
 {

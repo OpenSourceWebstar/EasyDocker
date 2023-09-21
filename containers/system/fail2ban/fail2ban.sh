@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Fail2Ban - Connection Security
+# Description : Fail2Ban - Connection Security (c/u/s/r/i):
 
 installFail2Ban()
 {

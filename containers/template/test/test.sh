@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Actual - Money Budgetting
+# Description : Actual - Money Budgetting (c/u/s/r/i):
 
 installActual()
 {

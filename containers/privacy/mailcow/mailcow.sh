@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Mailcow - Mail Server *UNFINISHED*
+# Description : Mailcow - Mail Server *UNFINISHED* (c/u/s/r/i):
 
 installMailcow()
 {

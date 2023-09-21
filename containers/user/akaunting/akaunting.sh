@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Akaunting - Invoicing Solution *UNFINISHED*
+# Description : Akaunting - Invoicing Solution *UNFINISHED* (c/u/s/r/i):
 
 installAkaunting()
 {

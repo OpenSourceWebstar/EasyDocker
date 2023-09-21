@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : GitLab - DevOps Platform *UNFINISHED*
+# Description : GitLab - DevOps Platform *UNFINISHED* (c/u/s/r/i):
 
 installGitLab()
 {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Dashy - Docker Dashboard
+# Description : Dashy - Docker Dashboard (c/t/u/s/r/i):
 
 installDashy()
 {
@@ -12,6 +12,10 @@ installDashy()
 
     if [[ "$dashy" == *[cC]* ]]; then
         editAppConfig $app_name;
+    fi
+
+    if [[ "$dashy" == *[tT]* ]]; then
+        dashyToolsMenu;
     fi
 
     if [[ "$dashy" == *[uU]* ]]; then

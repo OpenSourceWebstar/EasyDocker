@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Mattermost - Collaboration Platform
+# Description : Mattermost - Collaboration Platform (c/u/s/r/i):
 
 installMattermost()
 {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Vaultwarden - Password Manager
+# Description : Vaultwarden - Password Manager (c/u/s/r/i):
 
 installVaultwarden()
 {

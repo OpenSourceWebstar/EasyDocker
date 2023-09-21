@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Kimai - Online-Timetracker
+# Description : Kimai - Online-Timetracker (c/u/s/r/i):
 
 installKimai()
 {

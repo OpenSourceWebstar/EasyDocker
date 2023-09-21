@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Cozy - Cloud Platfrom *BROKEN*
+# Description : Cozy - Cloud Platfrom *BROKEN* (c/u/s/r/i):
 
 installCozy()
 {

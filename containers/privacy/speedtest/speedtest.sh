@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : LibreSpeed - Internet Speed Test
+# Description : LibreSpeed - Internet Speed Test (c/u/s/r/i):
 
 installSpeedtest()
 {

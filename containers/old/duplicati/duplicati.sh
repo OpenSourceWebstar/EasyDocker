@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Description : Duplicati - Backups
+# Description : Duplicati - Backups (c/u/s/r/i):
 
 installDuplicati()
 {
