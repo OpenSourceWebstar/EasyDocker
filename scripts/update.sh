@@ -28,10 +28,8 @@ checkUpdates()
 		sudo -u $easydockeruser git config --global user.name "$CFG_INSTALL_NAME"
 		sudo -u $easydockeruser git config --global user.email "$CFG_EMAIL"
 
-        gitUntrackFiles;
-
-		# Check if there are uncommitted changes
-		if [[ $(git status --porcelain) ]]; then
+        # Check if there are edited (modified) files
+        if git status --porcelain | grep -q "^ M"; then
 			isNotice "There are uncommitted changes in the repository."
 			while true; do
 				isQuestion "Do you want to discard these changes and update the repository? (y/n): "
