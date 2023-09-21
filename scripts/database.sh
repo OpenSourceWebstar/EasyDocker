@@ -330,7 +330,7 @@ databaseCycleThroughListApps()
 
 databaseCycleThroughListAppsCrontab()
 {
-    local name=$1
+    local show_header=$1
     ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
     # Check to see if installed
@@ -351,10 +351,13 @@ databaseCycleThroughListAppsCrontab()
         return 1
     fi
 
-    echo ""
-    echo "############################################"
-    echo "######     Backup Crontab Install     ######"
-    echo "############################################"
+    if [[ $show_header != "true" ]]; then
+        echo ""
+        echo "############################################"
+        echo "######     Backup Crontab Install     ######"
+        echo "############################################"
+        echo ""
+    fi
 
     app_names=("full")  # To Inject full to setup crontab also
     while IFS= read -r name; do
