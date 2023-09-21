@@ -351,12 +351,11 @@ databaseCycleThroughListAppsCrontab()
         return 1
     fi
 
-    if [[ $show_header != "true" ]]; then
+    if [[ $show_header != "false" ]]; then
         echo ""
         echo "############################################"
         echo "######     Backup Crontab Install     ######"
         echo "############################################"
-        echo ""
     fi
 
     app_names=("full")  # To Inject full to setup crontab also

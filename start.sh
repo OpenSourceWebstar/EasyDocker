@@ -62,11 +62,6 @@ startPreInstall()
 
 startScan()
 {
-    echo ""
-    echo "#####################################"
-    echo "###     Installation Scanning     ###"
-    echo "#####################################"
-    echo ""
 	databasePathInsert $initial_path_save
 	if [[ $CFG_REQUIREMENT_MIGRATE == "true" ]]; then
 		migrateCheckForMigrateFiles;
