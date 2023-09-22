@@ -37,7 +37,8 @@ checkUpdates()
 				case $customupdatesfound in
 					[yY])
                         remove_changes=true
-						gitCheckConfigs;
+                        gitCheckForUpdate;
+                        gitCheckConfigs;
                         scanConfigsFixLineEnding;
 						fixFolderPermissions;
 						sourceScripts;
@@ -49,6 +50,7 @@ checkUpdates()
 					[nN])
 						isNotice "Custom changes will be kept, continuing..."
                         remove_changes=false
+                        gitCheckForUpdate;
                         gitCheckConfigs;
                         scanConfigsFixLineEnding;
 						fixFolderPermissions;
@@ -66,7 +68,8 @@ checkUpdates()
 
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
-			gitCheckConfigs;
+            gitCheckForUpdate;
+            gitCheckConfigs;
             scanConfigsFixLineEnding;
 			fixFolderPermissions;
 			sourceScripts;
@@ -81,74 +84,78 @@ checkUpdates()
 
 gitCheckConfigs() 
 {
-    update_done=false  # Define update_done locally within gitCheckConfigs
-    if [ "$update_done" == "false" ]; then
-        # Check if the local configuration file contains "Change-Me"
-        if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
-            #echo "Local configuration file contains 'Change-Me'."
-            # Flag to track if any valid configs were found
-            valid_configs_found=false
+    if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
+        #echo "Local configuration file contains 'Change-Me'."
+        # Flag to track if any valid configs were found
+        valid_configs_found=false
 
-            # Get a list of all backup zip files in the directory, sorted by date (latest first)
-            backup_files=($(find "$backup_install_dir" -type f -name 'backup_*.zip' | sort -r))
-            
-            # Check if any backup files were found
-            if [ ${#backup_files[@]} -eq 0 ]; then
-                isNotice "No backup files found."
-                return
-            fi
-
-            for zip_file in "${backup_files[@]}"; do
-                #echo "Processing backup file: $zip_file"
-                # Create a temporary directory to extract the zip file contents
-                temp_dir=$(mktemp -d)
-
-                # Extract the zip file contents
-                unzip -q "$zip_file" -d "$temp_dir"
-
-                # Find the path of $config_file_general within the extracted files
-                config_file_path=$(find "$temp_dir" -type f -name "$config_file_general")
-
-                # Check if $config_file_general exists and does not contain "Change-Me"
-                if [ -n "$config_file_path" ] && ! grep -q "Change-Me" "$config_file_path"; then
-                    valid_configs_found=true
-                    isSuccessful "Valid config found in backup file: $zip_file"
-                    while true; do
-                        isQuestion "Do you want to restore the latest config backup? (y/n): "
-                        read -p "" defaultconfigfound
-                        case $defaultconfigfound in
-                            [yY])
-                                gitUseExistingBackup $zip_file
-                                # Set the flag to exit the loop
-                                break 2  # Exit the outer loop as well
-                                ;;
-                            [nN])
-                                isNotice "Custom changes will be kept, continuing..."
-                                break
-                                ;;
-                            *)
-                                isNotice "Please provide a valid input (y or n)."
-                                ;;
-                        esac
-                    done
-                else
-                    echo "Config file not found or contains 'Change-Me' in backup file: $zip_file"
-                fi
-
-                # Clean up the temporary directory
-                rm -rf "$temp_dir"
-            done
-
-
-            # If no valid configs were found in any backup file, display a message
-            if [ "$valid_configs_found" = false ]; then
-                echo "No valid configs found in any backup file. Unable to restore install backup as they all contain default values."
-            fi
-        else
-            if [[ $remove_changes == "true" ]]; then
-                gitFolderResetAndBackup;
-            fi
+        # Get a list of all backup zip files in the directory, sorted by date (latest first)
+        backup_files=($(find "$backup_install_dir" -type f -name 'backup_*.zip' | sort -r))
+        
+        # Check if any backup files were found
+        if [ ${#backup_files[@]} -eq 0 ]; then
+            isNotice "No backup files found."
+            return
         fi
+
+        for zip_file in "${backup_files[@]}"; do
+            #echo "Processing backup file: $zip_file"
+            # Create a temporary directory to extract the zip file contents
+            temp_dir=$(mktemp -d)
+
+            # Extract the zip file contents
+            unzip -q "$zip_file" -d "$temp_dir"
+
+            # Find the path of $config_file_general within the extracted files
+            config_file_path=$(find "$temp_dir" -type f -name "$config_file_general")
+
+            # Check if $config_file_general exists and does not contain "Change-Me"
+            if [ -n "$config_file_path" ] && ! grep -q "Change-Me" "$config_file_path"; then
+                valid_configs_found=true
+                isSuccessful "Valid config found in backup file: $zip_file"
+                while true; do
+                    isQuestion "Do you want to restore the latest config backup? (y/n): "
+                    read -p "" defaultconfigfound
+                    case $defaultconfigfound in
+                        [yY])
+                            gitUseExistingBackup $zip_file
+                            # Set the flag to exit the loop
+                            break 2  # Exit the outer loop as well
+                            ;;
+                        [nN])
+                            isNotice "Custom changes will be kept, continuing..."
+                            break
+                            ;;
+                        *)
+                            isNotice "Please provide a valid input (y or n)."
+                            ;;
+                    esac
+                done
+            else
+                echo "Config file not found or contains 'Change-Me' in backup file: $zip_file"
+            fi
+
+            # Clean up the temporary directory
+            rm -rf "$temp_dir"
+        done
+
+
+        # If no valid configs were found in any backup file, display a message
+        if [ "$valid_configs_found" = false ]; then
+            echo "No valid configs found in any backup file. Unable to restore install backup as they all contain default values."
+        fi
+    fi
+}
+
+gitCheckForUpdate()
+{
+    # Check the status of the local repository
+    cd "$script_dir"
+    if git status | grep -q "Your branch is behind"; then
+        isNotice "The repository is not up to date. Updating..."
+        gitFolderResetAndBackup;
+    else
+        isSuccessful "The repository is already up to date."
     fi
 }
 
