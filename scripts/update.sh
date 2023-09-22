@@ -219,6 +219,11 @@ gitFolderResetAndBackup()
     gitUntrackFiles;
 
     isSuccessful "Custom changes have been discarded successfully"
+    echo ""
+    isNotice "You have updated your version of EasyDocker."
+    isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new changes are loaded."
+    echo ""
+    exit
     update_done=true
 }
 
