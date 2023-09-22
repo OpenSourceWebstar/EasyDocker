@@ -310,6 +310,9 @@ installSQLiteDatabase()
                 if [ ! -e "$base_dir/$db_file" ]; then
                     result=$(sudo touch $base_dir/$db_file)
                     checkSuccess "Creating SQLite $db_file file"
+
+                    result=$(sudo chmod 755 $base_dir/$db_file && sudo chown $easydockeruser $base_dir/$db_file)
+                    checkSuccess "Changing permissions for SQLite $db_file file"
                 fi
 
                 setup_table_name=path
