@@ -151,7 +151,8 @@ gitCheckForUpdate()
 {
     # Check the status of the local repository
     cd "$script_dir"
-    if git status | grep -q "Your branch is behind"; then
+    sudo -u $easydockeruser git fetch > /dev/null 2>&1
+    if sudo -u $easydockeruser git status | grep -q "Your branch is behind"; then
         isNotice "The repository is not up to date. Updating..."
         gitFolderResetAndBackup;
     else
