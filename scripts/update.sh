@@ -39,6 +39,7 @@ checkUpdates()
                         remove_changes=true
 						gitCheckConfigs;
                         scanConfigsFixLineEnding;
+						fixFolderPermissions;
 						sourceScripts;
 
 						isSuccessful "Starting/Restarting EasyDocker"
@@ -50,6 +51,7 @@ checkUpdates()
                         remove_changes=false
                         gitCheckConfigs;
                         scanConfigsFixLineEnding;
+						fixFolderPermissions;
 						sourceScripts;
                         
                         detectOS;
@@ -66,6 +68,7 @@ checkUpdates()
 		if [[ $update_done != "true" ]]; then
 			gitCheckConfigs;
             scanConfigsFixLineEnding;
+			fixFolderPermissions;
 			sourceScripts;
 
 			isSuccessful "Starting/Restarting EasyDocker"
@@ -168,6 +171,12 @@ gitUseExistingBackup()
     gitUntrackFiles;
 
     isSuccessful "Custom changes have been discarded successfully"
+
+    echo ""
+    isNotice "You have restored the configuration files for EasyDocker."
+    isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
+    echo ""
+    exit
     update_done=true
 }
 
