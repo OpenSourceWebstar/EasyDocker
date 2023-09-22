@@ -34,16 +34,19 @@ runUpdate()
 fixFolderPermissions() 
 {
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        # Docker install user setup
+        # EasyDocker
         result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
         result=$(find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -type d -exec sudo chmod +x {} \; > /dev/null 2>&1)
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
-        # Easydocker user permissions
+        # Install user
         result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir" > /dev/null 2>&1)
         checkSuccess "Updating $install_dir with $CFG_DOCKER_INSTALL_USER ownership"
+
+        result=$(sudo chmod +x "$base_dir" > /dev/null 2>&1)
+        checkSuccess "Updating $base_dir with execute permissions."
 
         # Update permissions after
         result=$(find "$install_dir" -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
