@@ -63,6 +63,7 @@ startPreInstall()
 startScan()
 {
 	databasePathInsert $initial_path_save
+	fixFolderPermissions;
 	if [[ $CFG_REQUIREMENT_MIGRATE == "true" ]]; then
 		migrateCheckForMigrateFiles;
 		migrateGenerateTXTAll;
