@@ -38,17 +38,16 @@ fixFolderPermissions()
         result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-        result=$(find "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -type d -exec sudo chmod +x {} \; > /dev/null 2>&1)
+        result=$(find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -type d -exec sudo chmod +x {} \; > /dev/null 2>&1)
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
         # Easydocker user permissions
         result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $script_dir with $CFG_DOCKER_INSTALL_USER ownership"
+        checkSuccess "Updating $install_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
         # Update permissions after
         result=$(find "$install_dir" -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
-        checkSuccess "Updating $script_dir with $sudo_user_name read permissions"
-        
+        checkSuccess "Updating $install_dir with $sudo_user_name read permissions" 
     fi
 }
 
