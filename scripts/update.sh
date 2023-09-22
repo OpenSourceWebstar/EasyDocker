@@ -39,7 +39,6 @@ checkUpdates()
                         remove_changes=true
 						gitCheckConfigs;
                         scanConfigsFixLineEnding;
-						fixFolderPermissions;
 						sourceScripts;
 
 						isSuccessful "Starting/Restarting EasyDocker"
@@ -51,7 +50,6 @@ checkUpdates()
                         remove_changes=false
                         gitCheckConfigs;
                         scanConfigsFixLineEnding;
-						fixFolderPermissions;
 						sourceScripts;
                         
                         detectOS;
@@ -68,7 +66,6 @@ checkUpdates()
 		if [[ $update_done != "true" ]]; then
 			gitCheckConfigs;
             scanConfigsFixLineEnding;
-			fixFolderPermissions;
 			sourceScripts;
 
 			isSuccessful "Starting/Restarting EasyDocker"
