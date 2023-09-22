@@ -40,18 +40,16 @@ fixFolderPermissions()
 
         #result=$(sudo chmod +x $script_dir $ssl_dir $ssh_dir $backup_dir $restore_dir $migrate_dir)
         #checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+        echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1
+        sudo chmod +x $script_dir $ssl_dir $ssh_dir $backup_dir $restore_dir $migrate_dir > /dev/null 2>&1
 
+        # Easydocker user permissions
         #result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$script_dir")
         #checkSuccess "Updating $script_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
-        # Easydocker user permissions
         #result=$(sudo setfacl -R -m u:$sudo_user_name:rwX "$script_dir")
         #checkSuccess "Updating $script_dir with $sudo_user_name read permissions"
-
-
-        echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1
-        sudo chmod +x $script_dir $ssl_dir $ssh_dir $backup_dir $restore_dir $migrate_dir > /dev/null 2>&1
-        sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$script_dir" > /dev/null 2>&1
+        sudo chown -R $sudo_user_name:$sudo_user_name "$script_dir" > /dev/null 2>&1
         sudo setfacl -R -m u:$sudo_user_name:rwX "$script_dir" > /dev/null 2>&1
     fi
 }

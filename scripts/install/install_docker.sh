@@ -254,7 +254,7 @@ EOF
             result=$(runCommandForDockerInstallUser "$rootless_install")
             checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
 
-            result=$(copyFile $sysctl $sysctl.bak)
+            result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
 
             # Update sysctl file

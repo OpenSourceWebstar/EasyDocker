@@ -308,7 +308,7 @@ installSQLiteDatabase()
 
                 # Create SQLite database file
                 if [ ! -e "$base_dir/$db_file" ]; then
-                    result=$(createTouch $base_dir/$db_file)
+                    result=$(sudo touch $base_dir/$db_file)
                     checkSuccess "Creating SQLite $db_file file"
                 fi
 
