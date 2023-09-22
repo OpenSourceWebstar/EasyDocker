@@ -432,7 +432,7 @@ restoreRemoteMenu()
             echo "##########################################"
             echo ""
             app_list=()
-            declare -A seen_apps
+            seen_apps=()  # Use a regular indexed array to keep track of seen apps
             local count=1
 
             # Use SSH to list remote backups
@@ -442,11 +442,11 @@ restoreRemoteMenu()
             while read -r zip_file; do
                 # Extract the app_name from the filename using sed
                 app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
-                
-                # Check if the app_name is already in the associative array
-                if [ -z "${seen_apps[$app_name]}" ]; then
+
+                # Check if the app_name is already in the seen_apps array
+                if ! [[ " ${seen_apps[@]} " =~ " $app_name " ]]; then
                     app_list+=("$app_name")
-                    seen_apps["$app_name"]=1  # Mark the app_name as seen
+                    seen_apps+=("$app_name")  # Add the app_name to the seen_apps array
                     isOption "$count. $app_name"
                     ((count++))
                 fi
@@ -461,7 +461,7 @@ restoreRemoteMenu()
             read -p "" chosen_app_option
 
             if [[ "$chosen_app_option" == "x" ]]; then
-                return  # Go back to the main menu
+                resetToMenu;  # Go back to the main menu
             elif [[ "$chosen_app_option" =~ ^[0-9]+$ ]]; then
                 selected_app_index=$((chosen_app_option - 1))
 
@@ -585,67 +585,116 @@ restoreDeleteDockerFolder()
 restoreExtractFile()
 {
     cd $RESTORE_SAVE_DIRECTORY
-    # Local
+    # Function to attempt decryption with a passphrase
+    attempt_decryption() {
+        local passphrase="$1"
+        local unzip_path="$2"
+        result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d $unzip_path)
+        return $?
+    }
+
+    # Local Full
     if [[ "$restorefull" == [lL] ]]; then
         while true; do
-            result=$(sudo unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/"
+        
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the provided passphrase."
+                    echo ""
+                fi
+            fi
 
+            if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/"
+        
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the remote passphrase."
+                    echo ""
+                fi
+            fi
+
+            # Prompt the user for a passphrase
+            isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
+            read -s -r passphrase
+
+            if [ "$passphrase" = "x" ]; then
+                isNotice "Exiting..."
+                exit 1
+            fi
+
+            # Attempt to decrypt using the user-provided passphrase
+            attempt_decryption "$passphrase" "/"
+            
             if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
+                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
                 break
             else
                 isNotice "Decryption failed with the provided passphrase."
                 echo ""
-                if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
-                    result=$(sudo unzip -o -P "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$chosen_backup_file" -d /)
-                    if [ $? -eq 0 ]; then
-                        checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                        break
-                    else
-                        isNotice "Decryption failed with the remote passphrase."
-                    fi
-                else
-                    isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
-                    read -s -r passphrase
-
-                    if [ "$passphrase" = "x" ]; then
-                        isNotice "Exiting..."
-                        exit 1
-                    fi
-                fi
             fi
         done
     fi
+
+    # Remote Full
     if [[ "$restorefull" == [rR] ]]; then
         while true; do
-            result=$(sudo unzip -o -P "$CFG_BACKUP_PASSPHRASE" "$chosen_backup_file" -d /)
+            if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/"
+        
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the provided passphrase."
+                    echo ""
+                fi
+            fi
 
+            if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/"
+        
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the remote passphrase."
+                    echo ""
+                fi
+            fi
+
+            # Prompt the user for a passphrase
+            isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
+            read -s -r passphrase
+
+            if [ "$passphrase" = "x" ]; then
+                isNotice "Exiting..."
+                exit 1
+            fi
+
+            # Attempt to decrypt using the user-provided passphrase
+            attempt_decryption "$passphrase" "/"
+            
             if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
+                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
                 break
             else
                 isNotice "Decryption failed with the provided passphrase."
                 echo ""
-                if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
-                    result=$(sudo unzip -o -P "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$chosen_backup_file" -d /)
-                    if [ $? -eq 0 ]; then
-                        checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                        break
-                    else
-                        isNotice "Decryption failed with the remote passphrase."
-                    fi
-                else
-                    isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
-                    read -s -r passphrase
-
-                    if [ "$passphrase" = "x" ]; then
-                        isNotice "Exiting..."
-                        exit 1
-                    fi
-                fi
             fi
         done
     fi
+
     # Remote Migrate
     if [[ "$restorefull" == [mM] ]]; then
         while true; do
@@ -668,68 +717,104 @@ restoreExtractFile()
         done
     fi
 
-    # Local
+    # Local Restore
     if [[ "$restoresingle" == [lL] ]]; then
         while true; do
-            result=$(sudo unzip -o -P $CFG_BACKUP_PASSPHRASE $chosen_backup_file -d $install_dir)
+            if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$install_dir"
+
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the provided passphrase."
+                fi
+            fi
+
+            if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$install_dir"
+
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the remote passphrase."
+                fi
+            fi
+
+            # Prompt the user for a passphrase
+            isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
+            read -s -r passphrase
+
+            if [ "$passphrase" = "x" ]; then
+                isNotice "Exiting..."
+                exit 1
+            fi
+
+            # Attempt to decrypt using the user-provided passphrase
+            attempt_decryption "$passphrase" "$install_dir"
 
             if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
+                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
                 break
             else
                 isNotice "Decryption failed with the provided passphrase."
-                echo ""
-                if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
-                    result=$(sudo unzip -o -P "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$chosen_backup_file" -d $install_dir)
-                    if [ $? -eq 0 ]; then
-                        checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                        break
-                    else
-                        isNotice "Decryption failed with the remote passphrase."
-                    fi
-                else
-                    isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
-                    read -s -r passphrase
-
-                    if [ "$passphrase" = "x" ]; then
-                        isNotice "Exiting..."
-                        exit 1
-                    fi
-                fi
             fi
         done
     fi
-    # Remote
+
+
+    # Remote Restore
     if [[ "$restoresingle" == [rR] ]]; then
         while true; do
-            result=$(sudo unzip -o -P "$CFG_BACKUP_PASSPHRASE" "$chosen_backup_file" -d $install_dir)
+            if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$install_dir"
+
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the provided passphrase."
+                fi
+            fi
+
+            if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
+                # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
+                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$install_dir"
+
+                if [ $? -eq 0 ]; then
+                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
+                    break
+                else
+                    isNotice "Decryption failed with the remote passphrase."
+                fi
+            fi
+
+            # Prompt the user for a passphrase
+            isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
+            read -s -r passphrase
+
+            if [ "$passphrase" = "x" ]; then
+                isNotice "Exiting..."
+                exit 1
+            fi
+
+            # Attempt to decrypt using the user-provided passphrase
+            attempt_decryption "$passphrase" "$install_dir"
 
             if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
+                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
                 break
             else
                 isNotice "Decryption failed with the provided passphrase."
-                echo ""
-                if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
-                    result=$(sudo unzip -o -P "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$chosen_backup_file" -d $install_dir)
-                    if [ $? -eq 0 ]; then
-                        checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                        break
-                    else
-                        isNotice "Decryption failed with the remote passphrase."
-                    fi
-                else
-                    isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
-                    read -s -r passphrase
-
-                    if [ "$passphrase" = "x" ]; then
-                        isNotice "Exiting..."
-                        exit 1
-                    fi
-                fi
             fi
         done
     fi
+
+
     # Remote Migrate
     if [[ "$restoresingle" == [mM] ]]; then
         while true; do
