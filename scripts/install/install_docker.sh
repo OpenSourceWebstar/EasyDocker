@@ -95,7 +95,7 @@ installDockerUser()
                     read -p "" rootdisableconfirm
                     case "$rootdisableconfirm" in
                         [Yy]*)
-                            result=$(sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
+                            result=$(sudo sed 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
                             checkSuccess "Disabling Root Login"
                             break
                             ;;
