@@ -40,7 +40,7 @@ checkUpdates()
                         gitCheckForUpdate;
                         gitCheckConfigs;
                         scanConfigsFixLineEnding;
-						fixFolderPermissions;
+						fixPermissionsBeforeStart;
 						sourceScripts;
 
 						isSuccessful "Starting/Restarting EasyDocker"
@@ -53,7 +53,7 @@ checkUpdates()
                         gitCheckForUpdate;
                         gitCheckConfigs;
                         scanConfigsFixLineEnding;
-						fixFolderPermissions;
+						fixPermissionsBeforeStart;
 						sourceScripts;
                         
                         detectOS;
@@ -71,7 +71,7 @@ checkUpdates()
             gitCheckForUpdate;
             gitCheckConfigs;
             scanConfigsFixLineEnding;
-			fixFolderPermissions;
+			fixPermissionsBeforeStart;
 			sourceScripts;
 
 			isSuccessful "Starting/Restarting EasyDocker"
