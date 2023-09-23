@@ -153,9 +153,9 @@ gitCheckForUpdate()
     cd "$script_dir"
     sudo -u $easydockeruser git fetch > /dev/null 2>&1
     if sudo -u $easydockeruser git status | grep -q "Your branch is ahead"; then
-        isNotice "The repository is up to date...continuing..."
+        isSuccessful "The repository is up to date...continuing..."
     elif sudo -u $easydockeruser git status | grep -q "Your branch is up to date with"; then
-        isNotice "The repository is up to date...continuing..."
+        isSuccessful "The repository is up to date...continuing..."
     else
         isNotice "Updates found."
         while true; do
