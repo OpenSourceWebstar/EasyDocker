@@ -244,6 +244,7 @@ installDockerRootless()
             result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
+            # Rootless Install
 rootless_install=$(cat <<EOF
     curl -fsSL https://get.docker.com/rootless | sh && \
     systemctl --user start docker && \
@@ -253,6 +254,30 @@ EOF
 )
             result=$(runCommandForDockerInstallUser "$rootless_install")
             checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
+
+            # Sliprp4netns Install
+            systemd_user_dir="/home/$CFG_DOCKER_INSTALL_USER/.config/systemd/user"
+            result=$(runCommandForDockerInstallUser "mkdir -p $systemd_user_dir")
+            checkSuccess "Create the systemd user directory if it doesn't exist"
+
+            override_conf_file="$systemd_user_dir/docker.service.d/override.conf"
+            result=$(sudo touch $override_conf_file)
+            checkSuccess "Create the override.conf in docker.service.d"	
+			
+sudo bash -c "cat <<EOL > '$override_conf_file'
+[Service]
+Environment='DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER=slirp4netns'
+EOL"
+
+            result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER $override_conf_file)
+            checkSuccess "Updating ownership for override.conf"
+
+            result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
+            checkSuccess "Reload the systemd user manager configuration"
+
+			isNotice "Restarting docker service...this may take a moment..."
+            result=$(runCommandForDockerInstallUser "systemctl --user restart docker")
+            checkSuccess "Setting up slirp4netns for Rootless Docker"
 
             result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
