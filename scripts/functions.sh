@@ -150,7 +150,7 @@ dashyUpdateConf()
     conf_file="${install_dir}dashy/conf.yml"
 
     # Check if Dashy app is installed
-    if [[ -f "$conf_file" ]]; then
+    if [ -d "${install_dir}dashy" ]; then
         echo ""
         echo "#####################################"
         echo "###    Dashy Config Generation    ###"
