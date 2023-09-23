@@ -404,8 +404,8 @@ viewComposeFiles()
     isNotice " *WARNING* Only use this if you know what you are doing!"
     echo ""
 
-  # Find all subdirectories under $containers_dir
-  for app_dir in "$containers_dir"/*/; do
+  # Find all subdirectories under $install_dir
+  for app_dir in "$install_dir"/*/; do
     if [[ -d "$app_dir" ]]; then
       # Extract the app name (folder name)
       app_name=$(basename "$app_dir")
@@ -415,7 +415,7 @@ viewComposeFiles()
 
   # Check if any apps were found
   if [ ${#app_names[@]} -eq 0 ]; then
-    isNotice "No apps found in $containers_dir."
+    isNotice "No apps found in $install_dir."
     return
   fi
 
@@ -435,7 +435,7 @@ viewComposeFiles()
       # Check if the selected option is a valid number
       if ((selected_option >= 1 && selected_option <= ${#app_names[@]})); then
         local selected_app="${app_names[selected_option - 1]}"
-        local selected_app_dir="$containers_dir/$selected_app"
+        local selected_app_dir="$install_dir/$selected_app"
 
         # List Docker Compose files in the selected app's folder
         echo ""
