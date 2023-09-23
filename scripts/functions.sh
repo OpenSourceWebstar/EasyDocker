@@ -150,8 +150,7 @@ dashyUpdateConf()
     conf_file="${install_dir}dashy/conf.yml"
 
     # Clean up for new generation
-    result=$(sudo rm -rf ${install_dir}dashy/conf.yml)
-    checkSuccess "Removing dashy conf.yml configuration file for reconstruction"
+    sudo rm -rf ${install_dir}dashy/conf.yml
 
     # Check if Dashy app is installed
     if [ -d "${install_dir}dashy" ]; then

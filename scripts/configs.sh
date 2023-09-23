@@ -586,9 +586,9 @@ scanConfigsFixLineEnding()
             fi
 
             # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
-            sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$config_file"
+            #sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$config_file"
             sudo dos2unix "$config_file" > /dev/null 2>&1
-            sudo sed -i 's/\r$//' "$config_file"
+            #sudo sed -i 's/\r$//' "$config_file"
         fi
     done
 }
