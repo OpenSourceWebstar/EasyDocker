@@ -77,24 +77,24 @@ fixPermissionsBeforeStart()
 
 changeRootOwnedFilesAndFolders() 
 {
-    local install_dir="$1"
+    local dir_to_change="$1"
     local user_name="$2"
 
-    # Check if the install directory exists
-    if [ ! -d "$install_dir" ]; then
-        isError "Install directory '$install_dir' does not exist."
+    # Check if the directory exists
+    if [ ! -d "$dir_to_change" ]; then
+        isError "Install directory '$dir_to_change' does not exist."
         return 1
     fi
 
-    isNotice "Updating ownership of $install_dir...this may take a while depending on the size/amount of files..."
+    isNotice "Updating ownership of $dir_to_change...this may take a while depending on the size/amount of files..."
 
-    result=$(sudo find "$install_dir" -type f -user root -exec sudo chown "$user_name:$user_name" {} \;)
+    result=$(sudo find "$dir_to_change" -type f -user root -exec sudo chown "$user_name:$user_name" {} \;)
     checkSuccess "Find files owned by root and change ownership"
 
-    result=$(sudo find "$install_dir" -type d -user root -exec sudo chown "$user_name:$user_name" {} \;)
+    result=$(sudo find "$dir_to_change" -type d -user root -exec sudo chown "$user_name:$user_name" {} \;)
     checkSuccess "Find directories owned by root and change ownership"
 
-    isSuccessful "Ownership of root-owned files and directories in '$install_dir' has been changed to '$user_name'."
+    isSuccessful "Ownership of root-owned files and directories in '$dir_to_change' has been changed to '$user_name'."
 }
 
 changeRootOwnedFile()
