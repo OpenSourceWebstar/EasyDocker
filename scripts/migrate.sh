@@ -509,6 +509,7 @@ migrateGenerateTXTAll()
 migrateBuildTXT()
 {
     local app_name=$1
+    local migrate_file="migrate.txt"
     local migrate_file_path="$install_dir/$app_name/$migrate_file"
 
     # Check if the migrate.txt file exists
