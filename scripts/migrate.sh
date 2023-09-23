@@ -572,7 +572,7 @@ migrateSanitizeTXT()
 
     # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
     sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$migrate_file"
-    sudo dos2unix "$migrate_file"
+    sudo dos2unix "$migrate_file" > /dev/null 2>&1
     sudo sed -i 's/\r$//' "$migrate_file"
 }
 
