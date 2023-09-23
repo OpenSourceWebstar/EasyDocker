@@ -30,6 +30,7 @@ mainMenu()
 		echo ""
 		isOption "d. Database"
 		isOption "c. Configs"
+		isOption "y. YML Editor"
 		isOption "l. Logs"
 		isOption "t. Tools"
 		echo ""
@@ -199,6 +200,11 @@ mainMenu()
 				startOther;
 
 				;;
+			y)
+
+				viewComposeFiles;
+
+				;;
 			c)
 
 				viewConfigs;
@@ -252,7 +258,7 @@ dashyToolsMenu()
 		echo "###         Dashy Tools           ###"
 		echo "#####################################"
 		echo ""
-		isOption "1. System Apps"
+		isOption "1. Run Config Updater"
 		echo ""
 		isQuestion "What is your choice: "
 		read -rp "" choice
