@@ -589,12 +589,12 @@ migrateCheckAndUpdateIP()
         if [ "$migrate_ip" != "$public_ip" ]; then
             if ! sudo grep -q "MIGRATE_IP=" "$migrate_file_path"; then
                 result=$(sudo sed -i "1s/^/MIGRATE_IP=$public_ip\n/" "$migrate_file_path")
-                checkSuccess "Adding missing MIGRATE_IP for $app_name : $(basename "$migrate_file_path")."
+                checkSuccess "Adding missing MIGRATE_IP for $app_name : $migrate_file."
             else
                 result=$(sudo sed -i "s#MIGRATE_IP=.*#MIGRATE_IP=$public_ip#" "$migrate_file_path")
-                checkSuccess "Updated MIGRATE_IP for $app_name : $(basename "$migrate_file_path") to $public_ip."
+                checkSuccess "Updated MIGRATE_IP for $app_name : $migrate_file to $public_ip."
             fi
-            result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s/$migrate_ip/$public_ip/g" {} \;)
+            result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s|$migrate_ip|$public_ip|g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
@@ -629,7 +629,7 @@ migrateCheckAndUpdateInstallName()
 
 migrateScanConfigsToMigrate() 
 {
-    local migrate_file="$install_dir/$app_name/$migrate_file"
+  local migrate_file_path="$install_dir/$app_name/$migrate_file"
   # Find all subdirectories under the installation path and use them as app names
   local app_names=()
 
