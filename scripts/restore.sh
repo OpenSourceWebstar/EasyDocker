@@ -118,6 +118,13 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Opening ports if required"
+    echo ""
+
+    openAppPorts $app_name;
+    
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Starting up the $stored_app_name docker service(s)"
     echo ""
 

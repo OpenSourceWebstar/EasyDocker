@@ -125,7 +125,7 @@ installAkaunting()
         echo "---- $menu_number. Opening ports if required"
         echo ""
 
-        openAppPorts;
+        openAppPorts $app_name;
 
 		((menu_number++))
 		echo ""

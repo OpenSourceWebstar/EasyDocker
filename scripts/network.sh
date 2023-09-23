@@ -50,6 +50,8 @@ portExistsInDatabase()
 
 openAppPorts()
 {
+    local app_name="$1"
+    
     if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
         openPort $app_name 80/tcp
         openPort $app_name 443/tcp
@@ -114,7 +116,7 @@ closePort()
 CloseAppPorts()
 {
     local app_name="$1"
-    
+
     if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
         closePort $app_name 80/tcp
         closePort $app_name 443/tcp
