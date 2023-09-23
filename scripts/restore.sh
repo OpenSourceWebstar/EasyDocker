@@ -606,9 +606,11 @@ restoreExtractFile()
 {
     cd $RESTORE_SAVE_DIRECTORY
     # Function to attempt decryption with a passphrase
-    attempt_decryption() {
+    attempt_decryption() 
+    {
         local passphrase="$1"
         local unzip_path="$2"
+        isNotice "Attempting to decrypt and unzip $chosen_backup_file backup file...this may take a while..."
         result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d $unzip_path)
         return $?
     }
