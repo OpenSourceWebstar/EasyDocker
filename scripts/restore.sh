@@ -548,10 +548,10 @@ restoreCopyFile()
         RestoreBackupDate=$(echo "$chosen_backup_file" | cut -d'-' -f1-3)
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
         if [[ "$remote_server" == "1" ]]; then
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"
         elif [[ "$remote_server" == "2" ]]; then
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_2_IP to $RESTORE_SAVE_DIRECTORY"
         fi
     elif [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
