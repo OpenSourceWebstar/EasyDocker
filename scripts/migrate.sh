@@ -823,5 +823,5 @@ migrateUpdateFiles()
         checkSuccess "Updating Compose file for $app_name"
     fi
 
-    fixPermissionsBeforeStart $app_name
+    fixPermissionsBeforeStart;
 }

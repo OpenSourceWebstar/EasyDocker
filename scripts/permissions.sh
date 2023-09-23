@@ -67,13 +67,16 @@ fixPermissionsBeforeStart()
     fi
 
     # This is where custom app specific permissions are needed
-    if [[ $app_name == "traefik" ]]; then
-        updateFileOwnership "$install_dir$app_name/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-        updateFileOwnership "$install_dir$app_name/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-        result=$(sudo chmod 600 "$install_dir$app_name/etc/certs/acme.json")
-        checkSuccess "Set permissions to acme.json file for $app_name"
-        result=$(sudo chmod 600 "$install_dir$app_name/etc/traefik.yml")
-        checkSuccess "Set permissions to traefik.yml file for $app_name"
+    # Traefik
+    local app="traefik"
+    local app_install_dir="${install_dir}$app"
+    if [ ! -d "app_install_dir" ]; then
+        updateFileOwnership "$app_install_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership "$app_install_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
+        result=$(sudo chmod 600 "$app_install_dir/etc/certs/acme.json")
+        checkSuccess "Set permissions to acme.json file for traefik"
+        result=$(sudo chmod 600 "$app_install_dir/etc/traefik.yml")
+        checkSuccess "Set permissions to traefik.yml file for traefik"
     fi
 }
 

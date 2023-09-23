@@ -68,13 +68,6 @@ restoreStart()
 
     restoreExtractFile;
 
-    ((menu_number++))
-    echo ""
-    echo "---- $menu_number. Updating file permissions for restore."
-    echo ""
-
-    fixPermissionsBeforeStart $stored_app_name
-
     if [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
         ((menu_number++))
         echo ""
@@ -114,7 +107,7 @@ restoreStart()
     echo "---- $menu_number. Updating file permissions before starting."
     echo ""
 
-    fixPermissionsBeforeStart $app_name;
+    fixPermissionsBeforeStart;
 
     ((menu_number++))
     echo ""

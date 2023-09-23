@@ -53,7 +53,7 @@ installSpeedtest()
         echo "---- $menu_number. Updating file permissions before starting."
         echo ""
 
-		fixPermissionsBeforeStart $app_name;
+		fixPermissionsBeforeStart;
 
 		((menu_number++))
         echo ""
