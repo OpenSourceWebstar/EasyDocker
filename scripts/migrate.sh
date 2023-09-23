@@ -526,6 +526,7 @@ migrateScanFoldersForUpdates()
         # Extract the folder name from the full path
         local app_name=$(basename "$folder")
         if [ -d "$install_dir/$app_name" ]; then
+            migrateSanitizeTXT $app_name;
             migrateCheckAndUpdateIP $app_name;
             migrateCheckAndUpdateInstallName $app_name;
         fi
@@ -561,6 +562,16 @@ migrateGenerateTXTSingle()
     fi
     
     isSuccessful "Generating $migrate_file for $app_name completed."
+}
+
+
+migrateSanitizeTXT()
+{
+    local app_name="$1"
+    local migrate_file="$install_dir/$app_name/$migrate_file"
+
+    # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
+    sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$migrate_file"
 }
 
 migrateCheckAndUpdateIP() 
