@@ -248,6 +248,8 @@ editAppConfig() {
 
             # Compare the checksums to check if changes were made
             if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                source $config_file
+                cat $config_file
                 # Ask the user if they want to reinstall the application
                 while true; do
                     echo ""
@@ -333,8 +335,17 @@ viewEasyDockerConfigs()
         read -p "" selected_letter
         
         if [[ "$selected_letter" == "x" ]]; then
-            isNotice "Exiting."
-            return
+            if [[ $config_edited == "true" ]]; then
+                echo ""
+                echo ""
+                isNotice "You have edited configuration file(s) for EasyDocker."
+                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
+                echo ""
+                exit;
+            else
+                isNotice "Exiting..."
+                return
+            fi
             elif [[ "$selected_letter" =~ [A-Za-z] ]]; then
             selected_file=""
             for ((i = 0; i < ${#config_files[@]}; i++)); do
@@ -370,6 +381,7 @@ viewEasyDockerConfigs()
                 echo ""
                 isNotice "Configuration file '$config_name' has been updated."
                 echo ""
+                #config_edited=true
             fi
         else
             isNotice "Invalid input. Please enter a valid letter or 'x' to exit."
@@ -378,6 +390,84 @@ viewEasyDockerConfigs()
         fi
     done
 }
+
+viewComposeFiles() 
+{
+  local app_names=()
+  local app_dir
+
+    echo ""
+    echo "#################################"
+    echo "### Docker Compose YML Editor ###"
+    echo "#################################"
+    echo ""
+    isNotice " *WARNING* Only use this if you know what you are doing!"
+    echo ""
+
+  # Find all subdirectories under $containers_dir
+  for app_dir in "$containers_dir"/*/; do
+    if [[ -d "$app_dir" ]]; then
+      # Extract the app name (folder name)
+      app_name=$(basename "$app_dir")
+      app_names+=("$app_name")
+    fi
+  done
+
+  # Check if any apps were found
+  if [ ${#app_names[@]} -eq 0 ]; then
+    isNotice "No apps found in $containers_dir."
+    return
+  fi
+
+  # List numbered options for app names
+  isNotice "Select an app to view and edit Docker Compose files:"
+  echo ""
+  for i in "${!app_names[@]}"; do
+    echo "$((i + 1)). ${app_names[i]}"
+  done
+
+  # Read user input for app selection
+  isQuestion "Enter the number of the app (or 'x' to exit): "
+  read -p "" selected_option
+
+  case "$selected_option" in
+    [1-9]*)
+      # Check if the selected option is a valid number
+      if ((selected_option >= 1 && selected_option <= ${#app_names[@]})); then
+        local selected_app="${app_names[selected_option - 1]}"
+        local selected_app_dir="$containers_dir/$selected_app"
+
+        # List Docker Compose files in the selected app's folder
+        echo ""
+        isNotice "Docker Compose files in '$selected_app':"
+        echo ""
+        find "$selected_app_dir" -maxdepth 1 -type f -name "*docker-compose*" -exec basename {} \;
+
+        # Edit Docker Compose files with nano
+        for compose_file in "$selected_app_dir"/*docker-compose*; do
+          if [[ -f "$compose_file" ]]; then
+            nano "$compose_file"
+          fi
+        done
+
+        # Check if edits were made
+        isQuestion "Check if edits were made. Press Enter to continue..."
+        read -p ""
+
+      else
+        isNotice "Invalid app number. Please choose a valid option."
+      fi
+      ;;
+    x)
+      isNotice "Exiting..."
+      return
+      ;;
+    *)
+      isNotice "Invalid option. Please choose a valid option or 'x' to exit."
+      ;;
+  esac
+}
+
 
 viewConfigs() 
 {
@@ -400,9 +490,17 @@ viewConfigs()
             viewAppConfigs
             ;;
         x)
-            echo ""
-            isNotice "Exiting."
-            return
+            if [[ $config_edited == "true" ]]; then
+                echo ""
+                echo ""
+                isNotice "You have edited configuration file(s) for EasyDocker."
+                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
+                echo ""
+                exit;
+            else
+                isNotice "Exiting..."
+                return
+            fi
             ;;
         *)
             isNotice "Invalid option. Please choose a valid option or 'x' to exit."
@@ -436,8 +534,17 @@ viewAppConfigs()
             viewAppCategoryConfigs "user"
             ;;
         x)
-            isNotice "Exiting."
-            return
+            if [[ $config_edited == "true" ]]; then
+                echo ""
+                echo ""
+                isNotice "You have edited configuration file(s) for EasyDocker."
+                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
+                echo ""
+                exit;
+            else
+                isNotice "Exiting..."
+                return
+            fi
             ;;
         *)
             isNotice "Invalid selection. Please choose a valid category or 'x' to exit."
@@ -514,8 +621,16 @@ viewAppCategoryConfigs()
         if [[ "$selected_number" == "b" ]]; then
             return
         elif [[ "$selected_number" == "x" ]]; then
-            isNotice "Exiting."
-            resetToMenu;
+            if [[ $config_edited == "true" ]]; then
+                echo ""
+                echo ""
+                isNotice "You have edited configuration file(s) for EasyDocker."
+                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
+                echo ""
+                exit;
+            else
+                resetToMenu;
+            fi
         elif [[ "$selected_number" =~ ^[0-9]+$ ]]; then
             if ((selected_number >= 1 && selected_number <= (${#installed_apps[@]} + ${#other_apps[@]}))); then
                 if ((selected_number <= ${#installed_apps[@]})); then
@@ -587,7 +702,7 @@ scanConfigsFixLineEnding()
 
             # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
             #sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$config_file"
-            sudo dos2unix "$config_file" > /dev/null 2>&1
+            #sudo dos2unix "$config_file" > /dev/null 2>&1
             #sudo sed -i 's/\r$//' "$config_file"
         fi
     done
