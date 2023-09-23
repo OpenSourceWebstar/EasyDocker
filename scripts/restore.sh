@@ -111,6 +111,13 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Updating file permissions before starting."
+    echo ""
+
+    fixPermissionsBeforeStart $app_name;
+
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Starting up the $stored_app_name docker service(s)"
     echo ""
 

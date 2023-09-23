@@ -49,7 +49,7 @@ fixFolderPermissions()
         checkSuccess "Updating $base_dir with execute permissions."
 
         # Update permissions after
-        result=$(find "$install_dir" -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
+        result=$(find "$install_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
         checkSuccess "Updating $install_dir with $sudo_user_name read permissions" 
     fi
 }
