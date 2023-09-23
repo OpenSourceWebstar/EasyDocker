@@ -149,23 +149,27 @@ dashyUpdateConf()
     # Hardcoded path to Dashy's conf.yml file
     conf_file="${install_dir}dashy/conf.yml"
 
+    # Clean up for new generation
+    result=$(sudo rm -rf ${install_dir}dashy/conf.yml)
+    checkSuccess "Removing dashy conf.yml configuration file for reconstruction"
+
     # Check if Dashy app is installed
-    if [[ -f "$conf_file" ]]; then
+    if [ -d "${install_dir}dashy" ]; then
         echo ""
         echo "#####################################"
         echo "###    Dashy Config Generation    ###"
         echo "#####################################"
         echo ""
 
+        # Copy the default dashy conf.yml configuration file
+        result=$(copyResource "dashy" "conf.yml" "conf.yml")
+        checkSuccess "Copy default dashy conf.yml configuration file"
+
         local original_md5
         original_md5=$(md5sum "$conf_file")
 
         # Initialize changes_made flag as false
         changes_made=false
-
-        # Copy the default dashy conf.yml configuration file
-        result=$(copyResource "dashy" "conf.yml" "conf.yml")
-        checkSuccess "Copy default dashy conf.yml configuration file"
 
         # Function to uncomment lines using sed based on line numbers under the pattern
         uncomment_lines() {
