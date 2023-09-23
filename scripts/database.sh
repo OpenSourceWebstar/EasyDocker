@@ -39,6 +39,8 @@ databaseInstallApp() {
 
 databaseUninstallApp() 
 {
+    local app_name="$1"
+    
     # Check if sqlite3 is available
     if ! command -v sudo sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
