@@ -15,7 +15,7 @@ installSearXNG()
     fi
 
 	if [[ "$searxng" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$searxng" == *[sS]* ]]; then

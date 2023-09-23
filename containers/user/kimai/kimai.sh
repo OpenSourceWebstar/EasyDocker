@@ -15,7 +15,7 @@ installKimai()
     fi
 
 	if [[ "$kimai" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$kimai" == *[sS]* ]]; then

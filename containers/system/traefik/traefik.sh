@@ -15,7 +15,7 @@ installTraefik()
     fi
 
     if [[ "$traefik" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$traefik" == *[sS]* ]]; then

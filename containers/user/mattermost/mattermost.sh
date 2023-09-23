@@ -16,7 +16,7 @@ installMattermost()
     fi
 
 	if [[ "$mattermost" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$mattermost" == *[sS]* ]]; then

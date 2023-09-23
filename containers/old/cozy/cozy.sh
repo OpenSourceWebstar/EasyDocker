@@ -22,7 +22,7 @@ installCozy()
     fi
 
     if [[ "$cozy" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$cozy" == *[sS]* ]]; then

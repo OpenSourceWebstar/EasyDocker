@@ -15,7 +15,7 @@ installKillbill()
     fi
 
 	if [[ "$killbill" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$killbill" == *[sS]* ]]; then

@@ -15,7 +15,7 @@ installAkaunting()
     fi
 
 	if [[ "$akaunting" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$akaunting" == *[sS]* ]]; then

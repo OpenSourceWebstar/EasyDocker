@@ -16,7 +16,7 @@ installGitLab()
     fi
 
 	if [[ "$gitlab" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$gitlab" == *[sS]* ]]; then

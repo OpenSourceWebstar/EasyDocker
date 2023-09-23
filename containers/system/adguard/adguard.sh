@@ -15,7 +15,7 @@ installAdguard()
     fi
 
     if [[ "$adguard" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$adguard" == *[sS]* ]]; then

@@ -15,7 +15,7 @@ installWireguard()
     fi
 
     if [[ "$wireguard" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$wireguard" == *[sS]* ]]; then

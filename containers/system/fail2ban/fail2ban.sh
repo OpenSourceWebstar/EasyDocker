@@ -11,7 +11,7 @@ installFail2Ban()
     fi
 
     if [[ "$fail2ban" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$fail2ban" == *[sS]* ]]; then

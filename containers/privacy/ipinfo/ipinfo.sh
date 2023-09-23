@@ -15,7 +15,7 @@ installIPInfo()
     fi
 
 	if [[ "$ipinfo" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$ipinfo" == *[sS]* ]]; then

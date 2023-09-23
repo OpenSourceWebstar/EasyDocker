@@ -15,7 +15,7 @@ installActual()
     fi
 
 	if [[ "$actual" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$actual" == *[sS]* ]]; then

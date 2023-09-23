@@ -15,7 +15,7 @@ installJitsiMeet()
     fi
 
 	if [[ "$jitsimeet" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$jitsimeet" == *[sS]* ]]; then

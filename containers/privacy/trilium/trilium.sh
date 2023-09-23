@@ -15,7 +15,7 @@ installTrilium()
     fi
 
     if [[ "$trilium" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$trilium" == *[sS]* ]]; then

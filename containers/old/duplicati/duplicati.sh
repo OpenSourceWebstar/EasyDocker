@@ -16,7 +16,7 @@ installDuplicati()
     fi
 
     if [[ "$duplicati" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$duplicati" == *[sS]* ]]; then

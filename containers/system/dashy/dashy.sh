@@ -19,7 +19,7 @@ installDashy()
     fi
 
     if [[ "$dashy" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$dashy" == *[sS]* ]]; then

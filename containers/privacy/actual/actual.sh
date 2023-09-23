@@ -15,7 +15,7 @@ installTest()
     fi
 
     if [[ "$test" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$test" == *[sS]* ]]; then

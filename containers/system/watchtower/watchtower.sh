@@ -11,7 +11,7 @@ installWatchtower()
     fi
 
     if [[ "$watchtower" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$watchtower" == *[sS]* ]]; then

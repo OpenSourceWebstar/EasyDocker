@@ -15,7 +15,7 @@ installVaultwarden()
     fi
 
 	if [[ "$vaultwarden" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$vaultwarden" == *[sS]* ]]; then

@@ -15,7 +15,7 @@ installPihole()
     fi
 
     if [[ "$pihole" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$pihole" == *[sS]* ]]; then

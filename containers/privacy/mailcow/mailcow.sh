@@ -16,7 +16,7 @@ installMailcow()
     fi
 
 	if [[ "$mailcow" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$mailcow" == *[sS]* ]]; then

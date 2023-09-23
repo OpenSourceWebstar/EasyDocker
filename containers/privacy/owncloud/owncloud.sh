@@ -16,7 +16,7 @@ installOwnCloud()
     fi
 
 	if [[ "$owncloud" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$owncloud" == *[sS]* ]]; then

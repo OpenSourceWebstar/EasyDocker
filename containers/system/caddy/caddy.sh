@@ -14,7 +14,7 @@ installCaddy()
     fi
 
     if [[ "$caddy" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$caddy" == *[sS]* ]]; then

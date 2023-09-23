@@ -15,7 +15,7 @@ installTileDesk()
     fi
 
 	if [[ "$tiledesk" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$tiledesk" == *[sS]* ]]; then

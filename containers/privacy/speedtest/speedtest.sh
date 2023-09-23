@@ -15,7 +15,7 @@ installSpeedtest()
     fi
 
 	if [[ "$speedtest" == *[uU]* ]]; then
-		uninstallApp;
+		uninstallApp $app_name;
 	fi
 
 	if [[ "$speedtest" == *[sS]* ]]; then

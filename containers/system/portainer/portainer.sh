@@ -15,7 +15,7 @@ installPortainer()
     fi
 
     if [[ "$portainer" == *[uU]* ]]; then
-        uninstallApp;
+        uninstallApp $app_name;
     fi
 
     if [[ "$portainer" == *[sS]* ]]; then
