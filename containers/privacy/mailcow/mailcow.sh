@@ -170,19 +170,19 @@ installMailcow()
         echo ""
 
 		if [[ "$COWP80_PROMPT" == [yY] ]]; then
-        	result=$(sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $install_dir/mailcow/mailcow.conf)
+        	result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to custom http port"
 		fi
 		if [[ "$COWP443_PROMPT" == [yY] ]]; then
-        	result=$(sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $install_dir/mailcow/mailcow.conf)
+        	result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to custom https port"
 		fi
 		if [[ "$COWLE" == [yY] ]]; then
-        	result=$(sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $install_dir/mailcow/mailcow.conf)
+        	result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to disable SSL install"
 		fi
 		if [[ "$COWCD" == [nN] ]]; then
-        	result=$(sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $install_dir/mailcow/mailcow.conf)
+        	result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
 		fi
 

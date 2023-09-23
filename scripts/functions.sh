@@ -179,12 +179,12 @@ dashyUpdateConf()
 
             if [ -n "$start_line" ]; then
                 # Uncomment lines under the app section based on line numbers
-                sed -i "$((start_line+1))s/#- title/- title/" "$conf_file"
-                sed -i "$((start_line+2))s/#  description/  description/" "$conf_file"
-                sed -i "$((start_line+3))s/#  icon/  icon/" "$conf_file"
-                sed -i "$((start_line+4))s/#  url/  url/" "$conf_file"
-                sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
-                sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
+                sudo sed -i "$((start_line+1))s/#- title/- title/" "$conf_file"
+                sudo sed -i "$((start_line+2))s/#  description/  description/" "$conf_file"
+                sudo sed -i "$((start_line+3))s/#  icon/  icon/" "$conf_file"
+                sudo sed -i "$((start_line+4))s/#  url/  url/" "$conf_file"
+                sudo sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
+                sudo sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
             #else
                 #isNotice "App not found: $app_name"
             fi
@@ -198,9 +198,9 @@ dashyUpdateConf()
 
             if [ -n "$start_line" ]; then
                 # Uncomment lines under the category section based on line numbers
-                sed -i "$((start_line+1))s/^#- name/- name/" "$conf_file"
-                sed -i "$((start_line+2))s/^#  icon/  icon/" "$conf_file"
-                sed -i "$((start_line+3))s/^#  items/  items/" "$conf_file"
+                sudo sed -i "$((start_line+1))s/^#- name/- name/" "$conf_file"
+                sudo sed -i "$((start_line+2))s/^#  icon/  icon/" "$conf_file"
+                sudo sed -i "$((start_line+3))s/^#  items/  items/" "$conf_file"
             #else
                 #isNotice "Category not found: $category_name"
             fi

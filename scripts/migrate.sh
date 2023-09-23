@@ -592,7 +592,7 @@ migrateCheckAndUpdateIP()
                 result=$(sudo sed -i "s#MIGRATE_IP=.*#MIGRATE_IP=$public_ip#" "$migrate_file")
                 checkSuccess "Updated MIGRATE_IP for $app_name : $(basename "$migrate_file") to $public_ip."
             fi
-            result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sed -i "s/$migrate_ip/$public_ip/g" {} \;)
+            result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s/$migrate_ip/$public_ip/g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
@@ -768,7 +768,7 @@ migrateScanMigrateToConfigs()
               # Check if the existing value is different from the value in migrate.txt
               if [[ "$existing_value" != "$var_value" ]]; then
                 # Update the value in the config
-                sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$app_config_file"
+                sudo sed -i "s/^$var_name=$existing_value/$var_name=$var_value/" "$app_config_file"
                 isSuccessful "Updated variable $var_name in $(basename $app_config_file) to $var_value"
               fi
             fi
