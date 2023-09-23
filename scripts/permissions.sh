@@ -38,7 +38,7 @@ fixFolderPermissions()
         result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-        result=$(find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -type d -exec sudo chmod +x {} \; > /dev/null 2>&1)
+        result=$(find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
         # Install user
