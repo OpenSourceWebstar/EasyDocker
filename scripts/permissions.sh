@@ -58,6 +58,8 @@ fixPermissionsBeforeStart()
 {
     local app_name="$1"
 
+    fixFolderPermissions;
+
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         # Mainly for "full"
         changeRootOwnedFilesAndFolders $script_dir $CFG_DOCKER_INSTALL_USER

@@ -251,8 +251,8 @@ dashyUpdateConf()
         # Check if changes were made to the file
         if [ "$original_md5" != "$updated_md5" ]; then
             isNotice "Changes made to dashy config file...restarting dashy..."
-            result=$(runCommandForDockerInstallUser "docker restart dashy")
-            checkSuccess "Restarting dashy docker container"
+            runCommandForDockerInstallUser "docker restart dashy" > /dev/null 2>&1
+            isSuccessful "Restarted dashy docker container (if running)"
         else
             isSuccessful "No new changes made to the dashy config file."
         fi
