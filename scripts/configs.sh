@@ -391,18 +391,32 @@ viewEasyDockerConfigs()
     done
 }
 
-viewComposeFiles() 
-{
+# Function to list Docker Compose files in a directory
+listDockerComposeFiles() {
+  local dir="$1"
+  local docker_compose_files=()
+
+  for file in "$dir"/*; do
+    if [[ -f "$file" && "$file" == *docker-compose* ]]; then
+      docker_compose_files+=("$file")
+    fi
+  done
+
+  echo "${docker_compose_files[@]}"
+}
+
+# Function to view and edit Docker Compose files in a selected app's folder
+viewComposeFiles() {
   local app_names=()
   local app_dir
 
-    echo ""
-    echo "#################################"
-    echo "### Docker Compose YML Editor ###"
-    echo "#################################"
-    echo ""
-    isNotice " *WARNING* Only use this if you know what you are doing!"
-    echo ""
+  echo ""
+  echo "#################################"
+  echo "### Docker Compose YML Editor ###"
+  echo "#################################"
+  echo ""
+  isNotice "*WARNING* Only use this if you know what you are doing!"
+  echo ""
 
   # Find all subdirectories under $install_dir
   for app_dir in "$install_dir"/*/; do
@@ -423,10 +437,11 @@ viewComposeFiles()
   isNotice "Select an app to view and edit Docker Compose files:"
   echo ""
   for i in "${!app_names[@]}"; do
-    echo "$((i + 1)). ${app_names[i]}"
+    isOption "$((i + 1)). ${app_names[i]}"
   done
 
   # Read user input for app selection
+  echo ""
   isQuestion "Enter the number of the app (or 'x' to exit): "
   read -p "" selected_option
 
@@ -440,20 +455,49 @@ viewComposeFiles()
         # List Docker Compose files in the selected app's folder
         echo ""
         isNotice "Docker Compose files in '$selected_app':"
-        echo ""
-        find "$selected_app_dir" -maxdepth 1 -type f -name "*docker-compose*" -exec basename {} \;
+        selected_compose_files=($(listDockerComposeFiles "$selected_app_dir"))
 
-        # Edit Docker Compose files with nano
-        for compose_file in "$selected_app_dir"/*docker-compose*; do
-          if [[ -f "$compose_file" ]]; then
-            nano "$compose_file"
-          fi
-        done
+        # Check if any Docker Compose files were found
+        if [ ${#selected_compose_files[@]} -eq 0 ]; then
+          isNotice "No Docker Compose files found in '$selected_app'."
+        else
+          while true; do
+            # List numbered options for Docker Compose files
+            isNotice "Select Docker Compose files to edit (space-separated numbers, or 'x' to exit):"
+            echo ""
+            for i in "${!selected_compose_files[@]}"; do
+              local compose_file_name=$(basename "${selected_compose_files[i]}")
+              isOption "$((i + 1)). $compose_file_name"
+            done
 
-        # Check if edits were made
-        isQuestion "Check if edits were made. Press Enter to continue..."
-        read -p ""
+            # Read user input for file selection
+            echo ""
+            isQuestion "Enter the numbers of the files to edit (or 'x' to exit): "
+            read -p "" selected_files
 
+            case "$selected_files" in
+              [0-9]*)
+                # Edit the selected Docker Compose files with nano
+                IFS=' ' read -ra selected_file_numbers <<< "$selected_files"
+                for file_number in "${selected_file_numbers[@]}"; do
+                  local index=$((file_number - 1))
+                  if ((index >= 0 && index < ${#selected_compose_files[@]})); then
+                    local selected_file="${selected_compose_files[index]}"
+                    #echo "Debug: Editing file $selected_file"
+                    nano "$selected_file"
+                  fi
+                done
+                ;;
+              x)
+                isNotice "Debug: Exiting..."
+                return
+                ;;
+              *)
+                isNotice "Debug: Invalid option. Please choose valid file numbers or 'x' to exit."
+                ;;
+            esac
+          done
+        fi
       else
         isNotice "Invalid app number. Please choose a valid option."
       fi
@@ -467,7 +511,6 @@ viewComposeFiles()
       ;;
   esac
 }
-
 
 viewConfigs() 
 {
