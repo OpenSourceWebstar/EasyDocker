@@ -571,7 +571,9 @@ migrateSanitizeTXT()
     local migrate_file="$install_dir/$app_name/$migrate_file"
 
     # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
-    sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$migrate_file"
+    sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$migrate_file"
+    dos2unix "$migrate_file"
+    sudo sed -i 's/\r$//' "$migrate_file"
 }
 
 migrateCheckAndUpdateIP() 

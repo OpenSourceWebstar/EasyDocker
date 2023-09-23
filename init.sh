@@ -43,7 +43,7 @@ initializeScript()
 	echo "OS Updated"
 
 	# Install Apps
-	apt-get install sudo git zip curl sshpass apt-transport-https ca-certificates software-properties-common uidmap -y
+	apt-get install sudo git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "Prerequisite apps installed."
 
 	# Create Users
