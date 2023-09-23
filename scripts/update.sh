@@ -153,12 +153,22 @@ gitCheckForUpdate()
     cd "$script_dir"
     sudo -u $easydockeruser git fetch > /dev/null 2>&1
     if sudo -u $easydockeruser git status | grep -q "Your branch is ahead"; then
-        isNotice "The repository is already up to date."
+        isNotice "The repository is up to date...continuing..."
     elif sudo -u $easydockeruser git status | grep -q "Your branch is up to date with"; then
-        isSuccessful "The repository is already up to date."
+        isNotice "The repository is up to date...continuing..."
     else
-        isNotice "The repository is not up to date. Updating..."
-        gitFolderResetAndBackup;
+        isNotice "Updates found."
+        while true; do
+            isQuestion "Do you want to update EasyDocker now? (y/n): "
+            read -rp "" acceptupdates
+            if [[ "$acceptupdates" =~ ^[yYnN]$ ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input (y/n)."
+        done
+        if [[ $acceptupdates == [yY] ]]; then
+            gitFolderResetAndBackup;
+        fi
     fi
 }
 
@@ -254,15 +264,15 @@ gitUntrackFiles()
 
 gitReset()
 {
-        # Reset git
-        result=$(sudo -u $easydockeruser rm -rf $script_dir)
-        checkSuccess "Deleting all Git files"
-        result=$(mkdirFolders "$script_dir")
-        checkSuccess "Create the directory if it doesn't exist"
-        cd "$script_dir"
-        checkSuccess "Going into the install folder"
-        result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
-        checkSuccess "Clone the Git repository"
+    # Reset git
+    result=$(sudo -u $easydockeruser rm -rf $script_dir)
+    checkSuccess "Deleting all Git files"
+    result=$(mkdirFolders "$script_dir")
+    checkSuccess "Create the directory if it doesn't exist"
+    cd "$script_dir"
+    checkSuccess "Going into the install folder"
+    result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
+    checkSuccess "Clone the Git repository"
 }
 
 gitCleanInstallBackups()
