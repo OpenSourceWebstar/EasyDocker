@@ -88,7 +88,27 @@ restoreStart()
         migrateUpdateFiles $stored_app_name;
         app_name=$stored_app_name
     fi
-    
+
+    ((menu_number++))
+    echo ""
+    echo "---- $menu_number. Updating docker-compose file(s)"
+    echo ""
+
+    # This is mostly for the updating of the socker file update
+    # For checking if it's a default compose file or not
+    app_dir=$(find "$containers_dir" -type d -name "$stored_app_name" -print -quit)
+    app_script="$app_dir/$stored_app_name.sh"
+
+    setupIPsAndHostnames;
+
+    if grep -q "editComposeFileDefault" $app_script; then
+        editComposeFileDefault;
+    fi
+
+    if grep -q "editComposeFileApp" $app_script; then
+        editComposeFileApp;
+    fi
+
     ((menu_number++))
     echo ""
     echo "---- $menu_number. Starting up the $stored_app_name docker service(s)"
