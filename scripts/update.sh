@@ -152,7 +152,9 @@ gitCheckForUpdate()
     # Check the status of the local repository
     cd "$script_dir"
     sudo -u $easydockeruser git fetch > /dev/null 2>&1
-    if sudo -u $easydockeruser git status | grep -q "Your branch is up to date with"; then
+    if sudo -u $easydockeruser git status | grep -q "Your branch is ahead"; then
+        isNotice "The repository is already up to date."
+    elif sudo -u $easydockeruser git status | grep -q "Your branch is up to date with"; then
         isSuccessful "The repository is already up to date."
     else
         isNotice "The repository is not up to date. Updating..."
