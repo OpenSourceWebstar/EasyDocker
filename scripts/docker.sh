@@ -166,16 +166,23 @@ editComposeFileDefault()
     
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-            checkSuccess "Enabling Traefik options for public setup"
-            result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-            checkSuccess "Enable labels for Traefik option options on private setup"
+            if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
+                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                checkSuccess "Enable labels for Traefik option options on public setup"
+                result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
+            else
+                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                checkSuccess "Enable labels for Traefik option options on public setup"
+                result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                checkSuccess "Enabling Traefik options for public setup"
+            fi
         fi
     fi
     
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
+            result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
             checkSuccess "Disable Traefik options for private setup"
         fi
     fi
@@ -209,14 +216,23 @@ editComposeFileApp()
     
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-            checkSuccess "Enabling Traefik options for public setup)"
+            if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
+                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                checkSuccess "Enable labels for Traefik option options on public setup"
+                result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
+            else
+                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                checkSuccess "Enable labels for Traefik option options on public setup"
+                result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                checkSuccess "Enabling Traefik options for public setup"
+            fi
         fi
     fi
     
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i "s/labels:/#labels/g" $compose_file)
+            result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
             checkSuccess "Disable Traefik options for private setup"
         fi
     fi
