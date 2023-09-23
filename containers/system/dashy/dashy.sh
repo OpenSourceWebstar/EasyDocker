@@ -57,7 +57,7 @@ installDashy()
         echo "---- $menu_number. Setting up conf.yml file."
         echo ""
 
-        dashyUpdateConf;
+        #dashyUpdateConf;
 
 		((menu_number++))
         echo ""
