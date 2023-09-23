@@ -510,15 +510,19 @@ migrateBuildTXT()
 {
     local app_name=$1
     local migrate_file_path="$install_dir/$app_name/$migrate_file"
-    # Create a migrate.txt file with IP and InstallName
-    createTouch "$migrate_file_path"
 
-    # Add MIGRATE_IP options to $migrate_file for $app_name
-    echo "MIGRATE_IP=$public_ip" | sudo tee -a "$migrate_file_path" >/dev/null
-    # Add MIGRATE_INSTALL_NAME options to $migrate_file for $app_name
-    echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$migrate_file_path" >/dev/null
+    # Check if the migrate.txt file exists
+    if [ ! -f "$migrate_file_path" ]; then
+        # Create a migrate.txt file with IP and InstallName
+        createTouch "$migrate_file_path"
 
-    isSuccessful "Created $migrate_file for $app_name"
+        # Add MIGRATE_IP options to $migrate_file for $app_name
+        echo "MIGRATE_IP=$public_ip" | sudo tee -a "$migrate_file_path" >/dev/null
+        # Add MIGRATE_INSTALL_NAME options to $migrate_file for $app_name
+        echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$migrate_file_path" >/dev/null
+
+        isSuccessful "Created $migrate_file for $app_name"
+    fi
 }
 
 migrateScanFoldersForUpdates()
@@ -575,7 +579,7 @@ migrateSanitizeTXT()
 
     # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
     #sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$migrate_file_path"
-    sudo dos2unix "$migrate_file_path" > /dev/null 2>&1
+    #sudo dos2unix "$migrate_file_path" > /dev/null 2>&1
     #sudo sed -i 's/\r$//' "$migrate_file_path"
 }
 
@@ -583,17 +587,23 @@ migrateCheckAndUpdateIP()
 {
     local app_name="$1"
     local migrate_file_path="$install_dir/$app_name/$migrate_file"
+
     # Check if the migrate.txt file exists
     if [ -f "$migrate_file_path" ]; then
         local migrate_ip=$(sudo grep -o 'MIGRATE_IP=.*' "$migrate_file_path" | cut -d '=' -f 2)
+        
         if [ "$migrate_ip" != "$public_ip" ]; then
             if ! sudo grep -q "MIGRATE_IP=" "$migrate_file_path"; then
+                # Add MIGRATE_IP if it's missing
                 result=$(sudo sed -i "1s/^/MIGRATE_IP=$public_ip\n/" "$migrate_file_path")
                 checkSuccess "Adding missing MIGRATE_IP for $app_name : $migrate_file."
             else
-                result=$(sudo sed -i "s#MIGRATE_IP=.*#MIGRATE_IP=$public_ip#" "$migrate_file_path")
+                # Update MIGRATE_IP if it's already there
+                result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$migrate_file_path")
                 checkSuccess "Updated MIGRATE_IP for $app_name : $migrate_file to $public_ip."
             fi
+            
+            # Replace old IP with the new IP in .yml and .env files
             result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s|$migrate_ip|$public_ip|g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
@@ -601,6 +611,7 @@ migrateCheckAndUpdateIP()
         isError "$migrate_file not found in $app_name."
     fi
 }
+
 
 migrateCheckAndUpdateInstallName() 
 {
@@ -629,7 +640,6 @@ migrateCheckAndUpdateInstallName()
 
 migrateScanConfigsToMigrate() 
 {
-  local migrate_file_path="$install_dir/$app_name/$migrate_file"
   # Find all subdirectories under the installation path and use them as app names
   local app_names=()
 
@@ -647,13 +657,13 @@ migrateScanConfigsToMigrate()
     #echo "Processing app_name: $app_name"
 
     # Define the migrate.txt file for the app
-
-    #echo "Migrate file: $migrate_file_path"
+    local migrate_file="$install_dir/$app_name/migrate.txt"
+    #echo "Migrate file: $migrate_file"
 
     # Read the content of migrate.txt into an array
     declare -a migrate_lines
-    if [[ -f "$migrate_file_path" ]]; then
-      mapfile -t migrate_lines < "$migrate_file_path"
+    if [[ -f "$migrate_file" ]]; then
+      mapfile -t migrate_lines < "$migrate_file"
     fi
 
     # Create an associative array to track variable names in migrate.txt
@@ -686,7 +696,7 @@ migrateScanConfigsToMigrate()
               if [[ -z "${existing_variables[$variable_name]}" ]]; then
                 isSuccessful "Adding $line to ${app_name}'s migrate.txt file"
                 # Append the line to migrate.txt
-                echo "$line" | sudo tee -a "$migrate_file_path" >/dev/null
+                echo "$line" | sudo tee -a "$migrate_file" >/dev/null
                 # Update the associative array
                 existing_variables["$variable_name"]=1
               fi
