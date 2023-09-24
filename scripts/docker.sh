@@ -179,8 +179,14 @@ editComposeFileDefault()
             if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                result=$(sudo awk '/#traefik/ && !/whitelist/ { sub(/^#/, "", $0) } { print }' "$compose_file" | sudo tee "$compose_file" > /dev/null)
-                checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
+                # Loop through compose file
+                while IFS= read -r line; do
+                    if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
+                        line="${line//#/}"
+                    fi
+                    echo "$line"
+                done < "$compose_file" > >(sudo tee "$compose_file")
+                isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
             else
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
@@ -188,8 +194,14 @@ editComposeFileDefault()
                     result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
                     checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
                 elif grep -q "WHITELIST=false" "$compose_file"; then
-                result=$(sudo awk '/#traefik/ && !/whitelist/ { sub(/^#/, "", $0) } { print }' "$compose_file" | sudo tee "$compose_file" > /dev/null)
-                    checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
+                    # Loop through compose file
+                    while IFS= read -r line; do
+                        if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
+                            line="${line//#/}"
+                        fi
+                        echo "$line"
+                    done < "$compose_file" > >(sudo tee "$compose_file")
+                    isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
                 fi
             fi
         fi
