@@ -53,11 +53,12 @@ whitelistUpdateYML()
                     checkSuccess "Update the IP whitelist for $app_name"
                     whitelistUpdateCompose $app_name;
                     whitelistUpdateRestart $app_name;
+                    break  # Exit the loop after updating
                 fi
 
-                # If the IPs are setup already but needs an update
+                # If the IPs are setup already but need an update
                 local current_ip_range=$(grep "ipwhitelist.sourcerange:" "$yaml_file" | cut -d ' ' -f 2)
-                if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
+                if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ] && [ "$current_ip_range" != "IPWHITELIST" ]; then
                     result=$(sudo sed -i "s/ipwhitelist.sourcerange: $current_ip_range/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     whitelistUpdateCompose $app_name;

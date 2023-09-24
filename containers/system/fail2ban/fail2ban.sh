@@ -90,9 +90,6 @@ installFail2Ban()
             result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_dir$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up AbuseIPDB API Key in jail.local file"
 
-            result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_dir$app_name/config/$app_name/jail.local)
-            checkSuccess "Setting up IP Whitelist in jail.local file"
-
             if [[ $compose_setup == "default" ]]; then
                 dockerDownUpDefault $app_name;
             elif [[ $compose_setup == "app" ]]; then
