@@ -25,6 +25,7 @@ setupInstallVariables()
         setupIPsAndHostnames;
     fi
     
+    isSuccessful "App install variables setup successfully." 
 }
 
 setupIPsAndHostnames()
@@ -48,14 +49,16 @@ setupIPsAndHostnames()
             if [[ "$public" == "true" ]]; then
                 isSuccessful "Using $host_setup for public domain."
                 checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
-                echo ""
+            fi
+
+            if [[ $found_match == "true" ]]; then
+                isSuccessful "App network settings setup successfully."
             fi
         fi
     done < "$configs_dir$ip_file"
     
     if ! "$found_match"; then  # Changed the condition to check if no match is found
         checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"
-        echo ""
     fi
 }
 
