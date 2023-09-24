@@ -63,7 +63,7 @@ databaseUninstallApp()
 
     if [ -z "$results" ]; then
         # App not found in the database
-        isError "$app_name is not installed or not found in the database."
+        isNotice "$app_name is not installed or not found in the database."
         return 1
     else
         # App found in the database, update status to 0 and set uninstall_date

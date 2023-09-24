@@ -215,7 +215,7 @@ gitFolderResetAndBackup()
     checkSuccess "Copy the configs to the backup folder"
     result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
-    result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$containers_dir" "$backup_install_dir/$backupFolder/containers")
+    result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$install_dir" "$backup_install_dir/$backupFolder/containers")
     checkSuccess "Copy the containers to the backup folder"
 
     gitReset;
@@ -251,7 +251,7 @@ gitUntrackFiles()
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     # Get a list of .config files recursively in $containers_dir
-    config_files=($(find "$containers_dir" -type f -name "*.config"))
+    config_files=($(find "$install_dir" -type f -name "*.config"))
 
     # Loop through the list and untrack each file
     for config_file in "${config_files[@]}"; do

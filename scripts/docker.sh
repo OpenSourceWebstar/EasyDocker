@@ -8,12 +8,55 @@ runCommandForDockerInstallUser()
     result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command")
 }
 
+setupConfigToContainer()
+{
+    local app_name="$1"
+    local target_path="$install_dir$app_name"
+    local source_file="$containers_dir$app_name/$app_name.config"
+
+    if [ "$app_name" == "" ]; then
+        isError "The app_name is empty."
+        return 1
+    fi
+
+    if [ -d "$target_path" ]; then
+        isNotice "The directory '$target_path' already exists."
+        return 1
+    fi
+    
+    if [ ! -f "$source_file" ]; then
+        isError ""Error: "The config file '$source_file' does not exist."
+        return 1
+    fi
+    
+    mkdirFolders "$target_path"
+
+    if [ $? -ne 0 ]; then
+        isError "Failed to create the directory '$target_path'."
+        return 1
+    fi
+    
+    copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    
+    if [ $? -ne 0 ]; then
+        isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
+        return 1
+    fi
+
+    loadConfigFiles;
+}
+
 setupComposeFileNoApp()
 {
+    local app_name="$1"
     local target_path="$install_dir$app_name"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    local source_file="$app_dir/docker-compose.yml"
+    local source_file="$containers_dir$app_name/docker-compose.yml"
     
+    if [ "$app_name" == "" ]; then
+        isError "The app_name is empty."
+        return 1
+    fi
+
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."
         return 1
@@ -36,16 +79,19 @@ setupComposeFileNoApp()
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
     fi
-    
-    cd "$target_path"
 }
 
 setupComposeFileApp()
 {
+    local app_name="$1"
     local target_path="$install_dir$app_name"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    local source_file="$app_dir/docker-compose.yml"
+    local source_file="$containers_dir$app_name/docker-compose.yml"
     
+    if [ "$app_name" == "" ]; then
+        isError "The app_name is empty."
+        return 1
+    fi
+
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."
         return 1
@@ -56,8 +102,7 @@ setupComposeFileApp()
         return 1
     fi
     
-    result=$(sudo -u $easydockeruser mkdir -p "$target_path")
-    checkSuccess "Creating install path for $app_name"
+    result=$(mkdirFolders "$target_path")
     
     if [ $? -ne 0 ]; then
         isError "Failed to create the directory '$target_path'."
@@ -70,8 +115,6 @@ setupComposeFileApp()
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
     fi
-    
-    cd "$target_path"
 }
 
 dockerDownUpDefault()
@@ -153,8 +196,7 @@ editComposeFileDefault()
 {
     local app_name="$1"
     local compose_file="$install_dir$app_name/docker-compose.yml"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    local config_file="$app_dir/$app_name.config"
+    local config_file="$install_dir$app_name/$app_name.config"
     
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -224,8 +266,7 @@ editComposeFileApp()
 {
     local app_name="$1"
     local compose_file="$install_dir$app_name/docker-compose.$app_name.yml"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    local config_file="$app_dir/$app_name.config"
+    local config_file="$install_dir$app_name/$app_name.config"
 
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \

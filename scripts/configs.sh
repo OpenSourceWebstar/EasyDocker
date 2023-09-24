@@ -139,7 +139,7 @@ checkApplicationsConfigFilesMissingVariables()
                             checkSuccess "Adding the $var_line to '$container_config_relative_path':"
 
                             if [[ $var_line == *"WHITELIST="* ]]; then
-                                local app_dir=$(find "$containers_dir" -type d -name "$config_app_name" -print -quit)
+                                local app_dir=$containers_dir$config_app_name
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
                                     echo ""
@@ -175,7 +175,7 @@ checkApplicationsConfigFilesMissingVariables()
                             checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_relative_path':"
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
-                                local app_dir=$(find "$containers_dir" -type d -name "$config_app_name" -print -quit)
+                                local app_dir=$containers_dir$config_app_name
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
                                     echo ""
@@ -188,7 +188,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistAndStartApp $config_app_name;
+                                                whitelistAndStartApp $config_app_name true;
                                                 break  # Exit the loop
                                             ;;
                                             [nN])
@@ -288,7 +288,7 @@ editAppConfig() {
     fi
 
     # Use find to search for the app_name folder within $containers_dir
-    app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    app_dir=$containers_dir$app_name
 
     if [ -n "$app_dir" ]; then
         config_file="$app_dir/$app_name.config"

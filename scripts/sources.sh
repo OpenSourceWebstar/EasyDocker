@@ -38,7 +38,15 @@ loadContainerFiles() {
         if [ -f "$file" ]; then
             source "$(echo "$file" | sed 's|/docker/install//||')"
         fi
-    done < <(find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.config' -o -name '*.sh' \) -print0)
+    done < <(find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.sh' \) -print0)
 }
+loadContainerFiles;
 
-loadContainerFiles
+loadConfigFiles() {
+    while IFS= read -r -d '' file; do
+        if [ -f "$file" ]; then
+            source "$(echo "$file" | sed 's|/docker/install//||')"
+        fi
+    done < <(find "$install_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.config'\) -print0)
+}
+loadConfigFiles;

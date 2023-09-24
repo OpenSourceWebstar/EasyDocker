@@ -191,7 +191,7 @@ copyResource()
     local file_name="$2"
     local save_path="$3"
 
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    local app_dir=$containers_dir$config_app_name
 
     # Check if the app_name folder was found
     if [ -z "$app_dir" ]; then

@@ -677,8 +677,7 @@ migrateScanConfigsToMigrate()
       existing_variables["$variable_name"]=1
     done
 
-    # Look for config files within the $app_name subfolder of containers_dir
-    local app_config_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    local app_config_dir=$install_dir$app_name
 
     if [[ -n "$app_config_dir" ]]; then
       for config_file in "$app_config_dir"/*.config; do
@@ -763,8 +762,7 @@ migrateScanMigrateToConfigs()
         # Initialize a flag to indicate if the variable was found in any config file
         var_found=0
 
-        # Find the app_config_dir based on the app_name
-        local app_config_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+        local app_config_dir=$install_dir$app_name
         #echo "App config dir for $app_name: $app_config_dir"
 
         if [[ -n "$app_config_dir" ]]; then

@@ -5,6 +5,7 @@ app_name="$1"
 # Function to update IP whitelist in YAML files
 whitelistAndStartApp()
 {
+    echo "whitelistAndStartApp"
     local app_name="$1"
 
     # Starting variable for app
@@ -41,7 +42,7 @@ whitelistScan()
 whitelistUpdateYML()
 {
     local app_name="$1"
-
+    echo "whitelistUpdateYML"
     # Whitelist update for yml files
     for yaml_file in "$install_dir/$app_name"/*.yml; do
         if [ -f "$yaml_file" ]; then
@@ -65,12 +66,6 @@ whitelistUpdateYML()
         fi
     done
 
-    # For updating and restarting after
-    if [[ "$app_name" != "fail2ban" ]]; then
-        whitelistUpdateCompose $app_name;
-        whitelistUpdateRestart $app_name;
-    fi
-
     # Fail2ban specifics
     if [[ "$app_name" == "fail2ban" ]]; then
         if grep -q "ignoreip = ips_whitelist" "$install_dir/$app_name/config/$app_name/jail.local"; then
@@ -91,10 +86,15 @@ whitelistUpdateYML()
         fi
         whitelistUpdateRestart $app_name;
     fi
+
+    whitelistUpdateCompose $app_name;
+    whitelistUpdateRestart $app_name;
 }
 
 whitelistUpdateCompose()
 {
+    echo "whitelistUpdateCompose"
+    echo "compose_setup = $compose_setup"
     local app_name="$1"
 
     if [[ $compose_setup == "default" ]]; then
@@ -106,6 +106,8 @@ whitelistUpdateCompose()
 
 whitelistUpdateRestart()
 {
+    echo "whitelistUpdateRestart"
+    echo "compose_setup = $compose_setup"
     local app_name="$1"
 
     if [[ $compose_setup == "default" ]]; then
