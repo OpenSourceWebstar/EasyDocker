@@ -42,6 +42,7 @@ whitelistUpdateYML()
 {
     local app_name="$1"
 
+    # Whitelist update for yml files
     for yaml_file in "$install_dir/$app_name"/*.yml; do
         if [ -f "$yaml_file" ]; then
             # Check if the YAML file contains ipwhitelist.sourcerange
@@ -51,8 +52,6 @@ whitelistUpdateYML()
                 if grep -q "ipwhitelist.sourcerange: IPWHITELIST" "$yaml_file"; then
                     result=$(sudo sed -i "s/ipwhitelist.sourcerange: IPWHITELIST/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
-                    whitelistUpdateCompose $app_name;
-                    whitelistUpdateRestart $app_name;
                     break  # Exit the loop after updating
                 fi
 
@@ -61,12 +60,18 @@ whitelistUpdateYML()
                 if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ] && [ "$current_ip_range" != "IPWHITELIST" ]; then
                     result=$(sudo sed -i "s/ipwhitelist.sourcerange: $current_ip_range/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
-                    whitelistUpdateCompose $app_name;
-                    whitelistUpdateRestart $app_name;
                 fi
             fi
         fi
     done
+
+    # For updating and restarting after
+    if [[ "$app_name" != "fail2ban" ]]; then
+        whitelistUpdateCompose $app_name;
+        whitelistUpdateRestart $app_name;
+    fi
+
+    # Fail2ban specifics
     if [[ "$app_name" == "fail2ban" ]]; then
         if grep -q "ignoreip = ips_whitelist" "$install_dir/$app_name/config/$app_name/jail.local"; then
 
@@ -74,10 +79,7 @@ whitelistUpdateYML()
             if grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
                 result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/" "$install_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
-                #echo "whitelistUpdateCompose $app_name;"
-                whitelistUpdateCompose $app_name;
-                #echo "whitelistUpdateRestart $app_name;"
-                whitelistUpdateRestart $app_name;
+
             fi
 
             # If the IPs are setup already but needs an update
@@ -85,10 +87,9 @@ whitelistUpdateYML()
             if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
                 result=$(sudo sed -i "s/ignoreip = ips_whitelist/ignoreip = $CFG_IPS_WHITELIST/" "$install_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
-                #echo "whitelistUpdateRestart $app_name"
-                whitelistUpdateRestart $app_name;
             fi
         fi
+        whitelistUpdateRestart $app_name;
     fi
 }
 
