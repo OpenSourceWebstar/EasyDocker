@@ -5,7 +5,7 @@
 
 installDuplicati()
 {
-    if [[ -n "$duplicati" && "$duplicati" =~ [a-mo-zA-Z] ]]; then
+    if [[ -n "$duplicati" && "$duplicati" != "n" ]]; then
         setupConfigToContainer duplicati;
         app_name=$CFG_DUPLICATI_APP_NAME
     fi

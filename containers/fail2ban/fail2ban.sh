@@ -5,7 +5,7 @@
 
 installFail2Ban()
 {
-    if [[ -n "$fail2ban" && "$fail2ban" =~ [a-mo-zA-Z] ]]; then
+    if [[ -n "$fail2ban" && "$fail2ban" != "n" ]]; then
         setupConfigToContainer fail2ban;
         app_name=$CFG_FAIL2BAN_APP_NAME
     fi

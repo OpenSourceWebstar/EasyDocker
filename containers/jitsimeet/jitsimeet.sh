@@ -5,7 +5,7 @@
 
 installJitsiMeet()
 {
-    if [[ -n "$jitsimeet" && "$jitsimeet" =~ [a-mo-zA-Z] ]]; then
+    if [[ -n "$jitsimeet" && "$jitsimeet" != "n" ]]; then
     	setupConfigToContainer jitsimeet;
 		app_name=$CFG_JITSIMEET_APP_NAME
 		git_url=$CFG_JITSIMEET_GIT
