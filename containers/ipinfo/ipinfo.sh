@@ -5,9 +5,8 @@
 
 installIPInfo()
 {
-    setupConfigToContainer ipinfo;
-
     if [[ "$ipinfo" =~ [a-zA-Z] ]]; then
+        setupConfigToContainer ipinfo;
         app_name=$CFG_IPINFO_APP_NAME
     fi
 

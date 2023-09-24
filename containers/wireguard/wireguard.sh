@@ -5,9 +5,8 @@
 
 installWireguard()
 {
-    setupConfigToContainer wireguard;
-
     if [[ "$wireguard" =~ [a-zA-Z] ]]; then
+        setupConfigToContainer wireguard;
         app_name=$CFG_WIREGUARD_APP_NAME
     fi
     

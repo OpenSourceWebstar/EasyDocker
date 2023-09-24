@@ -5,9 +5,8 @@
 
 installTrilium()
 {
-    setupConfigToContainer traefik;
-    
     if [[ "$trilium" =~ [a-zA-Z] ]]; then
+        setupConfigToContainer traefik;
         app_name=$CFG_TRILIUM_APP_NAME
     fi
 

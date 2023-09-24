@@ -5,9 +5,8 @@
 
 installWatchtower()
 {
-    setupConfigToContainer watchtower;
-
     if [[ "$watchtower" =~ [a-zA-Z] ]]; then
+        setupConfigToContainer watchtower;
         app_name=$CFG_WATCHTOWER_APP_NAME
     fi
 

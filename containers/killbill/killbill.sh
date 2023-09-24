@@ -5,9 +5,8 @@
 
 installKillbill()
 {
-    setupConfigToContainer killbill;
-
     if [[ "$killbill" =~ [a-zA-Z] ]]; then
+        setupConfigToContainer killbill;
         app_name=$CFG_KILLBILL_APP_NAME
     fi
     
