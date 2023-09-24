@@ -22,7 +22,12 @@ installMattermost()
 	fi
 
 	if [[ "$mattermost" == *[rR]* ]]; then
-		dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
 	fi
 
     if [[ "$mattermost" == *[iI]* ]]; then
@@ -155,16 +160,16 @@ EOF
     	if [[ "$MATN" == [nN] ]]; then
 			if [[ "$OS" == [123] ]]; then
 				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN down")
+					result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 					checkSuccess "Shutting down nginx container"
 
-					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCN up -d")
+					result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCN up -d")
 					checkSuccess "Starting up nginx container"
 				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
+					result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 					checkSuccess "Shutting down nginx container"
 
-					result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
+					result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
 					checkSuccess "Starting up nginx container"
 				fi
 			fi
@@ -180,19 +185,19 @@ EOF
 					editCustomFile "$install_dir$app_name" "$DCWN"
 				fi
 
-				cd $install_dir$app_name 
+				 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
 					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-						result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN down")
+						result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 
-						result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f $DCWN up -d")
+						result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-						result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
+						result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 						
-						result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
+						result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					fi
 				fi

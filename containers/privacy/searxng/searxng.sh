@@ -21,7 +21,12 @@ installSearXNG()
 	fi
 
 	if [[ "$searxng" == *[rR]* ]]; then
-		dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
 	fi
 
 	if [[ "$searxng" == *[iI]* ]]; then
@@ -43,8 +48,11 @@ installSearXNG()
 		echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-		setupComposeFileNoApp;
-		whitelistApp $app_name false;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		((menu_number++))
         echo ""
@@ -58,7 +66,7 @@ installSearXNG()
 		echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
 		echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
 		# Loop to check for the existence of the file every second
 		while [ ! -f "$install_dir$app_name/searxng-data/settings.yml" ]; do
@@ -70,7 +78,11 @@ installSearXNG()
 		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_dir$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
-		dockerDownUpDefault $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
 
         ((menu_number++))
         echo ""

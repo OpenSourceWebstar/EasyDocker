@@ -21,7 +21,12 @@ installAdguard()
     fi
 
     if [[ "$adguard" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$adguard" == *[iI]* ]]; then
@@ -43,8 +48,11 @@ installAdguard()
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-		setupComposeFileNoApp;
-		whitelistApp $app_name false;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		result=$(copyResource "$app_name" "unbound.conf" "unbound.conf" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
@@ -61,7 +69,7 @@ installAdguard()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
         ((menu_number++))
         echo ""

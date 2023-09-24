@@ -23,7 +23,12 @@ installMailcow()
 	fi
 
 	if [[ "$mailcow" == *[rR]* ]]; then
-		dockerDownUpAdditionalYML $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
 	fi
 
     if [[ "$mailcow" == *[iI]* ]]; then

@@ -20,8 +20,13 @@ installTraefik()
         shutdownApp;
     fi
 
-    if [[ "$traefik" == *[rR]* ]]; then      
-        dockerDownUpDefault $app_name;
+    if [[ "$traefik" == *[rR]* ]]; then   
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$traefik" == *[iI]* ]]; then
@@ -43,7 +48,11 @@ installTraefik()
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-		setupComposeFileNoApp;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 		
         # Create necessary directories and set permissions
         result=$(mkdirFolders "$install_dir$app_name/etc" "$install_dir$app_name/etc/certs")
@@ -61,8 +70,6 @@ installTraefik()
         result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
-		whitelistApp $app_name false;
-
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
@@ -75,7 +82,7 @@ installTraefik()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
         ((menu_number++))
         echo ""
@@ -89,7 +96,11 @@ installTraefik()
         echo "---- $menu_number. Restarting $app_name after firewall changes"
         echo ""
 
-		dockerDownUpDefault $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
 
 		((menu_number++))
 		echo ""

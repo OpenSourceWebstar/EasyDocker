@@ -79,12 +79,15 @@ dockerDownUpDefault()
     local app_name="$1"
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        
             result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
             
             result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
-            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+
             result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
             
@@ -93,17 +96,21 @@ dockerDownUpDefault()
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+
             result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
             
             result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
-            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+
             result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
             
             result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
+
         fi
     fi
 }
@@ -146,8 +153,6 @@ editComposeFileDefault()
 {
     local app_name="$1"
     local compose_file="$install_dir$app_name/docker-compose.yml"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    local app_config="$app_dir/$app_name.config"
     
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -179,10 +184,10 @@ editComposeFileDefault()
             else
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                if grep -q "WHITELIST=true" "$app_config"; then
+                if grep -q "WHITELIST=true" "$compose_file"; then
                     result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
                     checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
-                elif grep -q "WHITELIST=false" "$app_config"; then
+                elif grep -q "WHITELIST=false" "$compose_file"; then
                     result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
                     checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
                 fi
@@ -204,8 +209,6 @@ editComposeFileApp()
 {
     local app_name="$1"
     local compose_file="$install_dir$app_name/docker-compose.$app_name.yml"
-    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
-    local app_config="$app_dir/$app_name.config"
 
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -237,10 +240,10 @@ editComposeFileApp()
             else
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                if grep -q "WHITELIST=true" "$app_config"; then
+                if grep -q "WHITELIST=true" "$compose_file"; then
                     result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
                     checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
-                elif grep -q "WHITELIST=false" "$app_config"; then
+                elif grep -q "WHITELIST=false" "$compose_file"; then
                     result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
                     checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
                 fi

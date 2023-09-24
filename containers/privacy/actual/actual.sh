@@ -21,7 +21,12 @@ installActual()
 	fi
 
     if [[ "$actual" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$actual" == *[iI]* ]]; then
@@ -43,8 +48,11 @@ installActual()
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-		setupComposeFileNoApp;
-		whitelistApp $app_name false;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		# SSL Cert is needed to load, using self signed
 		if [ -f "$ssl_dir$ssl_key" ]; then
@@ -71,7 +79,7 @@ installActual()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
 		((menu_number++))
         echo ""

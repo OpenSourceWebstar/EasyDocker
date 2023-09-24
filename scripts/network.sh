@@ -3,9 +3,10 @@
 setupInstallVariables()
 {
     app_name="$1"
-    echo "setupInstallVariables"
+
     # Build variable names based on app_name
     host_name_var="CFG_${app_name^^}_HOST_NAME"
+    compose_setup_var="CFG_${app_name^^}_COMPOSE_FILE"
     domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
     public_var="CFG_${app_name^^}_PUBLIC"
     port_var="CFG_${app_name^^}_PORT"
@@ -13,6 +14,7 @@ setupInstallVariables()
 
     # Access the variables using variable indirection
     host_name="${!host_name_var}"
+    compose_setup="${!compose_setup_var}"
     domain_number="${!domain_number_var}"
     public="${!public_var}"
     port="${!port_var}"

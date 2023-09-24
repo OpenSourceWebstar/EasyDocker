@@ -28,7 +28,12 @@ installCozy()
     fi
 
     if [[ "$cozy" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$cozy" == *[iI]* ]]; then
@@ -77,7 +82,11 @@ installCozy()
 		result=$(mkdirFolders $install_dir/$app_name/db $install_dir/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
-		setupComposeFileApp;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		result=$(sudo sed -i '35,$ d' $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"
@@ -88,14 +97,12 @@ installCozy()
 		result=$(sudo sed -i "s|labels:|#labels:|g" $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
-		whitelistApp $app_name false;
-
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
 		((menu_number++))
         echo ""

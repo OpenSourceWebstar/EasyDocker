@@ -22,7 +22,12 @@ installFail2Ban()
     fi
 
     if [[ "$fail2ban" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$fail2ban" == *[iI]* ]]; then
@@ -37,8 +42,11 @@ installFail2Ban()
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-		setupComposeFileNoApp;
-		whitelistApp $app_name false;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		((menu_number++))
         echo ""
@@ -52,7 +60,7 @@ installFail2Ban()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
 		((menu_number++))
         echo ""
@@ -85,7 +93,11 @@ installFail2Ban()
             result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/g" $install_dir$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up IP Whitelist in jail.local file"
 
-		    dockerDownUpDefault $app_name;
+            if [[ $compose_setup == "default" ]]; then
+                dockerDownUpDefault $app_name;
+            elif [[ $compose_setup == "app" ]]; then
+                dockerDownUpAdditionalYML $app_name;
+            fi
         else
             isNotice "No API key found, please provide one if you want to use AbuseIPDB"
         fi

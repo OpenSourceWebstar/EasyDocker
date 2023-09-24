@@ -87,7 +87,7 @@ restoreStart()
     echo "---- $menu_number. Updating docker-compose file(s)"
     echo ""
 
-    whitelistApp $app_name false;
+    whitelistAndStartApp $app_name;
 
     ((menu_number++))
     echo ""

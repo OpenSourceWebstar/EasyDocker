@@ -21,7 +21,12 @@ installCaddy()
     fi
 
     if [[ "$caddy" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$caddy" == *[iI]* ]]; then
@@ -43,11 +48,13 @@ installCaddy()
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
 		echo ""
 		
-		setupComposeFileNoApp;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 		
 		createTouch $install_dir$app_name/Caddyfile
-		
-		whitelistApp $app_name false;
 
 		((menu_number++))
         echo ""
@@ -61,7 +68,7 @@ installCaddy()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault $app_name;
+		whitelistAndStartApp $app_name;
 
         ((menu_number++))
         echo ""
@@ -75,7 +82,11 @@ installCaddy()
         echo "---- $menu_number. Restarting $app_name after firewall changes"
         echo ""
 
-		dockerDownUpDefault $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
 
 		((menu_number++))
 		echo ""

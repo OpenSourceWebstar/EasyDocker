@@ -21,7 +21,12 @@ installAkaunting()
 	fi
 
     if [[ "$akaunting" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$akaunting" == *[iI]* ]]; then
@@ -46,7 +51,11 @@ installAkaunting()
 		result=$(runCommandForDockerInstallUser "cd $install_dir && git clone https://github.com/akaunting/docker $install_dir$app_name")
 		checkSuccess "Cloning the Akaunting GitHub repo"
 
-		setupComposeFileApp;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		result=$(sudo sed -i 's|- akaunting-data:/var/www/html|- ./akaunting-data/:/var/www/html|g' $install_dir$app_name/docker-compose.yml)
 		checkSuccess "Updating akaunting-data to persistant storage"
@@ -63,8 +72,7 @@ installAkaunting()
 			result=$(sudo sed -i "${last_network},${last_network}+2s/^/# /" "$install_dir$app_name/docker-compose.yml")
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
 		fi
-		
-		whitelistApp $app_name false;
+
 
 		((menu_number++))
         echo ""
@@ -96,6 +104,8 @@ installAkaunting()
         echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start Akaunting"
         echo ""
+
+		whitelistAndStartApp $app_name;
 
 		# Check if this is a first time setup
 		if [ -f "$install_dir$app_name/SETUPINITIALIZED" ]; then

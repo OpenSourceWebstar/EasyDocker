@@ -21,7 +21,12 @@ installTileDesk()
 	fi
 
     if [[ "$tiledesk" == *[rR]* ]]; then
-        dockerDownUpDefault $app_name;
+		setupInstallVariables $app_name;
+        if [[ $compose_setup == "default" ]]; then
+		    dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
     if [[ "$tiledesk" == *[iI]* ]]; then
@@ -43,12 +48,16 @@ installTileDesk()
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-		setupComposeFileApp;
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp;
+        fi
 
 		result=$(cd $install_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
 
-		whitelistApp $app_name false;
+		whitelistAndStartApp $app_name;
 
 		((menu_number++))
         echo ""

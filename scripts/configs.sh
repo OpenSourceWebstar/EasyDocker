@@ -152,8 +152,8 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistApp "$config_app_name" true
-                                                break  # Exit the loop after executing whitelistApp
+                                                whitelistAndStartApp "$config_app_name" true
+                                                break  # Exit the loop after executing whitelistAndStartApp
                                                 ;;
                                             [nN])
                                                 break  # Exit the loop without updating
@@ -188,7 +188,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistApp $config_app_name true;
+                                                whitelistAndStartApp $config_app_name true;
                                                 break  # Exit the loop
                                             ;;
                                             [nN])
