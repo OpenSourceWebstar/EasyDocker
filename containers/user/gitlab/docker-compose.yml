@@ -28,6 +28,8 @@ services:
       #traefik.tcp.routers.gitlab-ssh.entrypoints: ssh
       #traefik.tcp.routers.gitlab-ssh.service: gitlab-ssh-svc
       #traefik.tcp.services.gitlab-ssh-svc.loadbalancer.server.port: SECONDPORT
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.gitlab.middlewares: my-whitelist-in-docker@docker
     volumes:
       - ./config:/etc/gitlab
       - ./logs:/var/log/gitlab

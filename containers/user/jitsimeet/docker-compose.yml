@@ -108,12 +108,15 @@ services:
                 aliases:
                     - ${XMPP_DOMAIN}
         labels:
-            traefik.enable: true
-            traefik.http.routers.web.entrypoints: web,websecure
-            traefik.http.routers.web.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
-            traefik.http.routers.web.tls: true
-            traefik.http.routers.web.tls.certresolver: production
-            traefik.docker.network: vpn
+            #caddy: DOMAINSUBNAMEHERE
+            #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+            #traefik.enable: true
+            #traefik.http.routers.jitismeet.entrypoints: web,websecure
+            #traefik.http.routers.jitismeet.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+            #traefik.http.routers.jitismeet.tls: true
+            #traefik.http.routers.jitismeet.tls.certresolver: production
+            #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+            #traefik.http.routers.jitismeet.middlewares: my-whitelist-in-docker@docker
 
     # XMPP server
     prosody:

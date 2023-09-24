@@ -107,7 +107,7 @@ dockerDownUpDefault()
     fi
 }
 
-dockerUpDownAdditionalYML()
+dockerDownUpAdditionalYML()
 {
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then

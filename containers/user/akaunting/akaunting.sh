@@ -117,7 +117,7 @@ installAkaunting()
 			fi
 		else
 			isNotice "It seems $app_name is already setup, using the normal up command"
-			dockerUpDownAdditionalYML;
+			dockerDownUpAdditionalYML;
 		fi
 
         ((menu_number++))

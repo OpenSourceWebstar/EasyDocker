@@ -24,7 +24,7 @@ installMailcow()
 	fi
 
 	if [[ "$mailcow" == *[rR]* ]]; then
-		dockerUpDownAdditionalYML;
+		dockerDownUpAdditionalYML;
 	fi
 
     if [[ "$mailcow" == *[iI]* ]]; then
@@ -198,7 +198,7 @@ installMailcow()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpDownAdditionalYML;
+		dockerDownUpAdditionalYML;
 
         ((menu_number++))
         echo ""

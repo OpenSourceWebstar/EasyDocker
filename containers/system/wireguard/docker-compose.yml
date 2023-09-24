@@ -45,6 +45,8 @@ services:
       #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
       #traefik.http.routers.wireguard.tls: true
       #traefik.http.routers.wireguard.tls.certresolver: production
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.wireguard.middlewares: my-whitelist-in-docker@docker
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

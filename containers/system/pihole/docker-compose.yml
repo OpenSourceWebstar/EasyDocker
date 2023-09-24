@@ -39,10 +39,12 @@ services:
       #caddy.rewrite: / /admin{uri}
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true
-      #traefik.http.routers.cozy.entrypoints: web,websecure
-      #traefik.http.routers.cozy.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
-      #traefik.http.routers.cozy.tls: true
-      #traefik.http.routers.cozy.tls.certresolver: production
+      #traefik.http.routers.pihole.entrypoints: web,websecure
+      #traefik.http.routers.pihole.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.pihole.tls: true
+      #traefik.http.routers.pihole.tls.certresolver: production
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.pihole.middlewares: my-whitelist-in-docker@docker
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

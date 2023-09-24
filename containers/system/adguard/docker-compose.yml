@@ -44,6 +44,8 @@ services:
       #traefik.tcp.routers.adguard-dot.tls: true
       #traefik.tcp.routers.adguard-dot.service: adguard
       #traefik.tcp.services.adguard.loadbalancer.server.port: 53
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.adguard.middlewares: my-whitelist-in-docker@docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - "./work:/opt/adguardhome/work"
