@@ -227,7 +227,7 @@ editComposeFileApp()
         result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
         "$compose_file")
-        checkSuccess "Updating Compose file for $app_name"
+        checkSuccess "Updating Compose file docker socket for $app_name"
     fi
     
     if [[ "$public" == "true" ]]; then
@@ -235,7 +235,7 @@ editComposeFileApp()
             if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                result=$(sudo awk '/#traefik/ && !/whitelist/ { sub(/^#/, "", $0) } { print }' "$compose_file" | sudo tee "$compose_file" > /dev/null)
                 checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
             else
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
@@ -244,7 +244,7 @@ editComposeFileApp()
                     result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
                     checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
                 elif grep -q "WHITELIST=false" "$compose_file"; then
-                    result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                    result=$(sudo awk '/#traefik/ && !/whitelist/ { sub(/^#/, "", $0) } { print }' "$compose_file" | sudo tee "$compose_file" > /dev/null)
                     checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
                 fi
             fi
@@ -303,7 +303,7 @@ editCustomFile()
         result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
         "$custompathandfile")
-        checkSuccess "Updating Compose file for $app_name"
+        checkSuccess "Updating Compose file docker socket for $app_name"
     fi
     
     isSuccessful "Updated the $customfile file"
