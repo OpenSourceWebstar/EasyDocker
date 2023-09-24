@@ -5,7 +5,7 @@
 
 installTest()
 {
-    if [[ -n "$test" && "$test" =~ [a-zA-Z] ]]; then
+    if [[ -n "$test" && "$test" =~ [a-mo-zA-Z] ]]; then
         setupConfigToContainer test;
         app_name=$CFG_TEST_APP_NAME
     fi

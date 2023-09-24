@@ -5,7 +5,7 @@
 
 installCozy()
 {
-    if [[ -n "$cozy" && "$cozy" =~ [a-zA-Z] ]]; then
+    if [[ -n "$cozy" && "$cozy" =~ [a-mo-zA-Z] ]]; then
         setupConfigToContainer cozy;
         app_name=$CFG_COZY_APP_NAME
     fi

@@ -5,7 +5,7 @@
 
 installPihole()
 {
-    if [[ -n "$pihole" && "$pihole" =~ [a-zA-Z] ]]; then
+    if [[ -n "$pihole" && "$pihole" =~ [a-mo-zA-Z] ]]; then
         setupConfigToContainer pihole;
         app_name=$CFG_PIHOLE_APP_NAME
     fi

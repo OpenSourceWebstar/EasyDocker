@@ -5,7 +5,7 @@
 
 installKimai()
 {
-    if [[ -n "$kimai" && "$kimai" =~ [a-zA-Z] ]]; then
+    if [[ -n "$kimai" && "$kimai" =~ [a-mo-zA-Z] ]]; then
         setupConfigToContainer kimai;
         app_name=$CFG_KIMAI_APP_NAME
     fi
