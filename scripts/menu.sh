@@ -229,20 +229,23 @@ mainMenu()
 	done
 }
 
-# Function to scan for apps in a specific category
 scanCategory() 
 {
     local category="$1"
-    local category_dir="$containers_dir/$category"
 
-    for app_dir in "$category_dir"/*; do
-        if [ -d "$app_dir" ]; then
-			local app_name=$(basename "$app_dir")
-			local install_file="$app_dir/$app_name.sh"
-            local app_description=$(grep -Po '(?<=# Description : ).*' "$install_file")
+    for app_dir in "$containers_dir"/*/; do
+        local app_name=$(basename "$app_dir")
+        local app_file="$app_dir$app_name.sh"
+        
+        if [ -f "$app_file" ]; then
+            local category_info=$(grep -Po '(?<=# Category : ).*' "$app_file")
+            
+            if [ "$category_info" == "$category" ]; then
+                local app_description=$(grep -Po '(?<=# Description : ).*' "$app_file")
 
-            isOptionMenu "$app_description "
-			read -rp "" $app_name
+                isOptionMenu "$app_description "
+                read -rp "" app_name
+            fi
         fi
     done
 }

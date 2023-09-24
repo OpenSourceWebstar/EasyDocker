@@ -121,7 +121,7 @@ databaseAppScan()
     existing_folder_names=()
     while IFS='|' read -r folder_name status; do
         if [[ -n "$folder_name" ]]; then
-        existing_folder_names+=("$folder_name")
+            existing_folder_names+=("$folder_name")
             # Check if the folder exists in the install_dir
             if [ -d "$install_dir/$folder_name" ]; then
                 if (( status != 1 )); then 
@@ -144,17 +144,40 @@ databaseAppScan()
         fi
     done <<< "$existing_folders"
 
-    # Insert folders into the database if they don't exist already
+    # Create an array to store folder names that should be removed from the database
+    folders_to_remove=()
+
+    # Get a list of folder names that exist in the database but not in the current folder structure
+    for folder_name in "${existing_folder_names[@]}"; do
+        if [ ! -d "$install_dir/$folder_name" ]; then
+            folders_to_remove+=("$folder_name")
+        fi
+    done
+
+    # Remove entries from the database for folders that no longer exist
+    for folder_name in "${folders_to_remove[@]}"; do
+        isNotice "Folder $folder_name no longer exists. Removing from the Database."
+        # Delete the entry from the database
+        result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
+        checkSuccess "Removing $folder_name from the apps database."
+        ((updated_count++)) # Increment updated_count
+    done
+
+    # Check and uninstall apps that contain only a config file
     for folder_name in $folder_names; do
-        if [[ -n "$folder_name" ]]; then
-            # Check if the folder_name is not present in the existing_folder_names array
-            if ! [[ "${existing_folder_names[@]}" =~ "${folder_name}" ]]; then
-                isNotice "New folder $folder_name found. Inserting into the Database."
-                # Insert the new folder into the database with status 1 (installed)
-                result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$folder_name', 1, date('now'));")
-                checkSuccess "Inserting $folder_name into the apps database."
-                ((updated_count++)) # Increment updated_count
+        folder_path="$install_dir/$folder_name"
+        if [ -d "$folder_path" ]; then
+            num_files=$(find "$folder_path" -type f | wc -l)
+            if [ "$num_files" -eq 1 ] && [ -f "$folder_path/$folder_name.config" ]; then
+                isNotice "Uninstalling $folder_name because it contains only a config file."
+                uninstallApp "$folder_name"
             fi
+        else
+            # If the folder doesn't exist in the directory, uninstall it from the database
+            isNotice "Folder $folder_name does not exist. Removing from the Database."
+            result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
+            checkSuccess "Removing $folder_name from the apps database."
+            ((updated_count++)) # Increment updated_count
         fi
     done
 
