@@ -40,7 +40,7 @@ services:
       #- SENDS_ALLOWED=true
       - WEB_VAULT_ENABLED=true
       #- ROCKET_TLS={certs="ssl/cert.pem",key="ssl/key.pem"}
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true

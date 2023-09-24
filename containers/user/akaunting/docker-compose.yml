@@ -5,7 +5,7 @@ networks:
 services:
   akaunting:
     container_name: akaunting
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true

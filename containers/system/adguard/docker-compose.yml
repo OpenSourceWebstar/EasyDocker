@@ -30,7 +30,7 @@ services:
       #- 3000:3000/tcp
       #- 3300:80/tcp
       #- 3443:443/tcp
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true

@@ -26,7 +26,7 @@ services:
       - KAUI_CONFIG_DAO_USER=root
       - KAUI_CONFIG_DAO_PASSWORD=killbill
       - KAUI_KILLBILL_URL=http://killbill:8080
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true

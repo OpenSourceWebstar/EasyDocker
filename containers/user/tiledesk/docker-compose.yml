@@ -15,7 +15,7 @@ services:
   proxy:
     ports:
       - "PORTHERE:80" # specify port forewarding
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true

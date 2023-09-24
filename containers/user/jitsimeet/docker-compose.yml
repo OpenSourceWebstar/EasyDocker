@@ -107,7 +107,7 @@ services:
             meet.jitsi:
                 aliases:
                     - ${XMPP_DOMAIN}
-        labels:
+        #labels:
             #caddy: DOMAINSUBNAMEHERE
             #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
             #traefik.enable: true

@@ -15,7 +15,7 @@ services:
         external_url DOMAINSUBNAMEHERE
         nginx['listen_https'] = false
         nginx['listen_port'] = PORTHERE
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true

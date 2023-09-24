@@ -92,7 +92,7 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 3
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "10.8.1.104:PORTHERE"
       #traefik.enable: true

@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     ports:
       - PORTHERE:8080
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true

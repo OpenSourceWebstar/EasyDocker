@@ -16,7 +16,7 @@ services:
       - WEBPORT=80
     ports:
       - 4001:80
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true

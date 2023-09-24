@@ -5,7 +5,7 @@ networks:
 services:
   cozy:
     container_name: cozy
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true

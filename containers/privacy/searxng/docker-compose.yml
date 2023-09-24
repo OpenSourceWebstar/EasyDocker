@@ -27,7 +27,7 @@ services:
       options:
         max-size: "1m"
         max-file: "1"
-    labels:
+    #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true
