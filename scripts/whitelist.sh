@@ -5,7 +5,6 @@ app_name="$1"
 # Function to update IP whitelist in YAML files
 whitelistAndStartApp()
 {
-    echo "whitelistAndStartApp"
     local app_name="$1"
 
     # Starting variable for app
@@ -42,7 +41,7 @@ whitelistScan()
 whitelistUpdateYML()
 {
     local app_name="$1"
-    echo "whitelistUpdateYML"
+
     # Whitelist update for yml files
     for yaml_file in "$install_dir/$app_name"/*.yml; do
         if [ -f "$yaml_file" ]; then
@@ -89,12 +88,12 @@ whitelistUpdateYML()
 
     whitelistUpdateCompose $app_name;
     whitelistUpdateRestart $app_name;
+
+    isSuccessful "All application whitelists are now up to date and $app_name started."
 }
 
 whitelistUpdateCompose()
 {
-    echo "whitelistUpdateCompose"
-    echo "compose_setup = $compose_setup"
     local app_name="$1"
 
     if [[ $compose_setup == "default" ]]; then
@@ -106,8 +105,6 @@ whitelistUpdateCompose()
 
 whitelistUpdateRestart()
 {
-    echo "whitelistUpdateRestart"
-    echo "compose_setup = $compose_setup"
     local app_name="$1"
 
     if [[ $compose_setup == "default" ]]; then

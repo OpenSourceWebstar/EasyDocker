@@ -65,13 +65,6 @@ installFail2Ban()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		whitelistAndStartApp $app_name;
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Setting up AbuseIPDB for fail2ban if api key is provided"
         echo ""
 
@@ -103,15 +96,16 @@ installFail2Ban()
 
             result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_dir$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up AbuseIPDB API Key in jail.local file"
-
-            if [[ $compose_setup == "default" ]]; then
-                dockerDownUpDefault $app_name;
-            elif [[ $compose_setup == "app" ]]; then
-                dockerDownUpAdditionalYML $app_name;
-            fi
         else
             isNotice "No API key found, please provide one if you want to use AbuseIPDB"
         fi
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		whitelistAndStartApp $app_name;
 
         ((menu_number++))
         echo ""
