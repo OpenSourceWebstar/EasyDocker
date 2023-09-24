@@ -47,6 +47,6 @@ loadConfigFiles() {
         if [ -f "$file" ]; then
             source "$(echo "$file" | sed 's|/docker/install//||')"
         fi
-    done < <(find "$install_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.config'\) -print0)
+    done < <(find "$install_dir" -type d \( -name 'resources' \) -prune -o -type f -name '*.config' -print0)
 }
 loadConfigFiles;
