@@ -171,7 +171,27 @@ checkApplicationsConfigFilesMissingVariables()
                             checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$container_config_relative_path':"
 
                             if [[ $remote_var == *"WHITELIST="* ]] && [[ $custom_value == *"true"* ]]; then
-                                
+                                echo ""
+                                isNotice "Whitelist has been added to the $config_app_name."
+                                echo ""
+                                while true; do
+                                    isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
+                                    read -rp "" whitelistaccept
+                                    echo ""
+                                    case $whitelistaccept in
+                                        [yY])
+                                            isNotice "Updating ${config_app_name}'s whitelist settings..."
+                                            whitelistApp $config_app_name;
+                                            break  # Exit the loop
+                                        ;;
+                                        [nN])
+                                            break  # Exit the loop
+                                        ;;
+                                        *)
+                                            isNotice "Please provide a valid input (c or e)."
+                                        ;;
+                                    esac
+                                done
                             fi
                             ;;
                         [xX])
