@@ -5,7 +5,7 @@
 
 installPortainer()
 {
-    if [[ "$portainer" =~ [a-zA-Z] ]]; then
+    if [[ -n "$portainer" && "$portainer" =~ [a-zA-Z] ]]; then
         setupConfigToContainer portainer;
         app_name=$CFG_PORTAINER_APP_NAME
     fi

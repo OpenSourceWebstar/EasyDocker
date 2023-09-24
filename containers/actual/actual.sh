@@ -5,7 +5,7 @@
 
 installActual()
 {
-    if [[ "$actual" =~ [a-zA-Z] ]]; then
+    if [[ -n "$actual" && "$actual" =~ [a-zA-Z] ]]; then
         setupConfigToContainer actual;
         app_name=$CFG_ACTUAL_APP_NAME
     fi

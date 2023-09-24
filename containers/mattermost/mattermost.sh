@@ -5,7 +5,7 @@
 
 installMattermost()
 {
-    if [[ "$mattermost" =~ [a-zA-Z] ]]; then
+    if [[ -n "$mattermost" && "$mattermost" =~ [a-zA-Z] ]]; then
     	setupConfigToContainer mattermost;
 		app_name=$CFG_MATTERMOST_APP_NAME
 		easy_setup=$CFG_MATTERMOST_EASY_SETUP

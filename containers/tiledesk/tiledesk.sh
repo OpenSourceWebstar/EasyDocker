@@ -5,7 +5,7 @@
 
 installTileDesk()
 {
-    if [[ "$tiledesk" =~ [a-zA-Z] ]]; then
+    if [[ -n "$tiledesk" && "$tiledesk" =~ [a-zA-Z] ]]; then
         setupConfigToContainer tiledesk;
 		app_name=$CFG_TILEDESK_APP_NAME
 	fi

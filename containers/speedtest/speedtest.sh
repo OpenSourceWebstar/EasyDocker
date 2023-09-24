@@ -5,8 +5,8 @@
 
 installSpeedtest()
 {
-    if [[ "$speedtest" =~ [a-zA-Z] ]]; then
-        setupConfigToContainer searxng;
+    if [[ -n "$speedtest" && "$speedtest" =~ [a-zA-Z] ]]; then
+        setupConfigToContainer speedtest;
         app_name=$CFG_SPEEDTEST_APP_NAME
     fi
 

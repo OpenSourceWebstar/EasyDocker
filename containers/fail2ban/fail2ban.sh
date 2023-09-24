@@ -5,7 +5,7 @@
 
 installFail2Ban()
 {
-    if [[ "$fail2ban" =~ [a-zA-Z] ]]; then
+    if [[ -n "$fail2ban" && "$fail2ban" =~ [a-zA-Z] ]]; then
         setupConfigToContainer fail2ban;
         app_name=$CFG_FAIL2BAN_APP_NAME
     fi
@@ -44,7 +44,7 @@ installFail2Ban()
         echo ""
 
 		setupInstallVariables $app_name;
-        
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."

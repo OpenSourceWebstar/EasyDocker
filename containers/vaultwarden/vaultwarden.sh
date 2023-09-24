@@ -5,7 +5,7 @@
 
 installVaultwarden()
 {
-    if [[ "$vaultwarden" =~ [a-zA-Z] ]]; then
+    if [[ -n "$vaultwarden" && "$vaultwarden" =~ [a-zA-Z] ]]; then
         setupConfigToContainer vaultwarden;
         app_name=$CFG_VAULTWARDEN_APP_NAME
     fi

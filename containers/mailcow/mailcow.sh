@@ -5,7 +5,7 @@
 
 installMailcow()
 {
-    if [[ "$mailcow" =~ [a-zA-Z] ]]; then
+    if [[ -n "$mailcow" && "$mailcow" =~ [a-zA-Z] ]]; then
     	setupConfigToContainer mailcow;
 		app_name=$CFG_MAILCOW_APP_NAME
 		easy_setup=$CFG_MAILCOW_EASY_SETUP

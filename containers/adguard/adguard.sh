@@ -5,7 +5,7 @@
 
 installAdguard()
 {
-    if [[ "$adguard" =~ [a-zA-Z] ]]; then
+    if [[ -n "$adguard" && "$adguard" =~ [a-zA-Z] ]]; then
         setupConfigToContainer adguard;
         app_name=$CFG_ADGUARD_APP_NAME
     fi
