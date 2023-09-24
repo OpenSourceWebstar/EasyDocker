@@ -4,11 +4,7 @@
 
 installSpeedtest()
 {
-    app_name=$CFG_SPEEDTEST_APP_NAME
-    host_name=$CFG_SPEEDTEST_HOST_NAME
-    domain_number=$CFG_SPEEDTEST_DOMAIN_NUMBER
-    public=$CFG_SPEEDTEST_PUBLIC
-	port=$CFG_SPEEDTEST_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$speedtest" == *[cC]* ]]; then
         editAppConfig $app_name;

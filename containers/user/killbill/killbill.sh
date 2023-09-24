@@ -4,11 +4,7 @@
 
 installKillbill()
 {
-    app_name=$CFG_KILLBILL_APP_NAME
-    host_name=$CFG_KILLBILL_HOST_NAME
-    domain_number=$CFG_KILLBILL_DOMAIN_NUMBER
-    public=$CFG_KILLBILL_PUBLIC
-	port=$CFG_KILLBILL_PORT
+    setupInstallVariables $app_name;
     
     if [[ "$killbill" == *[cC]* ]]; then
         editAppConfig $app_name;

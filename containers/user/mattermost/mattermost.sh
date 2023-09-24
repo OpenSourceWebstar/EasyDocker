@@ -4,11 +4,7 @@
 
 installMattermost()
 {
-    app_name=$CFG_MATTERMOST_APP_NAME
-    host_name=$CFG_MATTERMOST_HOST_NAME
-    domain_number=$CFG_MATTERMOST_DOMAIN_NUMBER
-    public=$CFG_MATTERMOST_PUBLIC
-	port=$CFG_MATTERMOST_PORT
+    setupInstallVariables $app_name;
 	easy_setup=$CFG_MATTERMOST_EASY_SETUP
 
     if [[ "$mattermost" == *[cC]* ]]; then

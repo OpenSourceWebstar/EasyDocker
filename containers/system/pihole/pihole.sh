@@ -4,11 +4,7 @@
 
 installPihole()
 {
-    app_name=$CFG_PIHOLE_APP_NAME
-    host_name=$CFG_PIHOLE_HOST_NAME
-    domain_number=$CFG_PIHOLE_DOMAIN_NUMBER
-    public=$CFG_PIHOLE_PUBLIC
-	port=$CFG_PIHOLE_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$pihole" == *[cC]* ]]; then
         editAppConfig $app_name;

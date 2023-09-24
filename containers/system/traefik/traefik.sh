@@ -4,11 +4,7 @@
 
 installTraefik()
 {
-    app_name=$CFG_TRAEFIK_APP_NAME
-    host_name=$CFG_TRAEFIK_HOST_NAME
-    domain_number=$CFG_TRAEFIK_DOMAIN_NUMBER
-    public=$CFG_TRAEFIK_PUBLIC
-	port=$CFG_TRAEFIK_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$traefik" == *[cC]* ]]; then
         editAppConfig $app_name;

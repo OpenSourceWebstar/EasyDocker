@@ -4,11 +4,7 @@
 
 installAkaunting()
 {
-    app_name=$CFG_AKAUNTING_APP_NAME
-    host_name=$CFG_AKAUNTING_HOST_NAME
-    domain_number=$CFG_AKAUNTING_DOMAIN_NUMBER
-    public=$CFG_AKAUNTING_PUBLIC
-	port=$CFG_AKAUNTING_PORT
+    setupInstallVariables $app_name;
     
     if [[ "$akaunting" == *[cC]* ]]; then
         editAppConfig $app_name;

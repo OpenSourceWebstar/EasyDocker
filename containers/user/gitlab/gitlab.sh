@@ -4,12 +4,7 @@
 
 installGitLab()
 {
-    app_name=$CFG_GITLAB_APP_NAME
-    host_name=$CFG_GITLAB_HOST_NAME
-    domain_number=$CFG_GITLAB_DOMAIN_NUMBER
-    public=$CFG_GITLAB_PUBLIC
-	port=$CFG_GITLAB_PORT
-	port_2=$CFG_GITLAB_PORT_2
+    setupInstallVariables $app_name;
     
     if [[ "$gitlab" == *[cC]* ]]; then
         editAppConfig $app_name;

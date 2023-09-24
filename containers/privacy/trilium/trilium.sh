@@ -4,11 +4,7 @@
 
 installTrilium()
 {
-    app_name=$CFG_TRILIUM_APP_NAME
-    host_name=$CFG_TRILIUM_HOST_NAME
-    domain_number=$CFG_TRILIUM_DOMAIN_NUMBER
-    public=$CFG_TRILIUM_PUBLIC
-	port=$CFG_TRILIUM_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$trilium" == *[cC]* ]]; then
         editAppConfig $app_name;

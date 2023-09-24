@@ -4,7 +4,7 @@
 
 installWatchtower()
 {
-    app_name=$CFG_WATCHTOWER_APP_NAME
+    setupInstallVariables $app_name;
 
     if [[ "$watchtower" == *[cC]* ]]; then
         editAppConfig $app_name;

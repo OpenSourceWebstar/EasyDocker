@@ -1,19 +1,28 @@
 #!/bin/bash
 
-setupIPsAndHostnames()
+setupInstallVariables()
 {
-    app_name="$1"
+    local app_name="$1"
 
     # Build variable names based on app_name
     host_name_var="CFG_${app_name^^}_HOST_NAME"
     domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
     public_var="CFG_${app_name^^}_PUBLIC"
+    port_var="CFG_${app_name^^}_PORT"
+    port_2_var="CFG_${app_name^^}_PORT_2"
 
     # Access the variables using variable indirection
     host_name="${!host_name_var}"
     domain_number="${!domain_number_var}"
     public="${!public_var}"
+    port="${!port_var}"
+    port_2="${!port_2_var}"
 
+    setupIPsAndHostnames;
+}
+
+setupIPsAndHostnames()
+{
     found_match=false
     while read -r line; do
         local hostname=$(echo "$line" | awk '{print $1}')

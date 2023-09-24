@@ -4,11 +4,7 @@
 
 installDashy()
 {
-    app_name=$CFG_DASHY_APP_NAME
-    host_name=$CFG_DASHY_HOST_NAME
-    domain_number=$CFG_DASHY_DOMAIN_NUMBER
-    public=$CFG_DASHY_PUBLIC
-	port=$CFG_DASHY_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$dashy" == *[cC]* ]]; then
         editAppConfig $app_name;

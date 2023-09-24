@@ -4,10 +4,7 @@
 
 installMailcow()
 {
-    app_name=$CFG_MAILCOW_APP_NAME
-    host_name=$CFG_MAILCOW_HOST_NAME
-    domain_number=$CFG_MAILCOW_DOMAIN_NUMBER
-    public=$CFG_MAILCOW_PUBLIC
+    setupInstallVariables $app_name;
 	easy_setup=$CFG_MAILCOW_EASY_SETUP
 	using_caddy=$CFG_MAILCOW_USING_CADDY
 

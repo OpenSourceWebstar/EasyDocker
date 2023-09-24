@@ -4,11 +4,7 @@
 
 installTileDesk()
 {
-    app_name=$CFG_TILEDESK_APP_NAME
-    host_name=$CFG_TILEDESK_HOST_NAME
-    domain_number=$CFG_TILEDESK_DOMAIN_NUMBER
-    public=$CFG_TILEDESK_PUBLIC
-	port=$CFG_TILEDESK_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$tiledesk" == *[cC]* ]]; then
         editAppConfig $app_name;

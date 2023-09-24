@@ -4,10 +4,7 @@
 
 installKimai()
 {
-    app_name=$CFG_KIMAI_APP_NAME
-    host_name=$CFG_KIMAI_HOST_NAME
-    domain_number=$CFG_KIMAI_DOMAIN_NUMBER
-    public=$CFG_KIMAI_PUBLIC
+    setupInstallVariables $app_name;
 	port=$CFG_KIMAI_PORT
 
     if [[ "$kimai" == *[cC]* ]]; then

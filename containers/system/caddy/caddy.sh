@@ -4,10 +4,7 @@
 
 installCaddy()
 {
-    app_name=$CFG_CADDY_APP_NAME
-    host_name=$CFG_CADDY_HOST_NAME
-    domain_number=$CFG_CADDY_DOMAIN_NUMBER
-    public=$CFG_CADDY_PUBLIC
+    setupInstallVariables $app_name;
 
     if [[ "$caddy" == *[cC]* ]]; then
         editAppConfig $app_name;

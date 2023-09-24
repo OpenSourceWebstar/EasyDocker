@@ -4,11 +4,7 @@
 
 installIPInfo()
 {
-    app_name=$CFG_IPINFO_APP_NAME
-    host_name=$CFG_IPINFO_HOST_NAME
-    domain_number=$CFG_IPINFO_DOMAIN_NUMBER
-    public=$CFG_IPINFO_PUBLIC
-	port=$CFG_IPINFO_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$ipinfo" == *[cC]* ]]; then
         editAppConfig $app_name;

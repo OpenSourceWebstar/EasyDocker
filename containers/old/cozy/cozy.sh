@@ -4,11 +4,7 @@
 
 installCozy()
 {
-    app_name=$CFG_COZY_APP_NAME
-    host_name=$CFG_COZY_HOST_NAME
-    domain_number=$CFG_COZY_DOMAIN_NUMBER
-    public=$CFG_COZY_PUBLIC
-	#port=$CFG_COZY_PORT
+    setupInstallVariables $app_name;
 
 	# Custom Cozy Variables
 	# Additional non default apps to be installed

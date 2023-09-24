@@ -4,12 +4,7 @@
 
 installDuplicati()
 {
-    app_name=$CFG_DUPLICATI_APP_NAME
-    host_name=$CFG_DUPLICATI_HOST_NAME
-    domain_number=$CFG_DUPLICATI_DOMAIN_NUMBER
-    public=$CFG_DUPLICATI_PUBLIC
-	port=$CFG_DUPLICATI_PORT
-
+    setupInstallVariables $app_name;
 
     if [[ "$duplicati" == *[cC]* ]]; then
         editAppConfig $app_name;

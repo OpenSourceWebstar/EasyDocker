@@ -4,11 +4,7 @@
 
 installOwnCloud()
 {
-    app_name=$CFG_OWNCLOUD_APP_NAME
-    host_name=$CFG_OWNCLOUD_HOST_NAME
-    domain_number=$CFG_OWNCLOUD_DOMAIN_NUMBER
-    public=$CFG_OWNCLOUD_PUBLIC
-	port=$CFG_OWNCLOUD_PORT
+    setupInstallVariables $app_name;
 	owncloud_version=$CFG_OWNCLOUD_VERSION
 
     if [[ "$owncloud" == *[cC]* ]]; then

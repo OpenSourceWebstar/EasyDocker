@@ -4,11 +4,7 @@
 
 installAdguard()
 {
-    app_name=$CFG_ADGUARD_APP_NAME
-    host_name=$CFG_ADGUARD_HOST_NAME
-    domain_number=$CFG_ADGUARD_DOMAIN_NUMBER
-    public=$CFG_ADGUARD_PUBLIC
-	port=$CFG_ADGUARD_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$adguard" == *[cC]* ]]; then
         editAppConfig $app_name;

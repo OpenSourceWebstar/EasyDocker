@@ -4,11 +4,7 @@
 
 installPortainer()
 {
-    app_name=$CFG_PORTAINER_APP_NAME
-    host_name=$CFG_PORTAINER_HOST_NAME
-    domain_number=$CFG_PORTAINER_DOMAIN_NUMBER
-    public=$CFG_PORTAINER_PUBLIC
-	port=$CFG_PORTAINER_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$portainer" == *[cC]* ]]; then
         editAppConfig $app_name;

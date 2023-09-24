@@ -4,11 +4,7 @@
 
 installWireguard()
 {
-    app_name=$CFG_WIREGUARD_APP_NAME
-    host_name=$CFG_WIREGUARD_HOST_NAME
-    domain_number=$CFG_WIREGUARD_DOMAIN_NUMBER
-    public=$CFG_WIREGUARD_PUBLIC
-	port=$CFG_WIREGUARD_PORT
+    setupInstallVariables $app_name;
     
     if [[ "$wireguard" == *[cC]* ]]; then
         editAppConfig $app_name;

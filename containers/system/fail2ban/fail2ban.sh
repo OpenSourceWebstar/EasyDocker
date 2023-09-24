@@ -4,7 +4,7 @@
 
 installFail2Ban()
 {
-	app_name=$CFG_FAIL2BAN_APP_NAME
+    setupInstallVariables $app_name;
 
     if [[ "$fail2ban" == *[cC]* ]]; then
         editAppConfig $app_name;

@@ -4,10 +4,7 @@
 
 installJitsiMeet()
 {
-    app_name=$CFG_JITSIMEET_APP_NAME
-    host_name=$CFG_JITSIMEET_HOST_NAME
-    domain_number=$CFG_JITSIMEET_DOMAIN_NUMBER
-    public=$CFG_JITSIMEET_PUBLIC
+    setupInstallVariables $app_name;
 	git_url=$CFG_JITSIMEET_GIT
     
     if [[ "$jitsimeet" == *[cC]* ]]; then

@@ -4,11 +4,7 @@
 
 installSearXNG()
 {
-    app_name=$CFG_SEARXNG_APP_NAME
-    host_name=$CFG_SEARXNG_HOST_NAME
-    domain_number=$CFG_SEARXNG_DOMAIN_NUMBER
-    public=$CFG_SEARXNG_PUBLIC
-	port=$CFG_SEARXNG_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$searxng" == *[cC]* ]]; then
         editAppConfig $app_name;

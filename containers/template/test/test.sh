@@ -4,11 +4,7 @@
 
 installActual()
 {
-    app_name=$CFG_ACTUAL_APP_NAME
-    host_name=$CFG_ACTUAL_HOST_NAME
-    domain_number=$CFG_ACTUAL_DOMAIN_NUMBER
-    public=$CFG_ACTUAL_PUBLIC
-	port=$CFG_ACTUAL_PORT
+    setupInstallVariables $app_name;
     
     if [[ "$actual" == *[cC]* ]]; then
         editAppConfig $app_name;

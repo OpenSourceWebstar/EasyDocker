@@ -4,11 +4,7 @@
 
 installVaultwarden()
 {
-    app_name=$CFG_VAULTWARDEN_APP_NAME
-    host_name=$CFG_VAULTWARDEN_HOST_NAME
-    domain_number=$CFG_VAULTWARDEN_DOMAIN_NUMBER
-    public=$CFG_VAULTWARDEN_PUBLIC
-	port=$CFG_VAULTWARDEN_PORT
+    setupInstallVariables $app_name;
 
     if [[ "$vaultwarden" == *[cC]* ]]; then
         editAppConfig $app_name;
