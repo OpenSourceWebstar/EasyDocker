@@ -4,6 +4,7 @@
 
 installPihole()
 {
+    app_name=$CFG_PIHOLE_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$pihole" == *[cC]* ]]; then

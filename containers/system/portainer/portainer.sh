@@ -4,6 +4,7 @@
 
 installPortainer()
 {
+    app_name=$CFG_PORTAINER_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$portainer" == *[cC]* ]]; then

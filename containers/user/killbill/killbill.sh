@@ -4,6 +4,7 @@
 
 installKillbill()
 {
+    app_name=$CFG_KILLBILL_APP_NAME
     setupInstallVariables $app_name;
     
     if [[ "$killbill" == *[cC]* ]]; then

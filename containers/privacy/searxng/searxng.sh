@@ -4,6 +4,7 @@
 
 installSearXNG()
 {
+    app_name=$CFG_SEARXNG_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$searxng" == *[cC]* ]]; then

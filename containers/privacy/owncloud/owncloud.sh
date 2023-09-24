@@ -4,6 +4,7 @@
 
 installOwnCloud()
 {
+    app_name=$CFG_OWNCLOUD_APP_NAME
     setupInstallVariables $app_name;
 	owncloud_version=$CFG_OWNCLOUD_VERSION
 

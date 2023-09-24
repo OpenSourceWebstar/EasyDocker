@@ -4,6 +4,7 @@
 
 installAdguard()
 {
+    app_name=$CFG_ADGUARD_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$adguard" == *[cC]* ]]; then

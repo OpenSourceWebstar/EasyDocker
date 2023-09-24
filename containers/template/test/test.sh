@@ -4,6 +4,7 @@
 
 installActual()
 {
+    app_name=$CFG_ACTUAL_APP_NAME
     setupInstallVariables $app_name;
     
     if [[ "$actual" == *[cC]* ]]; then

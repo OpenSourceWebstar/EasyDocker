@@ -4,6 +4,7 @@
 
 installTraefik()
 {
+    app_name=$CFG_TRAEFIK_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$traefik" == *[cC]* ]]; then

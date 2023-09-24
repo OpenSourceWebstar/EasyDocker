@@ -4,6 +4,7 @@
 
 installAkaunting()
 {
+    app_name=$CFG_AKAUNTING_APP_NAME
     setupInstallVariables $app_name;
     
     if [[ "$akaunting" == *[cC]* ]]; then

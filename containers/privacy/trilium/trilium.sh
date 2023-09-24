@@ -4,6 +4,7 @@
 
 installTrilium()
 {
+    app_name=$CFG_TRILIUM_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$trilium" == *[cC]* ]]; then

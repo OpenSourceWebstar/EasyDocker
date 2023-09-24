@@ -4,6 +4,7 @@
 
 installCozy()
 {
+    app_name=$CFG_COZY_APP_NAME
     setupInstallVariables $app_name;
 
 	# Custom Cozy Variables

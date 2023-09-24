@@ -4,6 +4,7 @@
 
 installWireguard()
 {
+    app_name=$CFG_WIREGUARD_APP_NAME
     setupInstallVariables $app_name;
     
     if [[ "$wireguard" == *[cC]* ]]; then

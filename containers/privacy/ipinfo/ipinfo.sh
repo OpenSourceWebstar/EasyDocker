@@ -4,6 +4,7 @@
 
 installIPInfo()
 {
+    app_name=$CFG_IPINFO_APP_NAME
     setupInstallVariables $app_name;
 
     if [[ "$ipinfo" == *[cC]* ]]; then

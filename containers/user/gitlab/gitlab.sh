@@ -4,6 +4,7 @@
 
 installGitLab()
 {
+    app_name=$CFG_GITLAB_APP_NAME
     setupInstallVariables $app_name;
     
     if [[ "$gitlab" == *[cC]* ]]; then

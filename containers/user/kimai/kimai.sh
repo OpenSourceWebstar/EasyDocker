@@ -4,8 +4,8 @@
 
 installKimai()
 {
+    app_name=$CFG_KIMAI_APP_NAME
     setupInstallVariables $app_name;
-	port=$CFG_KIMAI_PORT
 
     if [[ "$kimai" == *[cC]* ]]; then
         editAppConfig $app_name;

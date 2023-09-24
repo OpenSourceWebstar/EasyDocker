@@ -4,6 +4,7 @@
 
 installMattermost()
 {
+    app_name=$CFG_MATTERMOST_APP_NAME
     setupInstallVariables $app_name;
 	easy_setup=$CFG_MATTERMOST_EASY_SETUP
 

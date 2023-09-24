@@ -4,7 +4,9 @@
 
 installDuplicati()
 {
+    app_name=$CFG_DUPLICATI_APP_NAME
     setupInstallVariables $app_name;
+
 
     if [[ "$duplicati" == *[cC]* ]]; then
         editAppConfig $app_name;
