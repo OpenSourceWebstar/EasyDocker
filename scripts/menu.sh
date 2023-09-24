@@ -164,8 +164,6 @@ mainMenu()
 				isOptionMenu "Delete database file? (y/n): "
 				read -rp "" tooldeletedb
 
-				
-
 				startOther;
 
 				;;
@@ -244,7 +242,7 @@ scanCategory()
                 local app_description=$(grep -Po '(?<=# Description : ).*' "$app_file")
 
                 isOptionMenu "$app_description "
-                read -rp "" app_name
+                read -rp "" $app_name
             fi
         fi
     done

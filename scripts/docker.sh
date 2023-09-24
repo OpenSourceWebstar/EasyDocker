@@ -56,20 +56,9 @@ setupComposeFileNoApp()
         isError "The app_name is empty."
         return 1
     fi
-
-    if [ -d "$target_path" ]; then
-        isNotice "The directory '$target_path' already exists."
-        return 1
-    fi
     
     if [ ! -f "$source_file" ]; then
         isError "The source file '$source_file' does not exist."
-        return 1
-    fi
-    
-    mkdirFolders "$target_path"
-    if [ $? -ne 0 ]; then
-        isError "Failed to create the directory '$target_path'."
         return 1
     fi
     
@@ -91,21 +80,9 @@ setupComposeFileApp()
         isError "The app_name is empty."
         return 1
     fi
-
-    if [ -d "$target_path" ]; then
-        isNotice "The directory '$target_path' already exists."
-        return 1
-    fi
     
     if [ ! -f "$source_file" ]; then
         isError ""Error: "The source file '$source_file' does not exist."
-        return 1
-    fi
-    
-    result=$(mkdirFolders "$target_path")
-    
-    if [ $? -ne 0 ]; then
-        isError "Failed to create the directory '$target_path'."
         return 1
     fi
     
