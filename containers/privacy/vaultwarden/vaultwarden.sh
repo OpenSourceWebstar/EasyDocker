@@ -6,7 +6,6 @@ installVaultwarden()
 {
     if [[ "$vaultwarden" =~ [a-zA-Z] ]]; then
         app_name=$CFG_VAULTWARDEN_APP_NAME
-        setupInstallVariables $app_name;
     fi
 
     if [[ "$vaultwarden" == *[cC]* ]]; then
@@ -37,7 +36,7 @@ installVaultwarden()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

@@ -6,7 +6,6 @@ installMailcow()
 {
     if [[ "$mailcow" =~ [a-zA-Z] ]]; then
 		app_name=$CFG_MAILCOW_APP_NAME
-		setupInstallVariables $app_name;
 		easy_setup=$CFG_MAILCOW_EASY_SETUP
 		using_caddy=$CFG_MAILCOW_USING_CADDY
 	fi
@@ -39,7 +38,7 @@ installMailcow()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

@@ -6,7 +6,6 @@ installAdguard()
 {
     if [[ "$adguard" =~ [a-zA-Z] ]]; then
         app_name=$CFG_ADGUARD_APP_NAME
-        setupInstallVariables $app_name;
     fi
 
     if [[ "$adguard" == *[cC]* ]]; then
@@ -37,7 +36,7 @@ installAdguard()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 		
 		((menu_number++))
         echo ""

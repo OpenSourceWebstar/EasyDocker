@@ -6,7 +6,6 @@ installMattermost()
 {
     if [[ "$mattermost" =~ [a-zA-Z] ]]; then
 		app_name=$CFG_MATTERMOST_APP_NAME
-		setupInstallVariables $app_name;
 		easy_setup=$CFG_MATTERMOST_EASY_SETUP
 	fi
 
@@ -38,7 +37,7 @@ installMattermost()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

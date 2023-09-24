@@ -6,7 +6,6 @@ installActual()
 {
     if [[ "$actual" =~ [a-zA-Z] ]]; then
         app_name=$CFG_ACTUAL_APP_NAME
-        setupInstallVariables $app_name;
     fi
     
     if [[ "$actual" == *[cC]* ]]; then
@@ -37,7 +36,7 @@ installActual()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

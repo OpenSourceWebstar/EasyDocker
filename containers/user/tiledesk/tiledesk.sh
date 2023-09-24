@@ -6,7 +6,6 @@ installTileDesk()
 {
     if [[ "$tiledesk" =~ [a-zA-Z] ]]; then
 		app_name=$CFG_TILEDESK_APP_NAME
-		setupInstallVariables $app_name;
 	fi
 
     if [[ "$tiledesk" == *[cC]* ]]; then
@@ -37,7 +36,7 @@ installTileDesk()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

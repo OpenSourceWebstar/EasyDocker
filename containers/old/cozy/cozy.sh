@@ -6,7 +6,6 @@ installCozy()
 {
     if [[ "$cozy" =~ [a-zA-Z] ]]; then
         app_name=$CFG_COZY_APP_NAME
-        setupInstallVariables $app_name;
     fi
 
 	# Custom Cozy Variables
@@ -44,7 +43,7 @@ installCozy()
         echo "---- $menu_number. Checking DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames $app_name;
+		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""
