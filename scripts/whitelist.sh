@@ -11,10 +11,10 @@ whitelistApp()
     local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
     local app_config="$app_dir/$app_name.config"
     local app_script="$app_dir/$app_name.sh"
-    echo "whitelistApp"
+
     # Always keep YML updated
     whitelistUpdateYML $app_name $app_config $app_script $should_restart;
-    echo "whitelistUpdateYML $app_name $app_config $app_script $should_restart;"
+    #echo "whitelistUpdateYML $app_name $app_config $app_script $should_restart;"
 }
 
 # Function to update IP whitelist in YAML files
@@ -57,9 +57,9 @@ whitelistUpdateYML()
 
                 # Whitelist not setup yet
                 if grep -q "ipwhitelist.sourcerange: IPWHITELIST" "$yaml_file"; then
-                    echo "whitelistUpdateCompose $app_name $app_config;"
+                    #echo "whitelistUpdateCompose $app_name $app_config;"
                     whitelistUpdateCompose $app_name $app_config;
-                    echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
+                    #echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
                     whitelistUpdateRestart $app_name $app_script $should_restart;
                 fi
 
@@ -68,9 +68,9 @@ whitelistUpdateYML()
                 if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
                     result=$(sudo sed -i "s/ipwhitelist.sourcerange: $current_ip_range/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
-                    echo "whitelistUpdateCompose $app_name $app_config;"
+                    #echo "whitelistUpdateCompose $app_name $app_config;"
                     whitelistUpdateCompose $app_name $app_config;
-                    echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
+                    #echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
                     whitelistUpdateRestart $app_name $app_script $should_restart;
                 fi
             fi
@@ -83,9 +83,9 @@ whitelistUpdateYML()
             if grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
                 result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/" "$install_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
-                echo "whitelistUpdateCompose $app_name $app_config;"
+                #echo "whitelistUpdateCompose $app_name $app_config;"
                 whitelistUpdateCompose $app_name $app_config;
-                echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
+                #echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
                 whitelistUpdateRestart $app_name $app_script $should_restart;
             fi
 
@@ -94,7 +94,7 @@ whitelistUpdateYML()
             if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
                 result=$(sudo sed -i "s/ignoreip = ips_whitelist/ignoreip = $CFG_IPS_WHITELIST/" "$install_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
-                echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
+                #echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
                 whitelistUpdateRestart $app_name $app_script $should_restart;
             fi
         fi
