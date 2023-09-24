@@ -106,7 +106,7 @@ whitelistUpdateCompose()
     local app_name="$1"
     local app_config="$2"
     
-    setupIPsAndHostnames $app_name;
+    setupInstallVariables $app_name;
 
     if grep -q "editComposeFileDefault" $app_config; then
         editComposeFileDefault;
