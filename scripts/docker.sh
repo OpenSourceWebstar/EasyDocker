@@ -162,7 +162,6 @@ editComposeFileDefault()
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
         -e "s/PUBLICIPHERE/$public_ip/g" \
         -e "s/IPADDRESSHERE/$ip_setup/g" \
-        -e "s/IPWHITELIST/$CFG_IPS_WHITELIST/g" \
         -e "s/PORTHERE/$port/g" \
         -e "s/SECONDPORT/$port_2/g" \
     "$compose_file")
@@ -234,7 +233,6 @@ editComposeFileApp()
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
         -e "s/PUBLICIPHERE/$public_ip/g" \
         -e "s/IPADDRESSHERE/$ip_setup/g" \
-        -e "s/IPWHITELIST/$CFG_IPS_WHITELIST/g" \
         -e "s/PORTHERE/$port/g" \
         -e "s/SECONDPORT/$port_2/g" \
     "$compose_file")
