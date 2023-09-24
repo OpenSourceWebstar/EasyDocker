@@ -13,6 +13,7 @@ source scripts/functions.sh
 source scripts/update.sh
 source scripts/docker.sh
 source scripts/configs.sh
+source scripts/whitelist.sh
 source scripts/logs.sh
 source scripts/permissions.sh
 source scripts/database.sh
