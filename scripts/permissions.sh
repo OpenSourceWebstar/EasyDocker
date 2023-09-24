@@ -71,12 +71,18 @@ fixPermissionsBeforeStart()
     local app="traefik"
     local app_install_dir="${install_dir}$app"
     if [ ! -d "app_install_dir" ]; then
-        updateFileOwnership "$app_install_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-        updateFileOwnership "$app_install_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-        result=$(sudo chmod 600 "$app_install_dir/etc/certs/acme.json")
-        checkSuccess "Set permissions to acme.json file for traefik"
-        result=$(sudo chmod 600 "$app_install_dir/etc/traefik.yml")
-        checkSuccess "Set permissions to traefik.yml file for traefik"
+        # Check if the file exists before updating ownership and permissions
+        if [ -f "$app_install_dir/etc/certs/acme.json" ]; then
+            updateFileOwnership "$app_install_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+            result=$(sudo chmod 600 "$app_install_dir/etc/certs/acme.json")
+            checkSuccess "Set permissions to acme.json file for traefik"
+        fi
+        # Check if the file exists before updating ownership and permissions
+        if [ -f "$app_install_dir/etc/traefik.yml" ]; then
+            updateFileOwnership "$app_install_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
+            result=$(sudo chmod 600 "$app_install_dir/etc/traefik.yml")
+            checkSuccess "Set permissions to traefik.yml file for traefik"
+        fi
     fi
 }
 
