@@ -4,8 +4,10 @@
 
 installPortainer()
 {
-    app_name=$CFG_PORTAINER_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$portainer" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_PORTAINER_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$portainer" == *[cC]* ]]; then
         editAppConfig $app_name;

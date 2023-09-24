@@ -4,10 +4,12 @@
 
 installMailcow()
 {
-    app_name=$CFG_MAILCOW_APP_NAME
-    setupInstallVariables $app_name;
-	easy_setup=$CFG_MAILCOW_EASY_SETUP
-	using_caddy=$CFG_MAILCOW_USING_CADDY
+    if [[ "$mailcow" =~ [a-zA-Z] ]]; then
+		app_name=$CFG_MAILCOW_APP_NAME
+		setupInstallVariables $app_name;
+		easy_setup=$CFG_MAILCOW_EASY_SETUP
+		using_caddy=$CFG_MAILCOW_USING_CADDY
+	fi
 
     if [[ "$mailcow" == *[cC]* ]]; then
         editAppConfig $app_name;

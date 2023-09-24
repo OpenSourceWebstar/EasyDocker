@@ -4,8 +4,10 @@
 
 installTileDesk()
 {
-    app_name=$CFG_TILEDESK_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$tiledesk" =~ [a-zA-Z] ]]; then
+		app_name=$CFG_TILEDESK_APP_NAME
+		setupInstallVariables $app_name;
+	fi
 
     if [[ "$tiledesk" == *[cC]* ]]; then
         editAppConfig $app_name;

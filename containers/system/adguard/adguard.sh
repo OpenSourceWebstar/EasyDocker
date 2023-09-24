@@ -4,8 +4,10 @@
 
 installAdguard()
 {
-    app_name=$CFG_ADGUARD_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$adguard" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_ADGUARD_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$adguard" == *[cC]* ]]; then
         editAppConfig $app_name;

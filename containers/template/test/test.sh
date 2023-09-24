@@ -1,32 +1,34 @@
 #!/bin/bash
 
-# Description : Actual - Money Budgetting (c/u/s/r/i):
+# Description : Test - It just works! (c/u/s/r/i):
 
-installActual()
+installTest()
 {
-    app_name=$CFG_ACTUAL_APP_NAME
-    setupInstallVariables $app_name;
-    
-    if [[ "$actual" == *[cC]* ]]; then
+    if [[ "$test" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_TEST_APP_NAME
+        setupInstallVariables $app_name;
+    fi
+
+    if [[ "$test" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-	if [[ "$actual" == *[uU]* ]]; then
-		uninstallApp $app_name;
-	fi
+    if [[ "$test" == *[uU]* ]]; then
+        uninstallApp $app_name;
+    fi
 
-	if [[ "$actual" == *[sS]* ]]; then
-		shutdownApp;
-	fi
+    if [[ "$test" == *[sS]* ]]; then
+        shutdownApp;
+    fi
 
-    if [[ "$actual" == *[rR]* ]]; then
+    if [[ "$test" == *[rR]* ]]; then
         dockerDownUpDefault $app_name;
     fi
 
-    if [[ "$actual" == *[iI]* ]]; then
+    if [[ "$test" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
-        echo "###      Install $app_name"
+        echo "###          Install $app_name"
         echo "##########################################"
         echo ""
 
@@ -36,7 +38,7 @@ installActual()
         echo ""
 
 		setupIPsAndHostnames $app_name;
-
+		
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
@@ -45,25 +47,12 @@ installActual()
 		setupComposeFileNoApp;
 		whitelistApp $app_name false;
 
-		# SSL Cert is needed to load, using self signed
-		if [ -f "$ssl_dir$ssl_key" ]; then
-			checkSuccess "Self Signed SSL Certificate found, installing...."
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
 
-			result=$(mkdirFolders -p $install_dir$app_name/actual-data)
-			checkSuccess "Create actual-data folder"
-			
-			result=$(copyFile $script_dir/resources/$app_name/config.json $install_dir$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying config.json to actual-data folder"
-
-			result=$(copyFile $ssl_dir/$ssl_crt $install_dir$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying cert to actual-data folder"
-
-			result=$(copyFiles $ssl_dir/$ssl_key $install_dir$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying key to actual-data folder"
-			
-		else
-			checkSuccess "Self Signed SSL Certificate not found, this may cause an issue!"
-		fi
+		fixPermissionsBeforeStart;
 
 		((menu_number++))
         echo ""
@@ -71,13 +60,6 @@ installActual()
         echo ""
 
 		dockerDownUpDefault $app_name;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Updating file permissions before starting."
-        echo ""
-
-		fixPermissionsBeforeStart;
 
         ((menu_number++))
         echo ""
@@ -97,7 +79,7 @@ installActual()
         echo ""
         echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
         echo ""
-        echo "    You can now navigate to your new service using one of the options below : "
+        echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""
         echo "    Public : https://$host_setup/"
         echo "    External : http://$public_ip:$port/"
@@ -107,6 +89,6 @@ installActual()
 		menu_number=0
         sleep 3s
         cd
-	fi
-	actual=n
+    fi
+    test=n
 }

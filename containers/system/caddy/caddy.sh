@@ -4,8 +4,10 @@
 
 installCaddy()
 {
-    app_name=$CFG_CADDY_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$caddy" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_CADDY_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$caddy" == *[cC]* ]]; then
         editAppConfig $app_name;

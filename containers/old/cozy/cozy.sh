@@ -4,8 +4,10 @@
 
 installCozy()
 {
-    app_name=$CFG_COZY_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$cozy" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_COZY_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
 	# Custom Cozy Variables
 	# Additional non default apps to be installed

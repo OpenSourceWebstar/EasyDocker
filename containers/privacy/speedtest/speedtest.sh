@@ -4,8 +4,10 @@
 
 installSpeedtest()
 {
-    app_name=$CFG_SPEEDTEST_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$speedtest" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_SPEEDTEST_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$speedtest" == *[cC]* ]]; then
         editAppConfig $app_name;

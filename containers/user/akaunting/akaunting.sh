@@ -4,8 +4,10 @@
 
 installAkaunting()
 {
-    app_name=$CFG_AKAUNTING_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$actual" =~ [a-zA-Z] ]]; then
+		app_name=$CFG_AKAUNTING_APP_NAME
+		setupInstallVariables $app_name;
+	fi
     
     if [[ "$akaunting" == *[cC]* ]]; then
         editAppConfig $app_name;

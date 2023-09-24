@@ -4,9 +4,11 @@
 
 installOwnCloud()
 {
-    app_name=$CFG_OWNCLOUD_APP_NAME
-    setupInstallVariables $app_name;
-	owncloud_version=$CFG_OWNCLOUD_VERSION
+    if [[ "$owncloud" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_OWNCLOUD_APP_NAME
+        setupInstallVariables $app_name;
+        owncloud_version=$CFG_OWNCLOUD_VERSION
+    fi
 
     if [[ "$owncloud" == *[cC]* ]]; then
         editAppConfig $app_name;

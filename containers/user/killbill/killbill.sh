@@ -4,8 +4,10 @@
 
 installKillbill()
 {
-    app_name=$CFG_KILLBILL_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$killbill" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_KILLBILL_APP_NAME
+        setupInstallVariables $app_name;
+    fi
     
     if [[ "$killbill" == *[cC]* ]]; then
         editAppConfig $app_name;

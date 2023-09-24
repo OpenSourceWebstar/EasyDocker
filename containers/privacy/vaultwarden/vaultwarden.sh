@@ -4,8 +4,10 @@
 
 installVaultwarden()
 {
-    app_name=$CFG_VAULTWARDEN_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$vaultwarden" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_VAULTWARDEN_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$vaultwarden" == *[cC]* ]]; then
         editAppConfig $app_name;

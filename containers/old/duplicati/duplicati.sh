@@ -4,8 +4,10 @@
 
 installDuplicati()
 {
-    app_name=$CFG_DUPLICATI_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$duplicati" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_DUPLICATI_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
 
     if [[ "$duplicati" == *[cC]* ]]; then

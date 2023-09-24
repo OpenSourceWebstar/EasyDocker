@@ -4,9 +4,11 @@
 
 installMattermost()
 {
-    app_name=$CFG_MATTERMOST_APP_NAME
-    setupInstallVariables $app_name;
-	easy_setup=$CFG_MATTERMOST_EASY_SETUP
+    if [[ "$mattermost" =~ [a-zA-Z] ]]; then
+		app_name=$CFG_MATTERMOST_APP_NAME
+		setupInstallVariables $app_name;
+		easy_setup=$CFG_MATTERMOST_EASY_SETUP
+	fi
 
     if [[ "$mattermost" == *[cC]* ]]; then
         editAppConfig $app_name;

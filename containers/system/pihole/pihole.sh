@@ -4,8 +4,10 @@
 
 installPihole()
 {
-    app_name=$CFG_PIHOLE_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$pihole" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_PIHOLE_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$pihole" == *[cC]* ]]; then
         editAppConfig $app_name;

@@ -4,8 +4,10 @@
 
 installKimai()
 {
-    app_name=$CFG_KIMAI_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$kimai" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_KIMAI_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$kimai" == *[cC]* ]]; then
         editAppConfig $app_name;

@@ -4,8 +4,10 @@
 
 installDashy()
 {
-    app_name=$CFG_DASHY_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$dashy" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_DASHY_APP_NAME
+        setupInstallVariables $app_name;
+    fi
 
     if [[ "$dashy" == *[cC]* ]]; then
         editAppConfig $app_name;

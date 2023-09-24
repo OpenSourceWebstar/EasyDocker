@@ -4,8 +4,10 @@
 
 installWireguard()
 {
-    app_name=$CFG_WIREGUARD_APP_NAME
-    setupInstallVariables $app_name;
+    if [[ "$wireguard" =~ [a-zA-Z] ]]; then
+        app_name=$CFG_WIREGUARD_APP_NAME
+        setupInstallVariables $app_name;
+    fi
     
     if [[ "$wireguard" == *[cC]* ]]; then
         editAppConfig $app_name;

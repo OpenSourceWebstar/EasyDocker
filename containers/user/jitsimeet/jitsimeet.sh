@@ -4,9 +4,11 @@
 
 installJitsiMeet()
 {
-    app_name=$CFG_JITSIMEET_APP_NAME
-    setupInstallVariables $app_name;
-	git_url=$CFG_JITSIMEET_GIT
+    if [[ "$jitsimeet" =~ [a-zA-Z] ]]; then
+		app_name=$CFG_JITSIMEET_APP_NAME
+		setupInstallVariables $app_name;
+		git_url=$CFG_JITSIMEET_GIT
+	fi
     
     if [[ "$jitsimeet" == *[cC]* ]]; then
         editAppConfig $app_name;
