@@ -78,6 +78,9 @@ installFail2Ban()
         if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
+            result=$(mkdirFolders $install_dir$app_name/logs)
+            checkSuccess "Creating logs folder"
+
             result=$(cd $install_dir$app_name && createTouch $install_dir$app_name/logs/auth.log)
             checkSuccess "Creating Auth.log file"
 
