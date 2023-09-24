@@ -2,6 +2,18 @@
 
 setupIPsAndHostnames()
 {
+    app_name="$1"
+
+    # Build variable names based on app_name
+    host_name_var="CFG_${app_name^^}_HOST_NAME"
+    domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
+    public_var="CFG_${app_name^^}_PUBLIC"
+
+    # Access the variables using variable indirection
+    host_name="${!host_name_var}"
+    domain_number="${!domain_number_var}"
+    public="${!public_var}"
+
     found_match=false
     while read -r line; do
         local hostname=$(echo "$line" | awk '{print $1}')

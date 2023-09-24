@@ -62,7 +62,7 @@ whitelistUpdateYML()
                     echo "whitelistUpdateRestart $app_name $app_script $should_restart;"
                     whitelistUpdateRestart $app_name $app_script $should_restart;
                 fi
-                
+
                 # If the IPs are setup already but needs an update
                 local current_ip_range=$(grep "ipwhitelist.sourcerange:" "$yaml_file" | cut -d ' ' -f 2)
                 if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
@@ -106,7 +106,7 @@ whitelistUpdateCompose()
     local app_name="$1"
     local app_config="$2"
     
-    setupIPsAndHostnames;
+    setupIPsAndHostnames $app_name;
 
     if grep -q "editComposeFileDefault" $app_config; then
         editComposeFileDefault;

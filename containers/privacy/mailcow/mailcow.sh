@@ -39,7 +39,7 @@ installMailcow()
         echo "---- $menu_number. Checking custom DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames;
+		setupIPsAndHostnames $app_name;
 
 		((menu_number++))
         echo ""

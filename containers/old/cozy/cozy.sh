@@ -45,7 +45,7 @@ installCozy()
         echo "---- $menu_number. Checking DNS entry and IP for setup"
         echo ""
 
-		setupIPsAndHostnames;
+		setupIPsAndHostnames $app_name;
 
 		((menu_number++))
         echo ""
