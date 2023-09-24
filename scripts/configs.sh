@@ -138,7 +138,7 @@ checkApplicationsConfigFilesMissingVariables()
                             echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
                             checkSuccess "Adding the $var_line to '$container_config_relative_path':"
 
-                            if [[ $remote_var == *"WHITELIST="* ]]; then
+                            if [[ $var_line == *"WHITELIST="* ]]; then
                                 local app_dir=$(find "$containers_dir" -type d -name "$config_app_name" -print -quit)
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
@@ -152,15 +152,15 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistApp $config_app_name true;
-                                                break  # Exit the loop
-                                            ;;
+                                                whitelistApp "$config_app_name" true
+                                                break  # Exit the loop after executing whitelistApp
+                                                ;;
                                             [nN])
-                                                break  # Exit the loop
-                                            ;;
+                                                break  # Exit the loop without updating
+                                                ;;
                                             *)
-                                                isNotice "Please provide a valid input (c or e)."
-                                            ;;
+                                                isNotice "Please provide a valid input (y or n)."
+                                                ;;
                                         esac
                                     done
                                 fi
