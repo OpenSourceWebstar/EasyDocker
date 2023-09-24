@@ -66,7 +66,7 @@ installAkaunting()
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
 		fi
 		
-		editComposeFileApp $app_name;
+		whitelistApp $app_name false;
 
 		((menu_number++))
         echo ""

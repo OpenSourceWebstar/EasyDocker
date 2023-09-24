@@ -63,7 +63,7 @@ installTraefik()
         result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
-		editComposeFileDefault $app_name;
+		whitelistApp $app_name false;
 
 		((menu_number++))
         echo ""

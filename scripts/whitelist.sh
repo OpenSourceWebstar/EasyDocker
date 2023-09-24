@@ -6,13 +6,14 @@ app_name="$1"
 whitelistApp()
 {
     local app_name="$1"
+    local should_restart="$2"
     # For checking if it's a default compose file or not
     local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
     local app_config="$app_dir/$app_name.config"
     local app_script="$app_dir/$app_name.sh"
 
     # Always keep YML updated
-    whitelistUpdateYML $app_name $app_config $app_script
+    whitelistUpdateYML $app_name $app_config $app_script $should_restart
 }
 
 # Function to update IP whitelist in YAML files
@@ -45,6 +46,7 @@ whitelistUpdateYML()
     local app_name="$1"
     local app_config="$2"
     local app_script="$3"
+    local should_restart="$4"
 
     for yaml_file in "$install_dir/$app_name"/*.yml; do
         if [ -f "$yaml_file" ]; then
@@ -55,7 +57,7 @@ whitelistUpdateYML()
                     result=$(sudo sed -i "s/ipwhitelist.sourcerange: $current_ip_range/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     whitelistUpdateCompose $app_name $app_config
-                    whitelistUpdateRestart $app_name $app_script
+                    whitelistUpdateRestart $app_name $app_script $should_restart
                 fi
             fi
         fi
@@ -66,7 +68,7 @@ whitelistUpdateYML()
             if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
                 result=$(sudo sed -i "s/ignoreip = ips_whitelist/ignoreip = $CFG_IPS_WHITELIST/" "$install_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
-                whitelistUpdateRestart $app_name $app_script
+                whitelistUpdateRestart $app_name $app_script $should_restart
             fi
         fi
     fi
@@ -90,12 +92,15 @@ whitelistUpdateRestart()
 {
     local app_name="$1"
     local app_script="$2"
+    local should_restart="$3"
     
-    if grep -q "dockerDownUpDefault" $app_script; then
-        dockerDownUpDefault $app_name;
-    fi
-    
-    if grep -q "dockerDownUpAdditionalYML" $app_script; then
-        dockerDownUpAdditionalYML $app_name;
+    if [[ "$should_restart" == "true" ]]; then
+        if grep -q "dockerDownUpDefault" $app_script; then
+            dockerDownUpDefault $app_name;
+        fi
+        
+        if grep -q "dockerDownUpAdditionalYML" $app_script; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 }

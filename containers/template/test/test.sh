@@ -46,7 +46,7 @@ installActual()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault $app_name;
+		whitelistApp $app_name false;
 
 		# SSL Cert is needed to load, using self signed
 		if [ -f "$ssl_dir$ssl_key" ]; then

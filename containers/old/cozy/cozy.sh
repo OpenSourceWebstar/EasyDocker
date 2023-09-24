@@ -90,7 +90,7 @@ installCozy()
 		result=$(sudo sed -i "s|labels:|#labels:|g" $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
-		editComposeFileApp $app_name;
+		whitelistApp $app_name false;
 
 		((menu_number++))
         echo ""

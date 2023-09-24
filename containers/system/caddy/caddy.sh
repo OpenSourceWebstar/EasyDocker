@@ -48,7 +48,7 @@ installCaddy()
 		
 		createTouch $install_dir$app_name/Caddyfile
 		
-		editComposeFileDefault $app_name;
+		whitelistApp $app_name false;
 
 		((menu_number++))
         echo ""

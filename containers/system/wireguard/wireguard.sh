@@ -46,7 +46,7 @@ installWireguard()
 		echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault $app_name;
+		whitelistApp $app_name false;
 
 		((menu_number++))
 		echo ""
