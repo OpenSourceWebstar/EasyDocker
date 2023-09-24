@@ -138,32 +138,32 @@ checkApplicationsConfigFilesMissingVariables()
                             echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
                             checkSuccess "Adding the $var_line to '$container_config_relative_path':"
 
-                            if [[ $var_line == *"WHITELIST"* ]]; then
-                                echo ""
-                                isNotice "Whitelist has been added to the $config_app_name."
-                                echo ""
-                                while true; do
-                                    isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
-                                    read -rp "" whitelistaccept
+                            if [[ $remote_var == *"WHITELIST="* ]]; then
+                                local app_dir=$(find "$containers_dir" -type d -name "$config_app_name" -print -quit)
+                                # Check if app is installed
+                                if [ -d "$app_dir" ]; then
                                     echo ""
-                                    case $whitelistaccept in
-                                        [yY])
-                                            isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                            if [[ $var_line == *"true"* ]]; then
-                                                whitelistApp $config_app_name true;
-                                            elif [[ $var_line == *"false"* ]]; then
-                                                whitelistApp $config_app_name false;
-                                            fi
-                                            break  # Exit the loop
-                                        ;;
-                                        [nN])
-                                            break  # Exit the loop
-                                        ;;
-                                        *)
-                                            isNotice "Please provide a valid input (c or e)."
-                                        ;;
-                                    esac
-                                done
+                                    isNotice "Whitelist has been added to the $config_app_name."
+                                    echo ""
+                                    while true; do
+                                        isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
+                                        read -rp "" whitelistaccept
+                                        echo ""
+                                        case $whitelistaccept in
+                                            [yY])
+                                                isNotice "Updating ${config_app_name}'s whitelist settings..."
+                                                whitelistApp $config_app_name;
+                                                break  # Exit the loop
+                                            ;;
+                                            [nN])
+                                                break  # Exit the loop
+                                            ;;
+                                            *)
+                                                isNotice "Please provide a valid input (c or e)."
+                                            ;;
+                                        esac
+                                    done
+                                fi
                             fi
                             ;;
                         2)
@@ -175,31 +175,31 @@ checkApplicationsConfigFilesMissingVariables()
                             checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_relative_path':"
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
-                                echo ""
-                                isNotice "Whitelist has been added to the $config_app_name."
-                                echo ""
-                                while true; do
-                                    isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
-                                    read -rp "" whitelistaccept
+                                local app_dir=$(find "$containers_dir" -type d -name "$config_app_name" -print -quit)
+                                # Check if app is installed
+                                if [ -d "$app_dir" ]; then
                                     echo ""
-                                    case $whitelistaccept in
-                                        [yY])
-                                            isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                            if [[ $custom_value == "true" ]]; then
-                                                whitelistApp $config_app_name true;
-                                            elif [[ $var_line == *"false"* ]]; then
-                                                whitelistApp $config_app_name false;
-                                            fi
-                                            break  # Exit the loop
-                                        ;;
-                                        [nN])
-                                            break  # Exit the loop
-                                        ;;
-                                        *)
-                                            isNotice "Please provide a valid input (c or e)."
-                                        ;;
-                                    esac
-                                done
+                                    isNotice "Whitelist has been added to the $config_app_name."
+                                    echo ""
+                                    while true; do
+                                        isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
+                                        read -rp "" whitelistaccept
+                                        echo ""
+                                        case $whitelistaccept in
+                                            [yY])
+                                                isNotice "Updating ${config_app_name}'s whitelist settings..."
+                                                whitelistApp $config_app_name;
+                                                break  # Exit the loop
+                                            ;;
+                                            [nN])
+                                                break  # Exit the loop
+                                            ;;
+                                            *)
+                                                isNotice "Please provide a valid input (c or e)."
+                                            ;;
+                                        esac
+                                    done
+                                fi
                             fi
                             ;;
                         [xX])
