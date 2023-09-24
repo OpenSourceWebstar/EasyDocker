@@ -30,7 +30,7 @@ installCozy()
     fi
 
     if [[ "$cozy" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$cozy" == *[iI]* ]]; then
@@ -90,14 +90,14 @@ installCozy()
 		result=$(sudo sed -i "s|labels:|#labels:|g" $install_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
-		editComposeFileApp;
+		editComposeFileApp $app_name;
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
 		((menu_number++))
         echo ""

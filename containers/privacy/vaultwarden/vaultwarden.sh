@@ -23,7 +23,7 @@ installVaultwarden()
 	fi
 
 	if [[ "$vaultwarden" == *[rR]* ]]; then
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 	fi
 
     if [[ "$vaultwarden" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installVaultwarden()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -60,7 +60,7 @@ installVaultwarden()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

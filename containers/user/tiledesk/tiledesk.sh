@@ -23,7 +23,7 @@ installTileDesk()
 	fi
 
     if [[ "$tiledesk" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$tiledesk" == *[iI]* ]]; then
@@ -50,7 +50,7 @@ installTileDesk()
 		result=$(cd $install_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
 
-		editComposeFileApp;
+		editComposeFileApp $app_name;
 
 		((menu_number++))
         echo ""

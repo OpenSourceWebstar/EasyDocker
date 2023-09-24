@@ -23,7 +23,7 @@ installTraefik()
     fi
 
     if [[ "$traefik" == *[rR]* ]]; then      
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$traefik" == *[iI]* ]]; then
@@ -63,7 +63,7 @@ installTraefik()
         result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -77,7 +77,7 @@ installTraefik()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""
@@ -91,7 +91,7 @@ installTraefik()
         echo "---- $menu_number. Restarting $app_name after firewall changes"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
 		((menu_number++))
 		echo ""

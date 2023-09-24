@@ -23,7 +23,7 @@ installKimai()
 	fi
 
     if [[ "$kimai" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$kimai" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installKimai()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -60,7 +60,7 @@ installKimai()
         echo "---- $menu_number. Running the docker-compose.yml to install and start Kimai"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

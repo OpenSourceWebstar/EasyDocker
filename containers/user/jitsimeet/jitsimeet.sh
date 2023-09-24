@@ -23,7 +23,7 @@ installJitsiMeet()
 	fi
 
     if [[ "$jitsimeet" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$jitsimeet" == *[iI]* ]]; then
@@ -72,7 +72,7 @@ installJitsiMeet()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -120,7 +120,7 @@ installJitsiMeet()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

@@ -23,7 +23,7 @@ installTest()
     fi
 
     if [[ "$test" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$test" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installTest()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -60,7 +60,7 @@ installTest()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

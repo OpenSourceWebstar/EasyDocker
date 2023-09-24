@@ -138,7 +138,7 @@ checkApplicationsConfigFilesMissingVariables()
                             echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
                             checkSuccess "Adding the $var_line to '$container_config_relative_path':"
 
-                            if [[ $remote_var == *"WHITELIST="* ]] && [[ $var_line == *"true"* ]]; then
+                            if [[ $var_line == *"WHITELIST"* ]]; then
                                 echo ""
                                 isNotice "Whitelist has been added to the $config_app_name."
                                 echo ""
@@ -149,7 +149,11 @@ checkApplicationsConfigFilesMissingVariables()
                                     case $whitelistaccept in
                                         [yY])
                                             isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                            whitelistApp $config_app_name;
+                                            if [[ $var_line == *"true"* ]]; then
+                                                whitelistApp $config_app_name true;
+                                            elif [[ $var_line == *"false"* ]]; then
+                                                whitelistApp $config_app_name false;
+                                            fi
                                             break  # Exit the loop
                                         ;;
                                         [nN])
@@ -167,10 +171,10 @@ checkApplicationsConfigFilesMissingVariables()
                             isQuestion "Enter your value for $remote_var: "
                             read -p " " custom_value
                             echo ""
-                            echo "CFG_${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
-                            checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$container_config_relative_path':"
+                            echo "${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_relative_path':"
 
-                            if [[ $remote_var == *"WHITELIST="* ]] && [[ $custom_value == *"true"* ]]; then
+                            if [[ $remote_var == *"WHITELIST="* ]]; then
                                 echo ""
                                 isNotice "Whitelist has been added to the $config_app_name."
                                 echo ""
@@ -181,7 +185,11 @@ checkApplicationsConfigFilesMissingVariables()
                                     case $whitelistaccept in
                                         [yY])
                                             isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                            whitelistApp $config_app_name;
+                                            if [[ $custom_value == "true" ]]; then
+                                                whitelistApp $config_app_name true;
+                                            elif [[ $var_line == *"false"* ]]; then
+                                                whitelistApp $config_app_name false;
+                                            fi
                                             break  # Exit the loop
                                         ;;
                                         [nN])

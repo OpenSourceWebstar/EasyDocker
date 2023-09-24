@@ -22,7 +22,7 @@ installCaddy()
     fi
 
     if [[ "$caddy" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$caddy" == *[iI]* ]]; then
@@ -48,7 +48,7 @@ installCaddy()
 		
 		createTouch $install_dir$app_name/Caddyfile
 		
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -62,7 +62,7 @@ installCaddy()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""
@@ -76,7 +76,7 @@ installCaddy()
         echo "---- $menu_number. Restarting $app_name after firewall changes"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
 		((menu_number++))
 		echo ""

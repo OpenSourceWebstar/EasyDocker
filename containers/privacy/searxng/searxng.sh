@@ -23,7 +23,7 @@ installSearXNG()
 	fi
 
 	if [[ "$searxng" == *[rR]* ]]; then
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 	fi
 
 	if [[ "$searxng" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installSearXNG()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -60,7 +60,7 @@ installSearXNG()
 		echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
 		echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
 		# Loop to check for the existence of the file every second
 		while [ ! -f "$install_dir$app_name/searxng-data/settings.yml" ]; do
@@ -72,7 +72,7 @@ installSearXNG()
 		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_dir$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

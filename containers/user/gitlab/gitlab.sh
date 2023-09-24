@@ -24,7 +24,7 @@ installGitLab()
 	fi
 
     if [[ "$gitlab" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$gitlab" == *[iI]* ]]; then
@@ -47,14 +47,14 @@ installGitLab()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
 		((menu_number++))
         echo ""

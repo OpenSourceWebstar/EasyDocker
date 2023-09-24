@@ -76,6 +76,7 @@ setupComposeFileApp()
 
 dockerDownUpDefault()
 {
+    local app_name="$1"
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
             result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
@@ -109,6 +110,7 @@ dockerDownUpDefault()
 
 dockerDownUpAdditionalYML()
 {
+    local app_name="$1"
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
             result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
@@ -142,7 +144,10 @@ dockerDownUpAdditionalYML()
 
 editComposeFileDefault()
 {
+    local app_name="$1"
     local compose_file="$install_dir$app_name/docker-compose.yml"
+    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    local app_config="$app_dir/$app_name.config"
     
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
@@ -174,8 +179,13 @@ editComposeFileDefault()
             else
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-                checkSuccess "Enabling Traefik options for public setup"
+                if grep -q "WHITELIST=true" "$app_config"; then
+                    result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                    checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
+                elif grep -q "WHITELIST=false" "$app_config"; then
+                    result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                    checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
+                fi
             fi
         fi
     fi
@@ -192,8 +202,11 @@ editComposeFileDefault()
 
 editComposeFileApp()
 {
+    local app_name="$1"
     local compose_file="$install_dir$app_name/docker-compose.$app_name.yml"
-    
+    local app_dir=$(find "$containers_dir" -type d -name "$app_name" -print -quit)
+    local app_config="$app_dir/$app_name.config"
+
     result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
@@ -224,8 +237,13 @@ editComposeFileApp()
             else
                 result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-                checkSuccess "Enabling Traefik options for public setup"
+                if grep -q "WHITELIST=true" "$app_config"; then
+                    result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                    checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
+                elif grep -q "WHITELIST=false" "$app_config"; then
+                    result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                    checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
+                fi
             fi
         fi
     fi

@@ -23,7 +23,7 @@ installAdguard()
     fi
 
     if [[ "$adguard" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$adguard" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installAdguard()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		result=$(copyResource "$app_name" "unbound.conf" "unbound.conf" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
@@ -63,7 +63,7 @@ installAdguard()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

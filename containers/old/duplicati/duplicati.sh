@@ -24,7 +24,7 @@ installDuplicati()
     fi
 
     if [[ "$duplicati" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$duplicati" == *[iI]* ]]; then
@@ -47,7 +47,7 @@ installDuplicati()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -61,7 +61,7 @@ installDuplicati()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $$app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

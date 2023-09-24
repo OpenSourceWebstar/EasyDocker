@@ -95,11 +95,11 @@ restoreStart()
     setupIPsAndHostnames;
 
     if grep -q "editComposeFileDefault" $app_script; then
-        editComposeFileDefault;
+        editComposeFileDefault $app_name;
     fi
 
     if grep -q "editComposeFileApp" $app_script; then
-        editComposeFileApp;
+        editComposeFileApp $app_name;
     fi
 
     ((menu_number++))

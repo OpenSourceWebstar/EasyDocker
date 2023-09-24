@@ -24,7 +24,7 @@ installMattermost()
 	fi
 
 	if [[ "$mattermost" == *[rR]* ]]; then
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 	fi
 
     if [[ "$mattermost" == *[iI]* ]]; then

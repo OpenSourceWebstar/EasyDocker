@@ -23,7 +23,7 @@ installAkaunting()
 	fi
 
     if [[ "$akaunting" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$akaunting" == *[iI]* ]]; then
@@ -66,7 +66,7 @@ installAkaunting()
 			checkSuccess "Comment out the last 'networks:' and the 2 lines below it."
 		fi
 		
-		editComposeFileApp;
+		editComposeFileApp $app_name;
 
 		((menu_number++))
         echo ""
@@ -117,7 +117,7 @@ installAkaunting()
 			fi
 		else
 			isNotice "It seems $app_name is already setup, using the normal up command"
-			dockerDownUpAdditionalYML;
+			dockerDownUpAdditionalYML $app_name;
 		fi
 
         ((menu_number++))

@@ -19,7 +19,7 @@ installWatchtower()
     fi
 
     if [[ "$watchtower" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$watchtower" == *[iI]* ]]; then
@@ -35,7 +35,7 @@ installWatchtower()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -49,7 +49,7 @@ installWatchtower()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

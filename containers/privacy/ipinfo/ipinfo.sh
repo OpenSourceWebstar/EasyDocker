@@ -23,7 +23,7 @@ installIPInfo()
 	fi
 
 	if [[ "$ipinfo" == *[rR]* ]]; then
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 	fi
 
     if [[ "$ipinfo" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installIPInfo()
         echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
         echo ""
@@ -60,7 +60,7 @@ installIPInfo()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""

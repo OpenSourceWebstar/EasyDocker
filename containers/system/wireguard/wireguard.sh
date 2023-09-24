@@ -23,7 +23,7 @@ installWireguard()
     fi
 
     if [[ "$wireguard" == *[rR]* ]]; then
-        dockerDownUpDefault;
+        dockerDownUpDefault $app_name;
     fi
 
     if [[ "$wireguard" == *[iI]* ]]; then
@@ -46,7 +46,7 @@ installWireguard()
 		echo ""
 
 		setupComposeFileNoApp;
-		editComposeFileDefault;
+		editComposeFileDefault $app_name;
 
 		((menu_number++))
 		echo ""
@@ -71,7 +71,7 @@ installWireguard()
         echo "---- $menu_number. Running the docker-compose.yml to Install $app_name"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
         ((menu_number++))
         echo ""
@@ -85,7 +85,7 @@ installWireguard()
         echo "---- $menu_number. Restarting $app_name after firewall changes"
         echo ""
 
-		dockerDownUpDefault;
+		dockerDownUpDefault $app_name;
 
 		((menu_number++))
 		echo ""
