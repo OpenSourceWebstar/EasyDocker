@@ -23,7 +23,7 @@ setupConfigToContainer()
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."
     else
-        mkdirFolders "$target_path"
+        mkdirFolders --silent "$target_path" silent
     fi
     
     if [ ! -f "$source_file" ]; then
@@ -32,7 +32,7 @@ setupConfigToContainer()
     fi
     
     if [ ! -f "$target_path/$app_name.config" ]; then
-        copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+        copyFile --silent "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         
         if [ $? -ne 0 ]; then
             isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."

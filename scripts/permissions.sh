@@ -232,21 +232,26 @@ copyFile()
     local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
     local flags="$3"
-    local flags_full=""
 
     if [[ $flags == "overwrite" ]]; then
         flags_full="-f"
     fi
 
     result=$(sudo cp $flags_full "$file" "$save_dir")
-    checkSuccess "Copying $file_name to $save_dir" "$silent_flag"
+    if [ -z "$silent_flag" ]; then
+        checkSuccess "Copying $file_name to $save_dir"
+    fi
 
     if [[ $clean_dir == *"$install_dir"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
-        checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership" "$silent_flag"
+        if [ -z "$silent_flag" ]; then
+            checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
+        fi
     else
         result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
-        checkSuccess "Updating $save_dir_file with $easydockeruser ownership" "$silent_flag"
+        if [ -z "$silent_flag" ]; then
+            checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
+        fi
     fi
 }
 
@@ -291,7 +296,6 @@ copyFiles()
         fi
     done
 }
-
 
 createTouch() 
 {
