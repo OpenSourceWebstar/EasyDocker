@@ -34,6 +34,8 @@ setupConfigToContainer()
     if [ $? -ne 0 ]; then
         isError "Failed to create the directory '$target_path'."
         return 1
+    else
+        isSuccessful "Install folder for $app has been created"
     fi
     
     copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
@@ -41,6 +43,8 @@ setupConfigToContainer()
     if [ $? -ne 0 ]; then
         isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
         return 1
+    else
+        isSuccessful "Config file for $app has been created"
     fi
 
     loadConfigFiles;

@@ -63,7 +63,7 @@ installActual()
 			result=$(mkdirFolders -p $install_dir$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
-			result=$(copyFile $script_dir/resources/$app_name/config.json $install_dir$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			result=$(copyFile $containers_dir$app_name/resources/$app_name/config.json $install_dir$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying config.json to actual-data folder"
 
 			result=$(copyFile $ssl_dir/$ssl_crt $install_dir$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)

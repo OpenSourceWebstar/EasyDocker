@@ -218,8 +218,13 @@ copyFile()
     local save_dir="$2"
     local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
+    local flags="$3"
 
-    result=$(sudo cp "$file" "$save_dir")
+    if [[ $flags == "overwrite" ]]; then
+        flags_full="-f"
+    fi
+
+    result=$(sudo cp $flags_full "$file" "$save_dir")
     checkSuccess "Copying $file_name to $save_dir"
 
     if [[ $clean_dir == *"$install_dir"* ]]; then

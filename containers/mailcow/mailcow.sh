@@ -127,7 +127,7 @@ installMailcow()
 		result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized $install_dir/mailcow)
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 
-		result=$(copyFile $script_dir/containers/docker-compose.$app_name.yml $install_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		result=$(copyFile $containers_dir$app_name/docker-compose.$app_name.yml $install_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
 
 		((menu_number++))
