@@ -11,7 +11,7 @@ installSearxng()
         searxng=i
     fi
 
-    if [[ -n "$searxng" || "$searxng" != "n" ]]; then
+    if [[ -z  "$searxng" || "$searxng" != "n" ]]; then
         setupConfigToContainer searxng;
 		app_name=$CFG_SEARXNG_APP_NAME
 	fi
