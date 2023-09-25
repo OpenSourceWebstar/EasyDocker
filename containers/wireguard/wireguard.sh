@@ -111,7 +111,7 @@ installWireguard()
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
         echo ""
 
-		databaseInstallApp;
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

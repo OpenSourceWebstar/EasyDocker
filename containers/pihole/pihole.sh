@@ -115,7 +115,7 @@ installPihole()
         echo "---- $menu_number. Setting up database records"
         echo ""
 
-		databaseInstallApp;
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""
