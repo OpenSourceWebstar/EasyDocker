@@ -11,7 +11,7 @@ installMailcow()
         mailcow=i
     fi
 
-    if [[ -z  "$mailcow" || "$mailcow" != "n" ]]; then
+    if [[ "$mailcow" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer mailcow;
 		app_name=$CFG_MAILCOW_APP_NAME
 		easy_setup=$CFG_MAILCOW_EASY_SETUP

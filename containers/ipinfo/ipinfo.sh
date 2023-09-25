@@ -11,7 +11,7 @@ installIpinfo()
         ipinfo=i
     fi
 
-    if [[ -z  "$ipinfo" || "$ipinfo" != "n" ]]; then
+    if [[ "$ipinfo" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer ipinfo;
         app_name=$CFG_IPINFO_APP_NAME
     fi

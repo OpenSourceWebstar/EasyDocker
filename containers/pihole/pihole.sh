@@ -11,7 +11,7 @@ installPihole()
         pihole=i
     fi
 
-    if [[ -z  "$pihole" || "$pihole" != "n" ]]; then
+    if [[ "$pihole" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer pihole;
         app_name=$CFG_PIHOLE_APP_NAME
     fi

@@ -11,7 +11,7 @@ installAkaunting()
         akaunting=i
     fi
 
-    if [[ -z "$akaunting" || "$akaunting" != "n" ]]; then
+    if [[ "$akaunting" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer akaunting;
 		app_name=$CFG_AKAUNTING_APP_NAME
 	fi

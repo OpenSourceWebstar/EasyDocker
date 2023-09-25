@@ -11,12 +11,13 @@ installDashy()
         dashy=i
     fi
 
-    if [[ -z "$dashy" || "$dashy" != "n" ]]; then
+    if [[ "$dashy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer dashy;
         app_name=$CFG_DASHY_APP_NAME
     fi
 
     if [[ "$dashy" == *[cC]* ]]; then
+
         editAppConfig $app_name;
     fi
 

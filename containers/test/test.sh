@@ -11,7 +11,7 @@ installTest()
         test=i
     fi
 
-    if [[ -z  "$test" || "$test" != "n" ]]; then
+    if [[ "$test" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer test;
         app_name=$CFG_TEST_APP_NAME
     fi

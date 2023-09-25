@@ -11,7 +11,7 @@ installWatchtower()
         watchtower=i
     fi
 
-    if [[ -z  "$watchtower" || "$watchtower" != "n" ]]; then
+    if [[ "$watchtower" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer watchtower;
         app_name=$CFG_WATCHTOWER_APP_NAME
     fi
