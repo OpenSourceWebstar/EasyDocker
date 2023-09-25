@@ -221,7 +221,7 @@ dashyUpdateConf()
         while IFS= read -r -d $'\0' app_name_dir; do
             app_name_path="$app_name_dir"
             installed_app_paths+=("$app_name_path")
-        done < <(find "$install_dir" -mindepth 2 -maxdepth 2 -type d -print0)
+        done < <(sudo find "$install_dir" -mindepth 2 -maxdepth 2 -type d -print0)
 
         # Get unique category names related to installed apps
         installed_categories=()

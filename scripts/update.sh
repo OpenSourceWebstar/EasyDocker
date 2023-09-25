@@ -90,7 +90,7 @@ gitCheckConfigs()
         valid_configs_found=false
 
         # Get a list of all backup zip files in the directory, sorted by date (latest first)
-        backup_files=($(find "$backup_install_dir" -type f -name 'backup_*.zip' | sort -r))
+        backup_files=($(sudo find "$backup_install_dir" -type f -name 'backup_*.zip' | sort -r))
         
         # Check if any backup files were found
         if [ ${#backup_files[@]} -eq 0 ]; then
@@ -107,7 +107,7 @@ gitCheckConfigs()
             unzip -q "$zip_file" -d "$temp_dir"
 
             # Find the path of $config_file_general within the extracted files
-            config_file_path=$(find "$temp_dir" -type f -name "$config_file_general")
+            config_file_path=$(sudo find "$temp_dir" -type f -name "$config_file_general")
 
             # Check if $config_file_general exists and does not contain "Change-Me"
             if [ -n "$config_file_path" ] && ! grep -q "Change-Me" "$config_file_path"; then
@@ -251,7 +251,7 @@ gitUntrackFiles()
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     # Get a list of .config files recursively in $containers_dir
-    config_files=($(find "$containers_dir" -type f -name "*.config"))
+    config_files=($(sudo find "$containers_dir" -type f -name "*.config"))
 
     # Loop through the list and untrack each file
     for config_file in "${config_files[@]}"; do

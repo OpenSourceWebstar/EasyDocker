@@ -437,7 +437,7 @@ migrateRestoreFileMoveFromMigrate() {
                 isNotice "Invalid choice"
                 continue
             fi
-            file_count=$(find "$src_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
+            file_count=$(sudo find "$src_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
             if [ "$file_count" -eq 0 ]; then
                 echo ""
                 isNotice "No files found in $src_dir... returning to previous menu."

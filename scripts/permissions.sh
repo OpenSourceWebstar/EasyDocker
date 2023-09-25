@@ -274,7 +274,7 @@ copyFiles()
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     # Ensure the source path is expanded to a list of files
-    local files=($(find "$source" -type f))
+    local files=($(sudo find "$source" -type f))
 
     if [ ${#files[@]} -eq 0 ]; then
         echo "No files found in the source directory: $source"
