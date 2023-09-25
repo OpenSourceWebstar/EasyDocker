@@ -11,9 +11,9 @@ runCommandForDockerInstallUser()
 setupConfigToContainer()
 {
     local app_name="$1"
+    local flags="$2"
     local target_path="$install_dir$app_name"
     local source_file="$containers_dir$app_name/$app_name.config"
-
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -22,21 +22,13 @@ setupConfigToContainer()
 
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."
-        return 1
+    else
+        mkdirFolders "$target_path"
     fi
     
     if [ ! -f "$source_file" ]; then
         isError ""Error: "The config file '$source_file' does not exist."
         return 1
-    fi
-    
-    mkdirFolders "$target_path"
-
-    if [ $? -ne 0 ]; then
-        isError "Failed to create the directory '$target_path'."
-        return 1
-    else
-        isSuccessful "Install folder for $app has been created"
     fi
     
     if [ ! -f "$target_path/$app_name.config" ]; then
@@ -49,7 +41,35 @@ setupConfigToContainer()
             isSuccessful "Config file for $app has been created"
         fi
     else
-        isNotice "Config file for $app_name already exists...skipping"
+        if [[ "$flags" == "install" ]]; then
+            echo ""
+            isNotice "Config file for $app_name already exists..."
+            echo ""
+            while true; do
+                isQuestion "Would you like to reset the config file? (y/n): "
+                read -rp "" resetconfigaccept
+                echo ""
+                case $resetconfigaccept in
+                    [yY])
+                        isNotice "Resetting $app_name config file."
+                        copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                        if [ $? -ne 0 ]; then
+                            isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
+                            return 1
+                        else
+                            isSuccessful "Config file for $app has been created"
+                        fi
+                        break  # Exit the loop after executing whitelistAndStartApp
+                        ;;
+                    [nN])
+                        break  # Exit the loop without updating
+                        ;;
+                    *)
+                        isNotice "Please provide a valid input (y or n)."
+                        ;;
+                esac
+            done
+        fi
     fi
 
     loadConfigFiles;
