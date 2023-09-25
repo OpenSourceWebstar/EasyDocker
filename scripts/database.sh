@@ -5,7 +5,7 @@ app_name="$1"
 databaseInstallApp() 
 {
     local app_name="$1"
-    
+
     # Check if sqlite3 is available
     if ! command -v sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
@@ -118,34 +118,50 @@ databaseAppScan()
     updated_count=0
 
     # Get the list of all folder names and statuses from the database
-    existing_folders=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, status FROM apps;")
+    existing_folders=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, status, uninstall_date FROM apps;")
 
     # Create an array to store existing folder names in the database
     existing_folder_names=()
-    while IFS='|' read -r folder_name status; do
+    while IFS='|' read -r folder_name status uninstall_date; do
         if [[ -n "$folder_name" ]]; then
             existing_folder_names+=("$folder_name")
             # Check if the folder exists in the install_dir
             if [ -d "$install_dir/$folder_name" ]; then
-                if (( status != 1 )); then 
-                    isNotice "The folder for $folder_name has been found. Updating status to Installed in the Database"
+                if (( status == 0 )); then 
+                    isNotice "The folder for $folder_name has been found."
                     # Update the database to set the status to 1 (installed) and unset the uninstall_date
                     result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$folder_name';")
                     checkSuccess "Updating apps database for $folder_name to installed status."
                     ((updated_count++)) # Increment updated_count
                 fi
-            else
-                # Check if the status is not 0 (not uninstalled)
-                if (( status != 0 )); then
-                    isNotice "Unable to find the folder for $folder_name. Setting to Uninstalled in the Database"
-                    # Update the database to set the status to 0 and set the uninstall_date to the current date
-                    result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = date('now') WHERE name = '$folder_name';")
-                    checkSuccess "Updating apps database for $folder_name to uninstalled status."
-                    ((updated_count++)) # Increment updated_count
-                fi
             fi
         fi
     done <<< "$existing_folders"
+
+    # Loop through immediate subdirectories of $install_dir
+    for app_dir in "$install_dir"/*/; do
+        # Get the app name from the folder name
+        app_name=$(basename "$app_dir")
+
+        # Check if the app name is not already in the database
+        if ! [[ " ${existing_folder_names[@]} " =~ " $app_name " ]]; then
+            # Check if the folder contains a valid .config file
+            if [ -f "$app_dir/$app_name.config" ]; then
+                # Extract the date from the folder name (if present)
+                folder_date=$(echo "$app_name" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+                if [ -z "$folder_date" ]; then
+                    # If no date is found in the folder name, use the current date
+                    folder_date=$(date +%Y-%m-%d)
+                fi
+                
+                isNotice "Adding new app $app_name to the database."
+                # Add the new entry to the database with a default status of 1 (installed) and the extracted or current date
+                result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, uninstall_date) VALUES ('$app_name', 1, '$folder_date');")
+                checkSuccess "Adding $app_name to the apps database."
+                ((updated_count++)) # Increment updated_count
+            fi
+        fi
+    done
 
     # Create an array to store folder names that should be removed from the database
     folders_to_remove=()
