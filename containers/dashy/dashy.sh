@@ -11,7 +11,7 @@ installDashy()
         dashy=i
     fi
 
-    if [[ -n "$dashy" || "$dashy" != "n" ]]; then
+    if [[ ! -n  "$dashy" || "$dashy" != "n" ]]; then
         setupConfigToContainer dashy;
         app_name=$CFG_DASHY_APP_NAME
     fi

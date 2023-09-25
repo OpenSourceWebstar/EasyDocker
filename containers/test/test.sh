@@ -11,7 +11,7 @@ installTest()
         test=i
     fi
 
-    if [[ -n "$test" || "$test" != "n" ]]; then
+    if [[ ! -n "$test" || "$test" != "n" ]]; then
         setupConfigToContainer test;
         app_name=$CFG_TEST_APP_NAME
     fi
