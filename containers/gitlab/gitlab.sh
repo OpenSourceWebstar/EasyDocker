@@ -11,7 +11,7 @@ installGitlab()
         gitlab=i
     fi
 
-    if [[ -n "$gitlab" && "$gitlab" != "n" ]]; then
+    if [[ -n "$gitlab" || "$gitlab" != "n" ]]; then
         setupConfigToContainer gitlab;
         app_name=$CFG_GITLAB_APP_NAME
     fi

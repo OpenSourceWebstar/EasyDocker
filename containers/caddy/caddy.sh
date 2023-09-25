@@ -11,7 +11,7 @@ installCaddy()
         caddy=i
     fi
 
-    if [[ -n "$caddy" && "$caddy" != "n" ]]; then
+    if [[ -n "$caddy" || "$caddy" != "n" ]]; then
         setupConfigToContainer caddy;
         app_name=$CFG_CADDY_APP_NAME
     fi

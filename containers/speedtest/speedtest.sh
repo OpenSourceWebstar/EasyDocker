@@ -11,7 +11,7 @@ installSpeedtest()
         speedtest=i
     fi
 
-    if [[ -n "$speedtest" && "$speedtest" != "n" ]]; then
+    if [[ -n "$speedtest" || "$speedtest" != "n" ]]; then
         setupConfigToContainer speedtest;
         app_name=$CFG_SPEEDTEST_APP_NAME
     fi
