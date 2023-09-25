@@ -38,7 +38,7 @@ fixFolderPermissions()
         result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-        result=$(find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
+        result=$(sudo find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
         # Install user
@@ -49,7 +49,7 @@ fixFolderPermissions()
         checkSuccess "Updating $base_dir with execute permissions."
 
         # Update permissions after
-        result=$(find "$install_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
+        result=$(sudo find "$install_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
         checkSuccess "Updating $install_dir with $sudo_user_name read permissions" 
     fi
 }
