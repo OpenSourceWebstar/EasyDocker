@@ -84,29 +84,24 @@ checkEasyDockerConfigFilesMissingVariables()
     isSuccessful "Config variable check completed."  # Indicate completion
 }
 
-checkApplicationsConfigFilesMissingVariables()
+checkApplicationsConfigFilesMissingVariables() 
 {
     isNotice "Scanning Application config files...please wait"
-    local remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/containers/"
-    local container_configs=("$containers_dir"*/**/*.config)  # Match .config files in subdirectories
+    local container_configs=($(find "$install_dir" -type f -name '*.config'))  # Find .config files in subdirectories of $install_dir
 
     for container_config_file in "${container_configs[@]}"; do
-        container_config_relative_path=${container_config_file#$containers_dir}  # Extract relative path
         container_config_filename=$(basename "$container_config_file")
         config_app_name="${container_config_filename%.config}"
 
         # Extract config variables from the local file
         local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
 
-        # Generate the remote URL based on the relative path
-        remote_url="$remote_config_dir$container_config_relative_path"
+        # Find the corresponding .config file in $containers_dir
+        remote_config_file="$containers_dir$config_app_name/$config_app_name.config"
 
-            # Download the remote config file
-            tmp_file=$(mktemp)
-            curl -s "$remote_url" -o "$tmp_file"
-
+        if [ -f "$remote_config_file" ]; then
             # Extract config variables from the remote file
-            remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$tmp_file" | sed 's/=$//'))
+            remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
 
             # Filter out empty variable names from the remote variables
             remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
@@ -115,16 +110,16 @@ checkApplicationsConfigFilesMissingVariables()
             # Compare local and remote variables
             for remote_var in "${remote_variables[@]}"; do
                 if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
-                    var_line=$(grep "${remote_var}=" "$tmp_file")
+                    var_line=$(grep "${remote_var}=" "$remote_config_file")
 
                     echo ""
                     echo "####################################################"
                     echo "###   Missing Application Config Variable Found  ###"
                     echo "####################################################"
                     echo ""
-                    isNotice "Variable '$remote_var' is missing in the local config file '$container_config_relative_path'."
+                    isNotice "Variable '$remote_var' is missing in the local config file '$container_config_filename'."
                     echo ""
-                    isOption "1. Add the '$var_line' to the '$container_config_relative_path'"
+                    isOption "1. Add the '$var_line' to the '$container_config_filename'"
                     isOption "2. Add the '$remote_var' with my own value"
                     isOption "x. Skip"
                     echo ""
@@ -136,7 +131,7 @@ checkApplicationsConfigFilesMissingVariables()
                         1)
                             echo ""
                             echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
-                            checkSuccess "Adding the $var_line to '$container_config_relative_path':"
+                            checkSuccess "Adding the $var_line to '$container_config_filename':"
 
                             if [[ $var_line == *"WHITELIST="* ]]; then
                                 local app_dir=$containers_dir$config_app_name
@@ -172,7 +167,7 @@ checkApplicationsConfigFilesMissingVariables()
                             read -p " " custom_value
                             echo ""
                             echo "${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
-                            checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_relative_path':"
+                            checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_filename':"
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
                                 local app_dir=$containers_dir$config_app_name
@@ -188,15 +183,47 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistAndStartApp $config_app_name true;
+                                                whitelistAndStartApp $config_app_name;
                                                 break  # Exit the loop
                                             ;;
                                             [nN])
                                                 break  # Exit the loop
-                                            ;;
+                                                ;;
                                             *)
                                                 isNotice "Please provide a valid input (c or e)."
+                                                ;;
+                                        esac
+                                    done
+                                fi
+                            else
+                                local app_dir=$containers_dir$config_app_name
+                                # Check if app is installed
+                                if [ -d "$app_dir" ]; then
+                                    echo ""
+                                    isNotice "A new config value has been added to $config_app_name."
+                                    echo ""
+                                    while true; do
+                                        isQuestion "Would you like to reinstall $config_app_name? (y/n): "
+                                        read -rp "" reinstallafterconfig
+                                        echo ""
+                                        case $reinstallafterconfig in
+                                            [yY])
+                                                isNotice "Reinstalling $config_app_name now..."
+                                                app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                                                installFuncName="install${app_name_ucfirst}"
+                                                if type "$installFuncName" &>/dev/null; then
+                                                    "$installFuncName" "install"
+                                                else
+                                                    isNotice "Installation function not found for $app_name."
+                                                fi
+                                                break  # Exit the loop
                                             ;;
+                                            [nN])
+                                                break  # Exit the loop
+                                                ;;
+                                            *)
+                                                isNotice "Please provide a valid input (c or e)."
+                                                ;;
                                         esac
                                     done
                                 fi
@@ -211,8 +238,7 @@ checkApplicationsConfigFilesMissingVariables()
                     esac
                 fi
             done
-
-            rm "$tmp_file"
+        fi
     done
 
     isSuccessful "Config variable check completed."  # Indicate completion
@@ -325,9 +351,7 @@ editAppConfig() {
                     app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
                     installFuncName="install${app_name_ucfirst}"
                     if type "$installFuncName" &>/dev/null; then
-                        variable_name="$app_name"
-                        declare "$variable_name=i"
-                        "$installFuncName" 
+                        "$installFuncName" "install" 
                     else
                         isNotice "Installation function not found for $app_name."
                     fi

@@ -5,6 +5,12 @@
 
 installTrilium()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        trilium=i
+    fi
+
     if [[ -n "$trilium" && "$trilium" != "n" ]]; then
         setupConfigToContainer trilium;
         app_name=$CFG_TRILIUM_APP_NAME

@@ -93,7 +93,7 @@ startInstall()
     ###                Install System Apps              ###
     #######################################################
 
-    installFail2Ban;
+    installFail2ban;
     installCaddy;
     installTraefik;
     installWireguard;
@@ -108,9 +108,9 @@ startInstall()
     ###                Install Privacy Apps             ###
     #######################################################
 
-	installSearXNG;
+	installSearxng;
     installSpeedtest;
-	installIPInfo;
+	installIpinfo;
 	installCozy;
 	installTrilium;
     installMailcow;
@@ -120,10 +120,10 @@ startInstall()
     ###                 Install User Apps               ###
     #######################################################
 
-	installTileDesk;
-	installGitLab;
-	installOwnCloud;
-	installJitsiMeet;
+	installTiledesk;
+	installGitlab;
+	installOwncloud;
+	installJitsimeet;
 	installKillbill;
 	installActual;
     installAkaunting;

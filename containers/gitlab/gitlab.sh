@@ -3,8 +3,14 @@
 # Category : user
 # Description : GitLab - DevOps Platform *UNFINISHED* (c/u/s/r/i):
 
-installGitLab()
+installGitlab()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        gitlab=i
+    fi
+
     if [[ -n "$gitlab" && "$gitlab" != "n" ]]; then
         setupConfigToContainer gitlab;
         app_name=$CFG_GITLAB_APP_NAME

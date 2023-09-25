@@ -5,6 +5,12 @@
 
 installKimai()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        kimai=i
+    fi
+
     if [[ -n "$kimai" && "$kimai" != "n" ]]; then
         setupConfigToContainer kimai;
         app_name=$CFG_KIMAI_APP_NAME

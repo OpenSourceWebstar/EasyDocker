@@ -5,6 +5,12 @@
 
 installPortainer()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        portainer=i
+    fi
+
     if [[ -n "$portainer" && "$portainer" != "n" ]]; then
         setupConfigToContainer portainer;
         app_name=$CFG_PORTAINER_APP_NAME

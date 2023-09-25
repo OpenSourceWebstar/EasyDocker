@@ -5,6 +5,12 @@
 
 installWireguard()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        wireguard=i
+    fi
+
     if [[ -n "$wireguard" && "$wireguard" != "n" ]]; then
         setupConfigToContainer wireguard;
         app_name=$CFG_WIREGUARD_APP_NAME

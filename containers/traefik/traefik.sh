@@ -5,6 +5,12 @@
 
 installTraefik()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        traefik=i
+    fi
+
     if [[ -n "$traefik" && "$traefik" != "n" ]]; then
         setupConfigToContainer traefik;
         app_name=$CFG_TRAEFIK_APP_NAME

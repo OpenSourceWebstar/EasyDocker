@@ -5,6 +5,12 @@
 
 installMattermost()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        mattermost=i
+    fi
+
     if [[ -n "$mattermost" && "$mattermost" != "n" ]]; then
     	setupConfigToContainer mattermost;
 		app_name=$CFG_MATTERMOST_APP_NAME

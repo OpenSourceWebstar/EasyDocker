@@ -5,6 +5,12 @@
 
 installDuplicati()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        duplicati=i
+    fi
+
     if [[ -n "$duplicati" && "$duplicati" != "n" ]]; then
         setupConfigToContainer duplicati;
         app_name=$CFG_DUPLICATI_APP_NAME

@@ -5,6 +5,12 @@
 
 installVaultwarden()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        vaultwarden=i
+    fi
+
     if [[ -n "$vaultwarden" && "$vaultwarden" != "n" ]]; then
         setupConfigToContainer vaultwarden;
         app_name=$CFG_VAULTWARDEN_APP_NAME

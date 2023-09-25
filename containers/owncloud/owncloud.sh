@@ -3,8 +3,14 @@
 # Category : user
 # Description : OwnCloud - File & Document Cloud (c/u/s/r/i):
 
-installOwnCloud()
+installOwncloud()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        owncloud=i
+    fi
+
     if [[ -n "$owncloud" && "$owncloud" != "n" ]]; then
         setupConfigToContainer owncloud;
         app_name=$CFG_OWNCLOUD_APP_NAME

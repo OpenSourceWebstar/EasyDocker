@@ -5,6 +5,12 @@
 
 installCozy()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        cozy=i
+    fi
+
     if [[ -n "$cozy" && "$cozy" != "n" ]]; then
         setupConfigToContainer cozy;
         app_name=$CFG_COZY_APP_NAME

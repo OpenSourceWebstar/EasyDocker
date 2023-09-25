@@ -5,6 +5,12 @@
 
 installPihole()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        pihole=i
+    fi
+
     if [[ -n "$pihole" && "$pihole" != "n" ]]; then
         setupConfigToContainer pihole;
         app_name=$CFG_PIHOLE_APP_NAME

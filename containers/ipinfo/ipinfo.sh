@@ -3,8 +3,14 @@
 # Category : privacy
 # Description : IPInfo - Show IP Address (c/u/s/r/i):
 
-installIPInfo()
+installIpinfo()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        ipinfo=i
+    fi
+
     if [[ -n "$ipinfo" && "$ipinfo" != "n" ]]; then
         setupConfigToContainer ipinfo;
         app_name=$CFG_IPINFO_APP_NAME

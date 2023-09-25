@@ -5,6 +5,12 @@
 
 installDashy()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        dashy=i
+    fi
+
     if [[ -n "$dashy" && "$dashy" != "n" ]]; then
         setupConfigToContainer dashy;
         app_name=$CFG_DASHY_APP_NAME

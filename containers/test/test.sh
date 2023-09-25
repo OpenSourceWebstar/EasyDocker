@@ -5,6 +5,12 @@
 
 installTest()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        test=i
+    fi
+
     if [[ -n "$test" && "$test" != "n" ]]; then
         setupConfigToContainer test;
         app_name=$CFG_TEST_APP_NAME

@@ -3,8 +3,14 @@
 # Category : user
 # Description : Jitsi Meet - Video Conferencing (c/u/s/r/i):
 
-installJitsiMeet()
+installJitsimeet()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        jitsimeet=i
+    fi
+
     if [[ -n "$jitsimeet" && "$jitsimeet" != "n" ]]; then
     	setupConfigToContainer jitsimeet;
 		app_name=$CFG_JITSIMEET_APP_NAME

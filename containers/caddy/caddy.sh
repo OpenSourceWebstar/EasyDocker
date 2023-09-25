@@ -5,6 +5,12 @@
 
 installCaddy()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        caddy=i
+    fi
+
     if [[ -n "$caddy" && "$caddy" != "n" ]]; then
         setupConfigToContainer caddy;
         app_name=$CFG_CADDY_APP_NAME

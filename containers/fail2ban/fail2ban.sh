@@ -3,8 +3,14 @@
 # Category : system
 # Description : Fail2Ban - Connection Security (c/u/s/r/i):
 
-installFail2Ban()
+installFail2ban()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        fail2ban=i
+    fi
+
     if [[ -n "$fail2ban" && "$fail2ban" != "n" ]]; then
         setupConfigToContainer fail2ban;
         app_name=$CFG_FAIL2BAN_APP_NAME

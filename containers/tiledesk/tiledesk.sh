@@ -3,8 +3,14 @@
 # Category : user
 # Description : Tiledesk - Live Chat Platform *UNFINISHED* (c/u/s/r/i):
 
-installTileDesk()
+installTiledesk()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        tiledesk=i
+    fi
+
     if [[ -n "$tiledesk" && "$tiledesk" != "n" ]]; then
         setupConfigToContainer tiledesk;
 		app_name=$CFG_TILEDESK_APP_NAME

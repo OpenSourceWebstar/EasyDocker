@@ -14,6 +14,7 @@ setupConfigToContainer()
     local target_path="$install_dir$app_name"
     local source_file="$containers_dir$app_name/$app_name.config"
 
+
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
         return 1
@@ -38,13 +39,17 @@ setupConfigToContainer()
         isSuccessful "Install folder for $app has been created"
     fi
     
-    copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-    
-    if [ $? -ne 0 ]; then
-        isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
-        return 1
+    if [ ! -f "$target_path/$app_name.config" ]; then
+        copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+        
+        if [ $? -ne 0 ]; then
+            isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
+            return 1
+        else
+            isSuccessful "Config file for $app has been created"
+        fi
     else
-        isSuccessful "Config file for $app has been created"
+        isNotice "Config file for $app_name already exists...skipping"
     fi
 
     loadConfigFiles;

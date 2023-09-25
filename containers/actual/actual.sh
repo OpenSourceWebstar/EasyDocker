@@ -5,6 +5,12 @@
 
 installActual()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        actual=i
+    fi
+
     if [[ -n "$actual" && "$actual" != "n" ]]; then
         setupConfigToContainer actual;
         app_name=$CFG_ACTUAL_APP_NAME

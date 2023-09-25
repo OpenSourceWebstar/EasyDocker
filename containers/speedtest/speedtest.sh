@@ -5,6 +5,12 @@
 
 installSpeedtest()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        speedtest=i
+    fi
+
     if [[ -n "$speedtest" && "$speedtest" != "n" ]]; then
         setupConfigToContainer speedtest;
         app_name=$CFG_SPEEDTEST_APP_NAME

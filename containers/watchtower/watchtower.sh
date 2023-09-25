@@ -5,6 +5,12 @@
 
 installWatchtower()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        watchtower=i
+    fi
+
     if [[ -n "$watchtower" && "$watchtower" != "n" ]]; then
         setupConfigToContainer watchtower;
         app_name=$CFG_WATCHTOWER_APP_NAME

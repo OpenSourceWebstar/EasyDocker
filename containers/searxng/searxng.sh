@@ -3,8 +3,14 @@
 # Category : privacy
 # Description : Searxng - Search Engine (c/u/s/r/i):
 
-installSearXNG()
+installSearxng()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        searxng=i
+    fi
+
     if [[ -n "$searxng" && "$searxng" != "n" ]]; then
         setupConfigToContainer searxng;
 		app_name=$CFG_SEARXNG_APP_NAME

@@ -5,6 +5,12 @@
 
 installAkaunting()
 {
+    passedValue="$1"
+
+    if [[ "$passedValue" == "install" ]]; then
+        akaunting=i
+    fi
+
     if [[ -n "$akaunting" && "$akaunting" != "n" ]]; then
         setupConfigToContainer akaunting;
 		app_name=$CFG_AKAUNTING_APP_NAME
