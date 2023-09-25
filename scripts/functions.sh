@@ -150,7 +150,7 @@ dashyUpdateConf()
     conf_file="${install_dir}dashy/conf.yml"
 
     # Clean up for new generation
-    sudo rm -rf ${install_dir}dashy/conf.yml
+    sudo rm -rf "${install_dir}dashy/conf.yml"
 
     # Check if Dashy app is installed
     if [ -d "${install_dir}dashy" ]; then
@@ -184,8 +184,6 @@ dashyUpdateConf()
                 sudo sed -i "$((start_line+4))s/#  url/  url/" "$conf_file"
                 sudo sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
                 sudo sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
-            #else
-                #isNotice "App not found: $app_name"
             fi
         }
 
@@ -200,43 +198,47 @@ dashyUpdateConf()
                 sudo sed -i "$((start_line+1))s/^#- name/- name/" "$conf_file"
                 sudo sed -i "$((start_line+2))s/^#  icon/  icon/" "$conf_file"
                 sudo sed -i "$((start_line+3))s/^#  items/  items/" "$conf_file"
-            #else
-                #isNotice "Category not found: $category_name"
             fi
         }
 
-
-            # Loop through immediate subdirectories of $install_dir
-            for app_dir in "$install_dir"/*/; do
-                # Get the app name from the folder name
-                app_name=$(basename "$app_dir")
-
-                # Call the uncomment_lines function for each app
-                uncomment_lines "$app_name"
-            done
-
-
-        # Function to get the category name from the full path of an app
-        get_category_name() {
-            local app_path="$1"
-            local category_name=$(basename "$(dirname "$app_path")")
-            echo "$category_name"
-        }
+        # Loop through immediate subdirectories of $install_dir
+        for app_dir in "$install_dir"/*/; do
+            if [ -d "$app_dir" ]; then
+                local app_name=$(basename "$app_dir")
+                local app_config_file="$app_dir$app_name.sh"
+                if [ -f "$app_config_file" ]; then
+                    local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
+                    if [ -n "$category_info" ]; then
+                        # Call the uncomment_lines function for each app with a category
+                        uncomment_lines "$app_name"
+                    fi
+                fi
+            fi
+        done
 
         # Collect all installed app paths
         installed_app_paths=()
         while IFS= read -r -d $'\0' app_name_dir; do
             app_name_path="$app_name_dir"
             installed_app_paths+=("$app_name_path")
-        done < <(find "$containers_dir" -mindepth 2 -maxdepth 2 -type d -print0)
+        done < <(find "$install_dir" -mindepth 2 -maxdepth 2 -type d -print0)
 
         # Get unique category names related to installed apps
         installed_categories=()
         for app_path in "${installed_app_paths[@]}"; do
-            category_name=$(get_category_name "$app_path")
-            # Add the category to the list if not already present
-            if [[ ! " ${installed_categories[@]} " =~ " $category_name " ]]; then
-                installed_categories+=("$category_name")
+            if [ -d "$app_path" ]; then
+                local app_config_file="$app_path/$(basename "$app_path").sh"
+                if [ -f "$app_config_file" ]; then
+                    local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
+                    if [ -n "$category_info" ]; then
+                        # Get the category name from the app's folder
+                        local category_name=$(basename "$(dirname "$app_path")")
+                        # Add the category to the list if not already present
+                        if [[ ! " ${installed_categories[@]} " =~ " $category_name " ]]; then
+                            installed_categories+=("$category_name")
+                        fi
+                    fi
+                fi
             fi
         done
 
@@ -256,8 +258,6 @@ dashyUpdateConf()
         else
             isSuccessful "No new changes made to the dashy config file."
         fi
-    #else
-        #isNotice "Dashy app not found...skipping application setup..."
     fi
 }
 
