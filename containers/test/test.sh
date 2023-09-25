@@ -14,6 +14,7 @@ installTest()
     if [[ "$test" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer test;
         app_name=$CFG_TEST_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$test" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installTest()
     fi
 
     if [[ "$test" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$test" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installTest()
         echo "###          Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 		
 		((menu_number++))
         echo ""

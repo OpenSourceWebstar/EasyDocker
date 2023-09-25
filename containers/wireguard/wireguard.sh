@@ -14,6 +14,7 @@ installWireguard()
     if [[ "$wireguard" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer wireguard;
         app_name=$CFG_WIREGUARD_APP_NAME
+		setupInstallVariables $app_name;
     fi
     
     if [[ "$wireguard" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installWireguard()
     fi
 
     if [[ "$wireguard" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$wireguard" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installWireguard()
         echo "###          Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-		echo ""
-		echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-		echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
 		echo ""

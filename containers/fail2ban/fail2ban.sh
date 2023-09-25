@@ -14,6 +14,7 @@ installFail2ban()
     if [[ "$fail2ban" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer fail2ban;
         app_name=$CFG_FAIL2BAN_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$fail2ban" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installFail2ban()
     fi
 
     if [[ "$fail2ban" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$fail2ban" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installFail2ban()
         echo "###     Install $app_name"
         echo "##########################################"
         echo ""
-    
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

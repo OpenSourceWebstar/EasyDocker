@@ -14,6 +14,7 @@ installWatchtower()
     if [[ "$watchtower" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer watchtower;
         app_name=$CFG_WATCHTOWER_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$watchtower" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installWatchtower()
     fi
 
     if [[ "$watchtower" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$watchtower" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installWatchtower()
         echo "###           Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-		echo "---- $menu_number. Setting up install variables."
-		echo ""
-
-        setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

@@ -15,6 +15,7 @@ installMattermost()
     	setupConfigToContainer mattermost;
 		app_name=$CFG_MATTERMOST_APP_NAME
 		easy_setup=$CFG_MATTERMOST_EASY_SETUP
+		setupInstallVariables $app_name;
 	fi
 
     if [[ "$mattermost" == *[cC]* ]]; then
@@ -26,11 +27,10 @@ installMattermost()
 	fi
 
 	if [[ "$mattermost" == *[sS]* ]]; then
-		shutdownApp;
+		shutdownApp $app_name;
 	fi
 
 	if [[ "$mattermost" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -44,13 +44,6 @@ installMattermost()
         echo "###        Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

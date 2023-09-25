@@ -14,6 +14,7 @@ installVaultwarden()
     if [[ "$vaultwarden" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer vaultwarden;
         app_name=$CFG_VAULTWARDEN_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$vaultwarden" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installVaultwarden()
 	fi
 
 	if [[ "$vaultwarden" == *[sS]* ]]; then
-		shutdownApp;
+		shutdownApp $app_name;
 	fi
 
 	if [[ "$vaultwarden" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installVaultwarden()
         echo "###           Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

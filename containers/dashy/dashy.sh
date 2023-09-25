@@ -14,10 +14,10 @@ installDashy()
     if [[ "$dashy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer dashy;
         app_name=$CFG_DASHY_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$dashy" == *[cC]* ]]; then
-
         editAppConfig $app_name;
     fi
 
@@ -30,11 +30,10 @@ installDashy()
     fi
 
     if [[ "$dashy" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$dashy" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -48,13 +47,6 @@ installDashy()
         echo "###          Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

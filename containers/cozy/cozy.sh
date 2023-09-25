@@ -14,14 +14,16 @@ installCozy()
     if [[ "$cozy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer cozy;
         app_name=$CFG_COZY_APP_NAME
+        # Custom Cozy Variables
+        # Additional non default apps to be installed
+        # List here - https://github.com/vsellier/easy-cozy/blob/master/application.sh
+        cozy_user_1=test1
+        cozy_user_1_apps_enabled=true
+        cozy_user_1_apps="banks contacts"
+		setupInstallVariables $app_name;
     fi
 
-	# Custom Cozy Variables
-	# Additional non default apps to be installed
-	# List here - https://github.com/vsellier/easy-cozy/blob/master/application.sh
-	cozy_user_1=test1
-	cozy_user_1_apps_enabled=true
-	cozy_user_1_apps="banks contacts"
+
 
     if [[ "$cozy" == *[cC]* ]]; then
         editAppConfig $app_name;
@@ -32,11 +34,11 @@ installCozy()
     fi
 
     if [[ "$cozy" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$cozy" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
+
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -50,13 +52,6 @@ installCozy()
         echo "###           Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

@@ -14,6 +14,7 @@ installDuplicati()
     if [[ "$duplicati" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer duplicati;
         app_name=$CFG_DUPLICATI_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$duplicati" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installDuplicati()
     fi
 
     if [[ "$duplicati" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$duplicati" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installDuplicati()
         echo "###           Install $app_name"
         echo "##########################################"
         echo ""
-    
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 		
 		((menu_number++))
         echo ""

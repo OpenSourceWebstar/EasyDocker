@@ -14,6 +14,7 @@ installKillbill()
     if [[ "$killbill" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer killbill;
         app_name=$CFG_KILLBILL_APP_NAME
+		setupInstallVariables $app_name;
     fi
     
     if [[ "$killbill" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installKillbill()
 	fi
 
 	if [[ "$killbill" == *[sS]* ]]; then
-		shutdownApp;
+		shutdownApp $app_name;
 	fi
 
     if [[ "$killbill" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installKillbill()
         echo "###      Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

@@ -14,6 +14,7 @@ installSpeedtest()
     if [[ "$speedtest" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer speedtest;
         app_name=$CFG_SPEEDTEST_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$speedtest" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installSpeedtest()
 	fi
 
 	if [[ "$speedtest" == *[sS]* ]]; then
-		shutdownApp;
+		shutdownApp $app_name;
 	fi
 
 	if [[ "$speedtest" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installSpeedtest()
         echo "###           Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""

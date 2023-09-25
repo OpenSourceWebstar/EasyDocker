@@ -14,6 +14,7 @@ installTrilium()
     if [[ "$trilium" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer trilium;
         app_name=$CFG_TRILIUM_APP_NAME
+		setupInstallVariables $app_name;
     fi
 
     if [[ "$trilium" == *[cC]* ]]; then
@@ -25,11 +26,10 @@ installTrilium()
     fi
 
     if [[ "$trilium" == *[sS]* ]]; then
-        shutdownApp;
+        shutdownApp $app_name;
     fi
 
     if [[ "$trilium" == *[rR]* ]]; then
-		setupInstallVariables $app_name;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -43,13 +43,6 @@ installTrilium()
         echo "###          Install $app_name"
         echo "##########################################"
         echo ""
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking custom DNS entry and IP for setup"
-        echo ""
-
-		setupInstallVariables $app_name;
 
 		((menu_number++))
         echo ""
