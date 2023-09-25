@@ -54,6 +54,7 @@ installDashy()
         echo ""
 
         setupConfigToContainer $app_name install;
+        isSuccessful "Install folders and Config files have been setup for $app_name."
 
 		((menu_number++))
         echo ""

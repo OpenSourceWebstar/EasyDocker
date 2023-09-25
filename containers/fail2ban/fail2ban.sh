@@ -50,13 +50,13 @@ installFail2ban()
         echo ""
 
         setupConfigToContainer $app_name install;
+        isSuccessful "Install folders and Config files have been setup for $app_name."
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
         echo ""
 
-        setupConfigToContainer $app_name install;
         if [[ $compose_setup == "default" ]]; then
 		    setupComposeFileNoApp $app_name;
         elif [[ $compose_setup == "app" ]]; then
