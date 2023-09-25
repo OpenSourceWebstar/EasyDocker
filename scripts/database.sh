@@ -163,12 +163,22 @@ databaseAppScan()
         ((updated_count++)) # Increment updated_count
     done
 
-    # Check and uninstall apps that contain only a config file
+    # Check if all apps are up to date
+    if [ "$updated_count" -eq 0 ]; then
+        checkSuccess "All apps are up to date."
+    fi
+
+    # Check and uninstall apps that contain only a config file and are empty
     for folder_name in $folder_names; do
         folder_path="$install_dir/$folder_name"
         if [ -d "$folder_path" ]; then
-            num_files=$(sudo find "$folder_path" -type f | wc -l)
-            if [ "$num_files" -eq 1 ] && [ -f "$folder_path/$folder_name.config" ]; then
+            num_files=$(sudo find "$folder_path" -maxdepth 1 -type f | wc -l)
+            
+            # Check if the folder is empty or contains only a config file
+            if [ "$num_files" -eq 0 ]; then
+                isNotice "Uninstalling $folder_name because it is empty."
+                uninstallApp "$folder_name"
+            elif [ "$num_files" -eq 1 ] && [ -f "$folder_path/$folder_name.config" ]; then
                 isNotice "Uninstalling $folder_name because it contains only a config file."
                 uninstallApp "$folder_name"
             fi
@@ -180,11 +190,6 @@ databaseAppScan()
             ((updated_count++)) # Increment updated_count
         fi
     done
-
-    # Check if all apps are up to date
-    if [ "$updated_count" -eq 0 ]; then
-        checkSuccess "All apps are up to date."
-    fi
 }
 
 databaseListAllApps()
