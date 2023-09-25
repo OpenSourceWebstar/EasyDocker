@@ -137,14 +137,20 @@ mkdirFolders()
         local clean_dir=$(echo "$dir_path" | sed 's#//*#/#g')
 
         result=$(sudo mkdir -p "$dir_path")
-        checkSuccess "Creating $folder_name directory" "$silent_flag"
+        if [ -z "$silent_flag" ]; then
+            checkSuccess "Creating $folder_name directory"
+        fi
         
         if [[ $clean_dir == *"$install_dir"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
-            checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership" "$silent_flag"
+            if [ -z "$silent_flag" ]; then
+                checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
+            fi
         else
             result=$(sudo chown $easydockeruser:$easydockeruser "$dir_path")
-            checkSuccess "Updating $folder_name with $easydockeruser ownership" "$silent_flag"
+            if [ -z "$silent_flag" ]; then
+                checkSuccess "Updating $folder_name with $easydockeruser ownership"
+            fi
         fi
     done
 }

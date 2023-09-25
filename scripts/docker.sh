@@ -23,7 +23,7 @@ setupConfigToContainer()
     if [ -d "$target_path" ]; then
         isNotice "The directory '$target_path' already exists."
     else
-        mkdirFolders --silent "$target_path" silent
+        mkdirFolders --silent "$target_path"
     fi
     
     if [ ! -f "$source_file" ]; then
@@ -37,8 +37,6 @@ setupConfigToContainer()
         if [ $? -ne 0 ]; then
             isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
             return 1
-        else
-            isSuccessful "Config file for $app_name has been created"
         fi
     else
         if [[ "$flags" == "install" ]]; then
