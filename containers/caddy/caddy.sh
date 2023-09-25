@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : system
-Caddy - Reverse Proxy *NOT RECOMMENDED* (c/u/s/r/i):
+# Description : Caddy - Reverse Proxy *NOT RECOMMENDED* (c/u/s/r/i):
 
 installCaddy()
 {
@@ -45,11 +45,17 @@ installCaddy()
         echo ""
 
 		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setting up install folder and config file for $app_name."
+        echo ""
+
+        setupConfigToContainer $app_name install;
+
+		((menu_number++))
 		echo ""
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
 		echo ""
 		
-        setupConfigToContainer $app_name install;
         if [[ $compose_setup == "default" ]]; then
 		    setupComposeFileNoApp $app_name;
         elif [[ $compose_setup == "app" ]]; then
