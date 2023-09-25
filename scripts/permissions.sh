@@ -126,18 +126,25 @@ changeRootOwnedFile()
 
 mkdirFolders() 
 {
+    local silent_flag=""
+    if [ "$1" == "--silent" ]; then
+        silent_flag="$1"
+        shift  # Remove the first parameter (the silence flag)
+    fi
+
     for dir_path in "$@"; do
         local folder_name=$(basename "$dir_path")
         local clean_dir=$(echo "$dir_path" | sed 's#//*#/#g')
 
         result=$(sudo mkdir -p "$dir_path")
-        checkSuccess "Creating $folder_name directory"
+        checkSuccess "Creating $folder_name directory" "$silent_flag"
+        
         if [[ $clean_dir == *"$install_dir"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
-            checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
+            checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership" "$silent_flag"
         else
             result=$(sudo chown $easydockeruser:$easydockeruser "$dir_path")
-            checkSuccess "Updating $folder_name with $easydockeruser ownership"
+            checkSuccess "Updating $folder_name with $easydockeruser ownership" "$silent_flag"
         fi
     done
 }
@@ -213,31 +220,44 @@ copyResource()
 
 copyFile() 
 {
+    local silent_flag=""
+    if [ "$1" == "--silent" ]; then
+        silent_flag="$1"
+        shift
+    fi
+
     local file="$1"
     local file_name=$(basename "$file")
     local save_dir="$2"
     local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
     local flags="$3"
+    local flags_full=""
 
     if [[ $flags == "overwrite" ]]; then
         flags_full="-f"
     fi
 
     result=$(sudo cp $flags_full "$file" "$save_dir")
-    checkSuccess "Copying $file_name to $save_dir"
+    checkSuccess "Copying $file_name to $save_dir" "$silent_flag"
 
     if [[ $clean_dir == *"$install_dir"* ]]; then
         result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
-        checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
+        checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership" "$silent_flag"
     else
         result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
-        checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
+        checkSuccess "Updating $save_dir_file with $easydockeruser ownership" "$silent_flag"
     fi
 }
 
 copyFiles() 
 {
+    local silent_flag=""
+    if [ "$1" == "--silent" ]; then
+        silent_flag="$1"
+        shift
+    fi
+
     local source="$1"
     local save_dir="$2"
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
@@ -254,17 +274,24 @@ copyFiles()
         local file_name=$(basename "$file")
 
         result=$(sudo cp -f "$file" "$save_dir")
-        checkSuccess "Copying $file_name to $save_dir"
+        if [ -z "$silent_flag" ]; then
+            checkSuccess "Copying $file_name to $save_dir"
+        fi
 
         if [[ $clean_dir == *"$install_dir"* ]]; then
             result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$file_name")
-            checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+            if [ -z "$silent_flag" ]; then
+                checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+            fi
         else
             result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir/$file_name")
-            checkSuccess "Updating $file_name with $easydockeruser ownership"
+            if [ -z "$silent_flag" ]; then
+                checkSuccess "Updating $file_name with $easydockeruser ownership"
+            fi
         fi
     done
 }
+
 
 createTouch() 
 {
