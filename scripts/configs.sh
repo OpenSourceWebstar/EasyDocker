@@ -175,11 +175,7 @@ checkApplicationsConfigFilesMissingVariables()
                                                 isNotice "Reinstalling $config_app_name now..."
                                                 app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
                                                 installFuncName="install${app_name_ucfirst}"
-                                                if type "$installFuncName" &>/dev/null; then
-                                                    "$installFuncName" "install"
-                                                else
-                                                    isNotice "Installation function not found for $app_name."
-                                                fi
+                                                ${installFuncName} install
                                                 break  # Exit the loop
                                             ;;
                                             [nN])
@@ -382,11 +378,7 @@ editAppConfig() {
                     # Convert the first letter of app_name to uppercase
                     app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
                     installFuncName="install${app_name_ucfirst}"
-                    if type "$installFuncName" &>/dev/null; then
-                        "$installFuncName" "install" 
-                    else
-                        isNotice "Installation function not found for $app_name."
-                    fi
+                    ${installFuncName} install 
                 fi
             else
                 isNotice "No changes were made to the $app_name configuration."
@@ -718,34 +710,35 @@ viewAppCategoryConfigs()
         return 1
     fi
 
-    local category_dir="$containers_dir/$category"
-
-    if [[ ! -d "$category_dir" ]]; then
-        echo "Category '$category' does not exist in '$containers_dir'."
-        return 1
-    fi
-
     local installed_apps=()
     local other_apps=()
 
     # Collect all app_name folders and categorize them into installed and others
-    while IFS= read -r -d $'\0' app_name_dir; do
-        app_name=$(basename "$app_name_dir")
-        # Check if the app_name is installed based on the database query
-        results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
-        if [[ -n "$results" ]]; then
-            installed_apps+=("$app_name *INSTALLED")
-        else
-            other_apps+=("$app_name")
+    for app_dir in "$containers_dir"/*/; do
+        if [ -d "$app_dir" ]; then
+            local app_name=$(basename "$app_dir")
+            local app_config_file="$app_dir$app_name.sh"
+            if [ -f "$app_config_file" ]; then
+                local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
+                if [ "$category_info" == "$category" ]; then
+                    # Check if the app_name is installed based on the database query
+                    results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
+                    if [[ -n "$results" ]]; then
+                        installed_apps+=("$app_name *INSTALLED")
+                    else
+                        other_apps+=("$app_name")
+                    fi
+                fi
+            fi
         fi
-    done < <(find "$category_dir" -mindepth 1 -maxdepth 1 -type d -print0)
+    done
 
     if [[ ${#installed_apps[@]} -eq 0 && ${#other_apps[@]} -eq 0 ]]; then
         echo "No app_name folders found in category '$category'."
         return 1
     fi
 
-    local category_name=$(basename "$category_dir")
+    local category_name="$category"
     local category_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${category_name:0:1})${category_name:1}"
 
     echo ""
@@ -783,9 +776,9 @@ viewAppCategoryConfigs()
                 isNotice "You have edited configuration file(s) for EasyDocker."
                 isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
                 echo ""
-                exit;
+                exit
             else
-                resetToMenu;
+                resetToMenu
             fi
         elif [[ "$selected_number" =~ ^[0-9]+$ ]]; then
             if ((selected_number >= 1 && selected_number <= (${#installed_apps[@]} + ${#other_apps[@]}))); then
