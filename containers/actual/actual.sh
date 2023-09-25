@@ -30,7 +30,6 @@ installActual()
 	fi
 
     if [[ "$actual" == *[rR]* ]]; then
-
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
@@ -44,6 +43,13 @@ installActual()
         echo "###      Install $app_name"
         echo "##########################################"
         echo ""
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setting up install folder and config file for $app_name."
+        echo ""
+
+        setupConfigToContainer $app_name install;
 
 		((menu_number++))
         echo ""

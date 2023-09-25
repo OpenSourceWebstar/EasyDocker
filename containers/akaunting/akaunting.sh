@@ -46,9 +46,16 @@ installAkaunting()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Setting up install folder and config file for $app_name."
+        echo ""
+
+        setupConfigToContainer $app_name install;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Pulling a default Akaunting docker-compose.yml file and making edits."
         echo ""
-		
+
 		result=$(runCommandForDockerInstallUser "cd $install_dir && git clone https://github.com/akaunting/docker $install_dir$app_name")
 		checkSuccess "Cloning the Akaunting GitHub repo"
 

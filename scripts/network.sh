@@ -25,7 +25,7 @@ setupInstallVariables()
         setupIPsAndHostnames;
     fi
     
-    isSuccessful "App install variables setup successfully." 
+    #isSuccessful "App install variables setup successfully." 
 }
 
 setupIPsAndHostnames()
@@ -46,14 +46,14 @@ setupIPsAndHostnames()
             ssl_crt=${domain_full}.crt
             ip_setup=$ip
             
-            if [[ "$public" == "true" ]]; then
-                isSuccessful "Using $host_setup for public domain."
-                checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
-            fi
+            #if [[ "$public" == "true" ]]; then
+                #isSuccessful "Using $host_setup for public domain."
+                #checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
+            #fi
 
-            if [[ $found_match == "true" ]]; then
-                isSuccessful "App network settings setup successfully."
-            fi
+            #if [[ $found_match == "true" ]]; then
+                #isSuccessful "App network settings setup successfully."
+            #fi
         fi
     done < "$configs_dir$ip_file"
     

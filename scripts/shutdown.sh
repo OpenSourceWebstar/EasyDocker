@@ -4,13 +4,14 @@ app_name="$1"
 
 shutdownApp()
 {
+    local app_name="$1"
     echo ""
     echo "##########################################"
     echo "###      Shutting down $app_name"
     echo "##########################################"
     echo ""
 
-    dockerDownShutdown;
+    dockerDownShutdown $app_name;
             
     sleep 3s
     cd
@@ -18,6 +19,7 @@ shutdownApp()
 
 dockerDownShutdown()
 {
+    local app_name="$1"
     if [ -e $install_dir$app_name/docker-compose.yml ]; then
         if [[ "$OS" == [123] ]]; then
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then

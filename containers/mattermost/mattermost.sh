@@ -47,9 +47,16 @@ installMattermost()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Setting up install folder and config file for $app_name."
+        echo ""
+
+        setupConfigToContainer $app_name install;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Setting up Ports for $app_name"
         echo ""
-		
+
 		if [[ "$easy_setup" == "true" ]]; then
 			MATP80C=8011
 			MATP443C=4431

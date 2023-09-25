@@ -48,6 +48,13 @@ installMailcow()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Setting up install folder and config file for $app_name."
+        echo ""
+
+        setupConfigToContainer $app_name install;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Initial setup options"
         echo ""
 
