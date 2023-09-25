@@ -167,7 +167,7 @@ databaseAppScan()
     for folder_name in $folder_names; do
         folder_path="$install_dir/$folder_name"
         if [ -d "$folder_path" ]; then
-            num_files=$(find "$folder_path" -type f | wc -l)
+            num_files=$(sudo find "$folder_path" -type f | wc -l)
             if [ "$num_files" -eq 1 ] && [ -f "$folder_path/$folder_name.config" ]; then
                 isNotice "Uninstalling $folder_name because it contains only a config file."
                 uninstallApp "$folder_name"
