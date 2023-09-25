@@ -842,7 +842,7 @@ scanConfigsForRandomPassword()
 
 scanConfigsFixLineEnding()
 {
-    for app_name_dir in "$install_dir"/*/; do
+    for app_name_dir in "$container_dir"/*/; do
         if [ -d "$app_name_dir" ]; then
             for config_file in "$app_name_dir"/*.config; do
                 if [[ -f "$config_file" ]]; then
