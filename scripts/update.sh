@@ -251,7 +251,7 @@ gitUntrackFiles()
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     # Get a list of .config files recursively in $containers_dir
-    config_files=($(find "$install_dir" -type f -name "*.config"))
+    config_files=($(find "$containers_dir" -type f -name "*.config"))
 
     # Loop through the list and untrack each file
     for config_file in "${config_files[@]}"; do
