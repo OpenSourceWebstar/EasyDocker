@@ -159,6 +159,38 @@ checkApplicationsConfigFilesMissingVariables()
                                         esac
                                     done
                                 fi
+                            else
+                                local app_dir=$containers_dir$config_app_name
+                                # Check if app is installed
+                                if [ -d "$app_dir" ]; then
+                                    echo ""
+                                    isNotice "A new config value has been added to $config_app_name."
+                                    echo ""
+                                    while true; do
+                                        isQuestion "Would you like to reinstall $config_app_name? (y/n): "
+                                        read -rp "" reinstallafterconfig
+                                        echo ""
+                                        case $reinstallafterconfig in
+                                            [yY])
+                                                isNotice "Reinstalling $config_app_name now..."
+                                                app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                                                installFuncName="install${app_name_ucfirst}"
+                                                if type "$installFuncName" &>/dev/null; then
+                                                    "$installFuncName" "install"
+                                                else
+                                                    isNotice "Installation function not found for $app_name."
+                                                fi
+                                                break  # Exit the loop
+                                            ;;
+                                            [nN])
+                                                break  # Exit the loop
+                                                ;;
+                                            *)
+                                                isNotice "Please provide a valid input (c or e)."
+                                                ;;
+                                        esac
+                                    done
+                                fi
                             fi
                             ;;
                         2)
