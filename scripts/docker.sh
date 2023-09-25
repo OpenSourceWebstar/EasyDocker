@@ -42,33 +42,49 @@ setupConfigToContainer()
         fi
     else
         if [[ "$flags" == "install" ]]; then
-            echo ""
-            isNotice "Config file for $app_name already exists..."
-            echo ""
-            while true; do
-                isQuestion "Would you like to reset the config file? (y/n): "
-                read -rp "" resetconfigaccept
-                echo ""
-                case $resetconfigaccept in
-                    [yY])
-                        isNotice "Resetting $app_name config file."
-                        copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-                        if [ $? -ne 0 ]; then
-                            isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
-                            return 1
-                        else
-                            isSuccessful "Config file for $app_name has been created"
-                        fi
-                        break  # Exit the loop after executing whitelistAndStartApp
-                        ;;
-                    [nN])
-                        break  # Exit the loop without updating
-                        ;;
-                    *)
-                        isNotice "Please provide a valid input (y or n)."
-                        ;;
-                esac
-            done
+            # Check if the existing config file exists and has the same content as the source file
+            if [ -f "$target_path/$app_name.config" ]; then
+                if cmp -s "$source_file" "$target_path/$app_name.config"; then
+                    isNotice "Config file for $app_name is already up to date."
+                else
+                    echo ""
+                    isNotice "Config file for $app_name has been updated..."
+                    echo ""
+                    while true; do
+                        isQuestion "Would you like to reset the config file? (y/n): "
+                        read -rp "" resetconfigaccept
+                        echo ""
+                        case $resetconfigaccept in
+                            [yY])
+                                isNotice "Resetting $app_name config file."
+                                copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                                if [ $? -ne 0 ]; then
+                                    isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
+                                    return 1
+                                else
+                                    isSuccessful "Config file for $app_name has been updated."
+                                fi
+                                break  # Exit the loop after executing whitelistAndStartApp
+                                ;;
+                            [nN])
+                                break  # Exit the loop without updating
+                                ;;
+                            *)
+                                isNotice "Please provide a valid input (y or n)."
+                                ;;
+                        esac
+                    done
+                fi
+            else
+                isNotice "Config file for $app_name does not exist. Creating it..."
+                copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                if [ $? -ne 0 ]; then
+                    isError "Failed to create the config file in '$target_path'. Check '$docker_log_file' for more details."
+                    return 1
+                else
+                    isSuccessful "Config file for $app_name has been created."
+                fi
+            fi
         fi
     fi
 
