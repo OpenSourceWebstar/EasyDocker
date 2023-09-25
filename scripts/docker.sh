@@ -38,7 +38,7 @@ setupConfigToContainer()
             isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
             return 1
         else
-            isSuccessful "Config file for $app has been created"
+            isSuccessful "Config file for $app_name has been created"
         fi
     else
         if [[ "$flags" == "install" ]]; then
@@ -57,7 +57,7 @@ setupConfigToContainer()
                             isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
                             return 1
                         else
-                            isSuccessful "Config file for $app has been created"
+                            isSuccessful "Config file for $app_name has been created"
                         fi
                         break  # Exit the loop after executing whitelistAndStartApp
                         ;;
