@@ -12,7 +12,7 @@ installKimai()
     fi
 
     if [[ "$kimai" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer kimai;
+        setupConfigToContainer --silent kimai;
         app_name=$CFG_KIMAI_APP_NAME
 		setupInstallVariables $app_name;
     fi

@@ -12,7 +12,7 @@ installAdguard()
     fi
 
     if [[ "$adguard" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer adguard;
+        setupConfigToContainer --silent adguard;
         app_name=$CFG_ADGUARD_APP_NAME
     	setupInstallVariables $app_name;
     fi

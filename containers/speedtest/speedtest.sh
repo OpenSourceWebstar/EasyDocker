@@ -12,7 +12,7 @@ installSpeedtest()
     fi
 
     if [[ "$speedtest" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer speedtest;
+        setupConfigToContainer --silent speedtest;
         app_name=$CFG_SPEEDTEST_APP_NAME
 		setupInstallVariables $app_name;
     fi

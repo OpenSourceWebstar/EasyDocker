@@ -12,7 +12,7 @@ installTraefik()
     fi
 
     if [[ "$traefik" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer traefik;
+        setupConfigToContainer --silent traefik;
         app_name=$CFG_TRAEFIK_APP_NAME
 		setupInstallVariables $app_name;
     fi

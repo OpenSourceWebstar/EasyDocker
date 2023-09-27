@@ -12,7 +12,7 @@ installActual()
     fi
 
     if [[ "$actual" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer actual;
+        setupConfigToContainer --silent actual;
         app_name=$CFG_ACTUAL_APP_NAME
 		setupInstallVariables $app_name;
     fi

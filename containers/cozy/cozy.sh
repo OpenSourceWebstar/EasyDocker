@@ -12,7 +12,7 @@ installCozy()
     fi
 
     if [[ "$cozy" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer cozy;
+        setupConfigToContainer --silent cozy;
         app_name=$CFG_COZY_APP_NAME
         # Custom Cozy Variables
         # Additional non default apps to be installed

@@ -12,7 +12,7 @@ installDuplicati()
     fi
 
     if [[ "$duplicati" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer duplicati;
+        setupConfigToContainer --silent duplicati;
         app_name=$CFG_DUPLICATI_APP_NAME
 		setupInstallVariables $app_name;
     fi

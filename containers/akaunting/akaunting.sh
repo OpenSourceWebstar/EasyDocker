@@ -12,7 +12,7 @@ installAkaunting()
     fi
 
     if [[ "$akaunting" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer akaunting;
+        setupConfigToContainer --silent akaunting;
 		app_name=$CFG_AKAUNTING_APP_NAME
 		setupInstallVariables $app_name;
 	fi

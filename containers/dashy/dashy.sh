@@ -12,7 +12,7 @@ installDashy()
     fi
 
     if [[ "$dashy" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer dashy;
+        setupConfigToContainer --silent dashy;
         app_name=$CFG_DASHY_APP_NAME
 		setupInstallVariables $app_name;
     fi

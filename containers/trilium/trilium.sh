@@ -12,7 +12,7 @@ installTrilium()
     fi
 
     if [[ "$trilium" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer trilium;
+        setupConfigToContainer --silent trilium;
         app_name=$CFG_TRILIUM_APP_NAME
 		setupInstallVariables $app_name;
     fi

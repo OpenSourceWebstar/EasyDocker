@@ -12,7 +12,7 @@ installIpinfo()
     fi
 
     if [[ "$ipinfo" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer ipinfo;
+        setupConfigToContainer --silent ipinfo;
         app_name=$CFG_IPINFO_APP_NAME
 		setupInstallVariables $app_name;
     fi

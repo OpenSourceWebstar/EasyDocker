@@ -12,7 +12,7 @@ installGitlab()
     fi
 
     if [[ "$gitlab" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer gitlab;
+        setupConfigToContainer --silent gitlab;
         app_name=$CFG_GITLAB_APP_NAME
 		setupInstallVariables $app_name;
     fi

@@ -12,7 +12,7 @@ installFail2ban()
     fi
 
     if [[ "$fail2ban" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer fail2ban;
+        setupConfigToContainer --silent fail2ban;
         app_name=$CFG_FAIL2BAN_APP_NAME
 		setupInstallVariables $app_name;
     fi

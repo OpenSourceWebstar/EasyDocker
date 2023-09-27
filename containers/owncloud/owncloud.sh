@@ -12,7 +12,7 @@ installOwncloud()
     fi
 
     if [[ "$owncloud" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer owncloud;
+        setupConfigToContainer --silent owncloud;
         app_name=$CFG_OWNCLOUD_APP_NAME
         owncloud_version=$CFG_OWNCLOUD_VERSION
 		setupInstallVariables $app_name;

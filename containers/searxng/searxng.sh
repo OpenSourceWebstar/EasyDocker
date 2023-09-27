@@ -12,7 +12,7 @@ installSearxng()
     fi
 
     if [[ "$searxng" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer searxng;
+        setupConfigToContainer --silent searxng;
 		app_name=$CFG_SEARXNG_APP_NAME
 		setupInstallVariables $app_name;
 	fi

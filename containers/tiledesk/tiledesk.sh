@@ -12,7 +12,7 @@ installTiledesk()
     fi
 
     if [[ "$tiledesk" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer tiledesk;
+        setupConfigToContainer --silent tiledesk;
 		app_name=$CFG_TILEDESK_APP_NAME
 		setupInstallVariables $app_name;
 	fi

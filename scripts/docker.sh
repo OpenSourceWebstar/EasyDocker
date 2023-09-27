@@ -15,35 +15,46 @@ setupConfigToContainer()
     local target_path="$install_dir$app_name"
     local source_file="$containers_dir$app_name/$app_name.config"
 
+    local silent_flag=""
+
+    if [ "$1" == "--silent" ]; then
+        silent_flag="$1"
+        shift
+    fi
+
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
         return 1
     fi
 
     if [ -d "$target_path" ]; then
-        isNotice "The directory '$target_path' already exists."
+        if [ -z "$silent_flag" ]; then
+            isNotice "The directory '$target_path' already exists."
+        fi
     else
-        mkdirFolders --silent "$target_path"
+        mkdirFolders "$silent_flag" "$target_path"
     fi
-    
+
     if [ ! -f "$source_file" ]; then
-        isError ""Error: "The config file '$source_file' does not exist."
+        isError "The config file '$source_file' does not exist."
         return 1
     fi
-    
+
     if [ ! -f "$target_path/$app_name.config" ]; then
-        copyFile --silent "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-        
-        if [ $? -ne 0 ]; then
-            isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
-            return 1
+        if [ -z "$silent_flag" ]; then
+            isNotice "Copying config file to '$target_path/$app_name.config'..."
+            copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+        else
+            copyFile "$silence_flag" "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
     else
         if [[ "$flags" == "install" ]]; then
-            # Check if the existing config file exists and has the same content as the source file
             if [ -f "$target_path/$app_name.config" ]; then
+                # Same content check
                 if cmp -s "$source_file" "$target_path/$app_name.config"; then
-                    isNotice "Config file for $app_name is already up to date."
+                    if [ -z "$silent_flag" ]; then
+                        isNotice "Config file for $app_name is already up to date."
+                    fi
                 else
                     echo ""
                     isNotice "Config file for $app_name has been updated..."
@@ -56,12 +67,6 @@ setupConfigToContainer()
                             [yY])
                                 isNotice "Resetting $app_name config file."
                                 copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-                                if [ $? -ne 0 ]; then
-                                    isError "Failed to copy the config file to '$target_path'. Check '$docker_log_file' for more details."
-                                    return 1
-                                else
-                                    isSuccessful "Config file for $app_name has been updated."
-                                fi
                                 break  # Exit the loop after executing whitelistAndStartApp
                                 ;;
                             [nN])
@@ -74,20 +79,20 @@ setupConfigToContainer()
                     done
                 fi
             else
-                isNotice "Config file for $app_name does not exist. Creating it..."
-                copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-                if [ $? -ne 0 ]; then
-                    isError "Failed to create the config file in '$target_path'. Check '$docker_log_file' for more details."
-                    return 1
+                if [ -z "$silent_flag" ]; then
+                    isNotice "Config file for $app_name does not exist. Creating it..."
+                    copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
                 else
-                    isSuccessful "Config file for $app_name has been created."
+                    copyFile "$silent_flag" "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
                 fi
+
             fi
         fi
     fi
 
     loadConfigFiles;
 }
+
 
 setupComposeFileNoApp()
 {

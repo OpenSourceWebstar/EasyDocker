@@ -12,7 +12,7 @@ installKillbill()
     fi
 
     if [[ "$killbill" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer killbill;
+        setupConfigToContainer --silent killbill;
         app_name=$CFG_KILLBILL_APP_NAME
 		setupInstallVariables $app_name;
     fi

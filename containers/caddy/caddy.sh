@@ -12,7 +12,7 @@ installCaddy()
     fi
 
     if [[ "$caddy" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer caddy;
+        setupConfigToContainer --silent caddy;
         app_name=$CFG_CADDY_APP_NAME
 		setupInstallVariables $app_name;
     fi
