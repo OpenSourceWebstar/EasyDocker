@@ -39,7 +39,6 @@ checkUpdates()
                         remove_changes=true
                         gitCheckForUpdate;
                         gitCheckConfigs;
-                        scanConfigsFixLineEnding;
 						fixPermissionsBeforeStart;
 						sourceScripts;
 
@@ -52,7 +51,6 @@ checkUpdates()
                         remove_changes=false
                         gitCheckForUpdate;
                         gitCheckConfigs;
-                        scanConfigsFixLineEnding;
 						fixPermissionsBeforeStart;
 						sourceScripts;
                         
@@ -70,7 +68,6 @@ checkUpdates()
 		if [[ $update_done != "true" ]]; then
             gitCheckForUpdate;
             gitCheckConfigs;
-            scanConfigsFixLineEnding;
 			fixPermissionsBeforeStart;
 			sourceScripts;
 

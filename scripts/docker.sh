@@ -21,6 +21,13 @@ setupConfigToContainer()
     local target_path="$install_dir$app_name"
     local source_file="$containers_dir$app_name/$app_name.config"
 
+    echo "setupConfigToContainer"
+    echo "app_name = $app_name"
+    echo "silent_flag = $silent_flag"
+    echo "flags = $flags"
+    echo "target_path = $target_path"
+    echo "source_file = $source_file"
+
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
         return 1
@@ -31,7 +38,10 @@ setupConfigToContainer()
             isNotice "The directory '$target_path' already exists."
         fi
     else
-        mkdirFolders "$silent_flag" "$target_path"
+        if [ -z "$silent_flag" ]; then
+            mkdirFolders "$target_path"
+        else
+            mkdirFolders "$silent_flag" "$target_path"
     fi
 
     if [ ! -f "$source_file" ]; then
