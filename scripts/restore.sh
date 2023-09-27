@@ -41,7 +41,7 @@ restoreStart()
     if [ "$stored_app_name" == "full" ]; then
         dockerStopAllApps;
     else
-        dockerAppDown $stored_app_name;;
+        dockerAppDown $stored_app_name;
     fi
 
     ((menu_number++))
