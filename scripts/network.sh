@@ -4,6 +4,11 @@ setupInstallVariables()
 {
     app_name="$1"
 
+    if [[ "$app_name" == "" ]]; then
+        isError "Something went wrong...No app name provided..."
+        return 1
+    fi
+
     # Build variable names based on app_name
     host_name_var="CFG_${app_name^^}_HOST_NAME"
     compose_setup_var="CFG_${app_name^^}_COMPOSE_FILE"
