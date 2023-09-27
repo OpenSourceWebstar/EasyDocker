@@ -11,28 +11,28 @@ checkEasyDockerConfigFilesMissingVariables()
 {
     isNotice "Scanning EasyDocker config files...please wait"
     local local_configs=("$configs_dir"config_*)
-    remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
+    local remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
     
     for local_config_file in "${local_configs[@]}"; do
-        local_config_filename=$(basename "$local_config_file")
+        local local_config_filename=$(basename "$local_config_file")
         #echo "Checking local config file: $local_config_filename"  # Debug line output
         
         # Extract config variables from the local file
-        local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$local_config_file" | sed 's/=$//'))
+        local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$local_config_file" | sed 's/=$//'))
         
         # Generate the remote URL based on the local config file name
-        remote_url="$remote_config_dir$local_config_filename"
+        local remote_url="$remote_config_dir$local_config_filename"
     
         # Download the remote config file
-        tmp_file=$(mktemp)
+        local tmp_file=$(mktemp)
         curl -s "$remote_url" -o "$tmp_file"
         
         # Extract config variables from the remote file
-        remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$tmp_file" | sed 's/=$//'))
+        local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$tmp_file" | sed 's/=$//'))
         
         # Filter out empty variable names from the remote variables
-        remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
-        remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+        local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
+        local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
 
         # Compare local and remote variables
         for remote_var in "${remote_variables[@]}"; do
@@ -90,27 +90,27 @@ checkApplicationsConfigFilesMissingVariables()
     local container_configs=($(sudo find "$install_dir" -maxdepth 1 -type f -name '*.config'))  # Find .config files in immediate subdirectories of $install_dir
 
     for container_config_file in "${container_configs[@]}"; do
-        container_config_filename=$(basename "$container_config_file")
-        config_app_name="${container_config_filename%.config}"
+        local container_config_filename=$(basename "$container_config_file")
+        local config_app_name="${container_config_filename%.config}"
 
         # Extract config variables from the local file
-        local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
+        local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
 
         # Find the corresponding .config file in $containers_dir
-        remote_config_file="$containers_dir$config_app_name/$config_app_name.config"
+       local  remote_config_file="$containers_dir$config_app_name/$config_app_name.config"
 
         if [ -f "$remote_config_file" ]; then
             # Extract config variables from the remote file
-            remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
+            local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
 
             # Filter out empty variable names from the remote variables
-            remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
-            remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+            local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
+            local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
 
             # Compare local and remote variables
             for remote_var in "${remote_variables[@]}"; do
                 if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
-                    var_line=$(grep "${remote_var}=" "$remote_config_file")
+                    local var_line=$(grep "${remote_var}=" "$remote_config_file")
 
                     echo ""
                     echo "####################################################"
@@ -173,8 +173,8 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $reinstallafterconfig in
                                             [yY])
                                                 isNotice "Reinstalling $config_app_name now..."
-                                                app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
-                                                installFuncName="install${app_name_ucfirst}"
+                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                                                local installFuncName="install${app_name_ucfirst}"
                                                 ${installFuncName} install
                                                 break  # Exit the loop
                                             ;;
@@ -237,8 +237,8 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $reinstallafterconfig in
                                             [yY])
                                                 isNotice "Reinstalling $config_app_name now..."
-                                                app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
-                                                installFuncName="install${app_name_ucfirst}"
+                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                                                local installFuncName="install${app_name_ucfirst}"
                                                 if type "$installFuncName" &>/dev/null; then
                                                     "$installFuncName" "install"
                                                 else
@@ -527,8 +527,8 @@ viewComposeFiles() {
   for app_dir in "$install_dir"/*/; do
     if [[ -d "$app_dir" ]]; then
       # Extract the app name (folder name)
-      app_name=$(basename "$app_dir")
-      app_names+=("$app_name")
+      local app_name=$(basename "$app_dir")
+      local app_names+=("$app_name")
     fi
   done
 

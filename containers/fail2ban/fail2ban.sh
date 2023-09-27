@@ -5,7 +5,7 @@
 
 installFail2ban()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         fail2ban=i
@@ -13,7 +13,7 @@ installFail2ban()
 
     if [[ "$fail2ban" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent fail2ban;
-        app_name=$CFG_FAIL2BAN_APP_NAME
+        local app_name=$CFG_FAIL2BAN_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

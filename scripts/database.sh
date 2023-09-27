@@ -1,7 +1,5 @@
 #!/bin/bash
 
-app_name="$1"
-
 databaseInstallApp() 
 {
     local app_name="$1"
@@ -141,7 +139,7 @@ databaseAppScan()
     # Loop through immediate subdirectories of $install_dir
     for app_dir in "$install_dir"/*/; do
         # Get the app name from the folder name
-        app_name=$(basename "$app_dir")
+        local app_name=$(basename "$app_dir")
 
         # Check if the app name is not already in the database
         if ! [[ " ${existing_folder_names[@]} " =~ " $app_name " ]]; then

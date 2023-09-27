@@ -1,10 +1,11 @@
 #!/bin/bash
 
-app_name="$1"
-param2="$2"
+
 
 backupStart()
 {
+    local app_name="$1"
+    local param2="$2"
     local stored_app_name=$app_name
     echo ""
     echo "##########################################"
@@ -396,7 +397,7 @@ backupTransferFile()
 
 backupInitialize()
 {
-    app_name=$1
+    local app_name=$1
     
     # Safeguarding
     if [ "$app_name" == "" ]; then

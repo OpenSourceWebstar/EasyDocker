@@ -5,7 +5,7 @@
 
 installCaddy()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         caddy=i
@@ -13,7 +13,7 @@ installCaddy()
 
     if [[ "$caddy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent caddy;
-        app_name=$CFG_CADDY_APP_NAME
+        local app_name=$CFG_CADDY_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

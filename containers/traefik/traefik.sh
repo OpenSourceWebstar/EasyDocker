@@ -5,7 +5,7 @@
 
 installTraefik()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         traefik=i
@@ -13,7 +13,7 @@ installTraefik()
 
     if [[ "$traefik" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent traefik;
-        app_name=$CFG_TRAEFIK_APP_NAME
+        local app_name=$CFG_TRAEFIK_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-app_name="$1"
-
 shutdownApp()
 {
     local app_name="$1"
@@ -30,20 +28,22 @@ dockerDownShutdown()
                 isSuccessful "Shutting down container for $app_name"
             fi
         fi
-        dockerDownShutdownSuccessMessage;
+        dockerDownShutdownSuccessMessage $app_name;
     fi
 }
 
 dockerDownShutdownSuccessMessage()
 {
-        echo ""
-        isSuccessful "$app_name has been shutdown!"
-        echo ""
+    local app_name="$1"
+    echo ""
+    isSuccessful "$app_name has been shutdown!"
+    echo ""
 }
 
 dockerDownShutdownFailureMessage()
 {
-        echo ""
-        isError "$app_name has not been found, unable to shutdown!"
-        echo ""
+    local app_name="$1"
+    echo ""
+    isError "$app_name has not been found, unable to shutdown!"
+    echo ""
 }

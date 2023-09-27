@@ -5,7 +5,7 @@
 
 installActual()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         actual=i
@@ -13,7 +13,7 @@ installActual()
 
     if [[ "$actual" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent actual;
-        app_name=$CFG_ACTUAL_APP_NAME
+        local app_name=$CFG_ACTUAL_APP_NAME
 		setupInstallVariables $app_name;
     fi
     

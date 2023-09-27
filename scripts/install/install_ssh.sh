@@ -1,13 +1,11 @@
 #!/bin/bash
 
-app_name="$1"
-
-
 # Used for Sending SSH keys to remote hosts
 installSSHRemoteList()
 {
     if [[ "$CFG_REQUIREMENT_SSHREMOTE" == "true" ]]; then
         if [[ "$setupSSHRemoteKeys" == true ]]; then
+            local app_name="$1"
             echo ""
             echo "############################################"
             echo "######       Remote SSH Install       ######"

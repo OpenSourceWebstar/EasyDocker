@@ -5,7 +5,7 @@
 
 installCozy()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         cozy=i
@@ -13,7 +13,7 @@ installCozy()
 
     if [[ "$cozy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent cozy;
-        app_name=$CFG_COZY_APP_NAME
+        local app_name=$CFG_COZY_APP_NAME
         # Custom Cozy Variables
         # Additional non default apps to be installed
         # List here - https://github.com/vsellier/easy-cozy/blob/master/application.sh

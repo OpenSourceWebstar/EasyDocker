@@ -5,7 +5,7 @@
 
 installTest()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         test=i
@@ -13,7 +13,7 @@ installTest()
 
     if [[ "$test" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent test;
-        app_name=$CFG_TEST_APP_NAME
+        local app_name=$CFG_TEST_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

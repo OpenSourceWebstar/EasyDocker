@@ -5,7 +5,7 @@
 
 installGitlab()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         gitlab=i
@@ -13,7 +13,7 @@ installGitlab()
 
     if [[ "$gitlab" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent gitlab;
-        app_name=$CFG_GITLAB_APP_NAME
+        local app_name=$CFG_GITLAB_APP_NAME
 		setupInstallVariables $app_name;
     fi
     

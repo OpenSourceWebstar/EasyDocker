@@ -1,7 +1,5 @@
 #!/bin/bash
 
-app_name="$1"
-
 # Function to update IP whitelist in YAML files
 whitelistAndStartApp()
 {

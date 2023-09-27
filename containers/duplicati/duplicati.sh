@@ -5,7 +5,7 @@
 
 installDuplicati()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         duplicati=i
@@ -13,7 +13,7 @@ installDuplicati()
 
     if [[ "$duplicati" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent duplicati;
-        app_name=$CFG_DUPLICATI_APP_NAME
+        local app_name=$CFG_DUPLICATI_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

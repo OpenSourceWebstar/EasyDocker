@@ -5,7 +5,7 @@
 
 installSpeedtest()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         speedtest=i
@@ -13,7 +13,7 @@ installSpeedtest()
 
     if [[ "$speedtest" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent speedtest;
-        app_name=$CFG_SPEEDTEST_APP_NAME
+        local app_name=$CFG_SPEEDTEST_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

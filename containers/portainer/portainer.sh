@@ -5,7 +5,7 @@
 
 installPortainer()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         portainer=i
@@ -13,7 +13,7 @@ installPortainer()
 
     if [[ "$portainer" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent portainer;
-        app_name=$CFG_PORTAINER_APP_NAME
+        local app_name=$CFG_PORTAINER_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

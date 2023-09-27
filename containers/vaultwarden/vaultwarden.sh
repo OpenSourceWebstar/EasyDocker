@@ -5,7 +5,7 @@
 
 installVaultwarden()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         vaultwarden=i
@@ -13,7 +13,7 @@ installVaultwarden()
 
     if [[ "$vaultwarden" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent vaultwarden;
-        app_name=$CFG_VAULTWARDEN_APP_NAME
+        local app_name=$CFG_VAULTWARDEN_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

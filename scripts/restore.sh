@@ -1,8 +1,5 @@
 #!/bin/bash
 
-app_name="$1"
-chosen_backup_file="$2"
-
 restoreStart()
 {
     local app_name="$1"
@@ -79,7 +76,7 @@ restoreStart()
         migrateScanConfigsToMigrate;
         migrateScanMigrateToConfigs;
         migrateUpdateFiles $stored_app_name;
-        app_name=$stored_app_name
+        local app_name=$stored_app_name
     fi
 
     ((menu_number++))
@@ -166,6 +163,8 @@ restoreStart()
 
 restoreSingleBackupList()
 {
+    local app_name="$1"
+    localchosen_backup_file="$2"
     if [[ "$restoresingle" == [lL] ]]; then
         # Function to display a numbered list of app_names (zip files)
         select_app() {
@@ -181,11 +180,11 @@ restoreSingleBackupList()
             for zip_file in "$BACKUP_SAVE_DIRECTORY"/*.zip; do
                 if [ -f "$zip_file" ]; then
                     # Extract the app_name from the filename using sed
-                    app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
+                    local app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
                     
                     # Check if the app_name is already in the associative array
                     if [ -z "${seen_apps[$app_name]}" ]; then
-                        app_list+=("$app_name")
+                        local app_list+=("$app_name")
                         seen_apps["$app_name"]=1  # Mark the app_name as seen
                         isOption "$count. $app_name"
                         ((count++))
@@ -223,10 +222,10 @@ restoreSingleBackupList()
 
         # Validate the user's choice number
         if [[ "$chosen_app_number" =~ ^[0-9]+$ ]]; then
-            selected_app_index=$((chosen_app_number - 1))
+            local selected_app_index=$((chosen_app_number - 1))
 
             if [ "$selected_app_index" -ge 0 ] && [ "$selected_app_index" -lt "${#app_list[@]}" ]; then
-                selected_app_name="${app_list[selected_app_index]}"
+                local selected_app_name="${app_list[selected_app_index]}"
                 select_backup_file "$selected_app_name"
 
                 # Read the user's choice number for backup file
@@ -304,7 +303,7 @@ restoreFullBackupList()
 
             if [ "$selected_backup_index" -ge 0 ] && [ "$selected_backup_index" -lt "${#backup_list[@]}" ]; then
                 chosen_backup_file=$(basename "${backup_list[selected_backup_index]}")
-                selected_app_name=full
+                local selected_app_name=full
                 echo ""
                 isNotice "You selected: $chosen_backup_file"
                 restoreStart $selected_app_name $chosen_backup_file
@@ -462,7 +461,7 @@ restoreRemoteMenu()
             # Process the list of remote backup files
             while read -r zip_file; do
                 # Extract the app_name from the filename using sed
-                app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
+                local app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
 
                 # Check if the app_name is already in the seen_apps array
                 if ! [[ " ${seen_apps[@]} " =~ " $app_name " ]]; then
@@ -487,7 +486,7 @@ restoreRemoteMenu()
                 selected_app_index=$((chosen_app_option - 1))
 
                 if [ "$selected_app_index" -ge 0 ] && [ "$selected_app_index" -lt "${#app_list[@]}" ]; then
-                    selected_app_name="${app_list[selected_app_index]}"
+                    local selected_app_name="${app_list[selected_app_index]}"
                     select_backup_file "$selected_app_name"
                     return
                 else

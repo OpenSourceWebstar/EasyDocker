@@ -1,7 +1,5 @@
 #!/bin/bash
 
-app_name="$1"
-
 uninstallApp()
 {
     local app_name="$1"

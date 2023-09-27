@@ -74,8 +74,8 @@ migrateEnableConfig()
 
 migrateGetAppName() 
 {
-    selected_file=$(sudo -u $easydockeruser echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
-    selected_app_name=$(sudo -u $easydockeruser echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
+    local selected_file=$(sudo -u $easydockeruser echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
+    local selected_app_name=$(sudo -u $easydockeruser echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
     #echo "$selected_app_name"
 }
 
@@ -128,7 +128,7 @@ migrateListFullMigrateFiles()
 
     # Restore selected files
     for full_backup_file in "${selected_files[@]}"; do
-        selected_app_name=$(migrateGetAppName "$full_backup_file")
+        local selected_app_name=$(migrateGetAppName "$full_backup_file")
         restorefull=m
         restoreMigrate "$selected_app_name" "$full_backup_file"
         migrateshowfull=false
@@ -183,7 +183,7 @@ migrateListSingleMigrateFiles() {
 
     # Restore selected files
     for single_backup_file in "${selected_files[@]}"; do
-        selected_app_name=$(migrateGetAppName "$single_backup_file")
+        local selected_app_name=$(migrateGetAppName "$single_backup_file")
         restoresingle=m
         restoreMigrate "$selected_app_name" "$single_backup_file"
         migrateshowsingle=false
@@ -493,7 +493,7 @@ migrateGenerateTXTAll()
     # Loop through subdirectories
     for folder in "$install_dir"/*; do
         # Extract the folder name from the full path
-        app_name=$(basename "$folder")
+        local app_name=$(basename "$folder")
         if [ -d "$install_dir/$app_name" ]; then
 
             # Check if a migrate.txt file exists in the current directory

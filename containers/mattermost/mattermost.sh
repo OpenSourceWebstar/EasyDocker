@@ -5,7 +5,7 @@
 
 installMattermost()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         mattermost=i
@@ -13,7 +13,7 @@ installMattermost()
 
     if [[ "$mattermost" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer mattermost;
-		app_name=$CFG_MATTERMOST_APP_NAME
+		local app_name=$CFG_MATTERMOST_APP_NAME
 		easy_setup=$CFG_MATTERMOST_EASY_SETUP
 		setupInstallVariables $app_name;
 	fi

@@ -5,7 +5,7 @@
 
 installAkaunting()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         akaunting=i
@@ -13,7 +13,7 @@ installAkaunting()
 
     if [[ "$akaunting" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent akaunting;
-		app_name=$CFG_AKAUNTING_APP_NAME
+		local app_name=$CFG_AKAUNTING_APP_NAME
 		setupInstallVariables $app_name;
 	fi
     

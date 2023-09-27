@@ -10,17 +10,16 @@ runCommandForDockerInstallUser()
 
 setupConfigToContainer()
 {
-    local app_name="$1"
-    local flags="$2"
-    local target_path="$install_dir$app_name"
-    local source_file="$containers_dir$app_name/$app_name.config"
-
     local silent_flag=""
-
     if [ "$1" == "--silent" ]; then
         silent_flag="$1"
         shift
     fi
+
+    local app_name="$1"
+    local flags="$2"
+    local target_path="$install_dir$app_name"
+    local source_file="$containers_dir$app_name/$app_name.config"
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -92,7 +91,6 @@ setupConfigToContainer()
 
     loadConfigFiles;
 }
-
 
 setupComposeFileNoApp()
 {

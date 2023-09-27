@@ -81,7 +81,7 @@ viewLogs()
         [1-9]|[1-9][0-9]|10)
             index=$((log_choice - 1))
             if [ "$index" -ge 0 ] && [ "$index" -lt "${#app_list[@]}" ]; then
-                app_name="${app_list[index]}"
+                local app_name="${app_list[index]}"
                 viewLogsAppMenu "$app_name"  # Call the app-specific menu
             else
                 echo ""

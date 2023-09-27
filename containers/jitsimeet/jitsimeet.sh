@@ -5,7 +5,7 @@
 
 installJitsimeet()
 {
-    passedValue="$1"
+    local passedValue="$1"
 
     if [[ "$passedValue" == "install" ]]; then
         jitsimeet=i
@@ -13,7 +13,7 @@ installJitsimeet()
 
     if [[ "$jitsimeet" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer jitsimeet;
-		app_name=$CFG_JITSIMEET_APP_NAME
+		local app_name=$CFG_JITSIMEET_APP_NAME
 		git_url=$CFG_JITSIMEET_GIT
 		setupInstallVariables $app_name;
 	fi

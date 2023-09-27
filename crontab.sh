@@ -1,7 +1,7 @@
 #!/bin/bash
 
-app_name="$1"
-param2="$2"
+local app_name="$1"
+local param2="$2"
 
 source scripts/sources.sh
 
