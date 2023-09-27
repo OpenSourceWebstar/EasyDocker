@@ -6,7 +6,7 @@ setupInstallVariables()
 
     if [[ "$app_name" == "" ]]; then
         isError "Something went wrong...No app name provided..."
-        return 1
+        resetToMenu;
     fi
 
     # Build variable names based on app_name
