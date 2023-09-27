@@ -43,7 +43,7 @@ checkRequirements()
 		ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-			ISUSER=$( (sudo id -u "$CFG_DOCKER_INSTALL_USER"))
+			local ISUSER=$( (sudo id -u "$CFG_DOCKER_INSTALL_USER"))
 			if [[ "$ISUSER" == *"no such user"* ]]; then
 				ISACT=$(command -v docker &> /dev/null)
 			fi

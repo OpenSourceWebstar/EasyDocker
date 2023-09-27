@@ -22,10 +22,10 @@ installDebianUbuntu()
             printf "\r"
 
             isNotice "Installing Prerequisite Packages..."
-            result=$(sudo apt update 2>/dev/null)
+            local result=$(sudo apt update 2>/dev/null)
             checkSuccess "Running application update"
             installed_apps="apt install curl wget git zip htop sqlite3 pv sshpass rsync acl p7zip*"
-            result=$(sudo $installed_apps -y 2>/dev/null)
+            local result=$(sudo $installed_apps -y 2>/dev/null)
             checkSuccess "Installing system applications"
         else
             isNotice "System Updates already ran within the last ${CFG_UPDATER_CHECK} minutes, skipping..."

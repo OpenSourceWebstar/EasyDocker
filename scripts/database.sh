@@ -27,12 +27,12 @@ databaseInstallApp()
 
     if [ "$app_exists" -eq 0 ]; then
         isNotice "App does not exist in the database, setting up now."
-        result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$app_name', 1, date('now'));")
+        local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$app_name', 1, date('now'));")
         checkSuccess "Adding $app_name to the apps database."
         echo ""
     else
         isNotice "App already exists in the database, updating now."
-        result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$app_name';")
+        local result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$app_name';")
         checkSuccess "Updating apps database for $app_name to installed status."
         echo ""
     fi
@@ -104,7 +104,7 @@ databaseAppScan()
     fi
 
     # Scan the folder and retrieve folder names
-    folder_names=$(sudo find "$install_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+    local folder_names=$(sudo find "$install_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
     # Check if no folders are found
     if [ -z "$folder_names" ]; then
@@ -113,13 +113,13 @@ databaseAppScan()
     fi
 
     # Initialize the updated_count variable to keep track of updates made to the database
-    updated_count=0
+    local updated_count=0
 
     # Get the list of all folder names and statuses from the database
-    existing_folders=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, status, uninstall_date FROM apps;")
+    local existing_folders=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, status, uninstall_date FROM apps;")
 
     # Create an array to store existing folder names in the database
-    existing_folder_names=()
+    local existing_folder_names=()
     while IFS='|' read -r folder_name status uninstall_date; do
         if [[ -n "$folder_name" ]]; then
             existing_folder_names+=("$folder_name")
@@ -128,7 +128,7 @@ databaseAppScan()
                 if (( status == 0 )); then 
                     isNotice "The folder for $folder_name has been found."
                     # Update the database to set the status to 1 (installed) and unset the uninstall_date
-                    result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$folder_name';")
+                    local result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$folder_name';")
                     checkSuccess "Updating apps database for $folder_name to installed status."
                     ((updated_count++)) # Increment updated_count
                 fi
@@ -146,15 +146,15 @@ databaseAppScan()
             # Check if the folder contains a valid .config file
             if [ -f "$app_dir/$app_name.config" ]; then
                 # Extract the date from the folder name (if present)
-                folder_date=$(echo "$app_name" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+                local folder_date=$(echo "$app_name" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
                 if [ -z "$folder_date" ]; then
                     # If no date is found in the folder name, use the current date
-                    folder_date=$(date +%Y-%m-%d)
+                    local folder_date=$(date +%Y-%m-%d)
                 fi
                 
                 isNotice "Adding new app $app_name to the database."
                 # Add the new entry to the database with a default status of 1 (installed) and the extracted or current date
-                result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, uninstall_date) VALUES ('$app_name', 1, '$folder_date');")
+                local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO apps (name, status, uninstall_date) VALUES ('$app_name', 1, '$folder_date');")
                 checkSuccess "Adding $app_name to the apps database."
                 ((updated_count++)) # Increment updated_count
             fi
@@ -162,12 +162,12 @@ databaseAppScan()
     done
 
     # Create an array to store folder names that should be removed from the database
-    folders_to_remove=()
+    local folders_to_remove=()
 
     # Get a list of folder names that exist in the database but not in the current folder structure
     for folder_name in "${existing_folder_names[@]}"; do
         if [ ! -d "$install_dir/$folder_name" ]; then
-            folders_to_remove+=("$folder_name")
+            local folders_to_remove+=("$folder_name")
         fi
     done
 
@@ -175,7 +175,7 @@ databaseAppScan()
     for folder_name in "${folders_to_remove[@]}"; do
         isNotice "Folder $folder_name no longer exists. Removing from the Database."
         # Delete the entry from the database
-        result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
+        local result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
         checkSuccess "Removing $folder_name from the apps database."
         ((updated_count++)) # Increment updated_count
     done
@@ -189,7 +189,7 @@ databaseAppScan()
     for folder_name in $folder_names; do
         folder_path="$install_dir/$folder_name"
         if [ -d "$folder_path" ]; then
-            num_files=$(sudo find "$folder_path" -maxdepth 1 -type f | wc -l)
+            local num_files=$(sudo find "$folder_path" -maxdepth 1 -type f | wc -l)
             
             # Check if the folder is empty or contains only a config file
             if [ "$num_files" -eq 0 ]; then
@@ -202,7 +202,7 @@ databaseAppScan()
         else
             # If the folder doesn't exist in the directory, uninstall it from the database
             isNotice "Folder $folder_name does not exist. Removing from the Database."
-            result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
+            local result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
             checkSuccess "Removing $folder_name from the apps database."
             ((updated_count++)) # Increment updated_count
         fi
@@ -232,9 +232,9 @@ databaseListAllApps()
         echo ""
 
         # Execute the SQLite query and store the output in a variable
-        output=$(sudo sqlite3 -header -column $base_dir/$db_file "SELECT * FROM apps;")
+        local output=$(sudo sqlite3 -header -column $base_dir/$db_file "SELECT * FROM apps;")
         # Count the number of non-header lines (data rows) in the 'output'
-        num_data_rows=$(echo "$output" | grep -v '^name[[:space:]]|')
+        local num_data_rows=$(echo "$output" | grep -v '^name[[:space:]]|')
 
         # Check if results variable is not empty
         if [ -n "$num_data_rows" ]; then
@@ -276,7 +276,7 @@ databaseListInstalledApps()
     fi
 
     # Execute the query and store the results in a variable for installed apps only (status = 1)
-    results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, install_date FROM apps WHERE status = 1;")
+    local results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name, install_date FROM apps WHERE status = 1;")
 
     # Check if results variable is not empty
     if [ -n "$results" ]; then
@@ -305,7 +305,7 @@ databaseCycleThroughListApps()
         # Full
         # Backup
         if [[ "$backupfull" == [yY] ]]; then
-            name=full
+            local name=full
             isQuestion "Do you want a $name Backup? (y/n) "
             read -rp "" BACKUPACCEPT
 
@@ -317,7 +317,7 @@ databaseCycleThroughListApps()
 
         # Migrate
         if [[ "$migratefull" == [yY] ]]; then
-            name=full
+            local name=full
             isQuestion "Do you want a $name Migration  (y/n)? "
             read -rp "" MIGRATEACCEPT
 
@@ -328,9 +328,9 @@ databaseCycleThroughListApps()
         fi
 
         # This is for single apps ONLY    
-        app_names=()
+        local app_names=()
         while IFS= read -r name; do
-            app_names+=("$name")
+            local app_names+=("$name")
         done < <(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
 
         # Check if sqlite3 is available
@@ -378,7 +378,7 @@ databaseCycleThroughListApps()
 databaseCycleThroughListAppsCrontab()
 {
     local show_header=$1
-    ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
+    local ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -405,9 +405,9 @@ databaseCycleThroughListAppsCrontab()
         echo "############################################"
     fi
 
-    app_names=("full")  # To Inject full to setup crontab also
+    local app_names=("full")  # To Inject full to setup crontab also
     while IFS= read -r name; do
-        app_names+=("$name")
+        local app_names+=("$name")
     done < <(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
 
     # Check if sqlite3 is available
@@ -460,7 +460,7 @@ databaseSSHScanForKeys()
     updateSSHPermissions
 
     # Reloading SSH Service
-    result=$(sudo service ssh reload)
+    local result=$(sudo service ssh reload)
     checkSuccess "Reloading the SSH Service"
 
     isSuccessful "SSH Key Scan completed successfully."
@@ -488,7 +488,7 @@ databaseDisplayTables()
         fi
 
         # Get a list of existing tables in the database
-        tables_list=$(sudo sqlite3 "$base_dir/$db_file" ".tables")
+        local tables_list=$(sudo sqlite3 "$base_dir/$db_file" ".tables")
 
         # Check if there are any tables in the database
         if [ -z "$tables_list" ]; then
@@ -547,7 +547,7 @@ databaseEmptyTable()
     fi
 
     # Get a list of existing tables in the database
-    tables_list=$(sudo sqlite3 "$base_dir/$db_file" ".tables")
+    local tables_list=$(sudo sqlite3 "$base_dir/$db_file" ".tables")
 
     # Check if there are any tables in the database
     if [ -z "$tables_list" ]; then
@@ -594,18 +594,15 @@ checkIfUpdateShouldRun()
     fi
 
     local table_name="sysupdate"
-    local latest_timestamp
-    latest_timestamp=$(sudo sqlite3 "$base_dir/$db_file" "SELECT datetime(date || ' ' || time) FROM \"$table_name\" ORDER BY date DESC, time DESC LIMIT 1;")
+    local latest_timestamp=$(sudo sqlite3 "$base_dir/$db_file" "SELECT datetime(date || ' ' || time) FROM \"$table_name\" ORDER BY date DESC, time DESC LIMIT 1;")
 
     # Check if the timestamp is empty or not (no records in the database)
     if [[ -n "$latest_timestamp" ]]; then
         # Convert the latest timestamp to UNIX timestamp (seconds since epoch)
-        local latest_timestamp_unix
-        latest_timestamp_unix=$(date -d "$latest_timestamp" +%s)
+        local latest_timestamp_unix=$(date -d "$latest_timestamp" +%s)
 
         # Get the current UNIX timestamp
-        local current_timestamp_unix
-        current_timestamp_unix=$(date +%s)
+        local current_timestamp_unix=$(date +%s)
 
         # Calculate the time difference in seconds (current - latest)
         local time_difference=$((current_timestamp_unix - latest_timestamp_unix))
@@ -634,14 +631,14 @@ databasePathInsert()
 {
     local initial_path_save="$1"
     if [ -f "$base_dir/$db_file" ] && [ -n "$initial_path_save" ]; then
-        table_name=path
+        local table_name=path
         # Check if the path already exists in the database
-        existing_path=$(sudo sqlite3 "$base_dir/$db_file" "SELECT path FROM $table_name WHERE path = '$initial_path_save';")
+        local existing_path=$(sudo sqlite3 "$base_dir/$db_file" "SELECT path FROM $table_name WHERE path = '$initial_path_save';")
         if [ -z "$existing_path" ]; then
             # Path doesn't exist, clear old data and insert
-            result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name;")
+            local result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name;")
             checkSuccess "Clearing old path data"
-            result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (path) VALUES ('$initial_path_save');")
+            local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (path) VALUES ('$initial_path_save');")
             checkSuccess "Adding $initial_path_save to the $table_name table."
         fi
     fi
@@ -656,11 +653,11 @@ databasePortInsert()
     IFS='/' read -r port type <<< "$portdata"
 
     if [ -f "$base_dir/$db_file" ] && [ -n "$app_name" ]; then
-        table_name=ports
+        local table_name=ports
         # Check if already exists in the database
-        existing_portdata=$(sudo sqlite3 "$base_dir/$db_file" "SELECT port FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
+        local existing_portdata=$(sudo sqlite3 "$base_dir/$db_file" "SELECT port FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
         if [ -z "$existing_portdata" ]; then
-            result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, port, type) VALUES ('$app_name', '$port', '$type');")
+            local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, port, type) VALUES ('$app_name', '$port', '$type');")
             checkSuccess "Adding port $port and type $type for $app_name to the $table_name table."
         fi
     fi
@@ -675,8 +672,8 @@ databasePortRemove()
     IFS='/' read -r port type <<< "$portdata"
 
     if [ -f "$base_dir/$db_file" ] && [ -n "$app_name" ]; then
-        table_name=ports
-        result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
+        local table_name=ports
+        local result=$(sudo sqlite3 "$base_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
         checkSuccess "Deleting port $port and type $type for $app_name to the $table_name table."
     fi
 }
@@ -686,7 +683,7 @@ databaseBackupInsert()
 {
     local app_name="$1"
     local table_name=backups
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table."    
 }
 
@@ -694,7 +691,7 @@ databaseRestoreInsert()
 {
     local app_name="$1"
     local table_name=restores
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table."
 }
 
@@ -702,7 +699,7 @@ databaseMigrateInsert()
 {
     local app_name="$1"
     local table_name=migrations
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table." 
 }
 
@@ -710,7 +707,7 @@ databaseSSHInsert()
 {
     local app_name="$1"
     local table_name=ssh
-    result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
     checkSuccess "Adding $app_name to the $table_name table." 
 }
 
@@ -722,10 +719,10 @@ databaseSSHKeysInsert()
     local key_in_db=$(sudo sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
 
     if [ "$key_in_db" -eq 0 ]; then
-        result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
+        local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
         checkSuccess "Adding $key_file to the $table_name table."
     else
-        result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$key_file', date = '$current_date', time = '$current_time' WHERE name = '$key_file';")
+        local result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$key_file', date = '$current_date', time = '$current_time' WHERE name = '$key_file';")
         checkSuccess "$key_file already added to the $table_name table. Updating date/time."
     fi
 }
@@ -738,10 +735,10 @@ databaseCronJobsInsert()
 
     if [ "$key_in_db" != "" ]; then
         if [ "$key_in_db" -eq 0 ]; then
-            result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+            local result=$(sudo sqlite3 "$base_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
             checkSuccess "Adding $app_name to the $table_name table." 
         else
-            result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$app_name', date = '$current_date', time = '$current_time' WHERE name = '$app_name';")
+            local result=$(sudo sqlite3 "$base_dir/$db_file" "UPDATE $table_name SET name = '$app_name', date = '$current_date', time = '$current_time' WHERE name = '$app_name';")
             checkSuccess "$app_name already added to the $table_name table. Updating date/time." 
         fi
         #isNotice "app_name is empty, unable to insert"
@@ -751,7 +748,7 @@ databaseCronJobsInsert()
 databaseRemoveFile()
 {
 	if [[ "$tooldeletedb" == [yY] ]]; then
-        result=$(sudo -u $easydockeruser rm $base_dir/$db_file)
+        local result=$(sudo -u $easydockeruser rm $base_dir/$db_file)
         checkSuccess "Removing $db_file file"
     fi
 }

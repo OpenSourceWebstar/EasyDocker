@@ -112,7 +112,7 @@ installMailcow()
 			local ports_to_scan="25|$COWP80C|110|143|$COWP443C|465|587|993|995|4190"
 			local scan_result
 
-			scan_result=$(sudo -u $easydockeruser ss -tlpn | sudo grep  -E -w "$ports_to_scan")
+			scan_local result=$(sudo -u $easydockeruser ss -tlpn | sudo grep  -E -w "$ports_to_scan")
 
 			if [[ -n "$scan_result" ]]; then
 				isError "Some of the specified ports are not free:"
@@ -131,10 +131,10 @@ installMailcow()
         echo "---- $menu_number. Pulling Mailcow GitHub repo into the $install_dir$app_name folder"
         echo ""
 
-		result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized $install_dir/mailcow)
+		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized $install_dir/mailcow)
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 
-		result=$(copyFile $containers_dir$app_name/docker-compose.$app_name.yml $install_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		local result=$(copyFile $containers_dir$app_name/docker-compose.$app_name.yml $install_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
 
 		((menu_number++))
@@ -143,24 +143,24 @@ installMailcow()
         echo ""
 
 		# Custom values from files
-		result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g" $install_dir$app_name/docker-compose.$app_name.yml)
+		local result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g" $install_dir$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Domain Name in the docker-compose.$app_name.yml file"
 
-		result=$(sudo sed -i "s/IPADDRESSHERE/$ip_setup/g" $install_dir$app_name/docker-compose.$app_name.yml)
+		local result=$(sudo sed -i "s/IPADDRESSHERE/$ip_setup/g" $install_dir$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating IP Address in the docker-compose.$app_name.yml file"
 
-		result=$(sudo sed -i "s/PORTHERE/$COWP80C/g" $install_dir$app_name/docker-compose.$app_name.yml)
+		local result=$(sudo sed -i "s/PORTHERE/$COWP80C/g" $install_dir$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Port to $$COWP80C in the docker-compose.$app_name.yml file"
 		
 		if [[ "$using_caddy" == "false" ]]; then
 			# Setup SSL Transfer scripts
-			result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_dir$app_name/caddy-to-mailcow-ssl.sh | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $install_dir$app_name/caddy-to-mailcow-ssl.sh | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
-			result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_dir$app_name/caddy-to-mailcow-ssl.sh)
+			local result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $install_dir$app_name/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Setting Domain Name in caddy-to-mailcow-ssl.sh"
 			
-			result=$(sudo chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
+			local result=$(sudo chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Updating permissions for caddy-to-mailcow-ssl.sh"
 			
 			# Setup crontab
@@ -174,7 +174,7 @@ installMailcow()
 		fi
 		
 		# Script to setup Mailcow
-		result=$(cd mailcow && sudo -u $easydockeruser ./generate_config.sh)
+		local result=$(cd mailcow && sudo -u $easydockeruser ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
 
 		((menu_number++))
@@ -183,19 +183,19 @@ installMailcow()
         echo ""
 
 		if [[ "$COWP80_PROMPT" == [yY] ]]; then
-        	result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $install_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to custom http port"
 		fi
 		if [[ "$COWP443_PROMPT" == [yY] ]]; then
-        	result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $install_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to custom https port"
 		fi
 		if [[ "$COWLE" == [yY] ]]; then
-        	result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $install_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to disable SSL install"
 		fi
 		if [[ "$COWCD" == [nN] ]]; then
-        	result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $install_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $install_dir/mailcow/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
 		fi
 

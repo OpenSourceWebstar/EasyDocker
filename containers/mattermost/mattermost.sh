@@ -98,28 +98,28 @@ installMattermost()
         echo "---- $menu_number. Pulling Mattermost GitHub repo"
         echo ""
 
-        result=$(mkdirFolders $install_dir$app_name)
+        local result=$(mkdirFolders $install_dir$app_name)
 		checkSuccess "Creating $app_name install folder"
 
-        result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_dir$app_name)
+        local result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_dir$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
 
-        result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
+        local result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
 
-        result=$(mkdirFolders $install_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
+        local result=$(mkdirFolders $install_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
-        result=$(sudo chown -R 2000:2000 $install_dir$app_name/volumes/app/mattermost)
+        local result=$(sudo chown -R 2000:2000 $install_dir$app_name/volumes/app/mattermost)
 		checkSuccess "Setting folder permissions for $app_name folders"
 
-        result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_dir$app_name/.env)
+        local result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_dir$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
 		
-        result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_dir$app_name/.env)
+        local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTP_PORT to $MATP80C"	
 				
-        result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_dir$app_name/.env)
+        local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $MATP443C"	
 		
 		editEnvFileDefault;
@@ -169,16 +169,16 @@ EOF
     	if [[ "$MATN" == [nN] ]]; then
 			if [[ "$OS" == [123] ]]; then
 				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-					result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
+					local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 					checkSuccess "Shutting down nginx container"
 
-					result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCN up -d")
+					local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCN up -d")
 					checkSuccess "Starting up nginx container"
 				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
+					local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 					checkSuccess "Shutting down nginx container"
 
-					result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
+					local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
 					checkSuccess "Starting up nginx container"
 				fi
 			fi
@@ -197,16 +197,16 @@ EOF
 				 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
 					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-						result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
+						local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 
-						result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
+						local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-						result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
+						local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 						
-						result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
+						local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					fi
 				fi

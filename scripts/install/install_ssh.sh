@@ -90,7 +90,7 @@ installSSHKeyToHost() {
     fi
 
 # Copy the SSH public key to the remote directory using sftp
-result=$(sftp -oBatchMode=no -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null "$CFG_DOCKER_MANAGER_USER@$host" <<EOF
+local result=$(sftp -oBatchMode=no -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null "$CFG_DOCKER_MANAGER_USER@$host" <<EOF
 cd "ssh/$CFG_DOCKER_MANAGER_USER"
 put "$ssh_key_file"
 EOF
@@ -192,14 +192,14 @@ addSSHKeyToAuthorizedKeysAndDatabase()
 
         if [ "$key_in_db" -eq 0 ]; then
             # Key doesn't exist in the database, insert it
-            result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO ssh_keys (name, hash, date, time) VALUES ('$key_filename', '$ssh_public_key_hash', '$current_date', '$current_time');")
+            local result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO ssh_keys (name, hash, date, time) VALUES ('$key_filename', '$ssh_public_key_hash', '$current_date', '$current_time');")
             checkSuccess "SSH public key from $key_filename added to the database."
         else
             # Key exists in the database, check if its content has changed
             local db_key_hash=$(sqlite3 "$base_dir/$db_file" "SELECT hash FROM ssh_keys WHERE name = '$key_filename';")
             if [ "$db_key_hash" != "$ssh_public_key_hash" ]; then
                 # Key content has changed, update the record
-                result=$(sqlite3 "$base_dir/$db_file" "UPDATE ssh_keys SET hash = '$ssh_public_key_hash', date = '$current_date', time = '$current_time' WHERE name = '$key_filename';")
+                local result=$(sqlite3 "$base_dir/$db_file" "UPDATE ssh_keys SET hash = '$ssh_public_key_hash', date = '$current_date', time = '$current_time' WHERE name = '$key_filename';")
                 checkSuccess "SSH Key content from $key_filename updated in the database."
             #else
                 #echo "NOTICE: SSH Key content from $key_filename already exists in the database. Skipping update..."
@@ -219,33 +219,33 @@ removeSSHKeyFromAuthorizedKeysAndDatabase()
         local auth_key_file="$ssh_directory/authorized_keys"  # Define auth_key_file here
 
         # Remove the key from the authorized_keys file
-        result=$(sudo sed -i "/$key_filename/d" "$auth_key_file")
+        local result=$(sudo sed -i "/$key_filename/d" "$auth_key_file")
         checkSuccess "SSH public key '$key_filename' removed from authorized_keys file."
 
         # Remove the key from the database
         db_query="DELETE FROM ssh_keys WHERE name = '$key_filename';"
-        result=$(sqlite3 "$base_dir/$db_file" "$db_query")
+        local result=$(sqlite3 "$base_dir/$db_file" "$db_query")
         checkSuccess "SSH public key '$key_filename' removed from the database."
     fi
 }
 
 updateSSHPermissions()
 {
-    result=$(sudo chmod 700 $ssh_dir$CFG_DOCKER_MANAGER_USER/)
+    local result=$(sudo chmod 700 $ssh_dir$CFG_DOCKER_MANAGER_USER/)
     #checkSuccess "Adjusting permissions for $ssh_dir$CFG_DOCKER_MANAGER_USER"
 
     # SSH configuration directory
     auth_key="$ssh_dir$CFG_DOCKER_MANAGER_USER/authorized_keys"
     # Check if the config file already exists
     if [ -f "$auth_key" ]; then
-        result=$(sudo chmod 600 $auth_key)
+        local result=$(sudo chmod 600 $auth_key)
         #checkSuccess "Adjusting permissions for authorized_keys"
     fi
 
-    result=$(sudo chmod +rx $ssh_dir $ssh_dir$CFG_DOCKER_MANAGER_USER)
+    local result=$(sudo chmod +rx $ssh_dir $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding read and write permissions for ssh folders"
-    result=$(sudo chown -R $CFG_DOCKER_MANAGER_USER:$CFG_DOCKER_MANAGER_USER $ssh_dir$CFG_DOCKER_MANAGER_USER)
+    local result=$(sudo chown -R $CFG_DOCKER_MANAGER_USER:$CFG_DOCKER_MANAGER_USER $ssh_dir$CFG_DOCKER_MANAGER_USER)
     #checkSuccess "Adding chown to dockermanager user for ssh folders"
-    result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec sudo chmod 600 {} \;)
+    local result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec sudo chmod 600 {} \;)
     #checkSuccess "Updating all permissions of keys to 600"
 }

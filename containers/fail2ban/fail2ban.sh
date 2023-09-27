@@ -78,30 +78,30 @@ installFail2ban()
         if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
-            result=$(mkdirFolders $install_dir$app_name/logs)
+            local result=$(mkdirFolders $install_dir$app_name/logs)
             checkSuccess "Creating logs folder"
 
-            result=$(cd $install_dir$app_name && createTouch $install_dir$app_name/logs/auth.log)
+            local result=$(cd $install_dir$app_name && createTouch $install_dir$app_name/logs/auth.log)
             checkSuccess "Creating Auth.log file"
 
-            result=$(mkdirFolders $install_dir$app_name/config/$app_name $install_dir$app_name/config/$app_name/action.d)
+            local result=$(mkdirFolders $install_dir$app_name/config/$app_name $install_dir$app_name/config/$app_name/action.d)
             checkSuccess "Creating config and action.d folders"
 
             # AbuseIPDB
-            result=$(cd $install_dir$app_name/config/$app_name/action.d/ && sudo curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
+            local result=$(cd $install_dir$app_name/config/$app_name/action.d/ && sudo curl -o abuseipdb.conf https://raw.githubusercontent.com/fail2ban/fail2ban/0.11/config/action.d/abuseipdb.conf)
             checkSuccess "Downloading abuseipdb.conf from GitHub"
             
-            result=$(sudo sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_dir$app_name/config/$app_name/action.d/abuseipdb.conf)
+            local result=$(sudo sed -i "s/abuseipdb_apikey =/abuseipdb_apikey =$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_dir$app_name/config/$app_name/action.d/abuseipdb.conf)
             checkSuccess "Setting up abuseipdb_apikey"
 
             # Jail.local
-            result=$(mkdirFolders $install_dir$app_name/config/$app_name/)
+            local result=$(mkdirFolders $install_dir$app_name/config/$app_name/)
             checkSuccess "Creating $app_name folder"
 
-		    result=$(copyResource "$app_name" "jail.local" "config/$app_name/jail.local" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		    local result=$(copyResource "$app_name" "jail.local" "config/$app_name/jail.local" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
-            result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_dir$app_name/config/$app_name/jail.local)
+            local result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $install_dir$app_name/config/$app_name/jail.local)
             checkSuccess "Setting up AbuseIPDB API Key in jail.local file"
         else
             isNotice "No API key found, please provide one if you want to use AbuseIPDB"

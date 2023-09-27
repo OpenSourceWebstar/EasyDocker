@@ -41,7 +41,7 @@ restoreStart()
     if [ "$stored_app_name" == "full" ]; then
         dockerStopAllApps;
     else
-        dockerAppDown;
+        dockerAppDown $stored_app_name;;
     fi
 
     ((menu_number++))
@@ -177,7 +177,7 @@ restoreSingleBackupList()
             declare -A seen_apps
             local count=1
 
-            for zip_file in "$BACKUP_SAVE_DIRECTORY"/*.zip; do
+            for zip_file in "$backup_save_directory"/*.zip; do
                 if [ -f "$zip_file" ]; then
                     # Extract the app_name from the filename using sed
                     local app_name=$(basename "$zip_file" | sed -E 's/.*-([^-]+)-backup-.*/\1/')
@@ -203,7 +203,7 @@ restoreSingleBackupList()
             echo ""
             backup_list=()
             local count=1
-            for zip_file in "$BACKUP_SAVE_DIRECTORY"/*-$selected_app-backup-*; do
+            for zip_file in "$backup_save_directory"/*-$selected_app-backup-*; do
                 if [ -f "$zip_file" ]; then
                     backup_list+=("$zip_file")
                     isOption "$count. $(basename "$zip_file")"
@@ -275,7 +275,7 @@ restoreFullBackupList()
             echo ""
             backup_list=()
             local count=1
-            for zip_file in "$BACKUP_SAVE_DIRECTORY"/*.zip; do
+            for zip_file in "$backup_save_directory"/*.zip; do
                 if [ -f "$zip_file" ]; then
                     backup_list+=("$zip_file")
                     isOption "$count. $(basename "$zip_file")"
@@ -284,7 +284,7 @@ restoreFullBackupList()
             done
             if [ "${#backup_list[@]}" -eq 0 ]; then
                 echo ""
-                isNotice "No backup files found in $BACKUP_SAVE_DIRECTORY."
+                isNotice "No backup files found in $backup_save_directory."
                 return 1
             fi
         }
@@ -561,24 +561,24 @@ restoreCopyFile()
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        result=$(copyFile "$BACKUP_SAVE_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
         # Extract the date from the filename (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | cut -d'-' -f1-3)
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
         if [[ "$remote_server" == "1" ]]; then
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            local result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"
         elif [[ "$remote_server" == "2" ]]; then
-            result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            local result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_2_IP to $RESTORE_SAVE_DIRECTORY"
         fi
     elif [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        result=$(copyFile "$BACKUP_SAVE_DIRECTORY/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     fi
 }
@@ -594,10 +594,10 @@ restoreDeleteDockerFolder()
             exclude_options+=" --exclude='$folder'"
         done
         # Run rsync command to delete everything in base_dir except the specified folders
-        result=$(sudo rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
+        local result=$(sudo rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
         checkSuccess "Deleting the $app_name Docker install folder $base_dir"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        result=$(sudo rm -rf $install_dir$app_name)
+        local result=$(sudo rm -rf $install_dir$app_name)
         checkSuccess "Deleting the $app_name Docker install folder in $install_dir$app_name"
     fi
 }
@@ -611,7 +611,7 @@ restoreExtractFile()
         local passphrase="$1"
         local unzip_path="$2"
         isNotice "Attempting to decrypt and unzip $chosen_backup_file backup file...this may take a while..."
-        result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d $unzip_path)
+        local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d $unzip_path)
         return $?
     }
 
@@ -720,7 +720,7 @@ restoreExtractFile()
     # Remote Migrate
     if [[ "$restorefull" == [mM] ]]; then
         while true; do
-            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
+            local result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d /)
 
             if [ $? -eq 0 ]; then
                 checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"
@@ -840,7 +840,7 @@ restoreExtractFile()
     # Remote Migrate
     if [[ "$restoresingle" == [mM] ]]; then
         while true; do
-            result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_dir)
+            local result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_dir)
 
             if [ $? -eq 0 ]; then
                 checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"
@@ -863,10 +863,10 @@ restoreExtractFile()
 restoreCleanFiles()
 {
     if [[ "$restorefull" == [lLrRmM] ]]; then
-        result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
+        local result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
         checkSuccess "Clearing unneeded restore data"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
+        local result=$(sudo rm -rf $RESTORE_SAVE_DIRECTORY/*.zip)
         checkSuccess "Clearing unneeded restore data"
     fi
 }
@@ -878,7 +878,7 @@ restoreMigrate()
         local chosen_backup_file="$2"
         # Delete everything after the .zip extension in the file name
         local file_name=$(echo "$chosen_backup_file" | sed 's/\(.*\)\.zip/\1.zip/')
-        BACKUP_SAVE_DIRECTORY="$backup_full_dir"
+        backup_save_directory="$backup_full_dir"
         RESTORE_SAVE_DIRECTORY="$restore_full_dir"
         restoreStart "$app_name" "$file_name";
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
@@ -886,7 +886,7 @@ restoreMigrate()
         local chosen_backup_file="$2"
         # Delete everything after the .zip extension in the file name
         local file_name=$(echo "$chosen_backup_file" | sed 's/\(.*\)\.zip/\1.zip/')
-        BACKUP_SAVE_DIRECTORY="$backup_single_dir"
+        backup_save_directory="$backup_single_dir"
         RESTORE_SAVE_DIRECTORY="$restore_single_dir"
         restoreStart "$app_name" "$file_name";
     fi
@@ -897,22 +897,22 @@ restoreInitialize()
     if [[ "$restorefull" == [lLrRmM] ]]; then
         if [[ "$CFG_REQUIREMENT_MIGRATE" == "false" ]]; then
             migrateEnableConfig;
-            BACKUP_SAVE_DIRECTORY="$backup_full_dir"
+            backup_save_directory="$backup_full_dir"
             RESTORE_SAVE_DIRECTORY="$restore_full_dir"
             restoreFullBackupList;
         elif [[ "$CFG_REQUIREMENT_MIGRATE" == "true" ]]; then
-            BACKUP_SAVE_DIRECTORY="$backup_full_dir"
+            backup_save_directory="$backup_full_dir"
             RESTORE_SAVE_DIRECTORY="$restore_full_dir"
             restoreFullBackupList;
         fi
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
         if [[ "$CFG_REQUIREMENT_MIGRATE" == "false" ]]; then
             migrateEnableConfig;
-            BACKUP_SAVE_DIRECTORY="$backup_single_dir"
+            backup_save_directory="$backup_single_dir"
             RESTORE_SAVE_DIRECTORY="$restore_single_dir"
             restoreSingleBackupList;
         elif [[ "$CFG_REQUIREMENT_MIGRATE" == "true" ]]; then
-            BACKUP_SAVE_DIRECTORY="$backup_single_dir"
+            backup_save_directory="$backup_single_dir"
             RESTORE_SAVE_DIRECTORY="$restore_single_dir"
             restoreSingleBackupList;
         fi

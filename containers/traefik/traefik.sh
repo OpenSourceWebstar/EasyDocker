@@ -64,19 +64,19 @@ installTraefik()
         fi
 		
         # Create necessary directories and set permissions
-        result=$(mkdirFolders "$install_dir$app_name/etc" "$install_dir$app_name/etc/certs")
+        local result=$(mkdirFolders "$install_dir$app_name/etc" "$install_dir$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
         # Create and secure the acme.json file
-        result=$(createTouch "$install_dir$app_name/etc/certs/acme.json")
+        local result=$(createTouch "$install_dir$app_name/etc/certs/acme.json")
         checkSuccess "Created acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
-        result=$(copyResource "$app_name" "traefik.yml" "/etc/traefik.yml")
+        local result=$(copyResource "$app_name" "traefik.yml" "/etc/traefik.yml")
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
-        result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_dir$app_name/etc/traefik.yml")
+        local result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$install_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
 
 		((menu_number++))

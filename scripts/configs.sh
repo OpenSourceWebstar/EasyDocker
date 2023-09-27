@@ -297,7 +297,7 @@ checkConfigFilesExist()
 checkConfigFilesEdited()
 {
     # Flag to control the loop
-    config_check_done=false
+    local config_check_done=false
     
     while ! "$config_check_done"; do
         # Check if configs have not been changed
@@ -327,7 +327,7 @@ checkConfigFilesEdited()
             done
         else
             isSuccessful "Config file has been updated, continuing..."
-            config_check_done=true  # Set the flag to exit the loop
+            local config_check_done=true  # Set the flag to exit the loop
         fi
     done
 }
@@ -342,20 +342,20 @@ editAppConfig() {
     fi
 
     # Use find to search for the app_name folder within $containers_dir
-    app_dir=$containers_dir$app_name
+    local app_dir=$containers_dir$app_name
 
     if [ -n "$app_dir" ]; then
-        config_file="$app_dir/$app_name.config"
+        local config_file="$app_dir/$app_name.config"
 
         if [ -f "$config_file" ]; then
             # Calculate the checksum of the original file
-            original_checksum=$(md5sum "$config_file")
+            local original_checksum=$(md5sum "$config_file")
 
             # Open the file with nano for editing
             nano "$config_file"
 
             # Calculate the checksum of the edited file
-            edited_checksum=$(md5sum "$config_file")
+            local edited_checksum=$(md5sum "$config_file")
 
             # Compare the checksums to check if changes were made
             if [[ "$original_checksum" != "$edited_checksum" ]]; then
@@ -376,8 +376,8 @@ editAppConfig() {
                     # Run to see if edits have removed any variables
                     checkConfigFilesMissingVariables;
                     # Convert the first letter of app_name to uppercase
-                    app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
-                    installFuncName="install${app_name_ucfirst}"
+                    local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                    local installFuncName="install${app_name_ucfirst}"
                     ${installFuncName} install 
                 fi
             else
@@ -411,25 +411,25 @@ viewEasyDockerConfigs()
     PS3="Select a config to edit (Type the first letter of the config, or x to exit): "
     while true; do
         for ((i = 0; i < ${#config_files[@]}; i++)); do
-            file_name=$(basename "${config_files[i]}")  # Get the basename of the file
-            file_name_without_prefix=${file_name#config_}  # Remove the "config_" prefix from all files
-            config_name=${file_name_without_prefix,,}  # Convert the name to lowercase
+            local file_name=$(basename "${config_files[i]}")  # Get the basename of the file
+            local file_name_without_prefix=${file_name#config_}  # Remove the "config_" prefix from all files
+            local config_name=${file_name_without_prefix,,}  # Convert the name to lowercase
             
             if [[ "$file_name" == config_apps_* ]]; then
-                config_name=${config_name#apps_}  # Remove the "apps_" prefix from files with that prefix
+                local config_name=${config_name#apps_}  # Remove the "apps_" prefix from files with that prefix
             fi
             
-            first_letter=${config_name:0:1}  # Get the first letter
+            local first_letter=${config_name:0:1}  # Get the first letter
             
             # Check if the config name is in the associative array and retrieve the last modified timestamp
             if [ "${config_timestamps[$config_name]}" ]; then
-                last_modified="${config_timestamps[$config_name]}"
+                local last_modified="${config_timestamps[$config_name]}"
             else
-                last_modified=$(stat -c "%y" "${config_files[i]}")  # Get last modified time if not already in the array
-                config_timestamps["$config_name"]=$last_modified  # Store the last modified timestamp in the array
+                local last_modified=$(stat -c "%y" "${config_files[i]}")  # Get last modified time if not already in the array
+                local config_timestamps["$config_name"]=$last_modified  # Store the last modified timestamp in the array
             fi
             
-            formatted_last_modified=$(date -d "$last_modified" +"%m/%d %H:%M")  # Format the timestamp
+            local formatted_last_modified=$(date -d "$last_modified" +"%m/%d %H:%M")  # Format the timestamp
             
             isOption "$first_letter. ${config_name,,} (Last modified: $formatted_last_modified)"
         done
@@ -452,19 +452,19 @@ viewEasyDockerConfigs()
                 return
             fi
             elif [[ "$selected_letter" =~ [A-Za-z] ]]; then
-            selected_file=""
+            local selected_file=""
             for ((i = 0; i < ${#config_files[@]}; i++)); do
-                file_name=$(basename "${config_files[i]}")
-                file_name_without_prefix=${file_name#config_}
-                config_name=${file_name_without_prefix,,}
+               local  file_name=$(basename "${config_files[i]}")
+                local file_name_without_prefix=${file_name#config_}
+                local config_name=${file_name_without_prefix,,}
                 
                 if [[ "$file_name" == config_apps_* ]]; then
-                    config_name=${config_name#apps_}
+                    local config_name=${config_name#apps_}
                 fi
                 
-                first_letter=${config_name:0:1}
+                local first_letter=${config_name:0:1}
                 if [[ "$selected_letter" == "$first_letter" ]]; then
-                    selected_file="${config_files[i]}"
+                    local selected_file="${config_files[i]}"
                     break
                 fi
             done
@@ -479,8 +479,8 @@ viewEasyDockerConfigs()
                 createTouch "$selected_file"
                 
                 # Store the updated last modified timestamp in the associative array
-                config_name=$(basename "${selected_file}" | sed 's/config_//')
-                config_timestamps["$config_name"]=$(stat -c "%y" "$selected_file")
+                local config_name=$(basename "${selected_file}" | sed 's/config_//')
+                local config_timestamps["$config_name"]=$(stat -c "%y" "$selected_file")
                 
                 # Show a notification message indicating the config has been updated
                 echo ""
@@ -497,7 +497,8 @@ viewEasyDockerConfigs()
 }
 
 # Function to list Docker Compose files in a directory
-listDockerComposeFiles() {
+listDockerComposeFiles() 
+{
   local dir="$1"
   local docker_compose_files=()
 
@@ -511,7 +512,8 @@ listDockerComposeFiles() {
 }
 
 # Function to view and edit Docker Compose files in a selected app's folder
-viewComposeFiles() {
+viewComposeFiles() 
+{
   local app_names=()
   local app_dir
 
@@ -560,7 +562,7 @@ viewComposeFiles() {
         # List Docker Compose files in the selected app's folder
         echo ""
         isNotice "Docker Compose files in '$selected_app':"
-        selected_compose_files=($(listDockerComposeFiles "$selected_app_dir"))
+        local selected_compose_files=($(listDockerComposeFiles "$selected_app_dir"))
 
         # Check if any Docker Compose files were found
         if [ ${#selected_compose_files[@]} -eq 0 ]; then
@@ -754,12 +756,12 @@ viewAppCategoryConfigs()
         echo ""
         # Display *INSTALLED* apps first and then others
         for ((i = 0; i < ${#installed_apps[@]}; i++)); do
-            app_option="${installed_apps[i]}"
+            local app_option="${installed_apps[i]}"
             isOption "$((i + 1)). $app_option"
         done
 
         for ((i = 0; i < ${#other_apps[@]}; i++)); do
-            app_option="${other_apps[i]}"
+            local app_option="${other_apps[i]}"
             isOption "$((i + 1 + ${#installed_apps[@]})). $app_option"
         done
         
@@ -784,18 +786,18 @@ viewAppCategoryConfigs()
             if ((selected_number >= 1 && selected_number <= (${#installed_apps[@]} + ${#other_apps[@]}))); then
                 if ((selected_number <= ${#installed_apps[@]})); then
                     # Selected an *INSTALLED* app
-                    selected_index=$((selected_number - 1))
-                    app_option="${installed_apps[selected_index]}"
+                    local selected_index=$((selected_number - 1))
+                    local app_option="${installed_apps[selected_index]}"
                 else
                     # Selected an app from the other category
-                    selected_index=$((selected_number - ${#installed_apps[@]} - 1))
-                    app_option="${other_apps[selected_index]}"
+                    local selected_index=$((selected_number - ${#installed_apps[@]} - 1))
+                    local app_option="${other_apps[selected_index]}"
                 fi
 
                 # Remove the "*INSTALLED" suffix if it's present
-                app_name="${app_option%% *INSTALLED}"
+                local app_name="${app_option%% *INSTALLED}"
                 editAppConfig "$app_name"
-                select_app="$app_name"
+                local select_app="$app_name"
             else
                 isNotice "Invalid number. Please select a valid number or 'x' to exit."
                 echo ""

@@ -11,20 +11,20 @@ installSwapfile()
             echo ""
             ISSWAP=$( (sudo -u $easydockeruser swapoff /swapfile) 2>&1 )
             if [[ "$ISSWAP" != *"No such file or directory"* ]]; then
-                result=$(sudo -u $easydockeruser swapoff /swapfile)
+                local result=$(sudo -u $easydockeruser swapoff /swapfile)
                 isSuccessful "Turning off /swapfile (if needed)"
             fi
 
-            result=$(sudo -u $easydockeruser fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
+            local result=$(sudo -u $easydockeruser fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
             checkSuccess "Allocating $CFG_SWAPFILE_SIZE to the /swapfile"
             
-            result=$(sudo chmod 0600 /swapfile)
+            local result=$(sudo chmod 0600 /swapfile)
             checkSuccess "Adding permissions to the /swapfile"
 
-            result=$(sudo -u $easydockeruser mkswap /swapfile)
+            local result=$(sudo -u $easydockeruser mkswap /swapfile)
             checkSuccess "Swapping to the new /swapfile"
 
-            result=$(sudo -u $easydockeruser swapon /swapfile)
+            local result=$(sudo -u $easydockeruser swapon /swapfile)
             checkSuccess "Enabling the new /swapfile"
         fi
     fi
@@ -54,7 +54,7 @@ installSSLCertificate()
             # Function to generate SSL certificate for a given domain
             generateSSLCertificate() {
                 local domain_value="$1"
-                result=$(cd $ssl_dir && openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/CN=$domain_value" -keyout "$ssl_dir/$domain_value.key" -out "$ssl_dir/$domain_value.crt" >/dev/null 2>&1)
+                local result=$(cd $ssl_dir && openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/CN=$domain_value" -keyout "$ssl_dir/$domain_value.key" -out "$ssl_dir/$domain_value.crt" >/dev/null 2>&1)
                 checkSuccess "SSL Generation for $domain_value"
             }
 
@@ -101,11 +101,11 @@ installCrontab()
         # Check to see if already installed
         if [[ "$ISCRON" == *"command not found"* ]]; then
             isNotice "Crontab is not installed, setting up now."
-            result=$(sudo apt update)
+            local result=$(sudo apt update)
             checkSuccess "Updating apt for post installation"
-            result=$(sudo apt install cron -y)
+            local result=$(sudo apt install cron -y)
             isSuccessful "Installing crontab application"
-            result=$(sudo -u $easydockeruser crontab -l)
+            local result=$(sudo -u $easydockeruser crontab -l)
             isSuccessful "Enabling crontab on the system"
         fi
 
@@ -113,7 +113,7 @@ installCrontab()
         cron_output=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
-            result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - 2>/dev/null )
+            local result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - 2>/dev/null )
             checkSuccess "Setting up crontab for $easydockeruser user"
         fi
 
@@ -164,9 +164,9 @@ installCrontabSSHScan()
 
     # Check if the cron job does not exist in the user's crontab
     if ! sudo -u $easydockeruser crontab -l | grep -qF "$cron_job"; then
-        result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$marker") | sudo -u $easydockeruser crontab - )
+        local result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$marker") | sudo -u $easydockeruser crontab - )
         checkSuccess "Add the SSHScan marker to the crontab"
-        result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$cron_job") | sudo -u $easydockeruser crontab - )
+        local result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$cron_job") | sudo -u $easydockeruser crontab - )
         checkSuccess "Adding SSH Scaning to the Crontab"
     else
         isNotice "Cron job for SSH scan already exists. Skipping insertion."
@@ -218,7 +218,7 @@ $crontab_entry")
         checkSuccess "Insert the non-full entry after the apps comment"
     fi
 
-    result=$(echo "$existing_crontab" | sudo -u $easydockeruser crontab -)
+    local result=$(echo "$existing_crontab" | sudo -u $easydockeruser crontab -)
     checkSuccess "Set the updated crontab"
     
     crontab_full_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
@@ -285,9 +285,9 @@ installSetupCrontabTiming() {
     # Assuming CFG_BACKUP_CRONTAB_APP is set to "0 5 * * *"
     crontab_app_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
 
-    result=$(sudo -u $easydockeruser crontab -l | grep -v "$entry_name" | sudo -u $easydockeruser crontab - )
+    local result=$(sudo -u $easydockeruser crontab -l | grep -v "$entry_name" | sudo -u $easydockeruser crontab - )
     checkSuccess "Remove the existing crontab entry"
-    result=$( (sudo -u $easydockeruser crontab -l; echo "$updated_crontab_entry") | sudo -u $easydockeruser crontab - )
+    local result=$( (sudo -u $easydockeruser crontab -l; echo "$updated_crontab_entry") | sudo -u $easydockeruser crontab - )
     checkSuccess "Add the updated crontab entry"
 
     isSuccessful "Crontab entry for '$entry_name' updated successfully."
@@ -308,31 +308,31 @@ installSQLiteDatabase()
 
                 # Create SQLite database file
                 if [ ! -e "$base_dir/$db_file" ]; then
-                    result=$(sudo touch $base_dir/$db_file)
+                    local result=$(sudo touch $base_dir/$db_file)
                     checkSuccess "Creating SQLite $db_file file"
 
-                    result=$(sudo chmod 755 $base_dir/$db_file && sudo chown $easydockeruser $base_dir/$db_file)
+                    local result=$(sudo chmod 755 $base_dir/$db_file && sudo chown $easydockeruser $base_dir/$db_file)
                     checkSuccess "Changing permissions for SQLite $db_file file"
                 fi
 
                 setup_table_name=path
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (path TEXT );")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (path TEXT );")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=ports
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type, TEXT);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type, TEXT);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=sysupdate
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
@@ -341,49 +341,49 @@ installSQLiteDatabase()
                 # Table info here
                 # status = 1 = installed, 0 uninstalled
                 # TODO - Add should backup column
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, status DATE, install_date DATE, uninstall_date DATE);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, status DATE, install_date DATE, uninstall_date DATE);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=backups
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=restores
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=migrations
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=ssh
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=ssh_keys
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, hash TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, hash TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=cron_jobs
                 if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, date DATE, time TIME);")
+                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 

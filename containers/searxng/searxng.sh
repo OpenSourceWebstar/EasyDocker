@@ -84,7 +84,7 @@ installSearxng()
 		done
 
 		# Perform the required operation on the file once it exists
-		result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_dir$app_name/searxng-data/settings.yml")
+		local result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$install_dir$app_name/searxng-data/settings.yml")
 		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
         if [[ $compose_setup == "default" ]]; then

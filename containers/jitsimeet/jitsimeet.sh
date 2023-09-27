@@ -61,22 +61,22 @@ installJitsimeet()
 		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $git_url | cut -d/ -f3- | tail -n1)
 		echo "The latest tag is: $latest_tag"
 
-		result=$(mkdirFolders $install_dir$app_name)
+		local result=$(mkdirFolders $install_dir$app_name)
 		checkSuccess "Creating $app_name container installation folder"
-		result=$(cd $install_dir$app_name && sudo rm -rf $install_dir$app_name/$latest_tag.zip)
+		local result=$(cd $install_dir$app_name && sudo rm -rf $install_dir$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"
-		result=$(createTouch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
+		local result=$(createTouch $latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
 		checkSuccess "Create logging txt file"
 		
 
 		# Download files and unzip
-		result=$(sudo wget -O $install_dir$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
+		local result=$(sudo wget -O $install_dir$app_name/$latest_tag.zip $git_url/archive/refs/tags/$latest_tag.zip)
 		checkSuccess "Downloading tagged zip file from GitHub"
-		result=$(sudo unzip -o $install_dir$app_name/$latest_tag.zip -d $install_dir$app_name)
+		local result=$(sudo unzip -o $install_dir$app_name/$latest_tag.zip -d $install_dir$app_name)
 		checkSuccess "Unzip downloaded file"
-		result=$(sudo mv $install_dir$app_name/docker-jitsi-meet-$latest_tag/* $install_dir$app_name)
+		local result=$(sudo mv $install_dir$app_name/docker-jitsi-meet-$latest_tag/* $install_dir$app_name)
 		checkSuccess "Moving all files from zip file to install directory"
-		result=$(sudo rm -rf $install_dir$app_name/$latest_tag.zip && sudo rm -rf $install_dir$app_name/$latest_tag/)
+		local result=$(sudo rm -rf $install_dir$app_name/$latest_tag.zip && sudo rm -rf $install_dir$app_name/$latest_tag/)
 		checkSuccess "Removing downloaded zip file as no longer needed"
 		
 		((menu_number++))
@@ -105,30 +105,30 @@ installJitsimeet()
 		setupEnvFile;
 
 		# Updating custom .env values
-		result=$(sudo sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$install_dir$app_name/.jitsi-meet-cfg|g" $install_dir$app_name/.env)
+		local result=$(sudo sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$install_dir$app_name/.jitsi-meet-cfg|g" $install_dir$app_name/.env)
 		checkSuccess "Updating .env file with new install path"
 
-		result=$(sudo sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $install_dir$app_name/.env)
+		local result=$(sudo sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $install_dir$app_name/.env)
 		checkSuccess "Updating .env file with Public URL to $host_setup"
 
 		# Values are missing from the .env by default for some reason
 		# https://github.com/jitsi/docker-jitsi-meet/commit/12051700562d9826f9e024ad649c4dd9b88f94de#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5
-		result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo tee -a "$install_dir$app_name/.env")
+		local result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo tee -a "$install_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_DOMAIN"
 
-		result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$install_dir$app_name/.env")
+		local result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$install_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		result=$(echo "JVB_PORT=10000" | sudo tee -a "$install_dir$app_name/.env")
+		local result=$(echo "JVB_PORT=10000" | sudo tee -a "$install_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo tee -a "$install_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo tee -a "$install_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		result=$(echo "JVB_TCP_PORT=4443" | sudo tee -a "$install_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_PORT=4443" | sudo tee -a "$install_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
 
-		result=$(cd "$install_dir$app_name" && sudo ./gen-passwords.sh)
+		local result=$(cd "$install_dir$app_name" && sudo ./gen-passwords.sh)
 		checkSuccess "Running Jitsi Meet gen-passwords.sh script"
 
 		((menu_number++))

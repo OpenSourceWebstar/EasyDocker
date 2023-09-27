@@ -5,7 +5,7 @@ runCommandForDockerInstallUser()
     local remote_command="$1"
     
     # Run the SSH command using the existing SSH variables
-    result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command")
+    local result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command")
 }
 
 setupConfigToContainer()
@@ -146,35 +146,35 @@ dockerDownUpDefault()
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
             
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
 
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 
-            result=$(sudo -u $easydockeruser docker-compose down)
+            local result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
             
-            result=$(sudo -u $easydockeruser docker-compose up -d)
+            local result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
             
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
             checkSuccess "Starting up container for $app_name"
 
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 
-            result=$(sudo -u $easydockeruser docker-compose down)
+            local result=$(sudo -u $easydockeruser docker-compose down)
             checkSuccess "Shutting down container for $app_name"
             
-            result=$(sudo -u $easydockeruser docker-compose up -d)
+            local result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Starting up container for $app_name"
 
         fi
@@ -186,30 +186,30 @@ dockerDownUpAdditionalYML()
     local app_name="$1"
     if [[ "$OS" == [123] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
             
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q up -d")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+            local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
             
-            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q up -d)
+            local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q up -d)
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
             
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q -q up -d")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml -q -q up -d")
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+            local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
             checkSuccess "Shutting down container for $app_name (Using additional yml file)"
             
-            result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+            local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
             checkSuccess "Starting up container for $app_name (Using additional yml file)"
         fi
     fi
@@ -221,7 +221,7 @@ editComposeFileDefault()
     local compose_file="$install_dir$app_name/docker-compose.yml"
     local config_file="$install_dir$app_name/$app_name.config"
     
-    result=$(sudo sed -i \
+    local result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -234,7 +234,7 @@ editComposeFileDefault()
     
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-        result=$(sudo sed -i \
+        local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
         "$compose_file")
         checkSuccess "Updating Compose file docker socket for $app_name"
@@ -243,29 +243,29 @@ editComposeFileDefault()
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
             if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
 
                 # Loop through compose file
                 while IFS= read -r line; do
                     if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                        line="${line//#/}"
+                        local line="${line//#/}"
                     fi
                     echo "$line"
                 done < "$compose_file" > >(sudo tee "$compose_file")
 
                 isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
             else
-                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
                 if grep -q "WHITELIST=true" "$config_file"; then
-                    result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                    local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
                     checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
                 elif grep -q "WHITELIST=false" "$config_file"; then
                     # Loop through compose file
                     while IFS= read -r line; do
                         if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                            line="${line//#/}"
+                            local line="${line//#/}"
                         fi
                         echo "$line"
                     done < "$compose_file" > >(sudo tee "$compose_file")
@@ -277,7 +277,7 @@ editComposeFileDefault()
     
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
+            local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
             checkSuccess "Disable Traefik options for private setup"
         fi
     fi
@@ -291,7 +291,7 @@ editComposeFileApp()
     local compose_file="$install_dir$app_name/docker-compose.$app_name.yml"
     local config_file="$install_dir$app_name/$app_name.config"
 
-    result=$(sudo sed -i \
+    local result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -304,7 +304,7 @@ editComposeFileApp()
     
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-        result=$(sudo sed -i \
+        local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
         "$compose_file")
         checkSuccess "Updating Compose file docker socket for $app_name"
@@ -313,18 +313,18 @@ editComposeFileApp()
     if [[ "$public" == "true" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
             if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
-                result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                local result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
                 checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
             else
-                result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
                 checkSuccess "Enable labels for Traefik option options on public setup"
                 if grep -q "WHITELIST=true" "$config_file"; then
-                    result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                    local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
                     checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
                 elif grep -q "WHITELIST=false" "$config_file"; then
-                    result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+                    local result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
                     checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
                 fi
             fi
@@ -333,7 +333,7 @@ editComposeFileApp()
     
     if [[ "$public" == "false" ]]; then
         if [[ "$app_name" != "traefik" ]]; then
-            result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
+            local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
             checkSuccess "Disable Traefik options for private setup"
         fi
     fi
@@ -345,7 +345,7 @@ editEnvFileDefault()
 {
     local env_file="$install_dir$app_name/.env"
     
-    result=$(sudo sed -i \
+    local result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -366,7 +366,7 @@ editCustomFile()
     local custompath="$2"
     local custompathandfile="$custompath/$customfile"
     
-    result=$(sudo sed -i \
+    local result=$(sudo sed -i \
         -e "s/DOMAINNAMEHERE/$domain_full/g" \
         -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
         -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
@@ -380,7 +380,7 @@ editCustomFile()
     
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-        result=$(sudo sed -i \
+        local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
         "$custompathandfile")
         checkSuccess "Updating Compose file docker socket for $app_name"
@@ -391,7 +391,7 @@ editCustomFile()
 
 setupEnvFile()
 {
-    result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
+    local result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
     checkSuccess "Setting up .env file to path"
 }
 
@@ -399,10 +399,10 @@ dockerStopAllApps()
 {
     isNotice "Please wait for docker containers to stop"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
+        local result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
         checkSuccess "Stopping all docker containers"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo -u $easydockeruser docker stop $(docker ps -a -q))
+        local result=$(sudo -u $easydockeruser docker stop $(docker ps -a -q))
         checkSuccess "Stopping all docker containers"
     fi
 }
@@ -411,26 +411,30 @@ dockerStartAllApps()
 {
     isNotice "Please wait for docker containers to start"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
+        local result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo -u $easydockeruser docker restart $(docker ps -a -q))
+        local result=$(sudo -u $easydockeruser docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
 }
 
-dockerAppDown() {
+dockerAppDown() 
+{
+    local app_name="$1"
+
     isNotice "Please wait for $app_name container to stop"
+
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         if [ -d "$install_dir$app_name" ]; then
-            result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
+            local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down")
             checkSuccess "Shutting down $app_name container"
         else
             isNotice "Directory $install_dir$app_name does not exist. Container not found."
         fi
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
         if [ -d "$install_dir$app_name" ]; then
-            result=$(cd "$install_dir$app_name" && docker-compose down)
+            local result=$(cd "$install_dir$app_name" && docker-compose down)
             checkSuccess "Shutting down $app_name container"
         else
             isNotice "Directory $install_dir$app_name does not exist. Container not found."
@@ -441,12 +445,14 @@ dockerAppDown() {
 dockerAppUp()
 {
     local app_name="$1"
+
     isNotice "Please wait for $app_name container to start"
+
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
+        local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose up -d")
         checkSuccess "Starting up $app_name container"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(cd $install_dir$app_name && docker-compose up -d)
+        local result=$(cd $install_dir$app_name && docker-compose up -d)
         checkSuccess "Starting up $app_name container"
     fi
 }

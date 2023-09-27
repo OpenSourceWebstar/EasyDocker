@@ -147,7 +147,7 @@ detectOS()
 dashyUpdateConf() 
 {
     # Hardcoded path to Dashy's conf.yml file
-    conf_file="${install_dir}dashy/conf.yml"
+    local conf_file="${install_dir}dashy/conf.yml"
 
     # Clean up for new generation
     sudo rm -rf "${install_dir}dashy/conf.yml"
@@ -161,14 +161,13 @@ dashyUpdateConf()
         echo ""
 
         # Copy the default dashy conf.yml configuration file
-        result=$(copyResource "dashy" "conf.yml" "conf.yml")
+        local result=$(copyResource "dashy" "conf.yml" "conf.yml")
         checkSuccess "Copy default dashy conf.yml configuration file"
 
-        local original_md5
-        original_md5=$(md5sum "$conf_file")
+        local original_md5=$(md5sum "$conf_file")
 
         # Initialize changes_made flag as false
-        changes_made=false
+        local changes_made=false
 
         # Function to uncomment lines using sed based on line numbers under the pattern
         uncomment_lines() {
@@ -219,8 +218,8 @@ dashyUpdateConf()
         # Collect all installed app paths
         installed_app_paths=()
         while IFS= read -r -d $'\0' app_name_dir; do
-            app_name_path="$app_name_dir"
-            installed_app_paths+=("$app_name_path")
+            local app_name_path="$app_name_dir"
+            local installed_app_paths+=("$app_name_path")
         done < <(sudo find "$install_dir" -mindepth 2 -maxdepth 2 -type d -print0)
 
         # Get unique category names related to installed apps
@@ -235,7 +234,7 @@ dashyUpdateConf()
                         local category_name=$(basename "$(dirname "$app_path")")
                         # Add the category to the list if not already present
                         if [[ ! " ${installed_categories[@]} " =~ " $category_name " ]]; then
-                            installed_categories+=("$category_name")
+                            local installed_categories+=("$category_name")
                         fi
                     fi
                 fi
@@ -247,8 +246,7 @@ dashyUpdateConf()
             uncomment_category_lines "$category_name"
         done
 
-        local updated_md5
-        updated_md5=$(md5sum "$conf_file")
+        local updated_md5=$(md5sum "$conf_file")
 
         # Check if changes were made to the file
         if [ "$original_md5" != "$updated_md5" ]; then
@@ -265,7 +263,7 @@ passwordValidation()
 {
     # Password Setup for DB with complexity checking
     # Initialize valid password flag
-    valid_password=false
+    local valid_password=false
     # Loop until a valid password is entered
     while [ $valid_password = false ]
     do
@@ -289,14 +287,14 @@ passwordValidation()
             continue
         fi
         # If we make it here, the password is valid
-        valid_password=true
+        local valid_password=true
     done
 }
 
 emailValidation()
 {
     # Initialize email variable to empty string
-    email=""
+    local email=""
     
     # Loop until a valid email is entered
     while [[ ! $email =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; do
@@ -319,7 +317,7 @@ removeEmptyLineAtFileEnd()
     local last_line=$(tail -n 1 "$file_path")
     
     if [ -z "$last_line" ]; then
-        result=$(sudo sed -i '$d' "$file_path")
+        local result=$(sudo sed -i '$d' "$file_path")
         checkSuccess "Removed the empty line at the end of $file_path"
     fi
 }

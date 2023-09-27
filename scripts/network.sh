@@ -74,8 +74,8 @@ portExistsInDatabase()
     local type="$3"
 
     if [ -f "$base_dir/$db_file" ] && [ -n "$app_name" ]; then
-        table_name=ports
-        existing_portdata=$(sudo sqlite3 "$base_dir/$db_file" "SELECT port FROM $table_name WHERE port = '$port' AND type = '$type';")
+        local table_name=ports
+        local existing_portdata=$(sudo sqlite3 "$base_dir/$db_file" "SELECT port FROM $table_name WHERE port = '$port' AND type = '$type';")
         if [ -n "$existing_portdata" ]; then
             return 0  # Port exists in the database
         fi
@@ -116,10 +116,10 @@ openPort()
     databasePortInsert "$app_name" "$portdata"
 
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        result=$(sudo ufw allow "$port")
+        local result=$(sudo ufw allow "$port")
         checkSuccess "Opening port $port for $app_name in the UFW Firewall"
     elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        result=$(sudo ufw-docker allow "$app_name" "$port")
+        local result=$(sudo ufw-docker allow "$app_name" "$port")
         checkSuccess "Opening port $port for $$app_name in the UFW-Docker Firewall"
     fi
 }
@@ -135,10 +135,10 @@ closePort()
     if portExistsInDatabase "$app_name" "$port" "$type"; then
         databasePortRemove "$app_name" "$portdata"
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            result=$(sudo ufw deny "$port")
+            local result=$(sudo ufw deny "$port")
             checkSuccess "Closing port $port for $app_name in the UFW Firewall"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            result=$(sudo ufw-docker deny "$app_name" "$port")
+            local result=$(sudo ufw-docker deny "$app_name" "$port")
             checkSuccess "Closing port $port for $$app_name in the UFW-Docker Firewall"
         fi
     else

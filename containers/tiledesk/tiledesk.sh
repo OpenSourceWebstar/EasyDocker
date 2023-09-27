@@ -63,7 +63,7 @@ installTiledesk()
             setupComposeFileApp $app_name;
         fi
 
-		result=$(cd $install_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
+		local result=$(cd $install_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
 
 		whitelistAndStartApp $app_name;
@@ -82,23 +82,23 @@ installTiledesk()
 
 		if [[ "$OS" == [123] ]]; then
 			if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-				result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+				local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
-					result=$(runCommandForDockerInstallUser "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+					local result=$(runCommandForDockerInstallUser "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
 					checkSuccess "Starting public docker-compose.$app_name.yml"
 				else
-					result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+					local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-				result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+				local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
-					result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					local result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					checkSuccess "Starting public docker-compose.$app_name.yml"
 				else
-					result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			fi

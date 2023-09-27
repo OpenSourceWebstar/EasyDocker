@@ -62,10 +62,10 @@ dockerDownRemove()
     else
         if [[ "$OS" == [123] ]]; then
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down -v --rmi all --remove-orphans")
+                local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose down -v --rmi all --remove-orphans")
                 isNotice "Shutting down & Removing all $app_name container data"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose down -v --rmi all --remove-orphans)
+                local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose down -v --rmi all --remove-orphans)
                 isNotice "Shutting down & Removing all $app_name container data"
             fi
         fi
@@ -80,7 +80,7 @@ dockerDeleteData()
         isError "No app_name provided, unable to continue..."
         return
     else
-        result=$(sudo rm -rf $install_dir$app_name)
+        local result=$(sudo rm -rf $install_dir$app_name)
         checkSuccess "Deleting $app_name install folder"
     fi
 

@@ -7,17 +7,17 @@ installDocker()
         if command -v docker &> /dev/null; then
             isSuccessful "Docker is already installed."
         else
-            result=$(sudo curl -fsSL https://get.docker.com | sh )
+            local result=$(sudo curl -fsSL https://get.docker.com | sh )
             checkSuccess "Downloading & Installing Docker"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                result=$(sudo -u $easydockeruser systemctl start docker)
+                local result=$(sudo -u $easydockeruser systemctl start docker)
                 checkSuccess "Starting Docker Service"
 
-                result=$(sudo -u $easydockeruser systemctl enable docker)
+                local result=$(sudo -u $easydockeruser systemctl enable docker)
                 checkSuccess "Enabling Docker Service"
 
-                result=$(sudo -u $easydockeruser usermod -aG docker $USER)
+                local result=$(sudo -u $easydockeruser usermod -aG docker $USER)
                 checkSuccess "Adding user to 'docker' group"
             fi
         fi
@@ -47,13 +47,13 @@ installDockerCompose()
         ######################################        
         
         if [[ "$OS" == [123] ]]; then
-            result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
+            local result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 
-            result=$(sudo chmod +x /usr/local/bin/docker-compose)
+            local result=$(sudo chmod +x /usr/local/bin/docker-compose)
             checkSuccess "Make the script executable"
 
-            result=$(docker-compose --version)
+            local result=$(docker-compose --version)
             checkSuccess "Verify the installation"
         fi
 
@@ -83,9 +83,9 @@ installDockerUser()
             isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
         else
             # If the user doesn't exist, create the user
-            result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+            local result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
             checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
-            result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo chpasswd)
+            local result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo chpasswd)
             checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
 
             # Check if PermitRootLogin is set to "yes" before disabling it
@@ -95,7 +95,7 @@ installDockerUser()
                     read -p "" rootdisableconfirm
                     case "$rootdisableconfirm" in
                         [Yy]*)
-                            result=$(sudo sed 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
+                            local result=$(sudo sed 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
                             checkSuccess "Disabling Root Login"
                             break
                             ;;
@@ -137,7 +137,7 @@ docker network create \
   $CFG_NETWORK_NAME
 EOF
 )
-        result=$(runCommandForDockerInstallUser "$network_create")
+        local result=$(runCommandForDockerInstallUser "$network_create")
         checkSuccess "Creating docker network"
 	fi
 }
@@ -182,16 +182,16 @@ installDockerRootless()
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
             isNotice "Necessary packages are being installed...please wait..."
-            result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
+            local result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
             checkSuccess "Installing necessary packages"
 
-            result=$(sudo systemctl disable --now docker.service docker.socket)
+            local result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
 
             # slirp4netns update and install
             if ! command -v slirp4netns &> /dev/null; then
                 isNotice "slirp4netns is not installed. Installing..."
-                result=$(sudo apt-get install -y slirp4netns)
+                local result=$(sudo apt-get install -y slirp4netns)
                 checkSuccess "Installing slirp4netns"
             else
                 isNotice "slirp4netns is already installed"
@@ -200,9 +200,9 @@ installDockerRootless()
                 if [[ "$installed_version" != "$latest_version" ]]; then
                     isNotice "slirp4netns version $installed_version is outdated."
                     isNotice "Installing version $latest_version..."
-                    result=$(sudo apt-get update)
+                    local result=$(sudo apt-get update)
                     checkSuccess "Updating apt packages"
-                    result=$(sudo apt-get install -y slirp4netns)
+                    local result=$(sudo apt-get install -y slirp4netns)
                     checkSuccess "Installing slirp4netns"
                 else
                     isSuccessful "slirp4netns version $installed_version is up to date"
@@ -214,34 +214,34 @@ installDockerRootless()
                 if grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
                     isNotice "kernel.unprivileged_userns_clone=1 already exists in $sysctl"
                 else
-                    result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
+                    local result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
                     checkSuccess "Adding kernel.unprivileged_userns_clone=1 to $sysctl..."
-                    result=$(sudo -u $easydockeruser sysctl --system)
+                    local result=$(sudo -u $easydockeruser sysctl --system)
                     checkSuccess "Running sudo -u $easydockeruser sysctl --system..."
                 fi
             fi
                
             # Update .bashrc file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
-                result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                local result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding rootless header to .bashrc"
  
-                result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                local result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export PATH=/usr/bin:$PATH' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                local result=$(echo 'export PATH=/usr/bin:$PATH' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export path to .bashrc"
 
-                result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                local result=$(echo 'export DOCKER_HOST=unix:///run/user/${UID}/docker.sock' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DOCKER_HOST path to .bashrc"
 
-                result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                local result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DBUS_SESSION_BUS_ADDRESS path to .bashrc"
 
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
-            result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
+            local result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
             # Rootless Install
@@ -252,16 +252,16 @@ rootless_install=$(cat <<EOF
     exit
 EOF
 )
-            result=$(runCommandForDockerInstallUser "$rootless_install")
+            local result=$(runCommandForDockerInstallUser "$rootless_install")
             checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
 
             # Sliprp4netns Install
             systemd_user_dir="/home/$CFG_DOCKER_INSTALL_USER/.config/systemd/user"
-            result=$(runCommandForDockerInstallUser "mkdir -p $systemd_user_dir")
+            local result=$(runCommandForDockerInstallUser "mkdir -p $systemd_user_dir")
             checkSuccess "Create the systemd user directory if it doesn't exist"
 
             override_conf_file="$systemd_user_dir/docker.service.d/override.conf"
-            result=$(sudo touch $override_conf_file)
+            local result=$(sudo touch $override_conf_file)
             checkSuccess "Create the override.conf in docker.service.d"	
 			
 sudo bash -c "cat <<EOL > '$override_conf_file'
@@ -269,35 +269,35 @@ sudo bash -c "cat <<EOL > '$override_conf_file'
 Environment='DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER=slirp4netns'
 EOL"
 
-            result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER $override_conf_file)
+            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER $override_conf_file)
             checkSuccess "Updating ownership for override.conf"
 
-            result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
+            local result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
             checkSuccess "Reload the systemd user manager configuration"
 
 			isNotice "Restarting docker service...this may take a moment..."
-            result=$(runCommandForDockerInstallUser "systemctl --user restart docker")
+            local result=$(runCommandForDockerInstallUser "systemctl --user restart docker")
             checkSuccess "Setting up slirp4netns for Rootless Docker"
 
-            result=$(sudo cp $sysctl $sysctl.bak)
+            local result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
 
             # Update sysctl file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
 
-                result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo tee -a "$sysctl" > /dev/null)
+                local result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding rootless header to sysctl"
 
-                result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo tee -a "$sysctl" > /dev/null)
+                local result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding ip_unprivileged_port_start to sysctl"
 
-                result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
+                local result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
 
                 isSuccessful "Updated the sysctl with Docker Rootless configuration"
             fi
 
-            result=$(sudo sysctl --system)
+            local result=$(sudo sysctl --system)
             checkSuccess "Applying changes to sysctl"
         fi
     fi

@@ -68,10 +68,10 @@ installWireguard()
         echo "---- $menu_number. Enabling IP forwarding"
 		echo ""
 
-        result=$(sudo sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" /etc/sysctl.d/99-sysctl.conf)
+        local result=$(sudo sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" /etc/sysctl.d/99-sysctl.conf)
 		checkSuccess "Enabling IPv4 IP Forwarding in the 99-sysctl.conf file (Kernel)"
 
-        result=$(sudo sysctl -p)
+        local result=$(sudo sysctl -p)
 		checkSuccess "Apply changes made to the System's Kernel "
 
 		((menu_number++))

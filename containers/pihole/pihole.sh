@@ -90,15 +90,15 @@ installPihole()
 
             if [[ "$PHDNS" =~ ^[yY]$ ]]; then
                 # Updating nameserver address in /etc/resolv.conf
-                result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
+                local result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
                 checkSuccess "Updating nameserver in resolv.conf"
 
                 # Updating DNS address in /etc/systemd/resolved.conf
-                result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
+                local result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
                 checkSuccess "Updating DNS in resolved.conf"
 
                 # Restarting systemd-resolved to apply changes
-                result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
+                local result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
                 checkSuccess "Restarting systemd-resolved"
             fi
         fi
