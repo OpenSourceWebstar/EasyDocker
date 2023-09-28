@@ -42,6 +42,7 @@ setupConfigToContainer()
             mkdirFolders "$target_path"
         else
             mkdirFolders "$silent_flag" "$target_path"
+        fi
     fi
 
     if [ ! -f "$source_file" ]; then
