@@ -593,12 +593,12 @@ restoreDeleteDockerFolder()
         for folder in "${exclude_folders[@]}"; do
             exclude_options+=" --exclude='$folder'"
         done
-        # Run rsync command to delete everything in base_dir except the specified folders
-        local result=$(sudo rsync -a --delete $exclude_options "$base_dir/" "$base_dir")
-        checkSuccess "Deleting the $app_name Docker install folder $base_dir"
+        # Run rsync command to delete everything in docker_dir except the specified folders
+        local result=$(sudo rsync -a --delete $exclude_options "$docker_dir/" "$docker_dir")
+        checkSuccess "Deleting the $app_name Docker install folder $docker_dir"
     elif [[ "$restoresingle" == [lLrRmM] ]]; then
-        local result=$(sudo rm -rf $install_dir$app_name)
-        checkSuccess "Deleting the $app_name Docker install folder in $install_dir$app_name"
+        local result=$(sudo rm -rf $containers_dir$app_name)
+        checkSuccess "Deleting the $app_name Docker install folder in $containers_dir$app_name"
     fi
 }
 
@@ -744,7 +744,7 @@ restoreExtractFile()
         while true; do
             if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
-                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$install_dir"
+                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir"
 
                 if [ $? -eq 0 ]; then
                     checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
@@ -756,7 +756,7 @@ restoreExtractFile()
 
             if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
-                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$install_dir"
+                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir"
 
                 if [ $? -eq 0 ]; then
                     checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
@@ -776,7 +776,7 @@ restoreExtractFile()
             fi
 
             # Attempt to decrypt using the user-provided passphrase
-            attempt_decryption "$passphrase" "$install_dir"
+            attempt_decryption "$passphrase" "$containers_dir"
 
             if [ $? -eq 0 ]; then
                 checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
@@ -793,7 +793,7 @@ restoreExtractFile()
         while true; do
             if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
-                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$install_dir"
+                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir"
 
                 if [ $? -eq 0 ]; then
                     checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
@@ -805,7 +805,7 @@ restoreExtractFile()
 
             if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
-                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$install_dir"
+                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir"
 
                 if [ $? -eq 0 ]; then
                     checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
@@ -825,7 +825,7 @@ restoreExtractFile()
             fi
 
             # Attempt to decrypt using the user-provided passphrase
-            attempt_decryption "$passphrase" "$install_dir"
+            attempt_decryption "$passphrase" "$containers_dir"
 
             if [ $? -eq 0 ]; then
                 checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
@@ -840,7 +840,7 @@ restoreExtractFile()
     # Remote Migrate
     if [[ "$restoresingle" == [mM] ]]; then
         while true; do
-            local result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $install_dir)
+            local result=$(sudo unzip -o -P $CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE $chosen_backup_file -d $containers_dir)
 
             if [ $? -eq 0 ]; then
                 checkSuccess "Decrypting $chosen_backup_file (Remote Migration)"

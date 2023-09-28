@@ -38,19 +38,19 @@ fixFolderPermissions()
         local result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-        local result=$(sudo find "$install_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
+        local result=$(sudo find "$containers_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
         # Install user
-        local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $install_dir with $CFG_DOCKER_INSTALL_USER ownership"
+        local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
+        checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
-        local result=$(sudo chmod +x "$base_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $base_dir with execute permissions."
+        local result=$(sudo chmod +x "$docker_dir" > /dev/null 2>&1)
+        checkSuccess "Updating $docker_dir with execute permissions."
 
         # Update permissions after
-        local result=$(sudo find "$install_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
-        checkSuccess "Updating $install_dir with $sudo_user_name read permissions" 
+        local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
+        checkSuccess "Updating $containers_dir with $sudo_user_name read permissions" 
     fi
 }
 
@@ -63,7 +63,7 @@ fixPermissionsBeforeStart()
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         # Mainly for "full"
         changeRootOwnedFilesAndFolders $script_dir $CFG_DOCKER_INSTALL_USER
-        changeRootOwnedFile $base_dir/$db_file $sudo_user_name
+        changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
     fi
 
     # This is where custom app specific permissions are needed
@@ -141,7 +141,7 @@ mkdirFolders()
             checkSuccess "Creating $folder_name directory"
         fi
         
-        if [[ $clean_dir == *"$install_dir"* ]]; then
+        if [[ $clean_dir == *"$containers_dir"* ]]; then
             local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
             if [ -z "$silent_flag" ]; then
                 checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
@@ -165,7 +165,7 @@ copyFolder()
     local result=$(sudo cp -rf "$folder" "$save_dir")
     checkSuccess "Coping $folder_name to $save_dir"
 
-    if [[ $clean_dir == *"$install_dir"* ]]; then
+    if [[ $clean_dir == *"$containers_dir"* ]]; then
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$folder_name")
         checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
@@ -194,7 +194,7 @@ copyFolders()
         local result=$(sudo cp -rf "$subdir" "$save_dir")
         checkSuccess "Copying $subdir_name to $save_dir"
 
-        if [[ $clean_dir == *"$install_dir"* ]]; then
+        if [[ $clean_dir == *"$containers_dir"* ]]; then
             local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
@@ -210,17 +210,17 @@ copyResource()
     local file_name="$2"
     local save_path="$3"
 
-    local app_dir=$containers_dir$app_name
+    local app_dir=$install_containers_dir$app_name
 
     # Check if the app_name folder was found
     if [ -z "$app_dir" ]; then
-        echo "App folder '$app_name' not found in '$containers_dir'."
+        echo "App folder '$app_name' not found in '$install_containers_dir'."
     fi
 
-    local result=$(sudo cp "$app_dir/resources/$file_name" "$install_dir/$app_name/$save_path")
-    checkSuccess "Copying $file_name to $install_dir/$app_name/$save_path"
+    local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir/$app_name/$save_path")
+    checkSuccess "Copying $file_name to $containers_dir/$app_name/$save_path"
 
-    local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir/$app_name/$save_path")
+    local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path")
     checkSuccess "Updating $save_path with $CFG_DOCKER_INSTALL_USER ownership"
 }
 
@@ -248,7 +248,7 @@ copyFile()
         checkSuccess "Copying $file_name to $save_dir"
     fi
 
-    if [[ $clean_dir == *"$install_dir"* ]]; then
+    if [[ $clean_dir == *"$containers_dir"* ]]; then
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
         if [ -z "$silent_flag" ]; then
             checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
@@ -289,7 +289,7 @@ copyFiles()
             checkSuccess "Copying $file_name to $save_dir"
         fi
 
-        if [[ $clean_dir == *"$install_dir"* ]]; then
+        if [[ $clean_dir == *"$containers_dir"* ]]; then
             local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$file_name")
             if [ -z "$silent_flag" ]; then
                 checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
@@ -313,7 +313,7 @@ createTouch()
     local result=$(sudo touch "$clean_dir")
     checkSuccess "Touching $file_name to $file_dir"
 
-    if [[ $clean_dir == *"$install_dir"* ]]; then
+    if [[ $clean_dir == *"$containers_dir"* ]]; then
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
         checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
     else
@@ -329,7 +329,7 @@ updateFileOwnership()
     local clean_dir=$(echo "$file" | sed 's#//*#/#g')
     local user_name="$2"
 
-    if [[ $clean_dir == *"$install_dir"* ]]; then
+    if [[ $clean_dir == *"$containers_dir"* ]]; then
         local result=$(sudo chown $user_name:$user_name "$file")
         checkSuccess "Updating $file_name with $user_name ownership"
     else
@@ -363,7 +363,7 @@ moveFile()
     local result=$(sudo mv "$file" "$save_dir")
     checkSuccess "Moving $file_name to $save_dir"
 
-    if [[ $clean_dir == *"$install_dir"* ]]; then
+    if [[ $clean_dir == *"$containers_dir"* ]]; then
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
         checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
     else

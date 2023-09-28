@@ -64,31 +64,31 @@ installCozy()
         echo "---- $menu_number. Pulling from $app_name GitHub."
         echo ""
 
-		local result=$(sudo -u $easydockeruser git clone https://github.com/vsellier/easy-cozy.git $install_dir/$app_name)
+		local result=$(sudo -u $easydockeruser git clone https://github.com/vsellier/easy-cozy.git $containers_dir/$app_name)
 		checkSuccess "Cloning the Easy-Cozy from GitHub"
 		
-		local result=$(copyFile $install_dir/$app_name/env.template $install_dir/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		local result=$(copyFile $containers_dir/$app_name/env.template $containers_dir/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
-		local result=$(sudo sed -i "s|DATABASE_DIRECTORY=/var/lib/cozy/db|DATABASE_DIRECTORY=$install_dir/$app_name/db|g" $install_dir/$app_name/.env)
+		local result=$(sudo sed -i "s|DATAdocker_dirECTORY=/var/lib/cozy/db|DATAdocker_dirECTORY=$containers_dir/$app_name/db|g" $containers_dir/$app_name/.env)
 		checkSuccess "Update database directory to the correct install path"
 
-		local result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$install_dir/$app_name/storage/g" $install_dir/$app_name/.env)
+		local result=$(sudo sed -i "s|STORAGE_DIRECTORY=/var/lib/cozy/storage/STORAGE_DIRECTORY=$containers_dir/$app_name/storage/g" $containers_dir/$app_name/.env)
 		checkSuccess "Update storage directory to the correct install path"
 
-		local result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$install_dir/$app_name/acme|g" $install_dir/$app_name/.env)
+		local result=$(sudo sed -i "s|ACME_DIRECTORY=/var/lib/acme|ACME_DIRECTORY=$containers_dir/$app_name/acme|g" $containers_dir/$app_name/.env)
 		checkSuccess "Update acme directory to the correct install path"
 
-		local result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $install_dir/$app_name/.env)
+		local result=$(sudo sed -i "s|COZY_TLD=cozy.mydomain.tld|COZY_TLD=cozy.$domain_full|g" $containers_dir/$app_name/.env)
 		checkSuccess "Update the domain name to $domain_full"
 
-		local result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $install_dir/$app_name/.env)
+		local result=$(sudo sed -i "s|EMAIL=bofh@mydomain.tld|EMAIL=$CFG_EMAIL|g" $containers_dir/$app_name/.env)
 		checkSuccess "Update the email to $CFG_EMAIL"
 
-		local result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $install_dir/$app_name/.env)
+		local result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $containers_dir/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
-		local result=$(mkdirFolders $install_dir/$app_name/db $install_dir/$app_name/storage)
+		local result=$(mkdirFolders $containers_dir/$app_name/db $containers_dir/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
         if [[ $compose_setup == "default" ]]; then
@@ -97,13 +97,13 @@ installCozy()
             setupComposeFileApp $app_name;
         fi
 
-		local result=$(sudo sed -i '35,$ d' $install_dir/$app_name/docker-compose.yml)
+		local result=$(sudo sed -i '35,$ d' $containers_dir/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"
 
-		local result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $install_dir/$app_name/docker-compose.yml)
+		local result=$(sudo sed -i "s|- \"traefik|  # - \"traefik|g" $containers_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling all outdated Traefik values in docker-compose.yml "
 
-		local result=$(sudo sed -i "s|labels:|#labels:|g" $install_dir/$app_name/docker-compose.yml)
+		local result=$(sudo sed -i "s|labels:|#labels:|g" $containers_dir/$app_name/docker-compose.yml)
 		checkSuccess "Disabling labels in docker-compose.yml as we have custom values."
 
 		((menu_number++))
@@ -126,7 +126,7 @@ installCozy()
         echo ""
 
 		# Setting up a single instance of Cozy
-		local result=$(cd $install_dir/$app_name && sudo -u $easydockeruser ./create-instance.sh $cozy_user_1)
+		local result=$(cd $containers_dir/$app_name && sudo -u $easydockeruser ./create-instance.sh $cozy_user_1)
 		checkSuccess "Creating instance of $app_name for $cozy_user_1"
 
 		if [[ "$cozy_user_1_apps_enabled" == true ]]; then
@@ -150,7 +150,7 @@ installCozy()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
+        echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""

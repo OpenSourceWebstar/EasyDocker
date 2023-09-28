@@ -8,26 +8,28 @@ sshd_config="/etc/ssh/sshd_config"
 sudo_bashrc="/home/$sudo_user_name/.bashrc"
 
 # Directories
-base_dir=/docker
-install_dir=$base_dir/containers/
-ssl_dir=$base_dir/ssl/
-ssh_dir=$base_dir/ssh/
-backup_dir="$base_dir/backups"
+docker_dir="/docker"
+containers_dir="$docker_dir/containers/"
+ssl_dir="$docker_dir/ssl/"
+ssh_dir="$docker_dir/ssh/"
+logs_dir="$script_dir/logs/"
+configs_dir="$script_dir/configs/"
+backup_dir="$docker_dir/backups"
 backup_full_dir="$backup_dir/full"
 backup_single_dir="$backup_dir/single"
 backup_install_dir="$backup_dir/install"
-restore_dir="$base_dir/restore"
+restore_dir="$docker_dir/restore"
 restore_full_dir="$restore_dir/full"
 restore_single_dir="$restore_dir/single"
-migrate_dir="$base_dir/migrate"
+migrate_dir="$docker_dir/migrate"
 migrate_full_dir="$migrate_dir/full"
 migrate_single_dir="$migrate_dir/single"
 # Install Scripts
-script_dir="$base_dir/install"
-configs_dir="$script_dir/configs/"
-containers_dir="$script_dir/containers/"
-scripts_dir="$script_dir/scripts/"
-logs_dir=$script_dir/logs/
+script_dir="$docker_dir/install"
+install_configs_dir="$script_dir/configs/"
+install_containers_dir="$script_dir/containers/"
+install_scripts_dir="$script_dir/scripts/"
+
 
 initializeScript()
 {
@@ -58,7 +60,7 @@ initializeScript()
 	fi
 
 	# Setup folder structure
-	folders=("$base_dir" "$install_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
+	folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			sudo mkdir "$folder"

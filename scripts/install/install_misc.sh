@@ -44,7 +44,7 @@ installSSLCertificate()
             domains=()
             for domain_num in {1..9}; do
                 domain="CFG_DOMAIN_$domain_num"
-                domain_value=$(grep "^$domain=" "$configs_dir$config_file_general" | cut -d '=' -f 2 | tr -d '[:space:]')
+                domain_value=$(grep "^$domain=" "$install_configs_dir$config_file_general" | cut -d '=' -f 2 | tr -d '[:space:]')
                 
                 if [ -n "$domain_value" ]; then
                     domains+=("$domain_value")
@@ -251,13 +251,13 @@ installSetupCrontabTiming() {
     fi
 
     # Ensure the database file exists
-    if [ ! -f "$base_dir/$db_file" ]; then
-      isNotice "Database file not found: $base_dir/$db_file"
+    if [ ! -f "$docker_dir/$db_file" ]; then
+      isNotice "Database file not found: $docker_dir/$db_file"
       return
     fi
 
     # Step 1: Retrieve the necessary information from the database
-    db_entry=$(sqlite3 "$base_dir/$db_file" "SELECT id, name FROM cron_jobs WHERE name='$entry_name';")
+    db_entry=$(sqlite3 "$docker_dir/$db_file" "SELECT id, name FROM cron_jobs WHERE name='$entry_name';")
     IFS='|' read -r id name <<< "$db_entry"
 
     # Check if the entry exists in the database
@@ -298,7 +298,7 @@ installSQLiteDatabase()
 {
 	if [[ $CFG_REQUIREMENT_DATABASE == "true" ]]; then
         # Safeguard loading
-        if [ ! -e "$base_dir/$db_file" ]; then
+        if [ ! -e "$docker_dir/$db_file" ]; then
             if command -v sqlite3 &> /dev/null; then
                 echo ""
                 echo "##########################################"
@@ -307,88 +307,88 @@ installSQLiteDatabase()
                 echo ""
 
                 # Create SQLite database file
-                if [ ! -e "$base_dir/$db_file" ]; then
-                    local result=$(sudo touch $base_dir/$db_file)
+                if [ ! -e "$docker_dir/$db_file" ]; then
+                    local result=$(sudo touch $docker_dir/$db_file)
                     checkSuccess "Creating SQLite $db_file file"
 
-                    local result=$(sudo chmod 755 $base_dir/$db_file && sudo chown $easydockeruser $base_dir/$db_file)
+                    local result=$(sudo chmod 755 $docker_dir/$db_file && sudo chown $easydockeruser $docker_dir/$db_file)
                     checkSuccess "Changing permissions for SQLite $db_file file"
                 fi
 
                 setup_table_name=path
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (path TEXT );")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (path TEXT );")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=ports
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type, TEXT);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type, TEXT);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=sysupdate
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=apps
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
                 # status = 1 = installed, 0 uninstalled
                 # TODO - Add should backup column
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, status DATE, install_date DATE, uninstall_date DATE);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, status DATE, install_date DATE, uninstall_date DATE);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=backups
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=restores
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=migrations
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=ssh
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=ssh_keys
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, hash TEXT, date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, hash TEXT, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 setup_table_name=cron_jobs
-                if ! sqlite3 "$base_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $base_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, date DATE, time TIME);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, date DATE, time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
                 # Get the list of table names from the database
-                sql_table_names=$(sqlite3 "$base_dir/$db_file" ".tables")
+                sql_table_names=$(sqlite3 "$docker_dir/$db_file" ".tables")
 
                 # Loop through the table names and print the desired text
                 for sql_table_name in $sql_table_names; do

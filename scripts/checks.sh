@@ -63,7 +63,7 @@ checkRequirements()
 		pass_found=0
 		files_with_password=()
 
-		for config_file in "$configs_dir"/*; do
+		for config_file in "$install_configs_dir"/*; do
 			if [ -f "$config_file" ] && grep -q "RANDOMIZEDPASSWORD" "$config_file"; then
 				files_with_password+=("$(basename "$config_file")")  # Get only the filename
 				pass_found=1
@@ -81,7 +81,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_DATABASE == "true" ]]; then
 		### Database file
-		if [ -f "$base_dir/$db_file" ] ; then
+		if [ -f "$docker_dir/$db_file" ] ; then
 			isSuccessful "Installed Apps Database file found"
 		else
 			isNotice "Database file not found"
@@ -167,7 +167,7 @@ checkRequirements()
 		domains=()
 		for domain_num in {1..9}; do
 			domain="CFG_DOMAIN_$domain_num"
-			domain_value=$(sudo grep  "^$domain=" $configs_dir$config_file_general | cut -d '=' -f 2 | tr -d '[:space:]')
+			domain_value=$(sudo grep  "^$domain=" $install_configs_dir$config_file_general | cut -d '=' -f 2 | tr -d '[:space:]')
 			if [ -n "$domain_value" ]; then
 				domains+=("$domain_value")
 			fi
@@ -219,7 +219,7 @@ checkRequirements()
 	if [[ $CFG_REQUIREMENT_SSHREMOTE == "true" ]]; then
 		### Custom SSH Remote Install
 		# Check if the hosts line is empty or not found in the config file
-		ssh_hosts_line=$(sudo grep  '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
+		ssh_hosts_line=$(sudo grep  '^CFG_IPS_SSH_SETUP=' $install_configs_dir$config_file_general)
 		if [ -n "$ssh_hosts_line" ]; then
 			ssh_hosts=${ssh_hosts_line#*=}
 			ip_found=0

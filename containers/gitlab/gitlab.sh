@@ -93,7 +93,7 @@ installGitlab()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
+        echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using one of the options below : "
         echo ""

@@ -62,7 +62,7 @@ migrateEnableConfig()
         isNotice "Please provide a valid input (y/n)."
     done
     if [[ $enableconfigmigrate == [yY] ]]; then
-        local result=$(sudo sed -i "s/CFG_REQUIREMENT_MIGRATE="false"/CFG_REQUIREMENT_MIGRATE="true"/" "$configs_dir/$config_file_requirements")
+        local result=$(sudo sed -i "s/CFG_REQUIREMENT_MIGRATE="false"/CFG_REQUIREMENT_MIGRATE="true"/" "$install_configs_dir/$config_file_requirements")
         checkSuccess "Enabling CFG_REQUIREMENT_MIGRATE in $config_file_requirements"
     fi
     if [[ $enableconfigmigrate == [nN] ]]; then
@@ -488,13 +488,13 @@ migrateGenerateTXTAll()
     echo "############################################"
     echo ""
 
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
 
     # Loop through subdirectories
-    for folder in "$install_dir"/*; do
+    for folder in "$containers_dir"/*; do
         # Extract the folder name from the full path
         local app_name=$(basename "$folder")
-        if [ -d "$install_dir/$app_name" ]; then
+        if [ -d "$containers_dir/$app_name" ]; then
 
             # Check if a migrate.txt file exists in the current directory
             if [ ! -f "$migrate_file_path" ]; then
@@ -510,7 +510,7 @@ migrateBuildTXT()
 {
     local app_name=$1
     local migrate_file="migrate.txt"
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
 
     # Check if the migrate.txt file exists
     if [ ! -f "$migrate_file_path" ]; then
@@ -529,10 +529,10 @@ migrateBuildTXT()
 migrateScanFoldersForUpdates()
 {
     # Loop through all directories in the install path
-    for folder in "$install_dir"/*; do
+    for folder in "$containers_dir"/*; do
         # Extract the folder name from the full path
         local app_name=$(basename "$folder")
-        if [ -d "$install_dir/$app_name" ]; then
+        if [ -d "$containers_dir/$app_name" ]; then
             migrateSanitizeTXT $app_name;
             migrateCheckAndUpdateIP $app_name;
             migrateCheckAndUpdateInstallName $app_name;
@@ -545,9 +545,9 @@ migrateScanFoldersForUpdates()
 migrateGenerateTXTSingle()
 {
     local app_name=$1
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
     # Check if the specified directory exists
-    if [ -d "$install_dir/$app_name" ]; then
+    if [ -d "$containers_dir/$app_name" ]; then
         # Check if a migrate.txt file already exists in the specified directory
         if [ ! -f "$migrate_file_path" ]; then
             migrateBuildTXT $app_name;
@@ -576,7 +576,7 @@ migrateGenerateTXTSingle()
 migrateSanitizeTXT()
 {
     local app_name="$1"
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
 
     # Remove trailing non-text, non-number, non-special characters for lines starting with CFG_
     #sudo sed -i '/^CFG_/ s/[^[:alnum:]_]/ /g' "$migrate_file_path"
@@ -587,7 +587,7 @@ migrateSanitizeTXT()
 migrateCheckAndUpdateIP() 
 {
     local app_name="$1"
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
 
     # Check if the migrate.txt file exists
     if [ -f "$migrate_file_path" ]; then
@@ -605,7 +605,7 @@ migrateCheckAndUpdateIP()
             fi
             
             # Replace old IP with the new IP in .yml and .env files
-            local result=$(sudo find "$install_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s|$migrate_ip|$public_ip|g" {} \;)
+            local result=$(sudo find "$containers_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s|$migrate_ip|$public_ip|g" {} \;)
             checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
         fi
     else
@@ -617,7 +617,7 @@ migrateCheckAndUpdateIP()
 migrateCheckAndUpdateInstallName() 
 {
     local app_name="$1"
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
     # Check if the migrate.txt file exists
     if [ -f "$migrate_file_path" ]; then
 
@@ -645,7 +645,7 @@ migrateScanConfigsToMigrate()
   local app_names=()
 
   # Loop through the contents of the install_dir directory
-  for item in "$install_dir"/*; do
+  for item in "$containers_dir"/*; do
     if [[ -d "$item" ]]; then
       # If it's a directory, add its basename to app_names
       app_names+=("$(basename "$item")")
@@ -658,7 +658,7 @@ migrateScanConfigsToMigrate()
     #echo "Processing app_name: $app_name"
 
     # Define the migrate.txt file for the app
-    local migrate_file="$install_dir/$app_name/migrate.txt"
+    local migrate_file="$containers_dir/$app_name/migrate.txt"
     #echo "Migrate file: $migrate_file"
 
     # Read the content of migrate.txt into an array
@@ -677,7 +677,7 @@ migrateScanConfigsToMigrate()
       existing_variables["$variable_name"]=1
     done
 
-    local app_config_dir=$install_dir$app_name
+    local app_config_dir=$containers_dir$app_name
 
     if [[ -n "$app_config_dir" ]]; then
       for config_file in "$app_config_dir"/*.config; do
@@ -721,7 +721,7 @@ migrateScanConfigsToMigrate()
 
 migrateScanMigrateToConfigs() 
 {
-    local migrate_file_path="$install_dir/$app_name/$migrate_file"
+    local migrate_file_path="$containers_dir/$app_name/$migrate_file"
   isNotice "Scanning migrate.txt files... this may take a moment..."
 
   # Variables to ignore
@@ -731,7 +731,7 @@ migrateScanMigrateToConfigs()
   local app_names=()
 
   # Loop through the contents of the install_dir directory
-  for item in "$install_dir"/*; do
+  for item in "$containers_dir"/*; do
     if [[ -d "$item" ]]; then
       # If it's a directory, add its basename to app_names
       local app_names+=("$(basename "$item")")
@@ -762,7 +762,7 @@ migrateScanMigrateToConfigs()
         # Initialize a flag to indicate if the variable was found in any config file
         var_found=0
 
-        local app_config_dir=$install_dir$app_name
+        local app_config_dir=$containers_dir$app_name
         #echo "App config dir for $app_name: $app_config_dir"
 
         if [[ -n "$app_config_dir" ]]; then
@@ -810,9 +810,9 @@ migrateUpdateFiles()
 {            
     local app_name="$1"
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$install_dir$app_name")
+        local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir$app_name")
         checkSuccess "Updating ownership on migrated folder $app_name to $CFG_DOCKER_INSTALL_USER"
-        local compose_file="$install_dir$app_name/docker-compose.yml"
+        local compose_file="$containers_dir$app_name/docker-compose.yml"
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
         local result=$(sudo sed -i \

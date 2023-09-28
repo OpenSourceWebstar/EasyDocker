@@ -231,7 +231,7 @@ scanCategory()
 {
     local category="$1"
 
-    for app_dir in "$containers_dir"/*/; do
+    for app_dir in "$install_containers_dir"/*/; do
         local app_name=$(basename "$app_dir")
         local app_file="$app_dir$app_name.sh"
         

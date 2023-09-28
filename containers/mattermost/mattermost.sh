@@ -98,28 +98,28 @@ installMattermost()
         echo "---- $menu_number. Pulling Mattermost GitHub repo"
         echo ""
 
-        local result=$(mkdirFolders $install_dir$app_name)
+        local result=$(mkdirFolders $containers_dir$app_name)
 		checkSuccess "Creating $app_name install folder"
 
-        local result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $install_dir$app_name)
+        local result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $containers_dir$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
 
-        local result=$(copyFile $install_dir$app_name/env.example $install_dir$app_name/.env)
+        local result=$(copyFile $containers_dir$app_name/env.example $containers_dir$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
 
-        local result=$(mkdirFolders $install_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
+        local result=$(mkdirFolders $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
-        local result=$(sudo chown -R 2000:2000 $install_dir$app_name/volumes/app/mattermost)
+        local result=$(sudo chown -R 2000:2000 $containers_dir$app_name/volumes/app/mattermost)
 		checkSuccess "Setting folder permissions for $app_name folders"
 
-        local result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $install_dir$app_name/.env)
+        local result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
 		
-        local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $install_dir$app_name/.env)
+        local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTP_PORT to $MATP80C"	
 				
-        local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $install_dir$app_name/.env)
+        local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $MATP443C"	
 		
 		editEnvFileDefault;
@@ -169,16 +169,16 @@ EOF
     	if [[ "$MATN" == [nN] ]]; then
 			if [[ "$OS" == [123] ]]; then
 				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-					local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
+					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 					checkSuccess "Shutting down nginx container"
 
-					local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCN up -d")
+					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCN up -d")
 					checkSuccess "Starting up nginx container"
 				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
+					local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 					checkSuccess "Shutting down nginx container"
 
-					local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
+					local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
 					checkSuccess "Starting up nginx container"
 				fi
 			fi
@@ -186,27 +186,27 @@ EOF
 
 		if [[ "$MATN" == [yY] ]]; then
 			if [[ "$OS" == [123] ]]; then
-				if grep -q "vpn:" $install_dir$app_name/$DCWN; then
+				if grep -q "vpn:" $containers_dir$app_name/$DCWN; then
 					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
 				else			
-					removeEmptyLineAtFileEnd "$install_dir$app_name/$DCWN"
-					mattermostAddToYMLFile "$install_dir$app_name/$DCWN"
-					editCustomFile "$install_dir$app_name" "$DCWN"
+					removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN"
+					mattermostAddToYMLFile "$containers_dir$app_name/$DCWN"
+					editCustomFile "$containers_dir$app_name" "$DCWN"
 				fi
 
 				 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
 					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-						local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
+						local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 
-						local result=$(runCommandForDockerInstallUser "cd $install_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
+						local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-						local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
+						local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 						
-						local result=$(cd $install_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
+						local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
 						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
 					fi
 				fi
@@ -229,7 +229,7 @@ EOF
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
+        echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""

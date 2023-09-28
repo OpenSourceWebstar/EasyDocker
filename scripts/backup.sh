@@ -147,13 +147,13 @@ backupZipFile()
         # Create a temporary directory
         local temp_dir=$(mktemp -d)
 
-        local result=$(mkdirFolders "$temp_dir/$(basename "$base_dir")")
-        checkSuccess "Create the $base_dir inside the temporary directory"
+        local result=$(mkdirFolders "$temp_dir/$(basename "$docker_dir")")
+        checkSuccess "Create the $docker_dir inside the temporary directory"
 
-        local result=$(cd $base_dir && sudo cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$base_dir")")
+        local result=$(cd $docker_dir && sudo cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$docker_dir")")
         checkSuccess "Copy the data to the temporary directory"
 
-        local result=$(cd "$temp_dir" && zipFile "$CFG_BACKUP_PASSPHRASE" "$backup_save_directory/$backup_file_name.zip" "$(basename "$base_dir")")
+        local result=$(cd "$temp_dir" && zipFile "$CFG_BACKUP_PASSPHRASE" "$backup_save_directory/$backup_file_name.zip" "$(basename "$docker_dir")")
         checkSuccess "Create the zip command to include duplicates in the zip file"
 
         local result=$(sudo rm -r "$temp_dir")
@@ -161,7 +161,7 @@ backupZipFile()
 
         #checkSuccess "Compressing $app_name folder into an encrypted zip file"
     elif [ "$app_name" != "full" ]; then
-        local result=$(cd $install_dir && zipFile "$CFG_BACKUP_PASSPHRASE" "$backup_save_directory/$backup_file_name.zip" "$app_name")
+        local result=$(cd $containers_dir && zipFile "$CFG_BACKUP_PASSPHRASE" "$backup_save_directory/$backup_file_name.zip" "$app_name")
         checkSuccess "Compressing $app_name folder into an encrypted zip file"
     fi
 }

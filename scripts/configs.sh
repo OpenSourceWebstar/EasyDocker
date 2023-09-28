@@ -10,7 +10,7 @@ checkConfigFilesMissingVariables()
 checkEasyDockerConfigFilesMissingVariables()
 {
     isNotice "Scanning EasyDocker config files...please wait"
-    local local_configs=("$configs_dir"config_*)
+    local local_configs=("$install_configs_dir"config_*)
     local remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
     
     for local_config_file in "${local_configs[@]}"; do
@@ -87,7 +87,7 @@ checkEasyDockerConfigFilesMissingVariables()
 checkApplicationsConfigFilesMissingVariables() 
 {
     isNotice "Scanning Application config files...please wait"
-    local container_configs=($(sudo find "$install_dir" -maxdepth 1 -type f -name '*.config'))  # Find .config files in immediate subdirectories of $install_dir
+    local container_configs=($(sudo find "$containers_dir" -maxdepth 1 -type f -name '*.config'))  # Find .config files in immediate subdirectories of $containers_dir
 
     for container_config_file in "${container_configs[@]}"; do
         local container_config_filename=$(basename "$container_config_file")
@@ -96,8 +96,8 @@ checkApplicationsConfigFilesMissingVariables()
         # Extract config variables from the local file
         local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
 
-        # Find the corresponding .config file in $containers_dir
-       local  remote_config_file="$containers_dir$config_app_name/$config_app_name.config"
+        # Find the corresponding .config file in $install_containers_dir
+       local  remote_config_file="$install_containers_dir$config_app_name/$config_app_name.config"
 
         if [ -f "$remote_config_file" ]; then
             # Extract config variables from the remote file
@@ -134,7 +134,7 @@ checkApplicationsConfigFilesMissingVariables()
                             checkSuccess "Adding the $var_line to '$container_config_filename':"
 
                             if [[ $var_line == *"WHITELIST="* ]]; then
-                                local app_dir=$containers_dir$config_app_name
+                                local app_dir=$install_containers_dir$config_app_name
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
                                     echo ""
@@ -160,7 +160,7 @@ checkApplicationsConfigFilesMissingVariables()
                                     done
                                 fi
                             else
-                                local app_dir=$containers_dir$config_app_name
+                                local app_dir=$install_containers_dir$config_app_name
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
                                     echo ""
@@ -198,7 +198,7 @@ checkApplicationsConfigFilesMissingVariables()
                             checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_filename':"
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
-                                local app_dir=$containers_dir$config_app_name
+                                local app_dir=$install_containers_dir$config_app_name
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
                                     echo ""
@@ -224,7 +224,7 @@ checkApplicationsConfigFilesMissingVariables()
                                     done
                                 fi
                             else
-                                local app_dir=$containers_dir$config_app_name
+                                local app_dir=$install_containers_dir$config_app_name
                                 # Check if app is installed
                                 if [ -d "$app_dir" ]; then
                                     echo ""
@@ -278,10 +278,10 @@ checkConfigFilesExist()
         local file_found_count=0
         
         for file in "${config_files_all[@]}"; do
-            if [ -f "$configs_dir/$file" ]; then
+            if [ -f "$install_configs_dir/$file" ]; then
                 ((file_found_count++))
             else
-                isFatalError "Config File $file does not exist in $configs_dir."
+                isFatalError "Config File $file does not exist in $install_configs_dir."
                 isFatalErrorExit "Please make sure all configs are present"
             fi
         done
@@ -289,7 +289,7 @@ checkConfigFilesExist()
         if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
             isSuccessful "All config files are found in the configs folder."
         else
-            isFatalError "Not all config files were found in $configs_dir."
+            isFatalError "Not all config files were found in $install_configs_dir."
         fi
     fi
 }
@@ -301,7 +301,7 @@ checkConfigFilesEdited()
     
     while ! "$config_check_done"; do
         # Check if configs have not been changed
-        if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
+        if grep -q "Change-Me" "$install_configs_dir/$config_file_general"; then
             echo ""
             isNotice "Default config values have been found, have you edited the config files?"
             echo ""
@@ -341,8 +341,8 @@ editAppConfig() {
         return
     fi
 
-    # Use find to search for the app_name folder within $containers_dir
-    local app_dir=$containers_dir$app_name
+    # Use find to search for the app_name folder within $install_containers_dir
+    local app_dir=$install_containers_dir$app_name
 
     if [ -n "$app_dir" ]; then
         local config_file="$app_dir/$app_name.config"
@@ -393,7 +393,7 @@ editAppConfig() {
 
 viewEasyDockerConfigs()
 {
-    local config_files=("$configs_dir"*)  # List all files in the /configs/ folder
+    local config_files=("$install_configs_dir"*)  # List all files in the /configs/ folder
     
     echo ""
     echo "#################################"
@@ -525,8 +525,8 @@ viewComposeFiles()
   isNotice "*WARNING* Only use this if you know what you are doing!"
   echo ""
 
-  # Find all subdirectories under $install_dir
-  for app_dir in "$install_dir"/*/; do
+  # Find all subdirectories under $containers_dir
+  for app_dir in "$containers_dir"/*/; do
     if [[ -d "$app_dir" ]]; then
       # Extract the app name (folder name)
       local app_name=$(basename "$app_dir")
@@ -536,7 +536,7 @@ viewComposeFiles()
 
   # Check if any apps were found
   if [ ${#app_names[@]} -eq 0 ]; then
-    isNotice "No apps found in $install_dir."
+    isNotice "No apps found in $containers_dir."
     return
   fi
 
@@ -557,7 +557,7 @@ viewComposeFiles()
       # Check if the selected option is a valid number
       if ((selected_option >= 1 && selected_option <= ${#app_names[@]})); then
         local selected_app="${app_names[selected_option - 1]}"
-        local selected_app_dir="$install_dir/$selected_app"
+        local selected_app_dir="$containers_dir/$selected_app"
 
         # List Docker Compose files in the selected app's folder
         echo ""
@@ -716,7 +716,7 @@ viewAppCategoryConfigs()
     local other_apps=()
 
     # Collect all app_name folders and categorize them into installed and others
-    for app_dir in "$containers_dir"/*/; do
+    for app_dir in "$install_containers_dir"/*/; do
         if [ -d "$app_dir" ]; then
             local app_name=$(basename "$app_dir")
             local app_config_file="$app_dir$app_name.sh"
@@ -724,7 +724,7 @@ viewAppCategoryConfigs()
                 local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
                 if [ "$category_info" == "$category" ]; then
                     # Check if the app_name is installed based on the database query
-                    results=$(sudo sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
+                    results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
                     if [[ -n "$results" ]]; then
                         installed_apps+=("$app_name *INSTALLED")
                     else
@@ -820,7 +820,7 @@ scanConfigsForRandomPassword()
         echo "##########################################"
         echo ""
         # Iterate through files in the folder
-        for scanned_config_file in "$configs_dir"/*; do
+        for scanned_config_file in "$install_configs_dir"/*; do
             if [ -f "$scanned_config_file" ]; then
                 # Check if the file contains the placeholder string "RANDOMIZEDPASSWORD"
                 while sudo grep  -q "RANDOMIZEDPASSWORD" "$scanned_config_file"; do

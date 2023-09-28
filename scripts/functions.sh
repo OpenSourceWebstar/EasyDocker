@@ -200,8 +200,8 @@ dashyUpdateConf()
             fi
         }
 
-        # Loop through immediate subdirectories of $install_dir
-        for app_dir in "$install_dir"/*/; do
+        # Loop through immediate subdirectories of $containers_dir
+        for app_dir in "$containers_dir"/*/; do
             if [ -d "$app_dir" ]; then
                 local app_name=$(basename "$app_dir")
                 local app_config_file="$app_dir$app_name.sh"
@@ -220,7 +220,7 @@ dashyUpdateConf()
         while IFS= read -r -d $'\0' app_name_dir; do
             local app_name_path="$app_name_dir"
             local installed_app_paths+=("$app_name_path")
-        done < <(sudo find "$install_dir" -mindepth 2 -maxdepth 2 -type d -print0)
+        done < <(sudo find "$containers_dir" -mindepth 2 -maxdepth 2 -type d -print0)
 
         # Get unique category names related to installed apps
         installed_categories=()

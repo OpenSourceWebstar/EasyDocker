@@ -65,7 +65,7 @@ viewLogs()
     echo ""
     
     # List installed apps and add them as numbered options
-    local app_list=($(sqlite3 "$base_dir/$db_file" "SELECT name FROM apps WHERE status = 1;"))
+    local app_list=($(sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1;"))
     for ((i = 0; i < ${#app_list[@]}; i++)); do
         isOption "$((i + 1)). View logs for ${app_list[i]}"
     done

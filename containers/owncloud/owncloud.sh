@@ -71,7 +71,7 @@ installOwncloud()
 
 if [[ "$public" == "true" ]]; then	
 
-runCommandForDockerInstallUser "cd $install_dir$app_name && cat << EOF > $install_dir$app_name/.env
+runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
@@ -82,7 +82,7 @@ EOF"
 fi
 
 if [[ "$public" == "false" ]]; then	
-runCommandForDockerInstallUser "cd $install_dir$app_name && cat << EOF > $install_dir$app_name/.env
+runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
@@ -123,7 +123,7 @@ fi
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
+        echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""

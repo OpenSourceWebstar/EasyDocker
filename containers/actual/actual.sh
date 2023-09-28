@@ -67,16 +67,16 @@ installActual()
 		if [ -f "$ssl_dir$ssl_key" ]; then
 			checkSuccess "Self Signed SSL Certificate found, installing...."
 
-			local result=$(mkdirFolders -p $install_dir$app_name/actual-data)
+			local result=$(mkdirFolders -p $containers_dir$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
-			local result=$(copyFile $containers_dir$app_name/resources/$app_name/config.json $install_dir$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $install_containers_dir$app_name/resources/$app_name/config.json $containers_dir$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying config.json to actual-data folder"
 
-			local result=$(copyFile $ssl_dir/$ssl_crt $install_dir$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $ssl_dir/$ssl_crt $containers_dir$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying cert to actual-data folder"
 
-			local result=$(copyFiles $ssl_dir/$ssl_key $install_dir$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFiles $ssl_dir/$ssl_key $containers_dir$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying key to actual-data folder"
 			
 		else
@@ -113,7 +113,7 @@ installActual()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. You can find $app_name files at $install_dir$app_name"
+        echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""

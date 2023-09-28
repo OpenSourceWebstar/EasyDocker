@@ -45,7 +45,7 @@ setupIPsAndHostnames()
             # Public variables
             domain_prefix=$hostname
             domain_var_name="CFG_DOMAIN_${domain_number}"
-            domain_full=$(sudo grep  "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
+            domain_full=$(sudo grep  "^$domain_var_name=" $install_configs_dir/config_general | cut -d '=' -f 2-)
             host_setup=${domain_prefix}.${domain_full}
             ssl_key=${domain_full}.key
             ssl_crt=${domain_full}.crt
@@ -60,7 +60,7 @@ setupIPsAndHostnames()
                 #isSuccessful "App network settings setup successfully."
             #fi
         fi
-    done < "$configs_dir$ip_file"
+    done < "$install_configs_dir$ip_file"
     
     if ! "$found_match"; then  # Changed the condition to check if no match is found
         checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"
@@ -73,9 +73,9 @@ portExistsInDatabase()
     local port="$2"
     local type="$3"
 
-    if [ -f "$base_dir/$db_file" ] && [ -n "$app_name" ]; then
+    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
         local table_name=ports
-        local existing_portdata=$(sudo sqlite3 "$base_dir/$db_file" "SELECT port FROM $table_name WHERE port = '$port' AND type = '$type';")
+        local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM $table_name WHERE port = '$port' AND type = '$type';")
         if [ -n "$existing_portdata" ]; then
             return 0  # Port exists in the database
         fi

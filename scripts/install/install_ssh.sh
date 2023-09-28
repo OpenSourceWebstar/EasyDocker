@@ -19,12 +19,12 @@ installSSHRemoteList()
             fi
 
             # Check if database file is available
-            if [ ! -f "$base_dir/$db_file" ] ; then
+            if [ ! -f "$docker_dir/$db_file" ] ; then
                 checkSuccess "Database file not found. Make sure it's installed."
                 return 1
             fi
 
-            ssh_hosts_line=$(grep '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
+            ssh_hosts_line=$(grep '^CFG_IPS_SSH_SETUP=' $install_configs_dir$config_file_general)
             if [ -z "$ssh_hosts_line" ]; then
                 echo "No hosts found in the config file or the file is empty."
                 echo ""
@@ -33,7 +33,7 @@ installSSHRemoteList()
                 IFS=',' read -ra ip_addresses <<< "$ssh_hosts"
 
                 for ip in "${ip_addresses[@]}"; do
-                    results=$(sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM ssh WHERE ip = '$ip';")
+                    results=$(sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM ssh WHERE ip = '$ip';")
                     if [ "$results" -eq 0 ]; then
                         isNotice "Copying SSH public key to $ip..."
                         installSSHKeyToHost "$ip"
@@ -139,7 +139,7 @@ updateAuthorizedKeysAndDatabase()
                 # Remove the key from the database and authorized_keys file
                 removeSSHKeyFromAuthorizedKeysAndDatabase "$db_key_filename" "$ssh_directory"
             fi
-        done < <(sqlite3 "$base_dir/$db_file" "SELECT name FROM ssh_keys;")
+        done < <(sqlite3 "$docker_dir/$db_file" "SELECT name FROM ssh_keys;")
     fi
 }
 
@@ -188,18 +188,18 @@ addSSHKeyToAuthorizedKeysAndDatabase()
         local ssh_public_key_hash=$(echo "$ssh_public_key" | sha256sum | cut -d' ' -f1)
 
         # Check if the key already exists in the database
-        local key_in_db=$(sqlite3 "$base_dir/$db_file" "SELECT COUNT(*) FROM ssh_keys WHERE name = '$key_filename';")
+        local key_in_db=$(sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM ssh_keys WHERE name = '$key_filename';")
 
         if [ "$key_in_db" -eq 0 ]; then
             # Key doesn't exist in the database, insert it
-            local result=$(sqlite3 "$base_dir/$db_file" "INSERT INTO ssh_keys (name, hash, date, time) VALUES ('$key_filename', '$ssh_public_key_hash', '$current_date', '$current_time');")
+            local result=$(sqlite3 "$docker_dir/$db_file" "INSERT INTO ssh_keys (name, hash, date, time) VALUES ('$key_filename', '$ssh_public_key_hash', '$current_date', '$current_time');")
             checkSuccess "SSH public key from $key_filename added to the database."
         else
             # Key exists in the database, check if its content has changed
-            local db_key_hash=$(sqlite3 "$base_dir/$db_file" "SELECT hash FROM ssh_keys WHERE name = '$key_filename';")
+            local db_key_hash=$(sqlite3 "$docker_dir/$db_file" "SELECT hash FROM ssh_keys WHERE name = '$key_filename';")
             if [ "$db_key_hash" != "$ssh_public_key_hash" ]; then
                 # Key content has changed, update the record
-                local result=$(sqlite3 "$base_dir/$db_file" "UPDATE ssh_keys SET hash = '$ssh_public_key_hash', date = '$current_date', time = '$current_time' WHERE name = '$key_filename';")
+                local result=$(sqlite3 "$docker_dir/$db_file" "UPDATE ssh_keys SET hash = '$ssh_public_key_hash', date = '$current_date', time = '$current_time' WHERE name = '$key_filename';")
                 checkSuccess "SSH Key content from $key_filename updated in the database."
             #else
                 #echo "NOTICE: SSH Key content from $key_filename already exists in the database. Skipping update..."
@@ -224,7 +224,7 @@ removeSSHKeyFromAuthorizedKeysAndDatabase()
 
         # Remove the key from the database
         db_query="DELETE FROM ssh_keys WHERE name = '$key_filename';"
-        local result=$(sqlite3 "$base_dir/$db_file" "$db_query")
+        local result=$(sqlite3 "$docker_dir/$db_file" "$db_query")
         checkSuccess "SSH public key '$key_filename' removed from the database."
     fi
 }
