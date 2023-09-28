@@ -81,7 +81,7 @@ checkUpdates()
 
 gitCheckConfigs() 
 {
-    if grep -q "Change-Me" "$install_configs_dir/$config_file_general"; then
+    if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
         #echo "Local configuration file contains 'Change-Me'."
         # Flag to track if any valid configs were found
         local valid_configs_found=false
@@ -208,13 +208,11 @@ gitFolderResetAndBackup()
     local result=$(cd $backup_install_dir)
     checkSuccess "Going into the backup install folder"
 
-    local result=$(copyFolder "$install_configs_dir" "$backup_install_dir/$backupFolder")
+    local result=$(copyFolder "$configs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the configs to the backup folder"
     local result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
     checkSuccess "Copy the logs to the backup folder"
-    local result=$(sudo rsync -av --include='*/' --include='*.config' --exclude='*' "$containers_dir" "$backup_install_dir/$backupFolder/containers")
-    checkSuccess "Copy the containers to the backup folder"
-
+    
     gitReset;
     
     local result=$(copyFolders "$backup_install_dir/$backupFolder/" "$script_dir")
@@ -241,10 +239,10 @@ gitUntrackFiles()
     # Fixing the issue where the git does not use the .gitignore
     cd $script_dir
     sudo git config core.fileMode false
-    sudo -u $easydockeruser git rm --cached $install_configs_dir/$config_file_backup > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $install_configs_dir/$config_file_general > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $install_configs_dir/$config_file_requirements > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $install_configs_dir/$ip_file > /dev/null 2>&1
+    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
+    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
+    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
+    sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
     sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
