@@ -68,7 +68,7 @@ startScan()
 		migrateGenerateTXTAll;
 		migrateScanFoldersForUpdates;
 		migrateScanConfigsToMigrate;
-		migrateScanMigrateToConfigs;
+		#migrateScanMigrateToConfigs;
 	fi
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
