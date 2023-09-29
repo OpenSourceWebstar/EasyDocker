@@ -2,15 +2,15 @@
 
 checkConfigFilesMissingVariables()
 {
-    checkEasyDockerConfigFilesMissingVariables;
-    checkApplicationsConfigFilesMissingVariables;
+    #checkEasyDockerConfigFilesMissingVariables;
+    #checkApplicationsConfigFilesMissingVariables;
 }
 
 # Function to check missing config variables in local config files against remote config files
 checkEasyDockerConfigFilesMissingVariables()
 {
     isNotice "Scanning EasyDocker config files...please wait"
-    local local_configs=("$install_configs_dir"config_*)
+    local local_configs=("$configs_dir"config_*)
     local remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
     
     for local_config_file in "${local_configs[@]}"; do
@@ -278,10 +278,11 @@ checkConfigFilesExist()
         local file_found_count=0
         
         for file in "${config_files_all[@]}"; do
-            if [ -f "$install_configs_dir/$file" ]; then
+            if [ -f "$configs_dir/$file" ]; then
+                copyFile "$install_configs_dir/$file" "$configs_dir/$file"
                 ((file_found_count++))
             else
-                isFatalError "Config File $file does not exist in $install_configs_dir."
+                isFatalError "Config File $file does not exist in $configs_dir."
                 isFatalErrorExit "Please make sure all configs are present"
             fi
         done
@@ -289,7 +290,7 @@ checkConfigFilesExist()
         if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
             isSuccessful "All config files are found in the configs folder."
         else
-            isFatalError "Not all config files were found in $install_configs_dir."
+            isFatalError "Not all config files were found in $configs_dir."
         fi
     fi
 }
@@ -301,7 +302,7 @@ checkConfigFilesEdited()
     
     while ! "$config_check_done"; do
         # Check if configs have not been changed
-        if grep -q "Change-Me" "$install_configs_dir/$config_file_general"; then
+        if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
             echo ""
             isNotice "Default config values have been found, have you edited the config files?"
             echo ""
@@ -332,7 +333,8 @@ checkConfigFilesEdited()
     done
 }
 
-editAppConfig() {
+editAppConfig() 
+{
     local app_name="$1"
     local config_file
     local app_dir
@@ -393,7 +395,7 @@ editAppConfig() {
 
 viewEasyDockerConfigs()
 {
-    local config_files=("$install_configs_dir"*)  # List all files in the /configs/ folder
+    local config_files=("$configs_dir"*)  # List all files in the /configs/ folder
     
     echo ""
     echo "#################################"

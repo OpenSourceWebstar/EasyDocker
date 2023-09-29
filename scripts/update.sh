@@ -81,6 +81,8 @@ checkUpdates()
 
 gitCheckConfigs() 
 {
+    checkConfigFilesExist;
+    
     if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
         #echo "Local configuration file contains 'Change-Me'."
         # Flag to track if any valid configs were found
@@ -239,12 +241,6 @@ gitUntrackFiles()
     # Fixing the issue where the git does not use the .gitignore
     cd $script_dir
     sudo git config core.fileMode false
-    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_backup > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_general > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $configs_dir/$config_file_requirements > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $configs_dir/$ip_file > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $logs_dir/$docker_log_file > /dev/null 2>&1
-    sudo -u $easydockeruser git rm --cached $logs_dir/$backup_log_file > /dev/null 2>&1
     isSuccessful "Removing configs and logs from git for git changes"
     local result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
