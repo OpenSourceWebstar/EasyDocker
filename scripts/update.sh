@@ -85,27 +85,22 @@ checkUpdates()
 
 gitCheckConfigFilesExist()
 {
-        config_files_all=("$config_file_backup" "$config_file_general" "$config_file_requirements")
+    local file_found_count=0
 
-    if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-        local file_found_count=0
-
-        for file in "${config_files_all[@]}"; do
-            local file_path="$install_configs_dir$file"
-            if [ -f "$file_path" ]; then
-                copyFile --silent "$file_path" "$configs_dir$file"
-                ((file_found_count++))
-            else
-                isFatalError "Config File $file does not exist in $configs_dir."
-                isFatalErrorExit "Please make sure all configs are present"
-            fi
-        done
-        
-        if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
-            isSuccessful "All config files are successfully setup in the configs folder."
+    for file in "${config_files_all[@]}"; do
+        local file_path="$install_configs_dir$file"
+        if [ -f "$file_path" ]; then
+            copyFile --silent "$file_path" "$configs_dir$file"
+            ((file_found_count++))
         else
-            isFatalError "Not all config files were found in $configs_dir."
+            isNotice "Config File $file does not exist in $configs_dir."
         fi
+    done
+    
+    if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
+        isSuccessful "All config files are successfully setup in the configs folder."
+    else
+        isFatalErrorExit "Not all config files were found in $configs_dir."
     fi
 }
 

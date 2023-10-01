@@ -31,11 +31,11 @@ migrate_file=migrate.txt
 
 # Configs
 update_done=false
+ip_file=ips_hostname
 config_file_backup=config_backup
 config_file_general=config_general
 config_file_requirements=config_requirements
-config_files_all=("$config_file_backup" "$config_file_general" "$config_file_requirements")
-ip_file=ips_hostname
+config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$config_file_requirements")
 
 # Menu
 menu_number=0

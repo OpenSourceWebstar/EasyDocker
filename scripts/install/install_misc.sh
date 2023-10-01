@@ -131,6 +131,33 @@ deleteCrontab()
     echo "All crontab data has been deleted."
 }
 
+removeBackupCrontabApp() 
+{
+    local name=$1
+
+    # Check if the crontab entry exists for the specified application
+    if sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+        echo ""
+        isNotice "Application $name is no longer installed."
+        while true; do
+            isQuestion "Do you want to remove automatic backups for $name (y/n): "
+            read -rp "" removecrontab
+            if [[ "$removecrontab" =~ ^[yYnN]$ ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input (y/n)."
+        done
+        if [[ "$removecrontab" =~ ^[yY]$ ]]; then
+            # Remove the crontab entry for the specified application
+            sudo -u $easydockeruser crontab -l | grep -v "$name" | sudo -u $easydockeruser crontab -
+            isSuccessful "Automatic backups for $name have been removed."
+        fi
+    #else
+        #isNotice "Automatic Backups for $name are not set up."
+    fi
+}
+
+
 installBackupCrontabApp()
 {
     local name=$1
@@ -174,7 +201,8 @@ installCrontabSSHScan()
 }
 
 # Function to set up the backup entry in crontab
-installSetupCrontab() {
+installSetupCrontab() 
+{
     local entry_name=$1
 
     # Check to see if already instealled
@@ -228,7 +256,8 @@ $crontab_entry")
 }
 
 # Function to update a specific line in the crontab
-installSetupCrontabTiming() {
+installSetupCrontabTiming() 
+{
     local entry_name=$1
     ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
@@ -340,8 +369,7 @@ installSQLiteDatabase()
                 if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
                 # status = 1 = installed, 0 uninstalled
-                # TODO - Add should backup column
-                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, status DATE, install_date DATE, uninstall_date DATE);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT UNIQUE, status DATE, install_date DATE, install_time TIME, uninstall_date DATE, uninstall_time TIME);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 

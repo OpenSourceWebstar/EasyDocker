@@ -27,12 +27,12 @@ databaseInstallApp()
 
     if [ "$app_exists" -eq 0 ]; then
         isNotice "App does not exist in the database, setting up now."
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO apps (name, status, install_date) VALUES ('$app_name', 1, date('now'));")
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO apps (name, status, install_date, install_time) VALUES ('$app_name', 1, $current_date, $current_time);")
         checkSuccess "Adding $app_name to the apps database."
         echo ""
     else
         isNotice "App already exists in the database, updating now."
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 1, uninstall_date = NULL WHERE name = '$app_name';")
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 1, install_date = $current_date, install_time = $current_time, uninstall_date = NULL WHERE name = '$app_name';")
         checkSuccess "Updating apps database for $app_name to installed status."
         echo ""
     fi
@@ -69,7 +69,7 @@ databaseUninstallApp()
     else
         # App found in the database, update status to 0 and set uninstall_date
         isNotice "Uninstalling $app_name..."
-        if ! sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = date('now') WHERE name = '$app_name';"; then
+        if ! sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = $current_date, uninstall_time = $current_time WHERE name = '$app_name';"; then
             isError "Failed to update the database for $app_name."
             return 1
         fi
@@ -145,16 +145,19 @@ databaseAppScan()
         if ! [[ " ${existing_folder_names[@]} " =~ " $app_name " ]]; then
             # Check if the folder contains a valid .config file
             if [ -f "$app_dir/$app_name.config" ]; then
-                # Extract the date from the folder name (if present)
-                local folder_date=$(echo "$app_name" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
-                if [ -z "$folder_date" ]; then
-                    # If no date is found in the folder name, use the current date
-                    local folder_date=$(date +%Y-%m-%d)
+                # Extract the date and time from the folder name (if present)
+                local folder_datetime=$(sudo echo "$app_name" | sudo grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}')
+                if [ -z "$folder_datetime" ]; then
+                    # If no date and time are found in the folder name, use the current date and time
+                    local folder_datetime=$(sudo date "+%Y-%m-%d %H:%M:%S")
                 fi
-                
-                isNotice "Adding new app $app_name to the database."
+
+                # Split folder_datetime into date and time variables
+                local folder_date=$(echo "$folder_datetime" | awk '{print $1}')
+                local folder_time=$(echo "$folder_datetime" | awk '{print $2}')
+
                 # Add the new entry to the database with a default status of 1 (installed) and the extracted or current date
-                local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO apps (name, status, uninstall_date) VALUES ('$app_name', 1, '$folder_date');")
+                local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO apps (name, status, install_date, install_time) VALUES ('$app_name', 1, '$folder_date', '$folder_time');")
                 checkSuccess "Adding $app_name to the apps database."
                 ((updated_count++)) # Increment updated_count
             fi
@@ -249,8 +252,7 @@ databaseListAllApps()
     fi
 }
 
-databaseListInstalledApps() 
-{
+databaseListInstalledApps() {
     # Check if sqlite3 is available
     if ! command -v sudo sqlite3 &> /dev/null; then
         isNotice "sqlite3 command not found. Make sure it's installed."
@@ -258,7 +260,7 @@ databaseListInstalledApps()
     fi
 
     # Check if database file is available
-    if [ ! -f "$docker_dir/$db_file" ] ; then
+    if [ ! -f "$docker_dir/$db_file" ]; then
         checkSuccess "Database file not found. Make sure it's installed."
         return 1
     fi
@@ -276,19 +278,30 @@ databaseListInstalledApps()
     fi
 
     # Execute the query and store the results in a variable for installed apps only (status = 1)
-    local results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name, install_date FROM apps WHERE status = 1;")
+    local results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name, install_date, install_time FROM apps WHERE status = 1;")
 
     # Check if results variable is not empty
     if [ -n "$results" ]; then
         # Print the column headers
-        printf "%-12s|%s\n" "Name" " Install Date"
-        echo "--------------------------"
+        printf "%-12s| %-12s | %-12s\n" "Name" "Install Date" "Install Time"
+        echo "--------------------------------------"
 
         # Read and print each row of the results
-        while IFS="|" read -r name install_date; do
-            printf "%-12s|%s\n" "$name" " $install_date"
+        while IFS="|" read -r name install_date install_time; do
+            if [ -z "$install_date" ]; then
+                # If install_date is empty, update it with the current date
+                install_date=$(date +"%Y-%m-%d")
+                sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET install_date = '$install_date' WHERE name = '$name';"
+            fi
+            if [ -z "$install_time" ]; then
+                # If install_time is empty, update it with the current time
+                install_time=$(date +"%H:%M:%S")
+                sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET install_time = '$install_time' WHERE name = '$name';"
+            fi
+            printf "%-12s| %-12s | %-12s\n" "$name" "$install_date" "$install_time"
         done <<< "$results"
-	    if [[ "$toollistinstalledapps" == [yY] ]]; then
+
+        if [[ "$toollistinstalledapps" == [yY] ]]; then
             read -p "Press Enter to continue..."
         fi
     else
@@ -375,20 +388,19 @@ databaseCycleThroughListApps()
 	fi
 }
 
-databaseCycleThroughListAppsCrontab()
-{
+databaseCycleThroughListAppsCrontab() {
     local show_header=$1
     local ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
-        isNotice "Crontab is not found. Unable to setup backups."
+        isNotice "Crontab is not found. Unable to set up backups."
         return 1
     fi
 
     # Check to see if crontab is not installed
     if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser" > /dev/null 2>&1; then
-        isNotice "Crontab is not setup, skipping until its found."
+        isNotice "Crontab is not set up, skipping until it's found."
         return 1
     fi
 
@@ -405,7 +417,7 @@ databaseCycleThroughListAppsCrontab()
         echo "############################################"
     fi
 
-    local app_names=("full")  # To Inject full to setup crontab also
+    local app_names=("full")  # To Inject full to set up crontab also
     while IFS= read -r name; do
         local app_names+=("$name")
     done < <(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
@@ -416,20 +428,24 @@ databaseCycleThroughListAppsCrontab()
         return 1
     fi
 
-    # Check if the database file exists
-    if [ ! -f "$docker_dir/$db_file" ]; then
-        isNotice "Database file not found: $docker_dir/$db_file"
-        return 1
-    fi
+    # Remove crontab entries for applications with status = 0 (uninstalled)
+    while IFS= read -r name; do
+        local uninstalled_apps+=("$name")
+    done < <(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 0;")
 
+    for name in "${uninstalled_apps[@]}"; do
+        removeBackupCrontabApp $name
+    done
+
+    # Setup crontab entries for installed applications
     for name in "${app_names[@]}"; do
         installBackupCrontabApp $name
     done
 
     echo ""
     isSuccessful "Setting up Crontab backups for application(s) completed."
-
 }
+
 
 # Function to scan the folder for missing .pub keys and process them
 databaseSSHScanForKeys() 
@@ -589,7 +605,7 @@ checkIfUpdateShouldRun()
 
     # Ensure the database file exists
     if [ ! -f "$docker_dir/$db_file" ]; then
-        isError "Database file not found: $docker_dir/$db_file"
+        isNotice "Database file not found: $docker_dir/$db_file"
         return 0  # Database doesn't exist, so we should run the update
     fi
 

@@ -4,6 +4,7 @@ checkConfigFilesMissingVariables()
 {
     #checkEasyDockerConfigFilesMissingVariables;
     #checkApplicationsConfigFilesMissingVariables;
+    echo ""
 }
 
 # Function to check missing config variables in local config files against remote config files

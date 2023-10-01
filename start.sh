@@ -73,7 +73,7 @@ startScan()
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
 	dashyUpdateConf;
-    #databaseAppScan;
+    databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";
 }
