@@ -38,6 +38,7 @@ checkUpdates()
 					[yY])
                         remove_changes=true
                         gitCheckForUpdate;
+                        gitCheckConfigFilesExist;
                         gitCheckConfigs;
 						fixPermissionsBeforeStart;
 						sourceScripts;
@@ -50,6 +51,7 @@ checkUpdates()
 						isNotice "Custom changes will be kept, continuing..."
                         remove_changes=false
                         gitCheckForUpdate;
+                        gitCheckConfigFilesExist;
                         gitCheckConfigs;
 						fixPermissionsBeforeStart;
 						sourceScripts;
@@ -67,6 +69,7 @@ checkUpdates()
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
             gitCheckForUpdate;
+            gitCheckConfigFilesExist;
             gitCheckConfigs;
 			fixPermissionsBeforeStart;
 			sourceScripts;
@@ -79,10 +82,35 @@ checkUpdates()
 	fi
 }
 
+
+gitCheckConfigFilesExist()
+{
+        config_files_all=("$config_file_backup" "$config_file_general" "$config_file_requirements")
+
+    if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
+        local file_found_count=0
+
+        for file in "${config_files_all[@]}"; do
+            local file_path="$install_configs_dir$file"
+            if [ -f "$file_path" ]; then
+                copyFile --silent "$file_path" "$configs_dir$file"
+                ((file_found_count++))
+            else
+                isFatalError "Config File $file does not exist in $configs_dir."
+                isFatalErrorExit "Please make sure all configs are present"
+            fi
+        done
+        
+        if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
+            isSuccessful "All config files are successfully setup in the configs folder."
+        else
+            isFatalError "Not all config files were found in $configs_dir."
+        fi
+    fi
+}
+
 gitCheckConfigs() 
 {
-    checkConfigFilesExist;
-    
     if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
         #echo "Local configuration file contains 'Change-Me'."
         # Flag to track if any valid configs were found
@@ -130,8 +158,8 @@ gitCheckConfigs()
                             ;;
                     esac
                 done
-            else
-                echo "Config file not found or contains 'Change-Me' in backup file: $zip_file"
+            #else
+                #echo "Config file not found or contains 'Change-Me' in backup file: $zip_file"
             fi
 
             # Clean up the temporary directory
@@ -182,7 +210,7 @@ gitUseExistingBackup()
 
     gitReset;
     
-    local result=$(cp -r "$backup_install_dir$backup_install_dir/$backup_file_without_zip/"* "$script_dir")
+    local result=$(copyFile --silent "$backup_install_dir$backup_install_dir/$backup_file_without_zip/"* "$script_dir" -r)
     checkSuccess "Copy the backed up folders back into the installation directory"
     
     gitCleanInstallBackups;

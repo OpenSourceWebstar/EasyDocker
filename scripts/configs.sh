@@ -272,29 +272,6 @@ checkApplicationsConfigFilesMissingVariables()
     isSuccessful "Config variable check completed."  # Indicate completion
 }
 
-checkConfigFilesExist()
-{
-    if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-        local file_found_count=0
-        
-        for file in "${config_files_all[@]}"; do
-            if [ -f "$configs_dir/$file" ]; then
-                copyFile "$install_configs_dir/$file" "$configs_dir/$file"
-                ((file_found_count++))
-            else
-                isFatalError "Config File $file does not exist in $configs_dir."
-                isFatalErrorExit "Please make sure all configs are present"
-            fi
-        done
-        
-        if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
-            isSuccessful "All config files are found in the configs folder."
-        else
-            isFatalError "Not all config files were found in $configs_dir."
-        fi
-    fi
-}
-
 checkConfigFilesEdited()
 {
     # Flag to control the loop
