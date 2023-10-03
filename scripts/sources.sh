@@ -89,6 +89,7 @@ sourceScript()
         case "$choice" in
             1)
                 runInitReinstall;
+                exit 0  # Exit the entire script
             ;;
             2)
                 # User chose to continue
