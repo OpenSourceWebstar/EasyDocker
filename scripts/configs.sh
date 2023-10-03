@@ -2,84 +2,76 @@
 
 checkConfigFilesMissingVariables()
 {
-    #checkEasyDockerConfigFilesMissingVariables;
-    #checkApplicationsConfigFilesMissingVariables;
-    echo ""
+    checkEasyDockerConfigFilesMissingVariables;
+    checkApplicationsConfigFilesMissingVariables;
 }
 
-# Function to check missing config variables in local config files against remote config files
 checkEasyDockerConfigFilesMissingVariables()
 {
     isNotice "Scanning EasyDocker config files...please wait"
-    local local_configs=("$configs_dir"config_*)
-    local remote_config_dir="https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/configs/"
+    local local_configs=("$config_dir"*)
     
     for local_config_file in "${local_configs[@]}"; do
         local local_config_filename=$(basename "$local_config_file")
-        #echo "Checking local config file: $local_config_filename"  # Debug line output
         
         # Extract config variables from the local file
         local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$local_config_file" | sed 's/=$//'))
         
-        # Generate the remote URL based on the local config file name
-        local remote_url="$remote_config_dir$local_config_filename"
-    
-        # Download the remote config file
-        local tmp_file=$(mktemp)
-        curl -s "$remote_url" -o "$tmp_file"
-        
-        # Extract config variables from the remote file
-        local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$tmp_file" | sed 's/=$//'))
-        
-        # Filter out empty variable names from the remote variables
-        local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
-        local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+        # Find the corresponding .config file in $install_configs_dir
+        local remote_config_file="$install_configs_dir$local_config_filename"
 
-        # Compare local and remote variables
-        for remote_var in "${remote_variables[@]}"; do
-            if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
-                var_line=$(grep "${remote_var}=" "$tmp_file")
-                
-                echo ""
-                echo "####################################################"
-                echo "###   Missing EasyDocker Config Variable Found   ###"
-                echo "####################################################"
-                echo ""
-                isNotice "Variable '$remote_var' is missing in the local config file '$local_config_filename'."
-                echo ""
-                isOption "1. Add the '$var_line' to the '$local_config_filename'"
-                isOption "2. Add the '$remote_var' with my own value"
-                isOption "x. Skip"
-                echo ""
-                
-                isQuestion "Enter your choice (1 or 2) or 'x' to skip : "
-                read -rp "" choice
-                
-                case "$choice" in
-                    1)
-                        echo ""
-                        echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
-                        checkSuccess "Adding the $var_line to '$local_config_filename':"
-                    ;;
-                    2)
-                        echo ""
-                        isQuestion "Enter your value for $remote_var: "
-                        read -p " " custom_value
-                        echo ""
-                        echo "CFG_${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
-                        checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$local_config_filename':"
-                    ;;
-                    [xX])
-                        # User chose to skip
-                    ;;
-                    *)
-                        echo "Invalid choice. Skipping."
-                    ;;
-                esac
-            fi
-        done
-        
-        rm "$tmp_file"
+        if [ -f "$remote_config_file" ]; then
+            # Extract config variables from the remote file
+            local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
+            
+            # Filter out empty variable names from the remote variables
+            local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
+            local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+
+            # Compare local and remote variables
+            for remote_var in "${remote_variables[@]}"; do
+                if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
+                    var_line=$(grep "${remote_var}=" "$remote_config_file")
+                    
+                    echo ""
+                    echo "####################################################"
+                    echo "###   Missing EasyDocker Config Variable Found   ###"
+                    echo "####################################################"
+                    echo ""
+                    isNotice "Variable '$remote_var' is missing in the local config file '$local_config_filename'."
+                    echo ""
+                    isOption "1. Add the '$var_line' to the '$local_config_filename'"
+                    isOption "2. Add the '$remote_var' with my own value"
+                    isOption "x. Skip"
+                    echo ""
+                    
+                    isQuestion "Enter your choice (1 or 2) or 'x' to skip : "
+                    read -rp "" choice
+                    
+                    case "$choice" in
+                        1)
+                            echo ""
+                            echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                            checkSuccess "Adding the $var_line to '$local_config_filename':"
+                        ;;
+                        2)
+                            echo ""
+                            isQuestion "Enter your value for $remote_var: "
+                            read -p " " custom_value
+                            echo ""
+                            echo "CFG_${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                            checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$local_config_filename':"
+                        ;;
+                        [xX])
+                            # User chose to skip
+                        ;;
+                        *)
+                            echo "Invalid choice. Skipping."
+                        ;;
+                    esac
+                fi
+            done
+        fi
     done
     
     isSuccessful "Config variable check completed."  # Indicate completion
@@ -98,7 +90,7 @@ checkApplicationsConfigFilesMissingVariables()
         local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
 
         # Find the corresponding .config file in $install_containers_dir
-       local  remote_config_file="$install_containers_dir$config_app_name/$config_app_name.config"
+        local remote_config_file="$install_containers_dir$config_app_name/$config_app_name.config"
 
         if [ -f "$remote_config_file" ]; then
             # Extract config variables from the remote file
@@ -178,12 +170,12 @@ checkApplicationsConfigFilesMissingVariables()
                                                 local installFuncName="install${app_name_ucfirst}"
                                                 ${installFuncName} install
                                                 break  # Exit the loop
-                                            ;;
+                                                ;;
                                             [nN])
                                                 break  # Exit the loop
                                                 ;;
                                             *)
-                                                isNotice "Please provide a valid input (c or e)."
+                                                isNotice "Please provide a valid input (y or n)."
                                                 ;;
                                         esac
                                     done
@@ -214,12 +206,12 @@ checkApplicationsConfigFilesMissingVariables()
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
                                                 whitelistAndStartApp $config_app_name;
                                                 break  # Exit the loop
-                                            ;;
+                                                ;;
                                             [nN])
                                                 break  # Exit the loop
                                                 ;;
                                             *)
-                                                isNotice "Please provide a valid input (c or e)."
+                                                isNotice "Please provide a valid input (y or n)."
                                                 ;;
                                         esac
                                     done
@@ -246,12 +238,12 @@ checkApplicationsConfigFilesMissingVariables()
                                                     isNotice "Installation function not found for $app_name."
                                                 fi
                                                 break  # Exit the loop
-                                            ;;
+                                                ;;
                                             [nN])
                                                 break  # Exit the loop
                                                 ;;
                                             *)
-                                                isNotice "Please provide a valid input (c or e)."
+                                                isNotice "Please provide a valid input (y or n)."
                                                 ;;
                                         esac
                                     done
@@ -332,7 +324,7 @@ editAppConfig()
             local original_checksum=$(md5sum "$config_file")
 
             # Open the file with nano for editing
-            nano "$config_file"
+            sudo nano "$config_file"
 
             # Calculate the checksum of the edited file
             local edited_checksum=$(md5sum "$config_file")
@@ -453,7 +445,7 @@ viewEasyDockerConfigs()
                 isNotie "No config found with the selected letter. Please try again."
                 read -p "Press Enter to continue."
             else
-                nano "$selected_file"
+                sudo nano "$selected_file"
                 
                 # Update the last modified timestamp of the edited file
                 createTouch "$selected_file"
@@ -571,7 +563,7 @@ viewComposeFiles()
                   if ((index >= 0 && index < ${#selected_compose_files[@]})); then
                     local selected_file="${selected_compose_files[index]}"
                     #echo "Debug: Editing file $selected_file"
-                    nano "$selected_file"
+                    sudo nano "$selected_file"
                   fi
                 done
                 ;;

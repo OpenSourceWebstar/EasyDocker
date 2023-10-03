@@ -67,8 +67,6 @@ startScan()
 		migrateCheckForMigrateFiles;
 		migrateGenerateTXTAll;
 		migrateScanFoldersForUpdates;
-		migrateScanConfigsToMigrate;
-		#migrateScanMigrateToConfigs;
 	fi
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
@@ -157,14 +155,6 @@ startOther()
 
 	if [[ "$migratescanforupdates" == [yY] ]]; then
 		migrateScanFoldersForUpdates;
-	fi
-
-	if [[ "$migratescanforconfigstomigrate" == [yY] ]]; then
-		migrateScanConfigsToMigrate;
-	fi
-
-	if [[ "$migratescanformigratetoconfigs" == [yY] ]]; then
-		migrateScanMigrateToConfigs;
 	fi
 
     #######################################################

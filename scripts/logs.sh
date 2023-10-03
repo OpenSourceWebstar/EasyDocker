@@ -91,7 +91,7 @@ viewLogs()
         ;;
         e)
             isNotice "Viewing easydocker.log:"
-            nano "$logs_dir/easydocker.log"
+            sudo nano "$logs_dir/easydocker.log"
             viewLogs;
         ;;
         x)

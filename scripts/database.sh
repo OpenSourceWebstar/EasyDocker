@@ -388,7 +388,8 @@ databaseCycleThroughListApps()
 	fi
 }
 
-databaseCycleThroughListAppsCrontab() {
+databaseCycleThroughListAppsCrontab() 
+{
     local show_header=$1
     local ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
 
@@ -434,6 +435,7 @@ databaseCycleThroughListAppsCrontab() {
     done < <(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 0;")
 
     for name in "${uninstalled_apps[@]}"; do
+        echo "removeBackupCrontabApp $name"
         removeBackupCrontabApp $name
     done
 
