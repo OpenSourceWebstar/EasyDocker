@@ -4,7 +4,68 @@
 initial_path="$3"
 initial_path_save=$initial_path
 
-source scripts/sources.sh
+sourceScript() 
+{
+    local script_file="$1"
+
+    if [ -f "$script_file" ]; then
+        source "$script_file"
+    else
+        echo "Error: '$script_file' not found."
+        exit 1
+    fi
+
+    local missing_files=()
+    while read -r line; do
+        local file=$(echo "$line" | awk -F ' ' '{print $NF}' | sed 's/[";]//g')
+        if [ -n "$file" ] && [ ! -f "$file" ]; then
+            missing_files+=("$file")
+        fi
+    done < <(grep 'source ' "$script_file")
+
+    if [ ${#missing_files[@]} -gt 0 ]; then
+        echo ""
+        echo "####################################################"
+        echo "###       Missing EasyDocker Install Files       ###"
+        echo "####################################################"
+        echo ""
+        for missing_file in "${missing_files[@]}"; do
+            echo "NOTICE : It seems that $missing_file is missing from your EasyDocker Installation."
+        done
+        echo ""
+        echo "OPTION : 1. Reinstall EasyDocker"
+        echo "OPTION : 2. Continue...*NOT RECOMMENDED*"
+        echo "OPTION : x. Exit"
+        echo ""
+        read -rp "Enter your choice (1 or 2) or 'x' to skip : " choice
+        case "$choice" in
+            1)
+                runInitReinstall;
+            ;;
+            2)
+                # User chose to continue
+            ;;
+            [xX])
+                # User chose to exit
+                exit 1
+            ;;
+            *)
+                echo "Invalid choice. Please enter 1, 2, or 'x'."
+            ;;
+        esac
+    fi
+
+    # Call the function to check for updates
+    checkUpdates;
+}
+
+runInitReinstall() 
+{
+    sudo bash -c 'cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run'
+}
+
+# Call the function to source the script
+sourceScript "scripts/sources.sh"
 
 startPreInstall()
 {
@@ -248,7 +309,3 @@ exitScript() {
 	stty echo
 	exit 0
 }
-
-
-# Start the script
-checkUpdates;
