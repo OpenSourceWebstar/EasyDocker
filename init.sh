@@ -133,6 +133,7 @@ initializeScript()
 	echo ""
 	echo "Enjoy!"
 	echo ""
+	exit
 }
 
 if [ "$param1" == "run" ]; then
