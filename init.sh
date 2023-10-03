@@ -38,27 +38,45 @@ initializeScript()
 		echo "This script must be run as root."
 		exit 1
 	fi
-	
-	# Update OS
+
+	echo ""
+	echo "####################################################"
+	echo "###          Updating Operating System           ###"
+	echo "####################################################"
+	echo ""
 	apt-get update
 	apt-get upgrade -y
-	echo "OS Updated"
+	echo "SUCCESS: OS Updated"
+	echo ""
 
-	# Install Apps
+	echo ""
+	echo "####################################################"
+	echo "###         Installing Prerequired Apps          ###"
+	echo "####################################################"
+	echo ""
 	apt-get install sudo git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
-	echo "Prerequisite apps installed."
+	echo "SUCCESS: Prerequisite apps installed."
 
-	# Create Users
+	echo ""
+	echo "####################################################"
+	echo "###           Creating User Accounts             ###"
+	echo "####################################################"
+	echo ""
 	if id "$sudo_user_name" &>/dev/null; then
-		echo "User $sudo_user_name already exists."
+		echo "SUCCESS: User $sudo_user_name already exists."
 	else
 		# If the user doesn't exist, create the user
 		useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
 		echo "Setting password for $sudo_user_name user."
 		passwd $sudo_user_name
-		echo "User $sudo_user_name created successfully."
+		echo "SUCCESS: User $sudo_user_name created successfully."
 	fi
 
+	echo ""
+	echo "####################################################"
+	echo "###        EasyDocker Folder Creation            ###"
+	echo "####################################################"
+	echo ""
 	# Setup folder structure
 	folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 	for folder in "${folders[@]}"; do
@@ -66,43 +84,56 @@ initializeScript()
 			sudo mkdir "$folder"
 			sudo chown $sudo_user_name:$sudo_user_name "$folder"
 			sudo chmod 750 "$folder"
-			echo "Folder '$folder' created."
-		else
-			echo "Folder '$folder' already exists."
+			echo "SUCCESS: Folder '$folder' created."
+		#else
+			#echo "Folder '$folder' already exists."
 		fi
 	done
+	echo "SUCCESS: All folders have been created."
 
+	echo ""
+	echo "####################################################"
+	echo "###      	     Git Clone / Update                ###"
+	echo "####################################################"
+	echo ""
 	# Git Clone and Update
 	# Check if it's a Git repository by checking if it's inside a Git working tree
 	if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 		echo "A Git repository is already cloned in '$script_dir'."
-		echo "Please run the easydocker command to update the repository."
+		echo "NOTICE: Please run the easydocker command to update the repository."
 	else
-		echo "No Git repository found. Cloning Git Repository."
+		echo "NOTICE: No Git repository found. Cloning Git Repository."
 		# Clone the Git repository into the specified directory
-		runuser -l  $sudo_user_name -c "git clone "$repo_url" "$script_dir""
-		echo "Git repository cloned into '$script_dir'."
+		runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
+		echo "SUCCESS: Git repository cloned into '$script_dir'."
 	fi
 
+	echo ""
+	echo "####################################################"
+	echo "###      	     Custom Command Setup              ###"
+	echo "####################################################"
+	echo ""
 	# Custom command check
-	if grep -q "easydocker" $sudo_bashrc; then
-		echo ""
-		echo ""
-		echo "Custom command 'easydocker' is already installed. You can already use 'easydocker'."
-		echo ""
-		echo "You can now use the command under the $sudo_user_name."
-	else
-		echo "Custom command 'easydocker' is not installed. Installing..."
+	if ! grep -q "easydocker" $sudo_bashrc; then
+		echo "NOTICE: Custom command 'easydocker' is not installed. Installing..."
 		echo 'easydocker() {' >> $sudo_bashrc
 		echo '  path="$PWD"' >> $sudo_bashrc
 		echo '  cd /docker/install/ && chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
 		echo '}' >> $sudo_bashrc
 		source $sudo_bashrc
-		echo ""
-		echo "Custom command 'easydocker' has been installed."
-		echo ""
-		echo "You can now use the command under the $sudo_user_name."
-	fi	
+	fi
+
+	echo ""
+	echo "####################################################"
+	echo "###      EasyDocker Initilization Complete       ###"
+	echo "####################################################"
+	echo ""
+	echo "You can now use the command under the $sudo_user_name."
+	echo ""
+	echo "Run su $sudo_user_name and then easydocker"
+	echo ""
+	echo "Enjoy!"
+	echo ""
 }
 
 if [ "$param1" == "run" ]; then
