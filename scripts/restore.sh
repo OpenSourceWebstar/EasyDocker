@@ -73,8 +73,6 @@ restoreStart()
 
         migrateGenerateTXTAll;
         migrateScanFoldersForUpdates;
-        migrateScanConfigsToMigrate;
-        migrateScanMigrateToConfigs;
         migrateUpdateFiles $stored_app_name;
         local app_name=$stored_app_name
     fi
