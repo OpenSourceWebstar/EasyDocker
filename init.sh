@@ -47,7 +47,6 @@ initializeScript()
 	apt-get update
 	apt-get upgrade -y
 	echo "SUCCESS: OS Updated"
-	echo ""
 
 	echo ""
 	echo "####################################################"
@@ -93,7 +92,7 @@ initializeScript()
 
 	echo ""
 	echo "####################################################"
-	echo "###      	     Git Clone / Update                ###"
+	echo "###      	       Git Clone / Update              ###"
 	echo "####################################################"
 	echo ""
 	# Git Clone and Update
@@ -121,6 +120,8 @@ initializeScript()
 		echo '  cd /docker/install/ && chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
 		echo '}' >> $sudo_bashrc
 		source $sudo_bashrc
+	else
+		echo "SUCCESS: easydocker command already installed.
 	fi
 
 	echo ""
@@ -128,9 +129,7 @@ initializeScript()
 	echo "###      EasyDocker Initilization Complete       ###"
 	echo "####################################################"
 	echo ""
-	echo "You can now use the command under the $sudo_user_name."
-	echo ""
-	echo "Run su $sudo_user_name and then easydocker"
+	echo "You can now use the easydocker command under the $sudo_user_name."
 	echo ""
 	echo "Enjoy!"
 	echo ""
