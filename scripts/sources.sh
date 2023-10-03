@@ -46,23 +46,6 @@ sourceFiles()
     echo "${missing_files[@]}"
 }
 
-loadContainerFiles() {
-    while IFS= read -r -d '' file; do
-        if [ -f "$file" ]; then
-            source "$(echo "$file" | sed 's|/docker/install//||')"
-        fi
-    done < <(sudo find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.sh' \) -print0)
-}
-
-
-loadConfigFiles() {
-    while IFS= read -r -d '' file; do
-        if [ -f "$file" ]; then
-            source "$(echo "$file" | sed 's|/docker/install//||')"
-        fi
-    done < <(sudo find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f -name '*.config' -print0)
-}
-
 sourceScript() 
 {
     local missing_files=($(sourceFiles))
@@ -112,8 +95,26 @@ runInitReinstall()
     echo "###           Reinstalling EasyDocker            ###"
     echo "####################################################"
     echo ""
-    sudo bash -c 'cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run'
+    sudo bash -c 'rm -rf /docker/install/ && cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run'
     exit 0  # Exit the entire script
+}
+
+loadContainerFiles() 
+{
+    while IFS= read -r -d '' file; do
+        if [ -f "$file" ]; then
+            source "$(echo "$file" | sed 's|/docker/install//||')"
+        fi
+    done < <(sudo find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.sh' \) -print0)
+}
+
+loadConfigFiles() 
+{
+    while IFS= read -r -d '' file; do
+        if [ -f "$file" ]; then
+            source "$(echo "$file" | sed 's|/docker/install//||')"
+        fi
+    done < <(sudo find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f -name '*.config' -print0)
 }
 
 sourceScript;
