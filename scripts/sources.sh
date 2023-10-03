@@ -1,46 +1,59 @@
 #!/bin/bash
 
-source init.sh
+sourceFiles()
+{
+    local files_to_source=(
+        "init.sh"
 
-source configs/config_backup
-source configs/config_general
-source configs/config_requirements
+        "configs/config_backup"
+        "configs/config_general"
+        "configs/config_requirements"
 
-source scripts/variables.sh
-source scripts/checks.sh
-source scripts/menu.sh
-source scripts/functions.sh
-source scripts/update.sh
-source scripts/docker.sh
-source scripts/configs.sh
-source scripts/whitelist.sh
-source scripts/logs.sh
-source scripts/permissions.sh
-source scripts/database.sh
-source scripts/network.sh
-source scripts/shutdown.sh
+        "scripts/variables.sh"
+        "scripts/checks.sh"
+        "scripts/menu.sh"
+        "scripts/functions.sh"
+        "scripts/update.sh"
+        "scripts/docker.sh"
+        "scripts/configs.sh"
+        "scripts/whitelist.sh"
+        "scripts/logs.sh"
+        "scripts/permissions.sh"
+        "scripts/database.sh"
+        "scripts/network.sh"
+        "scripts/shutdown.sh"
 
-source scripts/backup.sh
-source scripts/restore.sh
-source scripts/migrate.sh
+        "scripts/backup.sh"
+        "scripts/restore.sh"
+        "scripts/migrate.sh"
 
-source scripts/install/install_os.sh
-source scripts/install/install_docker.sh
-source scripts/install/install_ufw.sh
-source scripts/install/install_misc.sh
-source scripts/install/install_user.sh
-source scripts/install/install_ssh.sh
+        "scripts/install/install_os.sh"
+        "scripts/install/install_docker.sh"
+        "scripts/install/install_ufw.sh"
+        "scripts/install/install_misc.sh"
+        "scripts/install/install_user.sh"
+        "scripts/install/install_ssh.sh"
 
-source scripts/install/uninstall.sh
+        "scripts/install/uninstall.sh"
+    )
+
+    for file_to_source in "${files_to_source[@]}"; do
+        if [ ! -f "$file_to_source" ]; then
+            missing_files+=("$file_to_source")
+        fi
+    done
+
+    echo "${missing_files[@]}"
+}
 
 loadContainerFiles() {
     while IFS= read -r -d '' file; do
         if [ -f "$file" ]; then
             source "$(echo "$file" | sed 's|/docker/install//||')"
         fi
-    done < <(sudo find "$install_containers_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.sh' \) -print0)
+    done < <(sudo find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f \( -name '*.sh' \) -print0)
 }
-loadContainerFiles;
+
 
 loadConfigFiles() {
     while IFS= read -r -d '' file; do
@@ -49,4 +62,56 @@ loadConfigFiles() {
         fi
     done < <(sudo find "$containers_dir" -type d \( -name 'resources' \) -prune -o -type f -name '*.config' -print0)
 }
-#loadConfigFiles;
+
+sourceScript() 
+{
+    local missing_files=($(sourceFiles))
+
+    if [ ${#missing_files[@]} -eq 0 ]; then
+        loadContainerFiles
+        loadConfigFiles
+        checkUpdates
+    else
+        echo ""
+        echo "####################################################"
+        echo "###       Missing EasyDocker Install Files       ###"
+        echo "####################################################"
+        echo ""
+        for missing_file in "${missing_files[@]}"; do
+            echo "NOTICE : It seems that $missing_file is missing from your EasyDocker Installation."
+        done
+        echo ""
+        echo "OPTION : 1. Reinstall EasyDocker"
+        echo "OPTION : 2. Continue...*NOT RECOMMENDED*"
+        echo "OPTION : x. Exit"
+        echo ""
+        read -rp "Enter your choice (1 or 2) or 'x' to skip : " choice
+        case "$choice" in
+            1)
+                runInitReinstall;
+            ;;
+            2)
+                # User chose to continue
+            ;;
+            [xX])
+                # User chose to exit
+                exit 1
+            ;;
+            *)
+                echo "Invalid choice. Please enter 1, 2, or 'x'."
+            ;;
+        esac
+    fi
+}
+
+runInitReinstall() 
+{
+	echo ""
+	echo "####################################################"
+	echo "###           Reinstalling EasyDocker            ###"
+	echo "####################################################"
+	echo ""
+    sudo bash -c 'cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run && exit'
+}
+
+sourceScript;
