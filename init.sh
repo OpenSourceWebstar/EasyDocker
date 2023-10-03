@@ -121,7 +121,7 @@ initializeScript()
 		echo '}' >> $sudo_bashrc
 		source $sudo_bashrc
 	else
-		echo "SUCCESS: easydocker command already installed.
+		echo "SUCCESS: easydocker command already installed."
 	fi
 
 	echo ""
