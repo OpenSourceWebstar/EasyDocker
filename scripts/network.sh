@@ -45,7 +45,7 @@ setupIPsAndHostnames()
             # Public variables
             domain_prefix=$hostname
             domain_var_name="CFG_DOMAIN_${domain_number}"
-            domain_full=$(sudo grep  "^$domain_var_name=" $install_configs_dir/config_general | cut -d '=' -f 2-)
+            domain_full=$(sudo grep  "^$domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
             host_setup=${domain_prefix}.${domain_full}
             ssl_key=${domain_full}.key
             ssl_crt=${domain_full}.crt
@@ -60,7 +60,7 @@ setupIPsAndHostnames()
                 #isSuccessful "App network settings setup successfully."
             #fi
         fi
-    done < "$install_configs_dir$ip_file"
+    done < "$configs_dir$ip_file"
     
     if ! "$found_match"; then  # Changed the condition to check if no match is found
         checkSuccess "No matching hostnames found for $host_name, please fill in the ips_hostname file"

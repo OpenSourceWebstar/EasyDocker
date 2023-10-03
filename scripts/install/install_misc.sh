@@ -44,7 +44,7 @@ installSSLCertificate()
             domains=()
             for domain_num in {1..9}; do
                 domain="CFG_DOMAIN_$domain_num"
-                domain_value=$(grep "^$domain=" "$install_configs_dir$config_file_general" | cut -d '=' -f 2 | tr -d '[:space:]')
+                domain_value=$(grep "^$domain=" "$configs_dir$config_file_general" | cut -d '=' -f 2 | tr -d '[:space:]')
                 
                 if [ -n "$domain_value" ]; then
                     domains+=("$domain_value")

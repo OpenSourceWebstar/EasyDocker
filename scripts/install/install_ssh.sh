@@ -24,7 +24,7 @@ installSSHRemoteList()
                 return 1
             fi
 
-            ssh_hosts_line=$(grep '^CFG_IPS_SSH_SETUP=' $install_configs_dir$config_file_general)
+            ssh_hosts_line=$(grep '^CFG_IPS_SSH_SETUP=' $configs_dir$config_file_general)
             if [ -z "$ssh_hosts_line" ]; then
                 echo "No hosts found in the config file or the file is empty."
                 echo ""
