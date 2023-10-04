@@ -57,6 +57,15 @@ fixFolderPermissions()
 fixPermissionsBeforeStart()
 {
     local app_name="$1"
+    local flag="$2"
+    
+    if [[ $flag == "update" ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###  Updating File/Folder Permissions  ###"
+        echo "##########################################"
+        echo ""
+    fi
 
     fixFolderPermissions;
 
@@ -67,21 +76,21 @@ fixPermissionsBeforeStart()
     fi
 
     # This is where custom app specific permissions are needed
-    # Traefik
-    local app="traefik"
-    local app_install_dir="${install_dir}$app"
-    if [ ! -d "app_install_dir" ]; then
-        # Check if the file exists before updating ownership and permissions
-        if [ -f "$app_install_dir/etc/certs/acme.json" ]; then
-            updateFileOwnership "$app_install_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-            local result=$(sudo chmod 600 "$app_install_dir/etc/certs/acme.json")
-            checkSuccess "Set permissions to acme.json file for traefik"
-        fi
-        # Check if the file exists before updating ownership and permissions
-        if [ -f "$app_install_dir/etc/traefik.yml" ]; then
-            updateFileOwnership "$app_install_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-            local result=$(sudo chmod 600 "$app_install_dir/etc/traefik.yml")
-            checkSuccess "Set permissions to traefik.yml file for traefik"
+    if [[ $app_name == "traefik" ]]; then
+        local app_install_dir="${install_dir}$app_name"
+        if [ ! -d "app_install_dir" ]; then
+            # Check if the file exists before updating ownership and permissions
+            if [ -f "$app_install_dir/etc/certs/acme.json" ]; then
+                updateFileOwnership "$app_install_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+                local result=$(sudo chmod 600 "$app_install_dir/etc/certs/acme.json")
+                checkSuccess "Set permissions to acme.json file for traefik"
+            fi
+            # Check if the file exists before updating ownership and permissions
+            if [ -f "$app_install_dir/etc/traefik.yml" ]; then
+                updateFileOwnership "$app_install_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
+                local result=$(sudo chmod 600 "$app_install_dir/etc/traefik.yml")
+                checkSuccess "Set permissions to traefik.yml file for traefik"
+            fi
         fi
     fi
 }
@@ -97,10 +106,24 @@ changeRootOwnedFilesAndFolders()
         return 1
     fi
 
-    isNotice "Updating ownership of $dir_to_change...this may take a while depending on the size/amount of files..."
+    # Start the result command in the background
+    (sudo find "$dir_to_change" -type f -user root -exec sudo chown "$user_name:$user_name" {} \; ) &
 
-    local result=$(sudo find "$dir_to_change" -type f -user root -exec sudo chown "$user_name:$user_name" {} \;)
-    checkSuccess "Find files owned by root and change ownership"
+    local start_time=$(date +%s)
+    local time_threshold=5
+
+    # Check periodically if the result command is still running
+    while ps -p $! > /dev/null; do
+        local current_time=$(date +%s)
+        local elapsed_time=$((current_time - start_time))
+        if [ "$elapsed_time" -ge "$time_threshold" ]; then
+            # Display the message
+            isNotice "Updating ownership of $dir_to_change...this may take a while depending on the size/amount of files..."
+            break
+        fi
+        sleep 1
+    done
+    isSuccessful "Find files owned by root and change ownership"
 
     local result=$(sudo find "$dir_to_change" -type d -user root -exec sudo chown "$user_name:$user_name" {} \;)
     checkSuccess "Find directories owned by root and change ownership"

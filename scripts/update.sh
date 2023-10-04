@@ -40,7 +40,7 @@ checkUpdates()
                         gitCheckForUpdate;
                         gitCheckConfigFilesExist;
                         gitCheckConfigs;
-						fixPermissionsBeforeStart;
+						fixPermissionsBeforeStart "" "update";
 						sourceScripts "update";
 
 						isSuccessful "Starting/Restarting EasyDocker"
@@ -53,8 +53,8 @@ checkUpdates()
                         gitCheckForUpdate;
                         gitCheckConfigFilesExist;
                         gitCheckConfigs;
-						fixPermissionsBeforeStart;
-						sourceScripts "noupdate";
+						fixPermissionsBeforeStart "" "update";
+						sourceScripts "update";
                         
                         detectOS;
 						
@@ -71,8 +71,8 @@ checkUpdates()
             gitCheckForUpdate;
             gitCheckConfigFilesExist;
             gitCheckConfigs;
-			fixPermissionsBeforeStart;
-			sourceScripts "noupdate";
+			fixPermissionsBeforeStart "" "update";
+			sourceScripts "update";
 
 			isSuccessful "Starting/Restarting EasyDocker"
 			detectOS;

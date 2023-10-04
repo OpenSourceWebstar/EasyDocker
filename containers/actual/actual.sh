@@ -95,7 +95,7 @@ installActual()
         echo "---- $menu_number. Updating file permissions before starting."
         echo ""
 
-		fixPermissionsBeforeStart;
+		fixPermissionsBeforeStart $app_name;
 
         ((menu_number++))
         echo ""

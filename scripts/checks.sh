@@ -53,9 +53,10 @@ checkRequirements()
 	fi
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
+		checkConfigFilesMissingVariables;
 		checkConfigFilesEdited;
 	fi
-
+	
 	if [[ $CFG_REQUIREMENT_PASSWORDS == "true" ]]; then
 		### Password randomizer
 		pass_found=0
@@ -238,10 +239,6 @@ checkRequirements()
 		else
 			isSuccessful "No hosts found in the config file."
 		fi
-	fi
-
-	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-		checkConfigFilesMissingVariables;
 	fi
 
 	if [[ "$preinstallneeded" -ne 0 ]]; then

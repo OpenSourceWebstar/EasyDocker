@@ -92,7 +92,7 @@ checkEasyDockerConfigFilesMissingVariables()
 
 checkApplicationsConfigFilesMissingVariables() 
 {
-    isNotice "Scanning Application config files...please wait"
+    #isNotice "Scanning Application config files...please wait"
     local container_configs=($(sudo find "$containers_dir" -maxdepth 2 -type f -name '*.config'))  # Find .config files in immediate subdirectories of $containers_dir
 
     for container_config_file in "${container_configs[@]}"; do
