@@ -37,7 +37,6 @@ files_to_source=(
 
 sourceFiles()
 {
-    echo ""
     echo "####################################################"
     echo "###       Loading EasyDocker Startup Files       ###"
     echo "####################################################"

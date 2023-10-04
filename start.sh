@@ -4,6 +4,14 @@
 initial_path="$3"
 initial_path_save=$initial_path
 
+displayEasyDockerLogo() 
+{
+    echo "
+____ ____ ____ _   _    ___  ____ ____ _  _ ____ ____ 
+|___ |__| [__   \_/     |  \ |  | |    |_/  |___ |__/ 
+|___ |  | ___]   |      |__/ |__| |___ | \_ |___ |  \ "
+}
+
 startPreInstall()
 {
 	# Disable Input
@@ -248,4 +256,5 @@ exitScript()
 	exit 0
 }
 
+displayEasyDockerLogo;
 source "scripts/sources.sh"
