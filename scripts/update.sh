@@ -244,7 +244,7 @@ gitFolderResetAndBackup()
     
     gitReset;
     
-    local result=$(copyFolders "$backup_install_dir/$backupFolder/" "$script_dir")
+    local result=$(copyFolders "$backup_install_dir/$backupFolder/" "$docker_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     local result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
