@@ -233,7 +233,8 @@ endStart()
 	resetToMenu;
 }
 
-exitScript() {
+exitScript() 
+{
 	echo ""
 	echo ""
 	isNotice "Exiting script..."

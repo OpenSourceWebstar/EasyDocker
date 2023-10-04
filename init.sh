@@ -30,7 +30,6 @@ install_configs_dir="$script_dir/configs/"
 install_containers_dir="$script_dir/containers/"
 install_scripts_dir="$script_dir/scripts/"
 
-
 initializeScript()
 {
 	# Check if script is run as root
