@@ -50,8 +50,9 @@ sourceFiles()
             #echo "Sourced file: $file_to_source"
         fi
     done
+    loadFiles "easydocker_configs";
+    loadFiles "app_configs";
     loadFiles "containers";
-    loadFiles "configs";
 }
 
 sourceScripts() 
@@ -119,12 +120,15 @@ loadFiles()
     local load_type="$1"
     local file_pattern
 
-    if [ "$load_type" = "containers" ]; then
-        local file_pattern="*.sh"
-        local folder_dir="$install_containers_dir"
-    elif [ "$load_type" = "configs" ]; then
+    if [ "$load_type" = "easydocker_configs" ]; then
+        local file_pattern="config_*"
+        local folder_dir="$configs_dir"
+    elif [ "$load_type" = "app_configs" ]; then
         local file_pattern="*.config"
         local folder_dir="$containers_dir"
+    elif [ "$load_type" = "containers" ]; then
+        local file_pattern="*.sh"
+        local folder_dir="$install_containers_dir"
     else
         echo "Invalid load type: $load_type"
         return

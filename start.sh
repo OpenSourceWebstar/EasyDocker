@@ -4,8 +4,6 @@
 initial_path="$3"
 initial_path_save=$initial_path
 
-source "scripts/sources.sh"
-
 startPreInstall()
 {
 	# Disable Input
@@ -249,3 +247,5 @@ exitScript()
 	stty echo
 	exit 0
 }
+
+source "scripts/sources.sh"
