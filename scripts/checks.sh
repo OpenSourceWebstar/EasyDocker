@@ -53,7 +53,6 @@ checkRequirements()
 	fi
 
 	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
-		checkConfigFilesMissingVariables;
 		checkConfigFilesEdited;
 	fi
 
@@ -239,6 +238,10 @@ checkRequirements()
 		else
 			isSuccessful "No hosts found in the config file."
 		fi
+	fi
+
+	if [[ $CFG_REQUIREMENT_CONFIG == "true" ]]; then
+		checkConfigFilesMissingVariables;
 	fi
 
 	if [[ "$preinstallneeded" -ne 0 ]]; then

@@ -8,26 +8,35 @@ checkConfigFilesMissingVariables()
 
 checkEasyDockerConfigFilesMissingVariables()
 {
-    isNotice "Scanning EasyDocker config files...please wait"
-    
-    # Loop through local config files in $config_dir
-    for local_config_file in "$config_dir"/*; do
+    #isNotice "Scanning EasyDocker config files...please wait"
+
+    # Loop through local config files in $configs_dir
+    for local_config_file in "$configs_dir"/*; do
         if [ -f "$local_config_file" ]; then
             local local_config_filename=$(basename "$local_config_file")
 
             # Extract config variables from the local file
             local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$local_config_file" | sed 's/=$//'))
 
+            #echo "Debug: Found local config file: $local_config_filename"
+            #echo "Debug: Local config variables: ${local_variables[@]}"
+
             # Find the corresponding .config file in $install_configs_dir
             local remote_config_file="$install_configs_dir$local_config_filename"
 
             if [ -f "$remote_config_file" ]; then
+                #echo "Debug: Found remote config file: $remote_config_file"
+
                 # Extract config variables from the remote file
                 local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
+
+                #echo "Debug: Remote config variables: ${remote_variables[@]}"
 
                 # Filter out empty variable names from the remote variables
                 local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
                 local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+
+                #echo "Debug: Remote variables after filtering: ${remote_variables[@]}"
 
                 # Compare local and remote variables
                 for remote_var in "${remote_variables[@]}"; do
@@ -60,8 +69,8 @@ checkEasyDockerConfigFilesMissingVariables()
                                 isQuestion "Enter your value for $remote_var: "
                                 read -p " " custom_value
                                 echo ""
-                                echo "CFG_${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
-                                checkSuccess "Adding the CFG_${remote_var}=$custom_value to '$local_config_filename':"
+                                echo "${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                checkSuccess "Adding the ${remote_var}=$custom_value to '$local_config_filename':"
                             ;;
                             [xX])
                                 # User chose to skip
@@ -72,6 +81,8 @@ checkEasyDockerConfigFilesMissingVariables()
                         esac
                     fi
                 done
+            #else
+                #echo "Debug: Remote config file not found: $remote_config_file"
             fi
         fi
     done
@@ -82,7 +93,7 @@ checkEasyDockerConfigFilesMissingVariables()
 checkApplicationsConfigFilesMissingVariables() 
 {
     isNotice "Scanning Application config files...please wait"
-    local container_configs=($(sudo find "$containers_dir" -maxdepth 1 -type f -name '*.config'))  # Find .config files in immediate subdirectories of $containers_dir
+    local container_configs=($(sudo find "$containers_dir" -maxdepth 2 -type f -name '*.config'))  # Find .config files in immediate subdirectories of $containers_dir
 
     for container_config_file in "${container_configs[@]}"; do
         local container_config_filename=$(basename "$container_config_file")
@@ -91,16 +102,25 @@ checkApplicationsConfigFilesMissingVariables()
         # Extract config variables from the local file
         local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
 
+        #echo "Debug: Found local config file: $container_config_filename"
+        #echo "Debug: Local config variables: ${local_variables[@]}"
+
         # Find the corresponding .config file in $install_containers_dir
         local remote_config_file="$install_containers_dir$config_app_name/$config_app_name.config"
 
         if [ -f "$remote_config_file" ]; then
+            #echo "Debug: Found remote config file: $remote_config_file"
+
             # Extract config variables from the remote file
             local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
+
+            #echo "Debug: Remote config variables: ${remote_variables[@]}"
 
             # Filter out empty variable names from the remote variables
             local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
             local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+
+            #echo "Debug: Remote variables after filtering: ${remote_variables[@]}"
 
             # Compare local and remote variables
             for remote_var in "${remote_variables[@]}"; do
