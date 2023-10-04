@@ -27,12 +27,12 @@ databaseInstallApp()
 
     if [ "$app_exists" -eq 0 ]; then
         isNotice "App does not exist in the database, setting up now."
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO apps (name, status, install_date, install_time) VALUES ('$app_name', 1, $current_date, $current_time);")
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO apps (name, status, install_date, install_time) VALUES ('$app_name', 1, '$current_date', '$current_time');")
         checkSuccess "Adding $app_name to the apps database."
         echo ""
     else
         isNotice "App already exists in the database, updating now."
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 1, install_date = $current_date, install_time = $current_time, uninstall_date = NULL WHERE name = '$app_name';")
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 1, install_date = $current_date, install_time = '$current_time', uninstall_date = NULL WHERE name = '$app_name';")
         checkSuccess "Updating apps database for $app_name to installed status."
         echo ""
     fi
@@ -69,7 +69,7 @@ databaseUninstallApp()
     else
         # App found in the database, update status to 0 and set uninstall_date
         isNotice "Uninstalling $app_name..."
-        if ! sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = $current_date, uninstall_time = $current_time WHERE name = '$app_name';"; then
+        if ! sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET status = 0, uninstall_date = '$current_date', uninstall_time = '$current_time' WHERE name = '$app_name';"; then
             isError "Failed to update the database for $app_name."
             return 1
         fi
