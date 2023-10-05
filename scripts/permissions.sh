@@ -143,6 +143,7 @@ changeRootOwnedFile()
             isNotice "$db_file is not yet created."
         else
             isError "File '$file_full' does not exist."
+        fi
         return 1
     fi
 
