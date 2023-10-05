@@ -21,12 +21,12 @@ setupConfigToContainer()
     local target_path="$containers_dir$app_name"
     local source_file="$install_containers_dir$app_name/$app_name.config"
 
-    echo "setupConfigToContainer"
-    echo "app_name = $app_name"
-    echo "silent_flag = $silent_flag"
-    echo "flags = $flags"
-    echo "target_path = $target_path"
-    echo "source_file = $source_file"
+    #echo "setupConfigToContainer"
+    #echo "app_name = $app_name"
+    #echo "silent_flag = $silent_flag"
+    #echo "flags = $flags"
+    #echo "target_path = $target_path"
+    #echo "source_file = $source_file"
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -100,7 +100,7 @@ setupConfigToContainer()
         fi
     fi
 
-    loadConfigFiles;
+    loadFiles "app_configs";
 }
 
 setupComposeFileNoApp()
