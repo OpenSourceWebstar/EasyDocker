@@ -266,6 +266,10 @@ copyFile()
         flags_full="-f"
     fi
 
+    if [[ $flags == "recursive" ]]; then
+        flags_full="-r"
+    fi
+
     local result=$(sudo cp $flags_full "$file" "$save_dir")
     if [ -z "$silent_flag" ]; then
         checkSuccess "Copying $file_name to $save_dir"
