@@ -5,7 +5,15 @@ runCommandForDockerInstallUser()
     local remote_command="$1"
     
     # Run the SSH command using the existing SSH variables
-    local result=$(sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command")
+    local output
+    sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+    local exit_code=$?
+
+    if [ $exit_code -eq 0 ]; then
+        return 0  # Success, command completed without errors
+    else
+        return 1  # Error, command encountered issues
+    fi
 }
 
 setupConfigToContainer()
