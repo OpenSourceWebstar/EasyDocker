@@ -126,6 +126,16 @@ checkRequirements()
 			((preinstallneeded++)) 
 		fi
 	fi
+
+	if [[ $CFG_REQUIREMENT_DOCKER_NETWORK == "true" ]]; then
+		### Docker VPN Network
+		if runCommandForDockerInstallUser "docker network ls | grep -q \"$CFG_NETWORK_NAME\""; then
+			isSuccessful "Docker Network $CFG_NETWORK_NAME  appears to be installed."
+		else
+			isNotice "Docker Network $CFG_NETWORK_NAME not found. Setup will start soon."
+			((preinstallneeded++)) 
+		fi
+	fi
 	
 	if [[ $CFG_REQUIREMENT_UFW == "true" ]]; then
 		### UFW Firewall
@@ -148,7 +158,6 @@ checkRequirements()
 			fi
 		fi
 	fi
-	
 
 	if [[ $CFG_REQUIREMENT_MANAGER == "true" ]]; then
 		### Docker Manager User Creation
