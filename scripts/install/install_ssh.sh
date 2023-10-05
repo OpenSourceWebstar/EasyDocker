@@ -20,7 +20,7 @@ installSSHRemoteList()
 
             # Check if database file is available
             if [ ! -f "$docker_dir/$db_file" ] ; then
-                checkSuccess "Database file not found. Make sure it's installed."
+                isNotice "Database file not found. Make sure it's installed."
                 return 1
             fi
 

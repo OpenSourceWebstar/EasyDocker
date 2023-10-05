@@ -2,6 +2,10 @@
 
 checkUpdates()
 {
+
+    gitCheckConfigFilesExist;
+	sourceScripts "update";
+    
 	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
 		echo ""
 		echo "#####################################"
