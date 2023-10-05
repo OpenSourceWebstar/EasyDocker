@@ -10,18 +10,23 @@ runCommandForDockerInstallUser()
 
 setupConfigToContainer()
 {
-    local silent_flag="$1"
-    local app_name="$2"
-    local flags="$3"
+    local silent_flag=""
+    if [ "$1" == "--silent" ]; then
+        silent_flag="$1"
+        shift
+    fi
+
+    local app_name="$1"
+    local flags="$2"
     local target_path="$containers_dir$app_name"
     local source_file="$install_containers_dir$app_name/$app_name.config"
 
-    echo "setupConfigToContainer"
-    echo "app_name = $app_name"
-    echo "silent_flag = $silent_flag"
-    echo "flags = $flags"
-    echo "target_path = $target_path"
-    echo "source_file = $source_file"
+    #echo "setupConfigToContainer"
+    #echo "app_name = $app_name"
+    #echo "silent_flag = $silent_flag"
+    #echo "flags = $flags"
+    #echo "target_path = $target_path"
+    #echo "source_file = $source_file"
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -50,7 +55,7 @@ setupConfigToContainer()
             isNotice "Copying config file to '$target_path/$app_name.config'..."
             copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         else
-            copyFile "$silence_flag" "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$silent_flag" "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
     else
         if [[ "$flags" == "install" ]]; then
