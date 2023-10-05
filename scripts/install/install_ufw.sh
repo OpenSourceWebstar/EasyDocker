@@ -63,7 +63,6 @@ installUFW()
 
             echo ""
             isSuccessful "UFW Firewall has been installed, you can use ufw status to see the status"
-            echo ""
 
             menu_number=0   
             cd

@@ -72,7 +72,8 @@ installDockerCompose()
         echo "        "${DOCKCOMPV}
         echo ""
         echo ""
-        sleep 3s
+		menu_number=0
+        sleep 1s
     fi
 }
 
@@ -178,15 +179,30 @@ installDockerRootless()
 		if grep -q "ROOTLESS" $sysctl; then
 			isSuccessful "Docker Rootless appears to be installed."
         else
+            echo ""
+            echo "##########################################"
+            echo "###      Install Docker Rootless       ###"
+            echo "##########################################"
+            echo ""
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Installing System Requirements."
+            echo ""
+
             local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
             local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
-            isNotice "Necessary packages are being installed...please wait..."
             local result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
             checkSuccess "Installing necessary packages"
 
             local result=$(sudo systemctl disable --now docker.service docker.socket)
             checkSuccess "Disabling Docker service & Socket"
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Installing slirp4netns."
+            echo ""
 
             # slirp4netns update and install
             if ! command -v slirp4netns &> /dev/null; then
@@ -209,8 +225,11 @@ installDockerRootless()
                 fi
             fi
 
-            # Updating Debian 10
             if [[ $(lsb_release -rs) == "10" ]]; then
+                ((menu_number++))
+                echo ""
+                echo "---- $menu_number. Updating the sysctl file for Updating Debian 10."
+                echo ""
                 if grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
                     isNotice "kernel.unprivileged_userns_clone=1 already exists in $sysctl"
                 else
@@ -220,8 +239,12 @@ installDockerRootless()
                     checkSuccess "Running sudo -u $easydockeruser sysctl --system..."
                 fi
             fi
-               
-            # Update .bashrc file
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Update the .bashrc file."
+            echo ""
+
             if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
                 local result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding rootless header to .bashrc"
@@ -241,6 +264,11 @@ installDockerRootless()
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
 
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Setting up Rootless Docker."
+            echo ""
+
             local result=$(sudo loginctl enable-linger $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Adding automatic start (linger)"
 
@@ -254,6 +282,11 @@ EOF
 )
             local result=$(runCommandForDockerInstallUser "$rootless_install")
             checkSuccess "Setting up Rootless for $CFG_DOCKER_INSTALL_USER"
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Setting up additional Sliprp4netns changes."
+            echo ""
 
             # Sliprp4netns Install
             systemd_user_dir="/home/$CFG_DOCKER_INSTALL_USER/.config/systemd/user"
@@ -285,6 +318,11 @@ EOL"
             local result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"
 
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Setting up sysctl file to work with LetsEncrypt."
+            echo ""
+
             # Update sysctl file
             if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
 
@@ -302,6 +340,8 @@ EOL"
 
             local result=$(sudo sysctl --system)
             checkSuccess "Applying changes to sysctl"
+
+            menu_number=0
         fi
     fi
 }
