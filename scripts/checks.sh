@@ -83,7 +83,7 @@ checkRequirements()
 		if [ -f "$docker_dir/$db_file" ] ; then
 			isSuccessful "Installed Apps Database file found"
 		else
-			isNotice "Database file not found"
+			isNotice "Database file not found yet. Setup will start soon."
 			((preinstallneeded++)) 
 		fi
 	fi

@@ -139,7 +139,10 @@ changeRootOwnedFile()
 
     # Check if the file exists
     if [ ! -f "$file_full" ]; then
-        isError "File '$file_full' does not exist."
+        if [[ $file_full == "$docker_dir/$db_file" ]]; then
+            isNotice "$db_file is not yet created."
+        else
+            isError "File '$file_full' does not exist."
         return 1
     fi
 
@@ -218,6 +221,12 @@ copyFolders()
         checkSuccess "Copying $subdir_name to $save_dir"
 
         if [[ $clean_dir == *"$containers_dir"* ]]; then
+            local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
+            checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
+        elif [[ $clean_dir == *"$configs_dir"* ]]; then
+            local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
+            checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
+        elif [[ $clean_dir == *"$logs_dir"* ]]; then
             local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         else
