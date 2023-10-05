@@ -37,11 +37,14 @@ files_to_source=(
 
 sourceFiles()
 {
-    echo ""
-    echo "####################################################"
-    echo "###       Loading EasyDocker Startup Files       ###"
-    echo "####################################################"
-    echo ""
+    local flag="$1"
+    if [[ $flag == "start" ]]; then
+        echo ""
+        echo "####################################################"
+        echo "###       Loading EasyDocker Startup Files       ###"
+        echo "####################################################"
+        echo ""
+    fi
     for file_to_source in "${files_to_source[@]}"; do
         if [ ! -f "$file_to_source" ]; then
             echo "NOTICE: Missing file: $file_to_source"
@@ -58,7 +61,7 @@ sourceFiles()
 sourceScripts() 
 {
     local flag="$1"
-    sourceFiles;
+    sourceFiles $flag;
     local missing_files=()
 
     for file_to_source in "${files_to_source[@]}"; do
@@ -69,8 +72,8 @@ sourceScripts()
     done
 
     if [ ${#missing_files[@]} -eq 0 ]; then
-        isSuccessful "All files found and loaded for startup."
         if [[ $flag == "start" ]]; then
+            isSuccessful "All files found and loaded for startup."
             checkUpdates;
         fi
     else
