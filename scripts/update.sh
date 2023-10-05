@@ -127,18 +127,18 @@ gitCheckConfigs()
             isNotice "No valid configs found in any backup file OR they all contain default values."
             while true; do
                 isQuestion "Do you want to continue without a config backup? (y/n): "
-                read -rp "" acceptnoconfigs
-                if [[ "$acceptnoconfigs" =~ ^[yYnN]$ ]]; then
+                read -rp " " acceptnoconfigs
+                if [[ "$acceptnoconfigs" =~ ^[yY]$ ]]; then
                     break
-                fi
-                if [[ $acceptnoconfigs == [nN] ]]; then
+                elif [[ "$acceptnoconfigs" =~ ^[nN]$ ]]; then
                     echo ""
                     echo ""
                     isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
                     exitScript
                     exit;
+                else
+                    isNotice "Please provide a valid input (y/n)."
                 fi
-                isNotice "Please provide a valid input (y/n)."
             done
             return
         fi
@@ -186,11 +186,11 @@ gitCheckConfigs()
 
         # If no valid configs were found in any backup file, display a message
         if [ "$valid_configs_found" = false ]; then
-            if [[ $acceptnoconfigs != [nN] ]]; then
+            if [[ $acceptupdates != [nN] ]]; then
                 isNotice "No valid configs found in any backup file OR they all contain default values."
                 while true; do
                     isQuestion "Do you want to continue without a config backup? (y/n): "
-                    read -rp "" acceptupdates
+                    read -rp "" acceptnoconfigs
                     if [[ "$acceptnoconfigs" =~ ^[yYnN]$ ]]; then
                         break
                     fi
@@ -201,7 +201,7 @@ gitCheckConfigs()
                     echo ""
                     isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
                     exitScript
-                    exit;
+                    exit
                 fi
             fi
         fi
