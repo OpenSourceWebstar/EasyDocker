@@ -5,7 +5,7 @@ checkUpdates()
 
     gitCheckConfigFilesExist;
 	sourceScripts "update";
-    
+
 	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
 		echo ""
 		echo "#####################################"
@@ -169,10 +169,22 @@ gitCheckConfigs()
             rm -rf "$temp_dir"
         done
 
-
         # If no valid configs were found in any backup file, display a message
         if [ "$valid_configs_found" = false ]; then
-            echo "No valid configs found in any backup file. Unable to restore install backup as they all contain default values."
+            isNotice "No valid configs found in any backup file OR they all contain default values."
+            while true; do
+                isQuestion "Do you want to continue without a config backup? (y/n): "
+                read -rp "" acceptupdates
+                if [[ "$acceptupdates" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
+            if [[ $acceptupdates == [nN] ]]; then
+                isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
+                exitScript
+                exit;
+            fi
         fi
     fi
 }
