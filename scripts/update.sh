@@ -124,7 +124,22 @@ gitCheckConfigs()
         
         # Check if any backup files were found
         if [ ${#backup_files[@]} -eq 0 ]; then
-            isNotice "No backup files found."
+            isNotice "No valid configs found in any backup file OR they all contain default values."
+            while true; do
+                isQuestion "Do you want to continue without a config backup? (y/n): "
+                read -rp "" acceptnoconfigs
+                if [[ "$acceptnoconfigs" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                if [[ $acceptnoconfigs == [nN] ]]; then
+                    echo ""
+                    echo ""
+                    isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
+                    exitScript
+                    exit;
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
             return
         fi
 
@@ -171,21 +186,23 @@ gitCheckConfigs()
 
         # If no valid configs were found in any backup file, display a message
         if [ "$valid_configs_found" = false ]; then
-            isNotice "No valid configs found in any backup file OR they all contain default values."
-            while true; do
-                isQuestion "Do you want to continue without a config backup? (y/n): "
-                read -rp "" acceptupdates
-                if [[ "$acceptupdates" =~ ^[yYnN]$ ]]; then
-                    break
+            if [[ $acceptnoconfigs != [nN] ]]; then
+                isNotice "No valid configs found in any backup file OR they all contain default values."
+                while true; do
+                    isQuestion "Do you want to continue without a config backup? (y/n): "
+                    read -rp "" acceptupdates
+                    if [[ "$acceptnoconfigs" =~ ^[yYnN]$ ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input (y/n)."
+                done
+                if [[ $acceptnoconfigs == [nN] ]]; then
+                    echo ""
+                    echo ""
+                    isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
+                    exitScript
+                    exit;
                 fi
-                isNotice "Please provide a valid input (y/n)."
-            done
-            if [[ $acceptupdates == [nN] ]]; then
-                echo ""
-                echo ""
-                isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
-                exitScript
-                exit;
             fi
         fi
     fi
