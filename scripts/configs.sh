@@ -87,7 +87,7 @@ checkEasyDockerConfigFilesMissingVariables()
         fi
     done
 
-    isSuccessful "Config variable check completed."  # Indicate completion
+    isSuccessful "EasyDocker Config variable check completed."  # Indicate completion
 }
 
 checkApplicationsConfigFilesMissingVariables() 
@@ -284,7 +284,7 @@ checkApplicationsConfigFilesMissingVariables()
         fi
     done
 
-    isSuccessful "Config variable check completed."  # Indicate completion
+    isSuccessful "Application Config variable check completed."  # Indicate completion
 }
 
 checkConfigFilesEdited()
