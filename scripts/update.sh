@@ -181,6 +181,8 @@ gitCheckConfigs()
                 isNotice "Please provide a valid input (y/n)."
             done
             if [[ $acceptupdates == [nN] ]]; then
+                echo ""
+                echo ""
                 isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
                 exitScript
                 exit;
