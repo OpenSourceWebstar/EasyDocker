@@ -260,6 +260,9 @@ EOF
             local result=$(runCommandForDockerInstallUser "mkdir -p $systemd_user_dir")
             checkSuccess "Create the systemd user directory if it doesn't exist"
 
+            local result=$(runCommandForDockerInstallUser "mkdir -p $systemd_user_dir/docker.service.d")
+            checkSuccess "Create the docker.service.d directory if it doesn't exist"
+
             override_conf_file="$systemd_user_dir/docker.service.d/override.conf"
             local result=$(sudo touch $override_conf_file)
             checkSuccess "Create the override.conf in docker.service.d"	
