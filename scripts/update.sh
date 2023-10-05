@@ -227,9 +227,9 @@ gitUseExistingBackup()
 
     gitReset;
     
-    local result=$(copyFile --silent "$backup_install_dir$backup_install_dir/$backup_file_without_zip/"* "$docker_dir" recursive)
+    local result=$(copyFolders "$backup_install_dir$backup_install_dir/$backup_file_without_zip/" "$docker_dir")
     checkSuccess "Copy the backed up folders back into the installation directory"
-    
+
     gitCleanInstallBackups;
 
     gitUntrackFiles;
