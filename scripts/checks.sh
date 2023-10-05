@@ -94,14 +94,14 @@ checkRequirements()
 			if [[ "$ISACT" != "/usr/bin/docker" ]]; then
 				isSuccessful "Docker appears to be installed and running."
 			else
-				isNotice "Docker does not appear to be installed."
+				isNotice "Docker does not appear to be installed. Setup will start soon."
 				((preinstallneeded++)) 
 			fi
 		elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 			if [[ "$ISACT" == "active" ]]; then
 				isSuccessful "Docker appears to be installed and running."
 			else
-				isNotice "Docker does not appear to be installed."
+				isNotice "Docker does not appear to be installed. Setup will start soon."
 				((preinstallneeded++)) 
 			fi
 		fi
@@ -112,7 +112,7 @@ checkRequirements()
 		if [[ "$ISCOMP" != *"command not found"* ]]; then
 			isSuccessful "Docker-compose appears to be installed."
 		else
-			isNotice "Docker-compose does not appear to be installed."
+			isNotice "Docker-compose does not appear to be installed. Setup will start soon."
 			((preinstallneeded++)) 
 		fi
 	fi
@@ -122,7 +122,7 @@ checkRequirements()
 		if grep -q "ROOTLESS" $sysctl; then
 			isSuccessful "Docker Rootless appears to be installed."
 		else
-			isNotice "Docker Rootless does not appear to be installed."
+			isNotice "Docker Rootless does not appear to be installed. Setup will start soon."
 			((preinstallneeded++)) 
 		fi
 	fi
@@ -132,7 +132,7 @@ checkRequirements()
 		if [[ "$ISUFW" != *"command not found"* ]]; then
 			isSuccessful "UFW Firewall appears to be installed."
 		else
-			isNotice "UFW Firewall does not appear to be installed."
+			isNotice "UFW Firewall does not appear to be installed. Setup will start soon."
 			((preinstallneeded++)) 
 		fi
 	fi
@@ -143,7 +143,7 @@ checkRequirements()
 			if [[ "$ISUFWD" != *"command not found"* ]]; then
 				isSuccessful "UFW-Docker Fix appears to be installed."
 			else
-				isNotice "UFW-Docker Fix does not appear to be installed."
+				isNotice "UFW-Docker Fix does not appear to be installed. Setup will start soon."
 				((preinstallneeded++)) 
 			fi
 		fi
@@ -181,7 +181,7 @@ checkRequirements()
 				isSuccessful "Certificate for domain $domain_value installed."
 			else
 				missing_ssl+=("$domain_value")
-				isNotice "Certificate for domain $domain_value not found."
+				isNotice "Certificate for domain $domain_value not found. Setup will start soon."
 			fi
 		done
 
@@ -210,7 +210,7 @@ checkRequirements()
 		if [[ "$ISCRON" != *"command not found"* ]] && sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
 			isSuccessful "Crontab is successfully set up."
 		else
-			isNotice "Crontab not installed."
+			isNotice "Crontab not installed. Setup will start soon."
 			((preinstallneeded++))
 		fi
 	fi
