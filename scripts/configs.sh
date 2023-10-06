@@ -63,6 +63,7 @@ checkEasyDockerConfigFilesMissingVariables()
                                 echo ""
                                 echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
                                 checkSuccess "Adding the $var_line to '$local_config_filename':"
+                                source $local_config_file
                             ;;
                             2)
                                 echo ""
@@ -71,6 +72,7 @@ checkEasyDockerConfigFilesMissingVariables()
                                 echo ""
                                 echo "${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
                                 checkSuccess "Adding the ${remote_var}=$custom_value to '$local_config_filename':"
+                                source $local_config_file
                             ;;
                             [xX])
                                 # User chose to skip
@@ -147,6 +149,7 @@ checkApplicationsConfigFilesMissingVariables()
                             echo ""
                             echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
                             checkSuccess "Adding the $var_line to '$container_config_filename':"
+                            source $container_config_file
 
                             if [[ $var_line == *"WHITELIST="* ]]; then
                                 local app_dir=$install_containers_dir$config_app_name
@@ -211,6 +214,7 @@ checkApplicationsConfigFilesMissingVariables()
                             echo ""
                             echo "${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
                             checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_filename':"
+                            source $container_config_file
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
                                 local app_dir=$install_containers_dir$config_app_name
@@ -355,7 +359,8 @@ editAppConfig()
                 while true; do
                     echo ""
                     isNotice "Changes have been made to the $app_name configuration."
-                    isQuestion "Do you want to reinstall the $app_name application? (y/n): "
+                    echo ""
+                    isQuestion "Would you like to reinstall $app_name? (y/n): "
                     read -p "" reinstall_choice
                     if [[ -n "$reinstall_choice" ]]; then
                         break
