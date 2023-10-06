@@ -235,6 +235,11 @@ gitCheckForUpdate()
 
 gitUseExistingBackup()
 {
+    echo ""
+    echo "#####################################"
+    echo "###  Installing EasyDocker Backup ###"
+    echo "#####################################"
+    echo ""
     local backup_file="$1"
     local backup_file_without_zip=$(basename "$backup_file" .zip)
     update_done=false
@@ -263,6 +268,11 @@ gitUseExistingBackup()
 
 gitFolderResetAndBackup()
 {
+    echo ""
+    echo "#####################################"
+    echo "###      Updating EasyDocker      ###"
+    echo "#####################################"
+    echo ""
     update_done=false
 
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
