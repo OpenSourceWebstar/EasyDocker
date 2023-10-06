@@ -188,7 +188,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $reinstallafterconfig in
                                             [yY])
                                                 isNotice "Reinstalling $config_app_name now..."
-                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${config_app_name:0:1})${config_app_name:1}"
                                                 local installFuncName="install${app_name_ucfirst}"
                                                 ${installFuncName} install
                                                 break  # Exit the loop
@@ -252,13 +252,9 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $reinstallafterconfig in
                                             [yY])
                                                 isNotice "Reinstalling $config_app_name now..."
-                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${config_app_name:0:1})${config_app_name:1}"
                                                 local installFuncName="install${app_name_ucfirst}"
-                                                if type "$installFuncName" &>/dev/null; then
-                                                    "$installFuncName" "install"
-                                                else
-                                                    isNotice "Installation function not found for $app_name."
-                                                fi
+                                                ${installFuncName} install
                                                 break  # Exit the loop
                                                 ;;
                                             [nN])
