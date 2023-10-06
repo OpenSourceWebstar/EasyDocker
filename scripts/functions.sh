@@ -140,6 +140,11 @@ detectOS()
     fi
 }
 
+fileHasEmptyLine() 
+{
+    tail -n 1 "$1" | [[ "$(cat -)" == "" ]]
+}
+
 dashyUpdateConf() 
 {
     # Hardcoded path to Dashy's conf.yml file

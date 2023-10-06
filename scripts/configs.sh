@@ -61,18 +61,32 @@ checkEasyDockerConfigFilesMissingVariables()
                         case "$choice" in
                             1)
                                 echo ""
-                                echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                # Check if the file ends with an empty line
+                                if fileHasEmptyLine "$local_config_file"; then
+                                    echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                else
+                                    echo "" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                    echo "$var_line" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                fi
+
                                 checkSuccess "Adding the $var_line to '$local_config_filename':"
-                                source $local_config_file
+                                source "$local_config_file"
                             ;;
                             2)
                                 echo ""
                                 isQuestion "Enter your value for $remote_var: "
                                 read -p " " custom_value
                                 echo ""
-                                echo "${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+
+                                if fileHasEmptyLine "$local_config_file"; then
+                                    echo "${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                else
+                                    echo "" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                    echo "${remote_var}=$custom_value" | sudo tee -a "$local_config_file" > /dev/null 2>&1
+                                fi
+
                                 checkSuccess "Adding the ${remote_var}=$custom_value to '$local_config_filename':"
-                                source $local_config_file
+                                source "$local_config_file"
                             ;;
                             [xX])
                                 # User chose to skip
@@ -147,9 +161,16 @@ checkApplicationsConfigFilesMissingVariables()
                     case "$choice" in
                         1)
                             echo ""
-                            echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+
+                            if fileHasEmptyLine "$container_config_file"; then
+                                echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            else
+                                echo "" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                                echo "$var_line" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            fi
+
                             checkSuccess "Adding the $var_line to '$container_config_filename':"
-                            source $container_config_file
+                            source "$container_config_file"
 
                             if [[ $var_line == *"WHITELIST="* ]]; then
                                 local app_dir=$install_containers_dir$config_app_name
@@ -212,9 +233,16 @@ checkApplicationsConfigFilesMissingVariables()
                             isQuestion "Enter your value for $remote_var: "
                             read -p " " custom_value
                             echo ""
-                            echo "${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+
+                            if fileHasEmptyLine "$container_config_file"; then
+                                echo "${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            else
+                                echo "" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                                echo "${remote_var}=$custom_value" | sudo tee -a "$container_config_file" > /dev/null 2>&1
+                            fi
+
                             checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_filename':"
-                            source $container_config_file
+                            source "$container_config_file"
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
                                 local app_dir=$install_containers_dir$config_app_name
