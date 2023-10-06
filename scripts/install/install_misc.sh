@@ -157,28 +157,36 @@ removeBackupCrontabApp()
     fi
 }
 
-
-installBackupCrontabApp()
-{
+installBackupCrontabApp() {
     local name=$1
+    local config_variable
 
-    if ! sudo -u $easydockeruser crontab -l | grep -q "$name"; then
-        echo ""
-        isNotice "Automatic Backups for $name are not set up."
-        while true; do
-            isQuestion "Do you want to set up automatic $name backups (y/n): "
-            read -rp "" setupcrontab
-            if [[ "$setupcrontab" =~ ^[yYnN]$ ]]; then
-                break
-            fi
-            isNotice "Please provide a valid input (y/n)."
-        done
-        if [[ "$setupcrontab" =~ ^[yY]$ ]]; then
+    # Determine the configuration variable based on the name
+    if [[ "$name" == "full" ]]; then
+        config_variable="CFG_BACKUP_FULL"
+    else
+        config_variable="CFG_${name^^}_BACKUP"
+    fi
 
-            installSetupCrontab $name
-            if [[ "$name" != "full" ]]; then
-                databaseCronJobsInsert $name
-                installSetupCrontabTiming $name
+    # Check if the configuration variable is set to true
+    if [[ -n "${!config_variable}" && "${!config_variable}" == "true" ]]; then
+        if ! sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+            echo ""
+            isNotice "Automatic Backups for $name are not set up."
+            while true; do
+                isQuestion "Do you want to set up automatic $name backups (y/n): "
+                read -rp "" setupcrontab
+                if [[ "$setupcrontab" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
+            if [[ "$setupcrontab" =~ ^[yY]$ ]]; then
+                installSetupCrontab $name
+                if [[ "$name" != "full" ]]; then
+                    databaseCronJobsInsert $name
+                    installSetupCrontabTiming $name
+                fi
             fi
         fi
     fi
