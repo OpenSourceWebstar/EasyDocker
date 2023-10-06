@@ -757,7 +757,7 @@ viewAppCategoryConfigs()
     for app_dir in "$containers_dir"/*/; do
         if [ -d "$app_dir" ]; then
             local app_name=$(basename "$app_dir")
-            local app_config_file="$app_dir$app_name.sh"
+            local app_config_file="$install_containers_dir$app_name/$app_name.sh"
             if [ -f "$app_config_file" ]; then
                 local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
                 if [ "$category_info" == "$category" ]; then
