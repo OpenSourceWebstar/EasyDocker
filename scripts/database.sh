@@ -435,13 +435,12 @@ databaseCycleThroughListAppsCrontab()
     done < <(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 0;")
 
     for name in "${uninstalled_apps[@]}"; do
-        echo "removeBackupCrontabApp $name"
-        removeBackupCrontabApp $name
+        removeBackupCrontabAppFolderRemoved $name
     done
 
     # Setup crontab entries for installed applications
     for name in "${app_names[@]}"; do
-        installBackupCrontabApp $name
+        checkBackupCrontabApp $name
     done
 
     echo ""

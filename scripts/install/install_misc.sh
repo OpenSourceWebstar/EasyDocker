@@ -131,9 +131,17 @@ deleteCrontab()
     echo "All crontab data has been deleted."
 }
 
-removeBackupCrontabApp() 
+removeBackupCrontabApp()
 {
-    local name=$1
+    local name="$1"
+    # Remove the crontab entry for the specified application
+    sudo -u $easydockeruser crontab -l | grep -v "$name" | sudo -u $easydockeruser crontab -
+    isSuccessful "Automatic backups for $name have been removed."
+}
+
+removeBackupCrontabAppFolderRemoved() 
+{
+    local name="$1"
 
     # Check if the crontab entry exists for the specified application
     if sudo -u $easydockeruser crontab -l | grep -q "$name"; then
@@ -148,16 +156,12 @@ removeBackupCrontabApp()
             isNotice "Please provide a valid input (y/n)."
         done
         if [[ "$removecrontab" =~ ^[yY]$ ]]; then
-            # Remove the crontab entry for the specified application
-            sudo -u $easydockeruser crontab -l | grep -v "$name" | sudo -u $easydockeruser crontab -
-            isSuccessful "Automatic backups for $name have been removed."
+            removeBackupCrontabApp $name;
         fi
-    #else
-        #isNotice "Automatic Backups for $name are not set up."
     fi
 }
 
-installBackupCrontabApp() 
+checkBackupCrontabApp() 
 {
     local name=$1
     local config_variable
@@ -188,6 +192,22 @@ installBackupCrontabApp()
                     databaseCronJobsInsert $name
                     installSetupCrontabTiming $name
                 fi
+            fi
+        fi
+    elif [[ -n "${!config_variable}" && "${!config_variable}" == "false" ]]; then
+        if sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+            echo ""
+            isNotice "Automatic Backups for $name are set up but disabled in the configs."
+            while true; do
+                isQuestion "Do you want to remove the automatic $name backups (y/n): "
+                read -rp "" disablecrontab
+                if [[ "$disablecrontab" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
+            if [[ "$disablecrontab" =~ ^[yY]$ ]]; then
+                removeBackupCrontabApp $name;
             fi
         fi
     fi

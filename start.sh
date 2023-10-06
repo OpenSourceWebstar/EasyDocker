@@ -203,9 +203,9 @@ startOther()
         installCrontab
     fi
 
-    if [[ "$toolinstallcrontabssh" == [yY] ]]; then
-        installCrontabSSHScan;
-    fi
+    #if [[ "$toolinstallcrontabssh" == [yY] ]]; then
+        #installCrontabSSHScan;
+    #fi
 
     #######################################################
     ###                      Database                   ###

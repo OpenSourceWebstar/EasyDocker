@@ -192,8 +192,8 @@ mainMenu()
 				read -rp "" toolinstallremotesshlist
 				isOptionMenu "Install Crontab? (y/n): "
 				read -rp "" toolinstallcrontab
-				isOptionMenu "Install SSH Scanning into Crontab? (y/n): "
-				read -rp "" toolinstallcrontabssh
+				#isOptionMenu "Install SSH Scanning into Crontab? (y/n): "
+				#read -rp "" toolinstallcrontabssh
 
 				startOther;
 
