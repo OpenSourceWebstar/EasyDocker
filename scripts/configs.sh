@@ -382,8 +382,12 @@ editAppConfig()
             # Compare the checksums to check if changes were made
             if [[ "$original_checksum" != "$edited_checksum" ]]; then
                 source $config_file
-                cat $config_file
+                #cat $config_file
                 # Ask the user if they want to reinstall the application
+                echo ""
+                echo "############################################"
+                echo "######    App Config Changes Found    ######"
+                echo "############################################"
                 while true; do
                     echo ""
                     isNotice "Changes have been made to the $app_name configuration."
