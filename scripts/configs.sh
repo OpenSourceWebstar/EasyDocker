@@ -644,6 +644,7 @@ viewConfigs()
                 exit;
             else
                 isNotice "Exiting..."
+                checkConfigFilesMissingVariables;
                 return
             fi
             ;;
