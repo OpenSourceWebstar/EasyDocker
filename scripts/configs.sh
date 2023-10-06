@@ -437,13 +437,12 @@ viewEasyDockerConfigs()
         if [[ "$selected_letter" == "x" ]]; then
             if [[ $config_edited == "true" ]]; then
                 echo ""
+                isNotice "Reloading configuration file(s) for EasyDocker."
                 echo ""
-                isNotice "You have edited configuration file(s) for EasyDocker."
-                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
-                echo ""
-                exit;
+                loadFiles "easydocker_configs";
             else
                 isNotice "Exiting..."
+                checkConfigFilesMissingVariables;
                 return
             fi
             elif [[ "$selected_letter" =~ [A-Za-z] ]]; then
@@ -637,11 +636,10 @@ viewConfigs()
         x)
             if [[ $config_edited == "true" ]]; then
                 echo ""
+                isNotice "Reloading configuration file(s) for all Configs."
                 echo ""
-                isNotice "You have edited configuration file(s) for EasyDocker."
-                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
-                echo ""
-                exit;
+                loadFiles "easydocker_configs";
+                loadFiles "app_configs";
             else
                 isNotice "Exiting..."
                 checkConfigFilesMissingVariables;
@@ -682,11 +680,9 @@ viewAppConfigs()
         x)
             if [[ $config_edited == "true" ]]; then
                 echo ""
+                isNotice "Reloading configuration file(s) for Applications."
                 echo ""
-                isNotice "You have edited configuration file(s) for EasyDocker."
-                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
-                echo ""
-                exit;
+                loadFiles "app_configs";
             else
                 isNotice "Exiting..."
                 return
@@ -770,13 +766,12 @@ viewAppCategoryConfigs()
         elif [[ "$selected_number" == "x" ]]; then
             if [[ $config_edited == "true" ]]; then
                 echo ""
+                isNotice "Reloading configuration file(s) for all Applications."
                 echo ""
-                isNotice "You have edited configuration file(s) for EasyDocker."
-                isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
-                echo ""
-                exit
+                loadFiles "app_configs";
+                resetToMenu;
             else
-                resetToMenu
+                resetToMenu;
             fi
         elif [[ "$selected_number" =~ ^[0-9]+$ ]]; then
             if ((selected_number >= 1 && selected_number <= (${#installed_apps[@]} + ${#other_apps[@]}))); then
