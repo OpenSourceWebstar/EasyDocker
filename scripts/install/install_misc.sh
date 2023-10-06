@@ -157,7 +157,8 @@ removeBackupCrontabApp()
     fi
 }
 
-installBackupCrontabApp() {
+installBackupCrontabApp() 
+{
     local name=$1
     local config_variable
 
@@ -213,6 +214,12 @@ installSetupCrontab()
 {
     local entry_name=$1
 
+    echo ""
+    echo "#####################################"
+    echo "###   Adding $entry_name to Crontab"
+    echo "#####################################"
+    echo ""
+
     # Check to see if already instealled
     if ! sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
         isError "Crontab is not setup"
@@ -232,25 +239,21 @@ installSetupCrontab()
 
     if ! echo "$existing_crontab" | grep -q "$full_comment"; then
         existing_crontab=$(echo -e "$existing_crontab\n$full_comment")
-        echo ""
         checkSuccess "Check if the full comment exists in the crontab"
     fi
 
     if [ "$entry_name" = "full" ]; then
         existing_crontab=$(echo "$existing_crontab" | sed "/$full_comment/a\\
 $crontab_entry")
-        echo ""
         checkSuccess "Add the new backup entry to the existing crontab"
     else
         # Check if the apps comment exists in the crontab
         if ! echo "$existing_crontab" | grep -q "$apps_comment"; then
             existing_crontab=$(echo -e "$existing_crontab\n$apps_comment")
-            echo ""
             checkSuccess "Insert the full entry after the full comment"
         fi
         existing_crontab=$(echo "$existing_crontab" | sed "/$apps_comment/a\\
 $crontab_entry")
-        echo ""
         checkSuccess "Insert the non-full entry after the apps comment"
     fi
 
