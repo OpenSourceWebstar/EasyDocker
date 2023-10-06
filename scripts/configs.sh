@@ -470,7 +470,9 @@ viewEasyDockerConfigs()
                 loadFiles "easydocker_configs";
             else
                 isNotice "Exiting..."
+                echo ""
                 checkConfigFilesMissingVariables;
+                databaseCycleThroughListAppsCrontab true;
                 return
             fi
             elif [[ "$selected_letter" =~ [A-Za-z] ]]; then
@@ -670,7 +672,9 @@ viewConfigs()
                 loadFiles "app_configs";
             else
                 isNotice "Exiting..."
+                echo ""
                 checkConfigFilesMissingVariables;
+                databaseCycleThroughListAppsCrontab true;
                 return
             fi
             ;;
