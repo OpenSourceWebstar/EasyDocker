@@ -2,8 +2,18 @@
 
 checkConfigFilesMissingVariables()
 {
+    local showheader="$1"
+
+    if [[ $showheader == "true" ]]; then
+        echo ""
+        echo "#################################"
+        echo "###   Scanning Config Files   ###"
+        echo "#################################"
+        echo ""
+    fi
     checkEasyDockerConfigFilesMissingVariables;
     checkApplicationsConfigFilesMissingVariables;
+
 }
 
 checkEasyDockerConfigFilesMissingVariables()
@@ -475,7 +485,7 @@ viewEasyDockerConfigs()
             else
                 isNotice "Exiting..."
                 echo ""
-                checkConfigFilesMissingVariables;
+                checkConfigFilesMissingVariables true;
                 databaseCycleThroughListAppsCrontab true;
                 return
             fi
@@ -677,7 +687,7 @@ viewConfigs()
             else
                 isNotice "Exiting..."
                 echo ""
-                checkConfigFilesMissingVariables;
+                checkConfigFilesMissingVariables true;
                 databaseCycleThroughListAppsCrontab true;
                 return
             fi
@@ -744,7 +754,7 @@ viewAppCategoryConfigs()
     local other_apps=()
 
     # Collect all app_name folders and categorize them into installed and others
-    for app_dir in "$install_containers_dir"/*/; do
+    for app_dir in "$containers_dir"/*/; do
         if [ -d "$app_dir" ]; then
             local app_name=$(basename "$app_dir")
             local app_config_file="$app_dir$app_name.sh"
