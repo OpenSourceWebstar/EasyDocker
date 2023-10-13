@@ -373,8 +373,8 @@ editAppConfig()
         return
     fi
 
-    # Use find to search for the app_name folder within $install_containers_dir
-    local app_dir=$install_containers_dir$app_name
+    # Use find to search for the app_name folder within $containers_dir
+    local app_dir=$containers_dir$app_name
 
     if [ -n "$app_dir" ]; then
         local config_file="$app_dir/$app_name.config"
