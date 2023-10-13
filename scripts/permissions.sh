@@ -225,11 +225,11 @@ copyFolders()
             local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
         elif [[ $clean_dir == *"$configs_dir"* ]]; then
-            local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
-            checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
+            local result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
+            checkSuccess "Updating $subdir_name with $easydockeruser ownership"
         elif [[ $clean_dir == *"$logs_dir"* ]]; then
-            local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
-            checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
+            local result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
+            checkSuccess "Updating $subdir_name with $easydockeruser ownership"
         else
             local result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
             checkSuccess "Updating $subdir_name with $easydockeruser ownership"
