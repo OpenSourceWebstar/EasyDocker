@@ -75,23 +75,15 @@ fixPermissionsBeforeStart()
         changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
     fi
 
-    # This is where custom app specific permissions are needed
-    if [[ $app_name == "traefik" ]]; then
-        local app_install_dir="${install_dir}$app_name"
-        if [ ! -d "app_install_dir" ]; then
-            # Check if the file exists before updating ownership and permissions
-            if [ -f "$app_install_dir/etc/certs/acme.json" ]; then
-                updateFileOwnership "$app_install_dir/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-                local result=$(sudo chmod 600 "$app_install_dir/etc/certs/acme.json")
-                checkSuccess "Set permissions to acme.json file for traefik"
-            fi
-            # Check if the file exists before updating ownership and permissions
-            if [ -f "$app_install_dir/etc/traefik.yml" ]; then
-                updateFileOwnership "$app_install_dir/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-                local result=$(sudo chmod 600 "$app_install_dir/etc/traefik.yml")
-                checkSuccess "Set permissions to traefik.yml file for traefik"
-            fi
-        fi
+    if [ -f "${install_dir}traefik/etc/certs/acme.json" ]; then
+        updateFileOwnership "${install_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+        local result=$(sudo chmod 600 "${install_dir}traefik/etc/certs/acme.json")
+        checkSuccess "Set permissions to acme.json file for traefik"
+    fi
+    if [ -f "${install_dir}traefik/etc/traefik.yml" ]; then
+        updateFileOwnership "${install_dir}traefik/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
+        local result=$(sudo chmod 600 "${install_dir}traefik/etc/traefik.yml")
+        checkSuccess "Set permissions to traefik.yml file for traefik"
     fi
 }
 
