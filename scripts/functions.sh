@@ -148,13 +148,13 @@ fileHasEmptyLine()
 dashyUpdateConf() 
 {
     # Hardcoded path to Dashy's conf.yml file
-    local conf_file="${install_dir}dashy/conf.yml"
+    local conf_file="${containers_dir}dashy/conf.yml"
 
     # Clean up for new generation
-    sudo rm -rf "${install_dir}dashy/conf.yml"
+    sudo rm -rf "${containers_dir}dashy/conf.yml"
 
     # Check if Dashy app is installed
-    if [ -d "${install_dir}dashy" ]; then
+    if [ -d "${containers_dir}dashy" ]; then
         echo ""
         echo "#####################################"
         echo "###    Dashy Config Generation    ###"

@@ -75,14 +75,14 @@ fixPermissionsBeforeStart()
         changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
     fi
 
-    if [ -f "${install_dir}traefik/etc/certs/acme.json" ]; then
-        updateFileOwnership "${install_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
-        local result=$(sudo chmod 600 "${install_dir}traefik/etc/certs/acme.json")
+    if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
+        updateFileOwnership "${containers_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
+        local result=$(sudo chmod 600 "${containers_dir}traefik/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for traefik"
     fi
-    if [ -f "${install_dir}traefik/etc/traefik.yml" ]; then
-        updateFileOwnership "${install_dir}traefik/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
-        local result=$(sudo chmod 600 "${install_dir}traefik/etc/traefik.yml")
+    if [ -f "${containers_dir}traefik/etc/traefik.yml" ]; then
+        updateFileOwnership "${containers_dir}traefik/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER
+        local result=$(sudo chmod 600 "${containers_dir}traefik/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for traefik"
     fi
 }

@@ -123,7 +123,7 @@ databaseAppScan()
     while IFS='|' read -r folder_name status uninstall_date; do
         if [[ -n "$folder_name" ]]; then
             existing_folder_names+=("$folder_name")
-            # Check if the folder exists in the install_dir
+            # Check if the folder exists in the containers_dir
             if [ -d "$containers_dir/$folder_name" ]; then
                 if (( status == 0 )); then 
                     isNotice "The folder for $folder_name has been found."
