@@ -65,69 +65,12 @@ setupConfigToContainer()
         else
             copyFile "$silent_flag" "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
-    else
-        if [[ "$flags" == "install" ]]; then
-            if [ -f "$target_path/$app_name.config" ]; then
-                # Same content check
-                if cmp -s "$source_file" "$target_path/$app_name.config"; then
-                    echo ""
-                    isNotice "Config file for $app_name contains no edits."
-                    echo ""
-                    while true; do
-                        isQuestion "Would you like to make edits to the config file? (y/n): "
-                        read -rp "" editconfigaccept
-                        echo ""
-                        case $editconfigaccept in
-                            [yY])
-                                # Calculate the checksum of the original file
-                                local original_checksum=$(md5sum "$target_path/$app_name.config")
+    fi
 
-                                # Open the file with nano for editing
-                                sudo nano "$target_path/$app_name.config"
-
-                                # Calculate the checksum of the edited file
-                                local edited_checksum=$(md5sum "$target_path/$app_name.config")
-
-                                # Compare the checksums to check if changes were made
-                                if [[ "$original_checksum" != "$edited_checksum" ]]; then
-                                    isSuccessful "Changes have been made to the $app_name.config."
-                                fi
-                                break
-                                ;;
-                            [nN])
-                                break  # Exit the loop without updating
-                                ;;
-                            *)
-                                isNotice "Please provide a valid input (y or n)."
-                                ;;
-                        esac
-                    done
-                else
-                    echo ""
-                    isNotice "Config file for $app_name has been updated..."
-                    echo ""
-                    while true; do
-                        isQuestion "Would you like to reset the config file? (y/n): "
-                        read -rp "" resetconfigaccept
-                        echo ""
-                        case $resetconfigaccept in
-                            [yY])
-                                isNotice "Resetting $app_name config file."
-                                copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-                                break  # Exit the loop after executing whitelistAndStartApp
-                                ;;
-                            [nN])
-                                break  # Exit the loop without updating
-                                ;;
-                            *)
-                                isNotice "Please provide a valid input (y or n)."
-                                ;;
-                        esac
-                    done
-                fi
-            else
-                isNotice "Config file for $app_name does not exist. Creating it..."
-                copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    if [[ "$flags" == "install" ]]; then
+        if [ -f "$target_path/$app_name.config" ]; then
+            # Same content check
+            if cmp -s "$source_file" "$target_path/$app_name.config"; then
                 echo ""
                 isNotice "Config file for $app_name contains no edits."
                 echo ""
@@ -160,7 +103,64 @@ setupConfigToContainer()
                             ;;
                     esac
                 done
+            else
+                echo ""
+                isNotice "Config file for $app_name has been updated..."
+                echo ""
+                while true; do
+                    isQuestion "Would you like to reset the config file? (y/n): "
+                    read -rp "" resetconfigaccept
+                    echo ""
+                    case $resetconfigaccept in
+                        [yY])
+                            isNotice "Resetting $app_name config file."
+                            copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                            break  # Exit the loop after executing whitelistAndStartApp
+                            ;;
+                        [nN])
+                            break  # Exit the loop without updating
+                            ;;
+                        *)
+                            isNotice "Please provide a valid input (y or n)."
+                            ;;
+                    esac
+                done
             fi
+        else
+            isNotice "Config file for $app_name does not exist. Creating it..."
+            copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            echo ""
+            isNotice "Config file for $app_name contains no edits."
+            echo ""
+            while true; do
+                isQuestion "Would you like to make edits to the config file? (y/n): "
+                read -rp "" editconfigaccept
+                echo ""
+                case $editconfigaccept in
+                    [yY])
+                        # Calculate the checksum of the original file
+                        local original_checksum=$(md5sum "$target_path/$app_name.config")
+
+                        # Open the file with nano for editing
+                        sudo nano "$target_path/$app_name.config"
+
+                        # Calculate the checksum of the edited file
+                        local edited_checksum=$(md5sum "$target_path/$app_name.config")
+
+                        # Compare the checksums to check if changes were made
+                        if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                            isSuccessful "Changes have been made to the $app_name.config."
+                        fi
+                        break
+                        ;;
+                    [nN])
+                        break  # Exit the loop without updating
+                        ;;
+                    *)
+                        isNotice "Please provide a valid input (y or n)."
+                        ;;
+                esac
+            done
         fi
     fi
 
