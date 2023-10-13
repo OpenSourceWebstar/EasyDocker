@@ -81,17 +81,17 @@ installTraefik()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Updating file permissions before starting."
-        echo ""
-
-		fixPermissionsBeforeStart $app_name;
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
 		whitelistAndStartApp $app_name;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
+
+		fixPermissionsBeforeStart $app_name;
 
         ((menu_number++))
         echo ""
