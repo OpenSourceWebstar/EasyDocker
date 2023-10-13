@@ -27,7 +27,7 @@ services:
       #caddy.tls: "internal"
       #traefik.enable: true
       #traefik.http.routers.cozy.entrypoints: web,websecure
-      #traefik.http.routers.cozy.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.cozy.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.cozy.tls: true
       #traefik.http.routers.cozy.tls.certresolver: production
     networks:

@@ -20,7 +20,7 @@ services:
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true
       #traefik.http.routers.tiledesk.entrypoints: web,websecure
-      #traefik.http.routers.tiledesk.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.tiledesk.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.tiledesk.tls: true
       #traefik.http.routers.tiledesk.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST

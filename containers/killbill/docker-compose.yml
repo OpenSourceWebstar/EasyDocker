@@ -31,7 +31,7 @@ services:
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true
       #traefik.http.routers.killbill.entrypoints: web,websecure
-      #traefik.http.routers.killbill.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.killbill.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.killbill.tls: true
       #traefik.http.routers.killbill.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST

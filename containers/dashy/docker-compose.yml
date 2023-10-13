@@ -37,7 +37,7 @@ services:
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true
       #traefik.http.routers.dashy.entrypoints: web,websecure
-      #traefik.http.routers.dashy.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.dashy.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.dashy.tls: true
       #traefik.http.routers.dashy.tls.certresolver: production
     networks:

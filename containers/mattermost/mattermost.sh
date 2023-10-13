@@ -143,7 +143,7 @@ mattermostAddToYMLFile()
     labels:
       traefik.enable: true
       traefik.http.routers.mattermost.entrypoints: web,websecure
-      traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`) # Update to your domain
+      traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`)
       traefik.http.routers.mattermost.tls: true
       traefik.http.routers.mattermost.tls.certresolver: production
     networks:

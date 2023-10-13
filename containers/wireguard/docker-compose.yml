@@ -42,7 +42,7 @@ services:
       #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
       #traefik.enable: true
       #traefik.http.routers.wireguard.entrypoints: web,websecure
-      #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.wireguard.tls: true
       #traefik.http.routers.wireguard.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST

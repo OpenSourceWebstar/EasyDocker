@@ -97,7 +97,7 @@ services:
       #caddy.reverse_proxy: "10.8.1.104:PORTHERE"
       #traefik.enable: true
       #traefik.http.routers.kimai-nginx.entrypoints: web,websecure
-      #traefik.http.routers.kimai-nginx.rule: Host(`DOMAINSUBNAMEHERE`) # Update to your domain
+      #traefik.http.routers.kimai-nginx.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.kimai-nginx.tls: true
       #traefik.http.routers.kimai-nginx.tls.certresolver: production
     networks:
