@@ -71,23 +71,23 @@ installWireguard()
         if [ -f "/etc/sysctl.d/99-sysctl.conf" ]; then
             local result=$(sudo sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" /etc/sysctl.d/99-sysctl.conf)
             checkSuccess "Enabling IPv4 IP Forwarding in the 99-sysctl.conf file (Kernel)"
-            local result=$(sudo sed -i "s/#net.ipv6.conf.all.forwarding/net.ipv6.conf.all.forwarding/g" /etc/sysctl.d/99-sysctl.conf)
-            checkSuccess "Enabling IPv6 IP Forwarding in the 99-sysctl.conf file (Kernel)"
+            #local result=$(sudo sed -i "s/#net.ipv6.conf.all.forwarding/net.ipv6.conf.all.forwarding/g" /etc/sysctl.d/99-sysctl.conf)
+            #checkSuccess "Enabling IPv6 IP Forwarding in the 99-sysctl.conf file (Kernel)"
         fi
         if [ -f "/etc/sysctl.conf" ]; then
             local result=$(sudo sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" /etc/sysctl.conf)
             checkSuccess "Enabling IPv4 IP Forwarding in the sysctl.conf file (Kernel)"
-            local result=$(sudo sed -i "s/#net.ipv6.conf.all.forwarding/net.ipv6.conf.all.forwarding/g" /etc/sysctl.conf)
-            checkSuccess "Enabling IPv6 IP Forwarding in the sysctl.conf file (Kernel)"
+            #local result=$(sudo sed -i "s/#net.ipv6.conf.all.forwarding/net.ipv6.conf.all.forwarding/g" /etc/sysctl.conf)
+            #checkSuccess "Enabling IPv6 IP Forwarding in the sysctl.conf file (Kernel)"
         fi
         
         if [ -f "/etc/ufw/sysctl.conf" ]; then
             local result=$(sudo sed -i "s|#net/ipv4/ip_forward|net/ipv4/ip_forward|g" /etc/ufw/sysctl.conf)
             checkSuccess "Enabling IPv4 IP Forwarding in the ufw sysctl.conf file"
-            local result=$(sudo sed -i "s|#net/ipv6/conf/default/forwarding|net/ipv6/conf/default/forwarding|g" /etc/ufw/sysctl.conf)
-            checkSuccess "Enabling IPv6 IP Forwarding default in the ufw sysctl.conf file"
-            local result=$(sudo sed -i "s|#net/ipv6/conf/all/forwarding|net/ipv6/conf/all/forwarding|g" /etc/ufw/sysctl.conf)
-            checkSuccess "Enabling IPv6 IP Forwarding all in the ufw sysctl.conf file"
+            #local result=$(sudo sed -i "s|#net/ipv6/conf/default/forwarding|net/ipv6/conf/default/forwarding|g" /etc/ufw/sysctl.conf)
+            #checkSuccess "Enabling IPv6 IP Forwarding default in the ufw sysctl.conf file"
+            #local result=$(sudo sed -i "s|#net/ipv6/conf/all/forwarding|net/ipv6/conf/all/forwarding|g" /etc/ufw/sysctl.conf)
+            #checkSuccess "Enabling IPv6 IP Forwarding all in the ufw sysctl.conf file"
         fi
 
         local result=$(sudo sysctl -p)

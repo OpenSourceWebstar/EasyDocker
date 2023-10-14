@@ -91,8 +91,6 @@ openAppPorts()
     if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
         openPort $app_name 80/tcp
         openPort $app_name 443/tcp
-        openPort $app_name 80/udp
-        openPort $app_name 443/udp
     elif [[ "$app_name" == "wireguard" ]]; then
         openPort $app_name 51820/udp
     elif [[ "$app_name" == "jitsimeet" ]]; then
