@@ -200,14 +200,16 @@ EOF
 						local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 
+            			isNotice "Starting container for $app_name, this may take a while..."
 						local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
-						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
+						checkSuccess "Started container for $app_name - (Without Nginx Compose File)"
 					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
 						local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
 						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
 						
+            			isNotice "Starting container for $app_name, this may take a while..."
 						local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
-						checkSuccess "Starting up container for $app_name - (Without Nginx Compose File)"
+						checkSuccess "Started container for $app_name - (Without Nginx Compose File)"
 					fi
 				fi
 			fi
