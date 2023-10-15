@@ -167,7 +167,7 @@ EOF
 		isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
 		read -rp "" MATN
     	if [[ "$MATN" == [nN] ]]; then
-			if [[ "$OS" == [123] ]]; then
+			if [[ "$OS" == [1234567] ]]; then
 				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
 					checkSuccess "Shutting down nginx container"
@@ -185,7 +185,7 @@ EOF
 		fi
 
 		if [[ "$MATN" == [yY] ]]; then
-			if [[ "$OS" == [123] ]]; then
+			if [[ "$OS" == [1234567] ]]; then
 				if grep -q "vpn:" $containers_dir$app_name/$DCWN; then
 					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
 				else			

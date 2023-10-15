@@ -60,7 +60,7 @@ dockerDownRemove()
         isError "No app_name provided, unable to continue..."
         return
     else
-        if [[ "$OS" == [123] ]]; then
+        if [[ "$OS" == [1234567] ]]; then
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
                 local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down -v --rmi all --remove-orphans")
                 isNotice "Shutting down & Removing all $app_name container data"

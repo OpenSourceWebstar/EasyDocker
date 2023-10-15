@@ -123,7 +123,7 @@ installAkaunting()
 			local result=$(createTouch $containers_dir$app_name/SETUPINITIALIZED)
 			checkSuccess "Creating initizilation file"
 
-			if [[ "$OS" == [123] ]]; then
+			if [[ "$OS" == [1234567] ]]; then
 				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && AKAUNTING_SETUP=true docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)")
 					isSuccessful "Starting $app_name up with initial setup flag"

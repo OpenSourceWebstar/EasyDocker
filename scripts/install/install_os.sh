@@ -2,7 +2,7 @@
 
 installDebianUbuntu()
 {
-    if [[ "$OS" == [123] ]]; then
+    if [[ "$OS" == [1234567] ]]; then
         if checkIfUpdateShouldRun; then
             isNotice "Installing System Updates... this may take a while...be patient."
             if [[ "$OS" == "1" ]]; then

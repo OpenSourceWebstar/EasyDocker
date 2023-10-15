@@ -36,7 +36,7 @@ checkRequirements()
 		fi
 	fi
 
-	if [[ "$OS" == [123] ]]; then
+	if [[ "$OS" == [1234567] ]]; then
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
 		ISUFW=$( (sudo ufw status ) 2>&1 )
 		ISUFWD=$( (sudo ufw-docker) 2>&1 )

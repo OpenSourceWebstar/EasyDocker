@@ -3,7 +3,7 @@
 installDockerManagerUser()
 {
     if [[ "$CFG_REQUIREMENT_MANAGER" == "true" ]]; then
-        if [[ "$OS" == [123] ]]; then
+        if [[ "$OS" == [1234567] ]]; then
             if ! userExists "$CFG_DOCKER_MANAGER_USER"; then
                 echo ""
                 echo "############################################"
@@ -84,7 +84,7 @@ uninstallDockerManagerUser()
     echo "############################################"
     echo ""
 	if [[ "$toolsremovedockermanageruser" == [yY] ]]; then
-        if [[ "$OS" == [123] ]]; then
+        if [[ "$OS" == [1234567] ]]; then
             # Remove the User Account and capture the exit status and output
             local result=$(sudo -u $easydockeruser userdel -r "$CFG_DOCKER_MANAGER_USER" 2>&1)
             checkSuccess "Removing the '$CFG_DOCKER_MANAGER_USER' user"

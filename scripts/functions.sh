@@ -96,24 +96,49 @@ detectOS()
         source /etc/os-release
         case "$NAME" in
             "Debian GNU/Linux")
-                detected_os="Debian 10 / 11 / 12"
-            OS=1 ;;
+                case "$VERSION_ID" in
+                    "10")
+                        detected_os="Debian 10"
+                        OS=1
+                        ;;
+                    "11")
+                        detected_os="Debian 11"
+                        OS=2
+                        ;;
+                    "12")
+                        detected_os="Debian 12"
+                        OS=3
+                        ;;
+                    *)
+                        detected_os="Debian (Unknown Version)"
+                        OS=4
+                        ;;
+                esac
+                ;;
             "Ubuntu")
                 case "$VERSION_ID" in
                     "18.04")
                         detected_os="Ubuntu 18.04"
-                    OS=2 ;;
+                        OS=5
+                        ;;
                     "20.04" | "21.04" | "22.04")
                         detected_os="Ubuntu 20.04 / 21.04 / 22.04"
-                    OS=3 ;;
+                        OS=6
+                        ;;
+                    *)
+                        detected_os="Ubuntu (Unknown Version)"
+                        OS=7
+                        ;;
                 esac
-            ;;
+                ;;
             "Arch Linux")
                 detected_os="Arch Linux"
-            OS=4 ;;
+                OS=8
+                ;;
             *)  # Default selection (End this Installer)
                 echo "Unable to detect OS."
-            exit 1 ;;
+                exit 1
+                ;;
         esac
         
         echo ""

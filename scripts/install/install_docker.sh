@@ -46,7 +46,7 @@ installDockerCompose()
         ###     Install Debian / Ubuntu    ###
         ######################################        
         
-        if [[ "$OS" == [123] ]]; then
+        if [[ "$OS" == [1234567] ]]; then
             local result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 

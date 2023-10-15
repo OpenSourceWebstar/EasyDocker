@@ -83,23 +83,41 @@ installPihole()
         echo ""
 
         if grep -q "$ip_setup" /etc/resolv.conf; then
-            checkSuccess "IP Already setup, no need to make changes"
+            isSuccessful "IP Already setup, no need to make changes"
         else
             isQuestion "Do you want to change the default DNS server on the host to use Pi-Hole? (y/n): "
             read -rp "" PHDNS
 
             if [[ "$PHDNS" =~ ^[yY]$ ]]; then
-                # Updating nameserver address in /etc/resolv.conf
-                local result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
-                checkSuccess "Updating nameserver in resolv.conf"
+                # Debian 10/11
+            	if [[ "$OS" == [12] ]]; then 
+                    # Updating nameserver address in /etc/resolv.conf
+                    local result=$(sudo sed -i "/nameserver/c\#nameserver\nameserver $ip_setup" /etc/resolv.conf)
+                    checkSuccess "Updating nameserver in resolv.conf"
 
-                # Updating DNS address in /etc/systemd/resolved.conf
-                local result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
-                checkSuccess "Updating DNS in resolved.conf"
+                    # Updating DNS address in /etc/systemd/resolved.conf
+                    local result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
+                    checkSuccess "Updating DNS in resolved.conf"
 
-                # Restarting systemd-resolved to apply changes
-                local result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
-                checkSuccess "Restarting systemd-resolved"
+                    # Restarting systemd-resolved to apply changes
+                    local result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
+                    checkSuccess "Restarting systemd-resolved"
+                fi
+                # Debian 12
+            	if [[ "$OS" == [3] ]]; then
+                    # Check if the line exists in /etc/resolv.conf
+                    if grep -q "nameserver $ip_setup" /etc/resolv.conf; then
+                        isNotice "The 'nameserver $ip_setup' exists in /etc/resolv.conf."
+                    else
+                        # Updating nameserver address in /etc/resolv.conf
+                        local result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
+                        checkSuccess "Updating nameserver in resolv.conf"
+                    fi
+
+                    # Update DNS address using resolvectl
+                    local result=$(sudo resolvectl dns eth0 $ip_setup)
+                    checkSuccess "Updating DNS using resolvectl"
+                fi
             fi
         fi
 

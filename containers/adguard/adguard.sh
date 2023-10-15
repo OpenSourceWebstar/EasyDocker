@@ -80,6 +80,50 @@ installAdguard()
 
 		whitelistAndStartApp $app_name;
 
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Editing local variables for DNS server to $app_name"
+        echo ""
+
+        if grep -q "$ip_setup" /etc/resolv.conf; then
+            isSuccessful "DNS Server Already setup, no need to make changes"
+        else
+            isQuestion "Do you want to change the default DNS server on the host to use Adguard? (y/n): "
+            read -rp "" ADGUARDDNS
+
+            if [[ "$ADGUARDDNS" =~ ^[yY]$ ]]; then
+                # Debian 10/11
+            	if [[ "$OS" == [12] ]]; then 
+                    # Updating nameserver address in /etc/resolv.conf
+                    local result=$(sudo sed -i "/nameserver/c\#nameserver\nameserver $ip_setup" /etc/resolv.conf)
+                    checkSuccess "Updating nameserver in resolv.conf"
+
+                    # Updating DNS address in /etc/systemd/resolved.conf
+                    local result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
+                    checkSuccess "Updating DNS in resolved.conf"
+
+                    # Restarting systemd-resolved to apply changes
+                    local result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
+                    checkSuccess "Restarting systemd-resolved"
+                fi
+                # Debian 12
+            	if [[ "$OS" == [3] ]]; then
+                    # Check if the line exists in /etc/resolv.conf
+                    if grep -q "nameserver $ip_setup" /etc/resolv.conf; then
+                        isNotice "The 'nameserver $ip_setup' exists in /etc/resolv.conf."
+                    else
+                        # Updating nameserver address in /etc/resolv.conf
+                        local result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
+                        checkSuccess "Updating nameserver in resolv.conf"
+                    fi
+
+                    # Update DNS address using resolvectl
+                    local result=$(sudo resolvectl dns eth0 $ip_setup)
+                    checkSuccess "Updating DNS using resolvectl"
+                fi
+            fi
+        fi
+
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Opening ports if required"
