@@ -194,7 +194,6 @@ checkBackupCrontabApp()
                 fi
             fi
             if [[ "$setupcrontab" == [nN] ]]; then
-                echo ""
                 while true; do
                     isQuestion "Do you want to disable automatic $name backups (y/n): "
                     read -rp "" setupdisablecrontab
