@@ -66,7 +66,7 @@ installTiledesk()
 		local result=$(cd $containers_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
 
-		whitelistAndStartApp $app_name;
+		whitelistAndStartApp $app_name install;
 
 		((menu_number++))
         echo ""

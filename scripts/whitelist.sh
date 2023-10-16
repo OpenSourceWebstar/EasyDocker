@@ -4,13 +4,13 @@
 whitelistAndStartApp()
 {
     local app_name="$1"
+    local flags="$2"
 
     # Starting variable for app
     setupInstallVariables $app_name;
 
     # Always keep YML updated
-    whitelistUpdateYML $app_name;
-    #echo "whitelistUpdateYML $app_name $app_config $app_script;"
+    whitelistUpdateYML $app_name $flags;
 }
 
 # Function to update IP whitelist in YAML files
@@ -28,6 +28,9 @@ whitelistScan()
             # Starting variable for app
             setupInstallVariables $app_name;
 
+            # Check status of config
+            whitelistCheckConfig $app_name;
+
             # Always keep YML updated
             whitelistUpdateYML $app_name;
         fi
@@ -39,10 +42,17 @@ whitelistScan()
 whitelistUpdateYML()
 {
     local app_name="$1"
+    local flags="$2"
     local whitelistupdates=false
 
+    if [[ $compose_setup == "default" ]]; then
+        local compose_file="docker-compose.yml"
+    elif [[ $compose_setup == "app" ]]; then
+        local compose_file="docker-compose.$app_name.yml"
+    fi
+
     # Whitelist update for yml files
-    for yaml_file in "$containers_dir/$app_name"/*.yml; do
+    for yaml_file in "$containers_dir/$app_name"/$compose_file; do
         if [ -f "$yaml_file" ]; then
             # Check if the YAML file contains ipwhitelist.sourcerange
             if grep -q "ipwhitelist.sourcerange:" "$yaml_file"; then
@@ -56,8 +66,9 @@ whitelistUpdateYML()
                 fi
 
                 # If the IPs are setup already but need an update
-                local current_ip_range=$(grep "ipwhitelist.sourcerange:" "$yaml_file" | cut -d ' ' -f 2)
-                if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ] || [ "$current_ip_range" != "IPWHITELIST" ]; then
+                local current_ip_range=""
+                local current_ip_range=$(grep "traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange:" "$yaml_file" | cut -d ':' -f 2 | xargs)
+                if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ] && [ "$current_ip_range" != "IPWHITELIST" ]; then
                     local result=$(sudo sed -i "s/ipwhitelist.sourcerange: $current_ip_range/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local whitelistupdates=true
@@ -89,11 +100,10 @@ whitelistUpdateYML()
 
     if [ "$whitelistupdates" == "true" ]; then
         whitelistUpdateCompose $app_name;
-        whitelistUpdateRestart $app_name;
+        whitelistUpdateRestart $app_name $flags;
+        isSuccessful "The whitelist for $app_name is now up to date and restarted."
         local whitelistupdates=false
     fi
-
-    isSuccessful "All application whitelists are now up to date and $app_name started."
 }
 
 whitelistUpdateCompose()
@@ -110,36 +120,45 @@ whitelistUpdateCompose()
 whitelistUpdateRestart()
 {
     local app_name="$1"
+    local flags="$2"
 
     if [[ $compose_setup == "default" ]]; then
-        while true; do
-            echo ""
-            isNotice "Whitelist changes have been made to the $app_name configuration."
-            echo ""
-            isQuestion "Would you like to restart $app_name? (y/n): "
-            read -p "" restart_choice
-            if [[ -n "$restart_choice" ]]; then
-                break
-            fi
-            isNotice "Please provide a valid input."
-        done
-        if [[ "$restart_choice" =~ [yY] ]]; then
+        if [[ $flags == "install" ]]; then
             dockerDownUpDefault $app_name;
+        elif [[ $flags == "" ]]; then
+            while true; do
+                echo ""
+                isNotice "Whitelist changes have been made to the $app_name configuration."
+                echo ""
+                isQuestion "Would you like to restart $app_name? (y/n): "
+                read -p "" restart_choice
+                if [[ -n "$restart_choice" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+            if [[ "$restart_choice" =~ [yY] ]]; then
+                dockerDownUpDefault $app_name;
+            fi
         fi
     elif [[ $compose_setup == "app" ]]; then
-        while true; do
-            echo ""
-            isNotice "Whitelist changes have been made to the $app_name configuration."
-            echo ""
-            isQuestion "Would you like to restart $app_name? (y/n): "
-            read -p "" restart_choice
-            if [[ -n "$restart_choice" ]]; then
-                break
+        if [[ $flags == "install" ]]; then
+            dockerDownUpDefault $app_name;
+        elif [[ $flags == "" ]]; then
+            while true; do
+                echo ""
+                isNotice "Whitelist changes have been made to the $app_name configuration."
+                echo ""
+                isQuestion "Would you like to restart $app_name? (y/n): "
+                read -p "" restart_choice
+                if [[ -n "$restart_choice" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+            if [[ "$restart_choice" =~ [yY] ]]; then
+                dockerDownUpAdditionalYML $app_name;
             fi
-            isNotice "Please provide a valid input."
-        done
-        if [[ "$restart_choice" =~ [yY] ]]; then
-            dockerDownUpAdditionalYML $app_name;
         fi
     fi
 

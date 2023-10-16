@@ -75,7 +75,7 @@ installPortainer()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		whitelistAndStartApp $app_name;
+		whitelistAndStartApp $app_name install;
         if [[ $compose_setup == "default" ]]; then
 		    dockerDownUpDefault $app_name;
         elif [[ $compose_setup == "app" ]]; then
