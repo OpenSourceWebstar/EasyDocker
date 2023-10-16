@@ -606,10 +606,10 @@ viewComposeFiles()
         if [ ${#selected_compose_files[@]} -eq 0 ]; then
           isNotice "No Docker Compose files found in '$selected_app'."
         else
-          local file_md5s=()
-          for file in "${selected_compose_files[@]}"; do
-            file_md5s["$file"]=$(md5sum "$file" | cut -d ' ' -f 1)
-          done
+            local file_md5s=()
+            for file in "${selected_compose_files[@]}"; do
+            file_md5s["$file"]=$(md5sum "$(realpath "$file")" | cut -d ' ' -f 1)
+            done
 
           while true; do
             # List numbered options for Docker Compose files
