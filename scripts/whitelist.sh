@@ -39,6 +39,7 @@ whitelistScan()
 whitelistUpdateYML()
 {
     local app_name="$1"
+    local whitelistupdates=false
 
     # Whitelist update for yml files
     for yaml_file in "$containers_dir/$app_name"/*.yml; do
@@ -50,6 +51,7 @@ whitelistUpdateYML()
                 if grep -q "ipwhitelist.sourcerange: IPWHITELIST" "$yaml_file"; then
                     local result=$(sudo sed -i "s/ipwhitelist.sourcerange: IPWHITELIST/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
+                    local whitelistupdates=true
                     break  # Exit the loop after updating
                 fi
 
@@ -58,6 +60,7 @@ whitelistUpdateYML()
                 if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ] && [ "$current_ip_range" != "IPWHITELIST" ]; then
                     local result=$(sudo sed -i "s/ipwhitelist.sourcerange: $current_ip_range/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
+                    local whitelistupdates=true
                 fi
             fi
         fi
@@ -71,7 +74,7 @@ whitelistUpdateYML()
             if grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
                 local result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/" "$containers_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
-
+                local whitelistupdates=true
             fi
 
             # If the IPs are setup already but needs an update
@@ -79,13 +82,16 @@ whitelistUpdateYML()
             if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
                 local result=$(sudo sed -i "s/ignoreip = ips_whitelist/ignoreip = $CFG_IPS_WHITELIST/" "$containers_dir/$app_name/config/$app_name/jail.local")
                 checkSuccess "Update the IP whitelist for $app_name"
+                local whitelistupdates=true
             fi
         fi
-        whitelistUpdateRestart $app_name;
     fi
 
-    whitelistUpdateCompose $app_name;
-    whitelistUpdateRestart $app_name;
+    if [ "$whitelistupdates" == "true" ]; then
+        whitelistUpdateCompose $app_name;
+        whitelistUpdateRestart $app_name;
+        local whitelistupdates=false
+    fi
 
     isSuccessful "All application whitelists are now up to date and $app_name started."
 }
@@ -106,9 +112,35 @@ whitelistUpdateRestart()
     local app_name="$1"
 
     if [[ $compose_setup == "default" ]]; then
-        dockerDownUpDefault $app_name;
+        while true; do
+            echo ""
+            isNotice "Whitelist changes have been made to the $app_name configuration."
+            echo ""
+            isQuestion "Would you like to restart $app_name? (y/n): "
+            read -p "" restart_choice
+            if [[ -n "$restart_choice" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$restart_choice" =~ [yY] ]]; then
+            dockerDownUpDefault $app_name;
+        fi
     elif [[ $compose_setup == "app" ]]; then
-        dockerDownUpAdditionalYML $app_name;
+        while true; do
+            echo ""
+            isNotice "Whitelist changes have been made to the $app_name configuration."
+            echo ""
+            isQuestion "Would you like to restart $app_name? (y/n): "
+            read -p "" restart_choice
+            if [[ -n "$restart_choice" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$restart_choice" =~ [yY] ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
     fi
 
 }

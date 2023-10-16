@@ -14,6 +14,7 @@ setupInstallVariables()
     compose_setup_var="CFG_${app_name^^}_COMPOSE_FILE"
     domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
     public_var="CFG_${app_name^^}_PUBLIC"
+    whitelist_var="CFG_${app_name^^}_WHITELIST"
     port_var="CFG_${app_name^^}_PORT"
     port_2_var="CFG_${app_name^^}_PORT_2"
 
@@ -22,6 +23,7 @@ setupInstallVariables()
     compose_setup="${!compose_setup_var}"
     domain_number="${!domain_number_var}"
     public="${!public_var}"
+    whitelist="${!whitelist_var}"
     port="${!port_var}"
     port_2="${!port_2_var}"
 
