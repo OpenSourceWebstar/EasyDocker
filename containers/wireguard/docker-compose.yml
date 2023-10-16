@@ -29,7 +29,7 @@ services:
       - ./wireguard-data:/etc/wireguard
     ports:
       - "51820:51820/udp"
-      - "51821:51821/tcp"
+      - "PORTHERE:51821/tcp"
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -45,6 +45,7 @@ services:
       #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.wireguard.tls: true
       #traefik.http.routers.wireguard.tls.certresolver: production
+      #traefik.http.services.wireguard.loadbalancer.server.port: PORTHERE
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.wireguard.middlewares: my-whitelist-in-docker@docker
     networks:
