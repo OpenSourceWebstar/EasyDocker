@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 backupStart()
 {
     local app_name="$1"
