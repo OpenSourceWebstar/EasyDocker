@@ -186,11 +186,32 @@ checkBackupCrontabApp()
                 fi
                 isNotice "Please provide a valid input (y/n)."
             done
-            if [[ "$setupcrontab" =~ ^[yY]$ ]]; then
+            if [[ "$setupcrontab" == [yY] ]]; then
                 installSetupCrontab $name
                 if [[ "$name" != "full" ]]; then
                     databaseCronJobsInsert $name
                     installSetupCrontabTiming $name
+                fi
+            fi
+            if [[ "$setupcrontab" == [nN] ]]; then
+                echo ""
+                while true; do
+                    isQuestion "Do you want to disable automatic $name backups (y/n): "
+                    read -rp "" setupdisablecrontab
+                    if [[ "$setupdisablecrontab" =~ ^[yYnN]$ ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input (y/n)."
+                done
+                if [[ "$setupdisablecrontab" == [yY] ]]; then
+                    if [[ "$name" != "full" ]]; then
+                        local config_file="$containers_dir$name/$name.config"
+                        result=$(sudo sed -i 's/BACKUP=true/BACKUP=false/' $config_file)
+                        checkSuccess "Disabled backups in the config for $name"
+                    elif [[ "$name" == "full" ]]; then
+                        result=$(sudo sed -i 's/CFG_BACKUP_FULL=true/CFG_BACKUP_FULL=false/' $configs_dir$config_file_backup)
+                        checkSuccess "Disabled $name backups in $config_file_backup."
+                    fi
                 fi
             fi
         fi

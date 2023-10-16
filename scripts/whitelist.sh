@@ -28,15 +28,12 @@ whitelistScan()
             # Starting variable for app
             setupInstallVariables $app_name;
 
-            # Check status of config
-            whitelistCheckConfig $app_name;
-
             # Always keep YML updated
             whitelistUpdateYML $app_name;
         fi
     done
 
-    isSuccessful "All application whitelists are now up to date."
+    isSuccessful "All application whitelists are up to date."
 }
 
 whitelistUpdateYML()
