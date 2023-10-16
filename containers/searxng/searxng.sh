@@ -77,20 +77,33 @@ installSearxng()
 
 		whitelistAndStartApp $app_name;
 
-		# Loop to check for the existence of the file every second
-		while [ ! -f "$containers_dir$app_name/searxng-data/settings.yml" ]; do
-			isNotice "Waiting for the file to appear..."
-			read -t 1 # Wait for 1 second
-		done
+        searxng_timeout=10
+        searxng_counter=0
+        # Loop to check for the existence of the file every second
+        while [ ! -f "$containers_dir$app_name/searxng-data/settings.yml" ]; do
+            if [ "$searxng_counter" -ge "$searxng_timeout" ]; then
+                isNotice "File not found after 10 seconds. Exiting..."
+                break
+            fi
 
-		# Perform the required operation on the file once it exists
-		local result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$containers_dir$app_name/searxng-data/settings.yml")
-		checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
+            isNotice "Waiting for the file to appear..."
+            read -t 1 # Wait for 1 second
 
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
+            # Increment the counter
+            searxng_counter=$((searxng_counter + 1))
+        done
+
+        # Check if the file was found or if we timed out
+        if [ -f "$containers_dir$app_name/searxng-data/settings.yml" ]; then
+            # Perform the required operation on the file once it exists
+            local result=$(sudo sed -i "s/simple_style: auto/simple_style: dark/" "$containers_dir$app_name/searxng-data/settings.yml")
+            checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
+
+            if [[ $compose_setup == "default" ]]; then
+                dockerDownUpDefault $app_name
+            elif [[ $compose_setup == "app" ]]; then
+                dockerDownUpAdditionalYML $app_name
+            fi
         fi
 
         ((menu_number++))
