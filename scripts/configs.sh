@@ -549,7 +549,6 @@ listDockerComposeFiles()
   echo "${docker_compose_files[@]}"
 }
 
-# Function to view and edit Docker Compose files in a selected app's folder
 viewComposeFiles() 
 {
   local app_names=()
@@ -595,6 +594,7 @@ viewComposeFiles()
       # Check if the selected option is a valid number
       if ((selected_option >= 1 && selected_option <= ${#app_names[@]})); then
         local selected_app="${app_names[selected_option - 1]}"
+        selected_app_name="$selected_app"  # Store the selected app name
         local selected_app_dir="$containers_dir/$selected_app"
 
         # List Docker Compose files in the selected app's folder
@@ -606,6 +606,11 @@ viewComposeFiles()
         if [ ${#selected_compose_files[@]} -eq 0 ]; then
           isNotice "No Docker Compose files found in '$selected_app'."
         else
+          local file_md5s=()
+          for file in "${selected_compose_files[@]}"; do
+            file_md5s["$file"]=$(md5sum "$file" | cut -d ' ' -f 1)
+          done
+
           while true; do
             # List numbered options for Docker Compose files
             isNotice "Select Docker Compose files to edit (space-separated numbers, or 'x' to exit):"
@@ -613,6 +618,7 @@ viewComposeFiles()
             for i in "${!selected_compose_files[@]}"; do
               local compose_file_name=$(basename "${selected_compose_files[i]}")
               isOption "$((i + 1)). $compose_file_name"
+            end for
             done
 
             # Read user input for file selection
@@ -628,17 +634,34 @@ viewComposeFiles()
                   local index=$((file_number - 1))
                   if ((index >= 0 && index < ${#selected_compose_files[@]})); then
                     local selected_file="${selected_compose_files[index]}"
-                    #echo "Debug: Editing file $selected_file"
+                    local original_md5="${file_md5s[$selected_file]}"
                     sudo nano "$selected_file"
+                    updated_md5=$(md5sum "$selected_file" | cut -d ' ' -f 1)
+                    if [ "$original_md5" != "$updated_md5" ]; then
+                        isNotice "File $selected_file has been modified."
+                        echo ""
+                        while true; do
+                            isQuestion "Do you want to restart $selected_app_name (y/n): "
+                            read -rp "" restartapp
+                            if [[ "$restartapp" =~ ^[yYnN]$ ]]; then
+                                break
+                            fi
+                            isNotice "Please provide a valid input (y/n)."
+                        done
+                        if [[ "$restartapp" == [yY] ]]; then
+                            whitelistAndStartApp $name;
+                        fi
+                    fi
                   fi
+                end for
                 done
                 ;;
               x)
-                isNotice "Debug: Exiting..."
+                isNotice "Exiting..."
                 return
                 ;;
               *)
-                isNotice "Debug: Invalid option. Please choose valid file numbers or 'x' to exit."
+                isNotice "Invalid option. Please choose valid file numbers or 'x' to exit."
                 ;;
             esac
           done
