@@ -144,7 +144,7 @@ detectOS()
         echo ""
         checkSuccess "Detected OS: $detected_os"
         
-        if [ "$OS" -gt 1 ]; then
+        if [ "$OS" > 3 ]; then
             isError "This OS ($detected_os) is untested and may not be fully supported."
             while true; do
                 isQuestion "Do you wish to continue anyway? (y/n): "

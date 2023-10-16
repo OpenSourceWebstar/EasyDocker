@@ -324,11 +324,26 @@ editComposeFileDefault()
     fi
     
     if [[ "$public" == "true" ]]; then
-        if [[ "$app_name" != "traefik" ]]; then
-            if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-                checkSuccess "Enable labels for Traefik option options on public setup"
+        if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
+            local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+            checkSuccess "Enable labels for Traefik option options on public setup"
 
+            # Loop through compose file
+            while IFS= read -r line; do
+                if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
+                    local line="${line//#/}"
+                fi
+                echo "$line"
+            done < "$compose_file" > >(sudo tee "$compose_file")
+
+            isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
+        else
+            local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+            checkSuccess "Enable labels for Traefik option options on public setup"
+            if grep -q "WHITELIST=true" "$config_file"; then
+                local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
+            elif grep -q "WHITELIST=false" "$config_file"; then
                 # Loop through compose file
                 while IFS= read -r line; do
                     if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
@@ -336,33 +351,14 @@ editComposeFileDefault()
                     fi
                     echo "$line"
                 done < "$compose_file" > >(sudo tee "$compose_file")
-
                 isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
-            else
-                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-                checkSuccess "Enable labels for Traefik option options on public setup"
-                if grep -q "WHITELIST=true" "$config_file"; then
-                    local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-                    checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
-                elif grep -q "WHITELIST=false" "$config_file"; then
-                    # Loop through compose file
-                    while IFS= read -r line; do
-                        if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                            local line="${line//#/}"
-                        fi
-                        echo "$line"
-                    done < "$compose_file" > >(sudo tee "$compose_file")
-                    isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
-                fi
             fi
         fi
     fi
     
     if [[ "$public" == "false" ]]; then
-        if [[ "$app_name" != "traefik" ]]; then
-            local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
-            checkSuccess "Disable Traefik options for private setup"
-        fi
+        local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
+        checkSuccess "Disable Traefik options for private setup"
     fi
     
     isSuccessful "Updated the $app_name docker-compose.yml"
@@ -394,31 +390,27 @@ editComposeFileApp()
     fi
     
     if [[ "$public" == "true" ]]; then
-        if [[ "$app_name" != "traefik" ]]; then
-            if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-                checkSuccess "Enable labels for Traefik option options on public setup"
+        if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
+            local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+            checkSuccess "Enable labels for Traefik option options on public setup"
+            local result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
+            checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
+        else
+            local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
+            checkSuccess "Enable labels for Traefik option options on public setup"
+            if grep -q "WHITELIST=true" "$config_file"; then
+                local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
+                checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
+            elif grep -q "WHITELIST=false" "$config_file"; then
                 local result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
-                checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
-            else
-                local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-                checkSuccess "Enable labels for Traefik option options on public setup"
-                if grep -q "WHITELIST=true" "$config_file"; then
-                    local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-                    checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
-                elif grep -q "WHITELIST=false" "$config_file"; then
-                    local result=$(sudo sed -i '/whitelist/!s/#traefik/traefik/g' "$compose_file")
-                    checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
-                fi
+                checkSuccess "Enabling Traefik options for public setup, and whitelist disabled."
             fi
         fi
     fi
     
     if [[ "$public" == "false" ]]; then
-        if [[ "$app_name" != "traefik" ]]; then
-            local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
-            checkSuccess "Disable Traefik options for private setup"
-        fi
+        local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
+        checkSuccess "Disable Traefik options for private setup"
     fi
     
     isSuccessful "Updated the docker-compose.$app_name.yml"
