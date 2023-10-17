@@ -75,9 +75,8 @@ whitelistUpdateYML()
 
             # This is for updating Timzeones
             if grep -q " TZ=" "$yaml_file"; then
-                # Whitelist not setup yet
                 if grep -q " TZ=TIMZEONEHERE" "$yaml_file"; then
-                    local result=$(sudo sed -i "s/ TZ=TIMZEONEHERE/ TZ=$CFG_TIMEZONE/" "$yaml_file")
+                    local result=$(sudo sed -i "s| TZ=TIMZEONEHERE| TZ=$CFG_TIMEZONE|" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local timezoneupdates=true
                     break  # Exit the loop after updating
@@ -86,7 +85,7 @@ whitelistUpdateYML()
                 local current_timezone=""
                 local current_timezone=$(grep " TZ=" "$yaml_file" | cut -d ':' -f 2 | xargs)
                 if [ "$current_timezone" != "$CFG_TIMEZONE" ] && [ "$current_timezone" != "TIMZEONEHERE" ]; then
-                    local result=$(sudo sed -i "s/ TZ=$current_timezone/ TZ=$CFG_TIMEZONE/" "$yaml_file")
+                    local result=$(sudo sed -i "s| TZ=$current_timezone| TZ=$CFG_TIMEZONE|" "$yaml_file")
                     checkSuccess "Update the Timezone for $app_name"
                     local timezoneupdates=true
                 fi
@@ -106,7 +105,7 @@ whitelistUpdateYML()
                     if [[ "$line" == *"authelia@docker"* && "$line" != *"#"* ]]; then
                         result=$(echo "$line" | sed -e 's/traefik/#traefik/')
                         checkSuccess "Disable Authelia for $app_name"
-                       local autheliaupdates=true
+                        local autheliaupdates=true
                     fi
                 done < "$yaml_file"
             fi
@@ -190,6 +189,7 @@ whitelistUpdateRestart()
                 isNotice "Changes have been made to the $app_name configuration."
                 echo ""
                 isQuestion "Would you like to restart $app_name? (y/n): "
+                echo ""
                 read -p "" restart_choice
                 if [[ -n "$restart_choice" ]]; then
                     break
@@ -209,6 +209,7 @@ whitelistUpdateRestart()
                 isNotice "Changes have been made to the $app_name configuration."
                 echo ""
                 isQuestion "Would you like to restart $app_name? (y/n): "
+                echo ""
                 read -p "" restart_choice
                 if [[ -n "$restart_choice" ]]; then
                     break
