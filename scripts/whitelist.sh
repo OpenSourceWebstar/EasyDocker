@@ -81,9 +81,9 @@ whitelistUpdateYML()
                     local timezoneupdates=true
                     break  # Exit the loop after updating
                 fi
-                # If the IPs are setup already but need an update
+                # If the timzones are setup already but need an update
                 local current_timezone=""
-                local current_timezone=$(grep " TZ=" "$yaml_file" | cut -d ':' -f 2 | xargs)
+                local current_timezone=$(grep " TZ=" "$yaml_file" | cut -d '=' -f 2 | xargs)
                 if [ "$current_timezone" != "$CFG_TIMEZONE" ] && [ "$current_timezone" != "TIMZEONEHERE" ]; then
                     local result=$(sudo sed -i "s| TZ=$current_timezone| TZ=$CFG_TIMEZONE|" "$yaml_file")
                     checkSuccess "Update the Timezone for $app_name"
