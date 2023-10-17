@@ -103,6 +103,7 @@ whitelistUpdateYML()
     fi
 
     if [ "$flags" == "restart" ]; then
+        whitelistUpdateCompose $app_name;
         whitelistUpdateRestart $app_name $flags;
     fi
 }

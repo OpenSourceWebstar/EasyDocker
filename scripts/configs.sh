@@ -197,6 +197,7 @@ checkApplicationsConfigFilesMissingVariables()
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
                                                 whitelistAndStartApp $config_app_name restart;
+                                                echo ""
                                                 break
                                                 ;;
                                             [nN])
