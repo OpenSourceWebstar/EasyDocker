@@ -133,7 +133,7 @@ whitelistUpdateYML()
         fi
     fi
 
-    if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ] || [ "$autheliaupdates" == "true" ]; then
+    if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ] || [ "$autheliaupdates" == "true" ] || [ "$flags" != "restart" ]; then
         whitelistUpdateCompose $app_name;
         whitelistUpdateRestart $app_name $flags;
         if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
