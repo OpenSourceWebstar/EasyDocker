@@ -1,6 +1,7 @@
 # General - NEEDED FOR INSTALLATION
 CFG_INSTALL_NAME=Change-Me
 CFG_EMAIL=change@me.com
+CFG_TIMZEZONE=Etc/UTC
 
 # Domains (9 maximum)
 CFG_DOMAIN_1=changeme.co.uk

@@ -19,7 +19,7 @@ services:
       # - 22/tcp # Uncomment to enable SSH
     environment:
       - FTLCONF_LOCAL_IPV4=10.8.1.3
-      - TZ=Europe/Lisbon
+      - TZ=TIMEZONEHERE
       - WEBPASSWORD=QWERTY123456asdfASDF
       - WEBTHEME=default-dark
       - REV_SERVER=true

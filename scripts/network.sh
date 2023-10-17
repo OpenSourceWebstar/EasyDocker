@@ -17,6 +17,7 @@ setupInstallVariables()
     whitelist_var="CFG_${app_name^^}_WHITELIST"
     port_var="CFG_${app_name^^}_PORT"
     port_2_var="CFG_${app_name^^}_PORT_2"
+    authelia_var="CFG_${app_name^^}_AUTHELIA"
 
     # Access the variables using variable indirection
     host_name="${!host_name_var}"
@@ -25,7 +26,7 @@ setupInstallVariables()
     public="${!public_var}"
     whitelist="${!whitelist_var}"
     port="${!port_var}"
-    port_2="${!port_2_var}"
+    authelia="${!authelia_var}"
 
     # Check if no network needed
     if [ "$host_name" != "" ]; then
