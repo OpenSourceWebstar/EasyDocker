@@ -76,7 +76,7 @@ whitelistUpdateYML()
             # This is for updating Timzeones
             if grep -q " TZ=" "$yaml_file"; then
                 # Whitelist not setup yet
-                if grep -q "- TZ=TIMZEONEHERE" "$yaml_file"; then
+                if grep -q " TZ=TIMZEONEHERE" "$yaml_file"; then
                     local result=$(sudo sed -i "s/ TZ=TIMZEONEHERE/ TZ=$CFG_TIMEZONE/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local timezoneupdates=true
