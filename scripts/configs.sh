@@ -196,8 +196,8 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistAndStartApp $config_app_name;
-                                                break  # Exit the loop after executing whitelistAndStartApp
+                                                whitelistAndStartApp $config_app_name restart;
+                                                break
                                                 ;;
                                             [nN])
                                                 break  # Exit the loop without updating
@@ -268,7 +268,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistAndStartApp $config_app_name;
+                                                whitelistAndStartApp $config_app_name restart;
                                                 break  # Exit the loop
                                                 ;;
                                             [nN])
@@ -549,8 +549,8 @@ listDockerComposeFiles()
   echo "${docker_compose_files[@]}"
 }
 
-viewComposeFiles() 
-{
+# Function to view and edit Docker Compose files in a selected app's folder
+viewComposeFiles() {
   local app_names=()
   local app_dir
 
@@ -594,7 +594,6 @@ viewComposeFiles()
       # Check if the selected option is a valid number
       if ((selected_option >= 1 && selected_option <= ${#app_names[@]})); then
         local selected_app="${app_names[selected_option - 1]}"
-        selected_app_name="$selected_app"  # Store the selected app name
         local selected_app_dir="$containers_dir/$selected_app"
 
         # List Docker Compose files in the selected app's folder
@@ -606,10 +605,13 @@ viewComposeFiles()
         if [ ${#selected_compose_files[@]} -eq 0 ]; then
           isNotice "No Docker Compose files found in '$selected_app'."
         else
-            local file_md5s=()
-            for file in "${selected_compose_files[@]}"; do
-            file_md5s["$file"]=$(md5sum "$(realpath "$file")" | cut -d ' ' -f 1)
-            done
+          local original_checksums=()  # To store original MD5 checksums
+          local edited_checksums=()    # To store edited MD5 checksums
+
+          # Calculate the original MD5 checksums for the selected Docker Compose files
+          for file in "${selected_compose_files[@]}"; do
+            original_checksums+=("$(md5sum "$file" | cut -d ' ' -f 1)")
+          done
 
           while true; do
             # List numbered options for Docker Compose files
@@ -618,7 +620,6 @@ viewComposeFiles()
             for i in "${!selected_compose_files[@]}"; do
               local compose_file_name=$(basename "${selected_compose_files[i]}")
               isOption "$((i + 1)). $compose_file_name"
-            end for
             done
 
             # Read user input for file selection
@@ -634,26 +635,23 @@ viewComposeFiles()
                   local index=$((file_number - 1))
                   if ((index >= 0 && index < ${#selected_compose_files[@]})); then
                     local selected_file="${selected_compose_files[index]}"
-                    local original_md5="${file_md5s[$selected_file]}"
                     sudo nano "$selected_file"
-                    updated_md5=$(md5sum "$selected_file" | cut -d ' ' -f 1)
-                    if [ "$original_md5" != "$updated_md5" ]; then
-                        isNotice "File $selected_file has been modified."
-                        echo ""
-                        while true; do
-                            isQuestion "Do you want to restart $selected_app_name (y/n): "
-                            read -rp "" restartapp
-                            if [[ "$restartapp" =~ ^[yYnN]$ ]]; then
-                                break
-                            fi
-                            isNotice "Please provide a valid input (y/n)."
-                        done
-                        if [[ "$restartapp" == [yY] ]]; then
-                            whitelistAndStartApp $name;
-                        fi
-                    fi
                   fi
-                end for
+                done
+
+                # Calculate the edited MD5 checksums for the selected Docker Compose files
+                edited_checksums=()  # Clear the edited checksums
+                for file in "${selected_compose_files[@]}"; do
+                  edited_checksums+=("$(md5sum "$file" | cut -d ' ' -f 1)")
+                done
+
+                # Check if any files have been modified
+                for i in "${!selected_compose_files[@]}"; do
+                  if [ "${original_checksums[i]}" != "${edited_checksums[i]}" ]; then
+                    isNotice "File ${selected_compose_files[i]} has been modified."
+                    whitelistAndStartApp "$selected_app" restart;
+                    break  # Stop processing files if any have been modified
+                  fi
                 done
                 ;;
               x)
@@ -679,6 +677,7 @@ viewComposeFiles()
       ;;
   esac
 }
+
 
 viewConfigs() 
 {

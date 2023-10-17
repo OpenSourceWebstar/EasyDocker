@@ -101,6 +101,10 @@ whitelistUpdateYML()
         isSuccessful "The whitelist for $app_name is now up to date and restarted."
         local whitelistupdates=false
     fi
+
+    if [ "$flags" == "restart" ]; then
+        whitelistUpdateRestart $app_name $flags;
+    fi
 }
 
 whitelistUpdateCompose()
@@ -120,12 +124,12 @@ whitelistUpdateRestart()
     local flags="$2"
 
     if [[ $compose_setup == "default" ]]; then
-        if [[ $flags == "install" ]]; then
+        if [[ $flags == "install" ]] ; then
             dockerDownUpDefault $app_name;
-        elif [[ $flags == "" ]]; then
+        elif [[ $flags == "" ]] || [[ $flags == "restart" ]]; then
             while true; do
                 echo ""
-                isNotice "Whitelist changes have been made to the $app_name configuration."
+                isNotice "Changes have been made to the $app_name configuration."
                 echo ""
                 isQuestion "Would you like to restart $app_name? (y/n): "
                 read -p "" restart_choice
@@ -141,10 +145,10 @@ whitelistUpdateRestart()
     elif [[ $compose_setup == "app" ]]; then
         if [[ $flags == "install" ]]; then
             dockerDownUpDefault $app_name;
-        elif [[ $flags == "" ]]; then
+        elif [[ $flags == "" ]] || [[ $flags == "restart" ]]; then
             while true; do
                 echo ""
-                isNotice "Whitelist changes have been made to the $app_name configuration."
+                isNotice "Changes have been made to the $app_name configuration."
                 echo ""
                 isQuestion "Would you like to restart $app_name? (y/n): "
                 read -p "" restart_choice

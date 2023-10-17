@@ -115,7 +115,7 @@ setupConfigToContainer()
                         [yY])
                             isNotice "Resetting $app_name config file."
                             copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-                            break  # Exit the loop after executing whitelistAndStartApp
+                            break
                             ;;
                         [nN])
                             break  # Exit the loop without updating
