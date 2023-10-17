@@ -133,27 +133,29 @@ whitelistUpdateYML()
         fi
     fi
 
-    if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ] || [ "$autheliaupdates" == "true" ] || [ "$flags" != "restart" ]; then
-        whitelistUpdateCompose $app_name;
-        whitelistUpdateRestart $app_name $flags;
-        if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
-            isSuccessful "The whitelist, timezone, and Authelia for $app_name are now up to date and restarted."
-        elif [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
-            isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
-        elif [ "$whitelistupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
-            isSuccessful "The whitelist and Authelia for $app_name are now up to date and restarted."
-        elif [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
-            isSuccessful "The timezone and Authelia for $app_name are now up to date and restarted."
-        elif [ "$whitelistupdates" == "true" ]; then
-            isSuccessful "The whitelist for $app_name is now up to date and restarted."
-        elif [ "$timezoneupdates" == "true" ]; then
-            isSuccessful "The timezone for $app_name is now up to date and restarted."
-        elif [ "$autheliaupdates" == "true" ]; then
-            isSuccessful "The Authelia for $app_name is now up to date and restarted."
+    if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ] || [ "$autheliaupdates" == "true" ]; then
+        if [ "$flags" != "restart" ]; then
+            whitelistUpdateCompose $app_name;
+            whitelistUpdateRestart $app_name $flags;
+            if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
+                isSuccessful "The whitelist, timezone, and Authelia for $app_name are now up to date and restarted."
+            elif [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
+                isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
+            elif [ "$whitelistupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
+                isSuccessful "The whitelist and Authelia for $app_name are now up to date and restarted."
+            elif [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
+                isSuccessful "The timezone and Authelia for $app_name are now up to date and restarted."
+            elif [ "$whitelistupdates" == "true" ]; then
+                isSuccessful "The whitelist for $app_name is now up to date and restarted."
+            elif [ "$timezoneupdates" == "true" ]; then
+                isSuccessful "The timezone for $app_name is now up to date and restarted."
+            elif [ "$autheliaupdates" == "true" ]; then
+                isSuccessful "The Authelia for $app_name is now up to date and restarted."
+            fi
+            local whitelistupdates=false
+            local timezoneupdates=false
+            local autheliaupdates=false
         fi
-        local whitelistupdates=false
-        local timezoneupdates=false
-        local autheliaupdates=false
     fi
 
     if [ "$flags" == "restart" ]; then
