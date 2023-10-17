@@ -101,6 +101,7 @@ startInstall()
     installFail2ban;
     installCaddy;
     installTraefik;
+    installAuthelia;
     installWireguard;
 	installAdguard;
     installPihole;
