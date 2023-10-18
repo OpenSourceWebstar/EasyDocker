@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# Category : privacy
+# Category : old
 # Description : Coturn (c/u/s/r/i):
