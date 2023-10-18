@@ -132,23 +132,23 @@ installMailcow()
         echo ""
 
 		# Define the paths
-		local source_dir="/docker/containers/mailcow"  # Directory with existing content
-		local backup_dir="/tmp/mailcow_backup"  # Temporary backup directory
+		local mailcow_source_dir="/docker/containers/mailcow"  # Directory with existing content
+		local mailcow_backup_dir="/tmp/mailcow_backup"  # Temporary backup directory
 		# Create a backup of the existing content
-		if [ -d "$source_dir" ]; then
-			result=$(sudo mv "$source_dir" "$backup_dir")
+		if [ -d "$mailcow_source_dir" ]; then
+			result=$(sudo mv "$mailcow_source_dir" "$mailcow_backup_dir")
 			checkSuccess "Backup of existing content created"
 		fi
 		# Clone the Git repository
-		local result=$(sudo rm -rf "$source_dir")
+		local result=$(sudo rm -rf "$mailcow_source_dir")
 		checkSuccess "Deleting mailcow directory git."
-		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized "$source_dir" && sudo -u $easydockeruser git config --global --add safe.directory $containers_dir$app_name)
+		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $easydockeruser git config --global --add safe.directory $containers_dir$app_name)
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 		# Restore the backup content
-		if [ -d "$backup_dir" ]; then
-			result=$(sudo rsync -a "$backup_dir/" "$source_dir/")
+		if [ -d "$mailcow_backup_dir" ]; then
+			result=$(sudo rsync -a "$mailcow_backup_dir/" "$mailcow_source_dir/")
 			checkSuccess "Restored existing content from backup"
-			local result=$(sudo rm -rf "$backup_dir")
+			local result=$(sudo rm -rf "$mailcow_backup_dir")
 			checkSuccess "Deleting backup directory."
 		fi
 
