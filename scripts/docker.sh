@@ -29,12 +29,11 @@ setupConfigToContainer()
     local target_path="$containers_dir$app_name"
     local source_file="$install_containers_dir$app_name/$app_name.config"
 
-    #echo "setupConfigToContainer"
-    #echo "app_name = $app_name"
-    #echo "silent_flag = $silent_flag"
-    #echo "flags = $flags"
-    #echo "target_path = $target_path"
-    #echo "source_file = $source_file"
+    if [ "$app_name" == "mailcow" ]; then
+        local config_file="${app_name}_easydocker.config"
+    else
+        local config_file="$app_name.config"
+    fi
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -58,19 +57,19 @@ setupConfigToContainer()
         return 1
     fi
 
-    if [ ! -f "$target_path/$app_name.config" ]; then
+    if [ ! -f "$target_path/$config_file" ]; then
         if [ -z "$silent_flag" ]; then
-            isNotice "Copying config file to '$target_path/$app_name.config'..."
-            copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            isNotice "Copying config file to '$target_path/$config_file'..."
+            copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         else
-            copyFile "$silent_flag" "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
     fi
 
     if [[ "$flags" == "install" ]]; then
-        if [ -f "$target_path/$app_name.config" ]; then
+        if [ -f "$target_path/$config_file" ]; then
             # Same content check
-            if cmp -s "$source_file" "$target_path/$app_name.config"; then
+            if cmp -s "$source_file" "$target_path/$config_file"; then
                 echo ""
                 isNotice "Config file for $app_name contains no edits."
                 echo ""
@@ -81,17 +80,17 @@ setupConfigToContainer()
                     case $editconfigaccept in
                         [yY])
                             # Calculate the checksum of the original file
-                            local original_checksum=$(md5sum "$target_path/$app_name.config")
+                            local original_checksum=$(md5sum "$target_path/$config_file")
 
                             # Open the file with nano for editing
-                            sudo nano "$target_path/$app_name.config"
+                            sudo nano "$target_path/$config_file"
 
                             # Calculate the checksum of the edited file
-                            local edited_checksum=$(md5sum "$target_path/$app_name.config")
+                            local edited_checksum=$(md5sum "$target_path/$config_file")
 
                             # Compare the checksums to check if changes were made
                             if [[ "$original_checksum" != "$edited_checksum" ]]; then
-                                isSuccessful "Changes have been made to the $app_name.config."
+                                isSuccessful "Changes have been made to the $config_file."
                             fi
                             break
                             ;;
@@ -114,7 +113,7 @@ setupConfigToContainer()
                     case $resetconfigaccept in
                         [yY])
                             isNotice "Resetting $app_name config file."
-                            copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                            copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
                             break
                             ;;
                         [nN])
@@ -128,7 +127,7 @@ setupConfigToContainer()
             fi
         else
             isNotice "Config file for $app_name does not exist. Creating it..."
-            copyFile "$source_file" "$target_path/$app_name.config" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
             echo ""
             isNotice "Config file for $app_name contains no edits."
             echo ""
@@ -139,17 +138,17 @@ setupConfigToContainer()
                 case $editconfigaccept in
                     [yY])
                         # Calculate the checksum of the original file
-                        local original_checksum=$(md5sum "$target_path/$app_name.config")
+                        local original_checksum=$(md5sum "$target_path/$config_file")
 
                         # Open the file with nano for editing
-                        sudo nano "$target_path/$app_name.config"
+                        sudo nano "$target_path/$config_file"
 
                         # Calculate the checksum of the edited file
-                        local edited_checksum=$(md5sum "$target_path/$app_name.config")
+                        local edited_checksum=$(md5sum "$target_path/$config_file")
 
                         # Compare the checksums to check if changes were made
                         if [[ "$original_checksum" != "$edited_checksum" ]]; then
-                            isSuccessful "Changes have been made to the $app_name.config."
+                            isSuccessful "Changes have been made to the $config_file."
                         fi
                         break
                         ;;
@@ -302,7 +301,6 @@ editComposeFileDefault()
 {
     local app_name="$1"
     local compose_file="$containers_dir$app_name/docker-compose.yml"
-    local config_file="$containers_dir$app_name/$app_name.config"
     
     local result=$(sudo sed -i \
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
@@ -340,7 +338,6 @@ editComposeFileApp()
 {
     local app_name="$1"
     local compose_file="$containers_dir$app_name/docker-compose.$app_name.yml"
-    local config_file="$containers_dir$app_name/$app_name.config"
 
     local result=$(sudo sed -i \
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
