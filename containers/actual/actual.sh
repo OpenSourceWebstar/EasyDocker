@@ -76,7 +76,7 @@ installActual()
 			local result=$(copyFile $ssl_dir$ssl_crt $containers_dir$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying cert to actual-data folder"
 
-			local result=$(copyFiles $ssl_dir$ssl_key $containers_dir$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $ssl_dir$ssl_key $containers_dir$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying key to actual-data folder"
 			
 		else
