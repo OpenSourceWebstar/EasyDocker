@@ -49,6 +49,7 @@ services:
       #traefik.http.routers.vaultwarden.tls: true
       #traefik.http.routers.vaultwarden.tls.certresolver: production
       #traefik.http.services.vaultwarden.loadbalancer.server.port: PORTHERE
+      #traefik.http.routers.vaultwarden.middlewares: authelia@docker
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.vaultwarden.middlewares: my-whitelist-in-docker@docker
     networks:
