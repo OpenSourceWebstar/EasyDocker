@@ -473,7 +473,7 @@ setupTraefikLabels() {
             # Enable all Traefik lines with no whitelist
             while IFS= read -r line; do
                 if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                    line="${line//#/}"
+                    local line="${line//#/}"
                 fi
                 echo "$line" >> "$temp_file"
             done < "$compose_file"
@@ -494,7 +494,7 @@ setupTraefikLabels() {
             # Enable all Traefik lines with no whitelist and authelia disabled
             while IFS= read -r line; do
                 if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* && "$line" != *"authelia@docker"* ]]; then
-                    line="${line//#/}"
+                    local line="${line//#/}"
                 fi
                 echo "$line" >> "$temp_file"
             done < "$compose_file"
@@ -531,6 +531,7 @@ setupTraefikLabels() {
 
                 # Replace the original file with the updated one
                 result=$(sudo mv "$temp_file" "$compose_file")
+
                 checkSuccess "Enabling Traefik options for public setup and whitelist disabled"
             fi
         # Authelia Disabled
@@ -576,7 +577,6 @@ setupTraefikLabels() {
 
                 checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
             fi
-
         fi
     fi
 }
