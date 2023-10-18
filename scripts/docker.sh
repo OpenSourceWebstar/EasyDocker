@@ -353,37 +353,6 @@ editComposeFileApp()
         "$compose_file")
         checkSuccess "Updating Compose file docker socket for $app_name"
     fi
-    
-    if [[ "$public" == "true" ]]; then
-        if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-            local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-            checkSuccess "Enable labels for Traefik option options on public setup"
-            # Loop through compose file
-            while IFS= read -r line; do
-                if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                    local line="${line//#/}"
-                fi
-                echo "$line"
-            done < "$compose_file" > >(sudo tee "$compose_file")
-            isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
-        else
-            local result=$(sudo sed -i "s/#labels:/labels:/g" $compose_file)
-            checkSuccess "Enable labels for Traefik option options on public setup"
-            if [[ "$whitelist" == "true" ]]; then
-                local result=$(sudo sed -i "s/#traefik/traefik/g" $compose_file)
-                checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
-            elif [[ "$whitelist" == "false" ]]; then
-                # Loop through compose file
-                while IFS= read -r line; do
-                    if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                        local line="${line//#/}"
-                    fi
-                    echo "$line"
-                done < "$compose_file" > >(sudo tee "$compose_file")
-                isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
-            fi
-        fi
-    fi
 
     if [[ "$public" == "true" ]]; then    
         setupTraefikLabels $compose_file;

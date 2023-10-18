@@ -131,25 +131,6 @@ installMailcow()
         echo "---- $menu_number. Pulling Mailcow GitHub repo into the $containers_dir$app_name folder"
         echo ""
 
-		if [ -f "$containers_dir$app_name/mailserver.conf" ]; then
-			while true; do
-				echo ""
-				isNotice "Mailcow install already found."
-				echo ""
-				isQuestion "Would you like to reinstall $app_name? *THIS WILL WIPE ALL DATA* (y/n): "
-				read -p "" reinstall_choice
-				if [[ -n "$reinstall_choice" ]]; then
-					break
-				fi
-				isNotice "Please provide a valid input."
-			done
-			if [[ "$reinstall_choice" == [yY] ]]; then
-				mailcowSetupGit;
-			fi
-		else
-			mailcowSetupGit;
-		fi
-
 		mailcowSetupGit()
 		{
 			# Define the paths
@@ -173,6 +154,25 @@ installMailcow()
 				checkSuccess "Deleting backup directory."
 			fi
 		}
+
+		if [ -f "$containers_dir$app_name/mailserver.conf" ]; then
+			while true; do
+				echo ""
+				isNotice "Mailcow install already found."
+				echo ""
+				isQuestion "Would you like to reinstall $app_name? *THIS WILL WIPE ALL DATA* (y/n): "
+				read -p "" reinstall_choice
+				if [[ -n "$reinstall_choice" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$reinstall_choice" == [yY] ]]; then
+				mailcowSetupGit;
+			fi
+		else
+			mailcowSetupGit;
+		fi
 
 		local result=$(copyFile $install_containers_dir$app_name/docker-compose.yml $containers_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
