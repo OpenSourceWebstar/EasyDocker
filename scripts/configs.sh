@@ -685,7 +685,8 @@ viewComposeFiles() {
             case "$selected_files" in
               [0-9]*)
                 # Edit the selected Docker Compose files with nano
-                local IFS=' ' read -ra selected_file_numbers <<< "$selected_files"
+                local IFS=' '   # Declare IFS as a local variable
+                read -r -a selected_file_numbers <<< "$selected_files"  # Declare selected_file_numbers as an array
                 for file_number in "${selected_file_numbers[@]}"; do
                   local index=$((file_number - 1))
                   if ((index >= 0 && index < ${#selected_compose_files[@]})); then
