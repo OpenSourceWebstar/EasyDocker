@@ -146,6 +146,8 @@ installMailcow()
 			if [[ "$reinstall_choice" == [yY] ]]; then
 				mailcowSetupGit;
 			fi
+		else
+			mailcowSetupGit;
 		fi
 
 		mailcowSetupGit()
