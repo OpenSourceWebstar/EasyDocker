@@ -324,7 +324,7 @@ editComposeFileDefault()
     fi
 
     if [[ "$public" == "true" ]]; then    
-        setupTraefikLabels $compose_file
+        setupTraefikLabels $compose_file;
     fi
     
     if [[ "$public" == "false" ]]; then
@@ -393,7 +393,7 @@ editComposeFileApp()
     fi
 
     if [[ "$public" == "true" ]]; then    
-        setupTraefikLabels $compose_file
+        setupTraefikLabels $compose_file;
     fi
 
     if [[ "$public" == "false" ]]; then
@@ -472,9 +472,9 @@ setupTraefikLabels()
                 fi
                 echo "$line"
             done < "$compose_file" > >(sudo tee "$compose_file")
-            isSuccessful "Enabling Traefik options for public setup, wuth authelia enabled and no whitelist found."
+            isSuccessful "Enabling Traefik options for public setup, with authelia enabled and no whitelist found."
         # Authelia Disabled
-        elif [[ "$authelia_setup" == "false" ]]; then
+        elif [[ "$authelia_setup" == "false" ]] || [[ "$authelia_setup" == "" ]]; then
             # Enable Labels
             local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
             checkSuccess "Enable labels for Traefik option options on public setup"
@@ -485,8 +485,9 @@ setupTraefikLabels()
                 fi
                 echo "$line"
             done < "$compose_file" > >(sudo tee "$compose_file")
-            isSuccessful "Enabling Traefik options for public setup, wuth authelia enabled and no whitelist found."
+            isSuccessful "Enabling Traefik options for public setup, with authelia enabled and no whitelist found."
         fi
+    # Whitelist Data
     else
         # Authelia Enabled
         if [[ "$authelia_setup" == "true" ]]; then
@@ -509,7 +510,7 @@ setupTraefikLabels()
                 isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
             fi
         # Authelia Disabled
-        elif [[ "$authelia_setup" == "false" ]]; then
+        elif [[ "$authelia_setup" == "false" ]] || [[ "$authelia_setup" == "" ]]; then
             # Enable Labels
             local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
             checkSuccess "Enable labels for Traefik option options on public setup"

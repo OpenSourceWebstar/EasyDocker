@@ -605,7 +605,8 @@ listDockerComposeFiles()
 }
 
 # Function to view and edit Docker Compose files in a selected app's folder
-viewComposeFiles() {
+viewComposeFiles() 
+{
   local app_names=()
   local app_dir
 
