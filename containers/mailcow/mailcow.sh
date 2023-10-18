@@ -132,8 +132,8 @@ installMailcow()
         echo ""
 
 		# Define the paths
-		source_dir="/docker/containers/mailcow"  # Directory with existing content
-		backup_dir="/tmp/mailcow_backup"  # Temporary backup directory
+		local source_dir="/docker/containers/mailcow"  # Directory with existing content
+		local backup_dir="/tmp/mailcow_backup"  # Temporary backup directory
 		# Create a backup of the existing content
 		if [ -d "$source_dir" ]; then
 			result=$(sudo mv "$source_dir" "$backup_dir")
@@ -189,7 +189,7 @@ installMailcow()
 		fi
 		
 		# Script to setup Mailcow
-		local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser ./generate_config.sh)
+		local result=$(cd $containers_dir$app_name && sudo ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
 
 		((menu_number++))
