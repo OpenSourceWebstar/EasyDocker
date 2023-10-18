@@ -432,11 +432,7 @@ editAppConfig()
     local app_dir=$containers_dir$app_name
 
     if [ -n "$app_dir" ]; then
-        if [ "$app_name" == "mailcow" ]; then
-            local config_file="$app_dir/${app_name}_easydocker.config"
-        else
-           local config_file="$app_dir/$app_name.config"
-        fi
+        local config_file="$app_dir/$app_name.config"
 
         if [ -f "$config_file" ]; then
             # Calculate the checksum of the original file

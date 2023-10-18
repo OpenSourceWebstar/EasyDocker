@@ -142,7 +142,7 @@ installMailcow()
 		# Clone the Git repository
 		local result=$(sudo rm -rf "$source_dir")
 		checkSuccess "Deleting mailcow directory git."
-		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized "$source_dir")
+		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized "$source_dir" && sudo -u $easydockeruser git config --global --add safe.directory $containers_dir$app_name)
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 		# Restore the backup content
 		if [ -d "$backup_dir" ]; then
@@ -196,19 +196,19 @@ installMailcow()
         echo ""
 
 		if [[ "$COWP80_PROMPT" == [yY] ]]; then
-        	local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $containers_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $containers_dir$app_name/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to custom http port"
 		fi
 		if [[ "$COWP443_PROMPT" == [yY] ]]; then
-        	local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $containers_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $containers_dir$app_name/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to custom https port"
 		fi
 		if [[ "$COWLE" == [yY] ]]; then
-        	local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $containers_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $containers_dir$app_name/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to disable SSL install"
 		fi
 		if [[ "$COWCD" == [nN] ]]; then
-        	local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $containers_dir/mailcow/mailcow.conf)
+        	local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $containers_dir$app_name/mailcow.conf)
         	checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
 		fi
 

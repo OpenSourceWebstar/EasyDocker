@@ -28,12 +28,7 @@ setupConfigToContainer()
     local flags="$2"
     local target_path="$containers_dir$app_name"
     local source_file="$install_containers_dir$app_name/$app_name.config"
-
-    if [ "$app_name" == "mailcow" ]; then
-        local config_file="${app_name}_easydocker.config"
-    else
-        local config_file="$app_name.config"
-    fi
+    local config_file="$app_name.config"
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
