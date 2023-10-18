@@ -152,16 +152,13 @@ installMailcow()
 		local result=$(sudo sed -i "s/PORTHERE/$COWP80C/g" $containers_dir$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Port to $$COWP80C in the docker-compose.$app_name.yml file"
 		
-		if [[ "$using_caddy" == "false" ]]; then
+		if [[ "$using_caddy" == "true" ]]; then
 			# Setup SSL Transfer scripts
 			local result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $containers_dir$app_name/caddy-to-mailcow-ssl.sh | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
 			local result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $containers_dir$app_name/caddy-to-mailcow-ssl.sh)
 			checkSuccess "Setting Domain Name in caddy-to-mailcow-ssl.sh"
-			
-			local result=$(sudo chmod 0755 /docker/mailcow/caddy-to-mailcow-ssl.sh)
-			checkSuccess "Updating permissions for caddy-to-mailcow-ssl.sh"
 			
 			# Setup crontab
 			job="0 * * * * /bin/bash $containers_dir$app_name/caddy-to-mailcow-ssl.sh"
@@ -174,7 +171,7 @@ installMailcow()
 		fi
 		
 		# Script to setup Mailcow
-		local result=$(cd mailcow && sudo -u $easydockeruser ./generate_config.sh)
+		local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
 
 		((menu_number++))
