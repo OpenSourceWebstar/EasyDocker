@@ -155,7 +155,7 @@ installMailcow()
 			fi
 		}
 
-		if [ -f "$containers_dir$app_name/mailserver.conf" ]; then
+		if [ -f "$containers_dir$app_name/mailcow.conf" ]; then
 			while true; do
 				echo ""
 				isNotice "Mailcow install already found."
