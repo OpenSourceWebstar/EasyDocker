@@ -85,9 +85,9 @@ installActual()
 
 		if [ $public == "false" ]; then
             # Enable local SSL
-            local result=$(sed -i 's/^#environment/environment/' $containers_dir$app_name/docker-compose.yml)
+            local result=$(sudo sed -i 's/^#environment/environment/' $containers_dir$app_name/docker-compose.yml)
             checkSuccess "Enabling environment in the docker-compose file."
-            local result=$(sed -i 's/^# - ACTUAL_HTTPS/ - ACTUAL_HTTPS/' $containers_dir$app_name/docker-compose.yml)
+            local result=$(sudo sed -i 's/^# - ACTUAL_HTTPS/ - ACTUAL_HTTPS/' $containers_dir$app_name/docker-compose.yml)
             checkSuccess "Enabling the HTTPS variables in the docker-compose file."
         fi
 
