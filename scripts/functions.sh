@@ -401,6 +401,7 @@ resetToMenu()
     cozy=n
     duplicati=n
     caddy=n
+    authelia=n
     
     # Backup
     backupsingle=n

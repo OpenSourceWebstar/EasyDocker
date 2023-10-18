@@ -26,7 +26,7 @@ setupInstallVariables()
     public="${!public_var}"
     whitelist="${!whitelist_var}"
     port="${!port_var}"
-    authelia="${!authelia_var}"
+    authelia_setup="${!authelia_var}"
 
     # Check if no network needed
     if [ "$host_name" != "" ]; then

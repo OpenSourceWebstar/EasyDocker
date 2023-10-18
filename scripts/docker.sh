@@ -461,7 +461,7 @@ setupTraefikLabels()
     # No Whitelist Data
     if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
         # Authelia Enabled
-        if [[ "$authelia" == "true" ]]; then
+        if [[ "$authelia_setup" == "true" ]]; then
             # Enable Labels
             local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
             checkSuccess "Enable labels for Traefik option options on public setup"
@@ -474,7 +474,7 @@ setupTraefikLabels()
             done < "$compose_file" > >(sudo tee "$compose_file")
             isSuccessful "Enabling Traefik options for public setup, wuth authelia enabled and no whitelist found."
         # Authelia Disabled
-        elif [[ "$authelia" == "false" ]]; then
+        elif [[ "$authelia_setup" == "false" ]]; then
             # Enable Labels
             local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
             checkSuccess "Enable labels for Traefik option options on public setup"
@@ -489,7 +489,7 @@ setupTraefikLabels()
         fi
     else
         # Authelia Enabled
-        if [[ "$authelia" == "true" ]]; then
+        if [[ "$authelia_setup" == "true" ]]; then
             # Enable Labels
             local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
             checkSuccess "Enable labels for Traefik option options on public setup"
@@ -509,7 +509,7 @@ setupTraefikLabels()
                 isSuccessful "Enabling Traefik options for public setup, and no whitelist found."
             fi
         # Authelia Disabled
-        elif [[ "$authelia" == "false" ]]; then
+        elif [[ "$authelia_setup" == "false" ]]; then
             # Enable Labels
             local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
             checkSuccess "Enable labels for Traefik option options on public setup"

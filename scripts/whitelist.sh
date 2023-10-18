@@ -92,7 +92,7 @@ whitelistUpdateYML()
             fi
 
             # This is for enabling authelia
-            if [[ $authelia == "true" ]]; then
+            if [[ $authelia_setup == "true" ]]; then
                 while IFS= read -r line; do
                     if [[ "$line" == *"authelia@docker"* && "$line" == *"#"* ]]; then
                         local result=$(sudo sed -i '/authelia@docker/s/#//g' "$yaml_file")
@@ -100,7 +100,7 @@ whitelistUpdateYML()
                         local autheliaupdates=true
                     fi
                 done < "$yaml_file"
-            elif [[ $authelia == "false" ]]; then
+            elif [[ $authelia_setup == "false" ]]; then
                 while IFS= read -r line; do
                     if [[ "$line" == *"authelia@docker"* && "$line" != *"#"* ]]; then
                         result=$(echo "$line" | sed -e 's/traefik/#traefik/')
