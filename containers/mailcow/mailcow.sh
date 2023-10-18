@@ -148,6 +148,8 @@ installMailcow()
 		if [ -d "$backup_dir" ]; then
 			result=$(sudo rsync -a "$backup_dir/" "$source_dir/")
 			checkSuccess "Restored existing content from backup"
+			local result=$(sudo rm -rf "$backup_dir")
+			checkSuccess "Deleting backup directory."
 		fi
 
 		local result=$(copyFile $install_containers_dir$app_name/docker-compose.yml $containers_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
