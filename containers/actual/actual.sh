@@ -83,11 +83,11 @@ installActual()
 			checkSuccess "Self Signed SSL Certificate not found, this may cause an issue!"
 		fi
 
-		if [ $public == "false" ]; then
+        if [ "$public" == "false" ]; then
             # Enable local SSL
-            local result=$(sudo sed -i 's/^#environment/environment/' $containers_dir$app_name/docker-compose.yml)
+            result=$(sudo sed -i 's|^#environment|environment|' "$containers_dir$app_name/docker-compose.yml")
             checkSuccess "Enabling environment in the docker-compose file."
-            local result=$(sudo sed -i 's/^# - ACTUAL_HTTPS/ - ACTUAL_HTTPS/' $containers_dir$app_name/docker-compose.yml)
+            result=$(sudo sed -i 's|^# - ACTUAL_HTTPS| - ACTUAL_HTTPS|' "$containers_dir$app_name/docker-compose.yml")
             checkSuccess "Enabling the HTTPS variables in the docker-compose file."
         fi
 
