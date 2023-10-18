@@ -455,7 +455,8 @@ editCustomFile()
     isSuccessful "Updated the $customfile file"
 }
 
-setupTraefikLabels() {
+setupTraefikLabels() 
+{
     local compose_file="$1"
     local temp_file="/tmp/temp_compose_file.yml"
 
@@ -471,6 +472,7 @@ setupTraefikLabels() {
             > "$temp_file"
 
             # Enable all Traefik lines with no whitelist
+            local IFS
             while IFS= read -r line; do
                 if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
                     local line="${line//#/}"
@@ -492,6 +494,7 @@ setupTraefikLabels() {
             > "$temp_file"
 
             # Enable all Traefik lines with no whitelist and authelia disabled
+            local IFS
             while IFS= read -r line; do
                 if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* && "$line" != *"authelia@docker"* ]]; then
                     local line="${line//#/}"
@@ -521,17 +524,17 @@ setupTraefikLabels() {
                 # Create or truncate the temporary file
                 > "$temp_file"
 
+                local IFS
                 # Enable all Traefik lines with no whitelist if "authelia" is in the line
                 while IFS= read -r line; do
                     if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                        line="${line//#/}"
+                        local line="${line//#/}"
                     fi
                     echo "$line" >> "$temp_file"
                 done < "$compose_file"
 
                 # Replace the original file with the updated one
                 result=$(sudo mv "$temp_file" "$compose_file")
-
                 checkSuccess "Enabling Traefik options for public setup and whitelist disabled"
             fi
         # Authelia Disabled
@@ -545,10 +548,11 @@ setupTraefikLabels() {
                 # Create or truncate the temporary file
                 > "$temp_file"
 
+                local IFS
                 # Enable all Traefik lines with whitelist but no authelia
                 while IFS= read -r line; do
                     if [[ "$line" == *"#traefik"* && "$line" != *"authelia@docker"* ]]; then
-                        line="${line//#/}"
+                        local line="${line//#/}"
                     fi
                     echo "$line" >> "$temp_file"
                 done < "$compose_file"
@@ -564,10 +568,11 @@ setupTraefikLabels() {
                 # Create or truncate the temporary file
                 > "$temp_file"
 
+                local IFS
                 # Enable all Traefik lines with no whitelist or authelia
                 while IFS= read -r line; do
                     if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* && "$line" != *"authelia@docker"* ]]; then
-                        line="${line//#/}"
+                        local line="${line//#/}"
                     fi
                     echo "$line" >> "$temp_file"
                 done < "$compose_file"
