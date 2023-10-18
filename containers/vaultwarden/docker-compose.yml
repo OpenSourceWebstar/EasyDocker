@@ -10,7 +10,7 @@ services:
     container_name: vaultwarden
     image: vaultwarden/server:latest
     ports:
-      - 8201:80
+      - PORTHERE:80
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./vaultwarden-ssl/:/ssl/
@@ -48,6 +48,7 @@ services:
       #traefik.http.routers.vaultwarden.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.vaultwarden.tls: true
       #traefik.http.routers.vaultwarden.tls.certresolver: production
+      #traefik.http.services.vaultwarden.loadbalancer.server.port: PORTHERE
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.vaultwarden.middlewares: my-whitelist-in-docker@docker
     networks:
