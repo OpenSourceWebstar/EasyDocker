@@ -131,8 +131,24 @@ installMailcow()
         echo "---- $menu_number. Pulling Mailcow GitHub repo into the $containers_dir$app_name folder"
         echo ""
 
-		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized $containers_dir/mailcow)
+		# Define the paths
+		source_dir="/docker/containers/mailcow"  # Directory with existing content
+		backup_dir="/tmp/mailcow_backup"  # Temporary backup directory
+		# Create a backup of the existing content
+		if [ -d "$source_dir" ]; then
+			result=$(sudo mv "$source_dir" "$backup_dir")
+			checkSuccess "Backup of existing content created"
+		fi
+		# Clone the Git repository
+		local result=$(sudo rm -rf "$source_dir")
+		checkSuccess "Deleting mailcow directory git."
+		local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized "$source_dir")
 		checkSuccess "Cloning Mailcow Dockerized GitHub repo"
+		# Restore the backup content
+		if [ -d "$backup_dir" ]; then
+			result=$(sudo rsync -a "$backup_dir/" "$source_dir/")
+			checkSuccess "Restored existing content from backup"
+		fi
 
 		local result=$(copyFile $install_containers_dir$app_name/docker-compose.yml $containers_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
