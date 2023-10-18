@@ -335,10 +335,10 @@ checkIpsHostnameFilesMissingEntries()
 
         if [ -f "$remote_ips_file" ]; then
             # Compare the local and remote files and find missing lines
-            missing_lines=$(diff --new-line-format="%L" --old-line-format="" --unchanged-line-format="" "$ips_file" "$remote_ips_file")
+            local missing_lines=$(diff --new-line-format="%L" --old-line-format="" --unchanged-line-format="" "$ips_file" "$remote_ips_file")
 
-            IFS=$'\n' # Set the internal field separator to newline
-            for line in $missing_lines; do
+            local IFS=$'\n' # Set the internal field separator to newline
+            for ips_line in $missing_lines; do
                 echo ""
                 echo "####################################################"
                 echo "###        Missing IP/Hostname Entry Found       ###"
@@ -348,7 +348,7 @@ checkIpsHostnameFilesMissingEntries()
                 echo ""
                 
                 while true; do
-                    isOption "1. Add $line to the '$ips_file'"
+                    isOption "1. Add $ips_line to the '$ips_file'"
                     isOption "x. Skip"
                     
                     echo ""
@@ -357,7 +357,7 @@ checkIpsHostnameFilesMissingEntries()
                     echo ""
                     case "$ipschoice" in
                         1)
-                            echo "$line" | sudo tee -a "$remote_ips_file" > /dev/null 2>&1
+                            echo "$ips_line" | sudo tee -a "$remote_ips_file" > /dev/null 2>&1
                             checkSuccess "Adding the missing entry to $ips_file"
                             break
                             ;;
@@ -374,7 +374,7 @@ checkIpsHostnameFilesMissingEntries()
             done
         fi
 
-        IFS=" " # Reset the internal field separator
+        local IFS=" " # Reset the internal field separator
     fi
 
     isSuccessful "IP/Hostname record check completed."  # Indicate completion
@@ -685,7 +685,7 @@ viewComposeFiles() {
             case "$selected_files" in
               [0-9]*)
                 # Edit the selected Docker Compose files with nano
-                IFS=' ' read -ra selected_file_numbers <<< "$selected_files"
+                local IFS=' ' read -ra selected_file_numbers <<< "$selected_files"
                 for file_number in "${selected_file_numbers[@]}"; do
                   local index=$((file_number - 1))
                   if ((index >= 0 && index < ${#selected_compose_files[@]})); then
