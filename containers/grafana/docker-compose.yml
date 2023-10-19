@@ -1,0 +1,33 @@
+version: "3.8"
+
+networks:
+  vpn:
+    external: true
+
+services:
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+     - GF_SERVER_ROOT_URL=http://DOMAINSUBNAMEHERE/
+     - GF_INSTALL_PLUGINS=grafana-clock-panel
+    ports:
+     - 'PORTHERE:3000'
+    volumes:
+     - ./grafana_storage:/var/lib/grafana
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    #labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #traefik.enable: true
+      #traefik.http.routers.ipinfo.entrypoints: web,websecure
+      #traefik.http.routers.ipinfo.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.ipinfo.tls: true
+      #traefik.http.routers.ipinfo.tls.certresolver: production
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.ipinfo.middlewares: my-whitelist-in-docker@docker
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

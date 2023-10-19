@@ -98,17 +98,18 @@ startInstall()
     ###                Install System Apps              ###
     #######################################################
 
-    installFail2ban;
-    installCaddy;
-    installTraefik;
-    installAuthelia;
-    installWireguard;
-	installAdguard;
-    installPihole;
-	installPortainer;
-    installWatchtower;
-	installDashy;
+    installAdguard
+    installAuthelia
+    installCaddy
+    installDashy
     installDuplicati;
+    installFail2ban;
+    installGrafana;
+    installPihole;
+    installPortainer;
+    installTraefik;
+    installWatchtower;
+    installWireguard;
 
     #######################################################
     ###                Install Privacy Apps             ###
