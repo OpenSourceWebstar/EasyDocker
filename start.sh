@@ -116,6 +116,7 @@ startInstall()
 
 	installSearxng;
     installSpeedtest;
+	installInvidious;
 	installIpinfo;
 	installCozy;
 	installTrilium;
