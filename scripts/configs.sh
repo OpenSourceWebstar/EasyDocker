@@ -357,7 +357,7 @@ checkIpsHostnameFilesMissingEntries()
                     echo ""
                     case "$ipschoice" in
                         1)
-                            echo "$ips_line" | sudo tee -a "$remote_ips_file" > /dev/null 2>&1
+                            echo "$ips_line" | sudo tee -a "$ips_file" > /dev/null 2>&1
                             checkSuccess "Adding the missing entry to $ips_file"
                             break
                             ;;
