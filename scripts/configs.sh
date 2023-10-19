@@ -328,10 +328,10 @@ checkApplicationsConfigFilesMissingVariables()
 
 checkIpsHostnameFilesMissingEntries() 
 {
-    local ips_file="$configs_dir/$ip_file"
+    local ips_file="$configs_dir$ip_file"
 
     if [ -f "$ips_file" ]; then
-        local remote_ips_file="$install_configs_dir/$ip_file"
+        local remote_ips_file="$install_configs_dir$ip_file"
 
         if [ -f "$remote_ips_file" ]; then
             # Compare the local and remote files and find missing lines
