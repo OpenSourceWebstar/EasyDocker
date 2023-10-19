@@ -3,7 +3,7 @@
 # Category : system
 # Description : Grafana - Metrics Visualizer (c/u/s/r/i):
 
-installInvidious()
+instalGrafana()
 {
     local passedValue="$1"
 
