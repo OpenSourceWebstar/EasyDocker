@@ -79,6 +79,14 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Checking & Opening ports if required"
+    echo ""
+
+    setupInstallVariables $app_name;
+    checkAppPorts $app_name $port $port_2;
+
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Updating docker-compose file(s)"
     echo ""
 
@@ -91,13 +99,6 @@ restoreStart()
 
     fixPermissionsBeforeStart $app_name;
 
-    ((menu_number++))
-    echo ""
-    echo "---- $menu_number. Opening ports if required"
-    echo ""
-
-    openAppPorts $app_name;
-    
     ((menu_number++))
     echo ""
     echo "---- $menu_number. Starting up the $stored_app_name docker service(s)"

@@ -44,6 +44,13 @@ installJitsimeet()
         echo "###      Install $app_name"
         echo "##########################################"
         echo ""
+		
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking & Opening ports if required"
+        echo ""
+
+        checkAppPorts $app_name $port $port_2;
 
 		((menu_number++))
         echo ""
@@ -137,13 +144,6 @@ installJitsimeet()
         echo ""
 
 		whitelistAndStartApp $app_name install;
-
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Opening ports if required"
-        echo ""
-
-        openAppPorts $app_name;		
 
 		((menu_number++))
 		echo ""

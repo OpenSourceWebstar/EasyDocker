@@ -109,10 +109,10 @@ fi
 
         ((menu_number++))
         echo ""
-        echo "---- $menu_number. Opening ports if required"
+        echo "---- $menu_number. Checking & Opening ports if required"
         echo ""
 
-        openAppPorts $app_name;
+        checkAppPorts $app_name $port $port_2;
 
 		((menu_number++))
 		echo ""

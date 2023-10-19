@@ -26,6 +26,7 @@ setupInstallVariables()
     public="${!public_var}"
     whitelist="${!whitelist_var}"
     port="${!port_var}"
+    port_2="${!port_2_var}"
     authelia_setup="${!authelia_var}"
 
     # Check if no network needed
@@ -79,18 +80,30 @@ portExistsInDatabase()
 
     if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
         local table_name=ports
-        local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM $table_name WHERE port = '$port' AND type = '$type';")
+
+        if [ -n "$type" ]; then
+            local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, app_name FROM $table_name WHERE port = '$port' AND type = '$type';")
+        else
+            local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, app_name FROM $table_name WHERE port = '$port';")
+        fi
+
         if [ -n "$existing_portdata" ]; then
+            local app_name_from_db
+            local app_name_from_db=$(echo "$existing_portdata" | awk '{print $2}')
+            isNotice "Port $port is already used by $app_name_from_db."
             return 0  # Port exists in the database
         fi
     fi
     return 1  # Port does not exist in the database
 }
 
-openAppPorts()
+checkAppPorts()
 {
     local app_name="$1"
+    local port_1="$2"
+    local port_2="$3"
     
+    # This is where we open the ports
     if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
         openPort $app_name 80/tcp
         openPort $app_name 443/tcp
@@ -100,9 +113,30 @@ openAppPorts()
         openPort jitsimeet-jvb-1 10000/udp
         openPort jitsimeet-jvb-1 4443
     else
-        isNotice "No ports needed to be opened."
+        # This is for logging ports to avoid conflict of ports
+        if [[ "$port_1" != "" ]]; then
+            logPort $app_name $port_1;
+        fi
+        if [[ "$port_2" != "" ]]; then
+            logPort $app_name $port_2;
+        fi
+        isNotice "Used port(s) logged, but no ports needed to be opened."
     fi
 }
+
+logPort()
+{
+    local app_name="$1"
+    local port="$2"
+
+    # Check if the port already exists in the database
+    if portExistsInDatabase "$app_name" "$port" ""; then
+        return
+    fi
+
+    databasePortInsert "$app_name" "$port"
+}
+
 
 openPort()
 {
