@@ -107,6 +107,7 @@ startInstall()
     installGrafana;
     installPihole;
     installPortainer;
+    installPrometheus;
     installTraefik;
     installWatchtower;
     installWireguard;
