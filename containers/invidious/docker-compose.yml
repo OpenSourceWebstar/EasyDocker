@@ -43,12 +43,12 @@ services:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
       #traefik.enable: true
-      #traefik.http.routers.ipinfo.entrypoints: web,websecure
-      #traefik.http.routers.ipinfo.rule: Host(`DOMAINSUBNAMEHERE`)
-      #traefik.http.routers.ipinfo.tls: true
-      #traefik.http.routers.ipinfo.tls.certresolver: production
+      #traefik.http.routers.invidious.entrypoints: web,websecure
+      #traefik.http.routers.invidious.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.invidious.tls: true
+      #traefik.http.routers.invidious.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.ipinfo.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.invidious.middlewares: my-whitelist-in-docker@docker
     depends_on:
       - invidious-db
     networks:
