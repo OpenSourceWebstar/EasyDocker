@@ -2,12 +2,22 @@
 
 runCommandForDockerInstallUser()
 {
+    local silent_flag=""
+    if [ "$1" == "--silent" ]; then
+        silent_flag="$1"
+        shift
+    fi
     local remote_command="$1"
     
     # Run the SSH command using the existing SSH variables
     local output
-    sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
-    local exit_code=$?
+    if [ -z "$silent_flag" ]; then
+        sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+        local exit_code=$?
+    else
+        sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+        local exit_code=$?
+    fi
 
     if [ $exit_code -eq 0 ]; then
         return 0  # Success, command completed without errors
@@ -375,15 +385,15 @@ editEnvFileDefault()
     local env_file="$containers_dir$app_name/.env"
     
     local result=$(sudo sed -i \
-        -e "s/DOMAINNAMEHERE/$domain_full/g" \
-        -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
-        -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
-        -e "s/PUBLICIPHERE/$public_ip/g" \
-        -e "s/IPADDRESSHERE/$ip_setup/g" \
-        -e "s/IPWHITELIST/$CFG_IPS_WHITELIST/g" \
-        -e "s/PORTHERE/$port/g" \
-        -e "s/SECONDPORT/$port_2/g" \
-        -e "s/TIMEZONEHERE/$CFG_TIMEZONE/g" \
+        -e "s|DOMAINNAMEHERE|$domain_full|g" \
+        -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
+        -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
+        -e "s|PUBLICIPHERE|$public_ip|g" \
+        -e "s|IPADDRESSHERE|$ip_setup|g" \
+        -e "s|IPWHITELIST|$CFG_IPS_WHITELIST|g" \
+        -e "s|PORTHERE|$port|g" \
+        -e "s|SECONDPORT|$port_2|g" \
+        -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$env_file")
     checkSuccess "Updating .env file for $app_name"
     
@@ -399,15 +409,15 @@ editCustomFile()
     local custompathandfile="$custompath/$customfile"
     
     local result=$(sudo sed -i \
-        -e "s/DOMAINNAMEHERE/$domain_full/g" \
-        -e "s/DOMAINSUBNAMEHERE/$host_setup/g" \
-        -e "s/DOMAINPREFIXHERE/$domain_prefix/g" \
-        -e "s/PUBLICIPHERE/$public_ip/g" \
-        -e "s/IPADDRESSHERE/$ip_setup/g" \
-        -e "s/IPWHITELIST/$CFG_IPS_WHITELIST/g" \
-        -e "s/PORTHERE/$port/g" \
-        -e "s/SECONDPORT/$port_2/g" \
-        -e "s/TIMEZONEHERE/$CFG_TIMEZONE/g" \
+        -e "s|DOMAINNAMEHERE|$domain_full|g" \
+        -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
+        -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
+        -e "s|PUBLICIPHERE|$public_ip|g" \
+        -e "s|IPADDRESSHERE|$ip_setup|g" \
+        -e "s|IPWHITELIST|$CFG_IPS_WHITELIST|g" \
+        -e "s|PORTHERE|$port|g" \
+        -e "s|SECONDPORT|$port_2|g" \
+        -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$custompathandfile")
     checkSuccess "Updating $customfile file for $app_name"
     
