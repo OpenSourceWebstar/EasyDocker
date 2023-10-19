@@ -16,7 +16,6 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - ./prom_data:/prometheus
-    volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
       #caddy: DOMAINSUBNAMEHERE
