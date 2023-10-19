@@ -16,7 +16,7 @@ services:
      - 'PORTHERE:3000'
     volumes:
      - ./grafana_storage:/var/lib/grafana
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+     - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
