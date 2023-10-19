@@ -33,7 +33,8 @@ uninstallApp()
         echo "---- $menu_number. Closing ports if required"
         echo ""
 
-        CloseAppPorts $stored_app_name;
+        setupInstallVariables $app_name;
+        removeAppPorts $stored_app_name $port $port_2;
 
         ((menu_number++))
         echo ""

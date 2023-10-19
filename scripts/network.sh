@@ -76,17 +76,10 @@ portExistsInDatabase()
 {
     local app_name="$1"
     local port="$2"
-    local type="$3"
 
     if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
         local table_name=ports
-
-        if [ -n "$type" ]; then
-            local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, app_name FROM $table_name WHERE port = '$port' AND type = '$type';")
-        else
-            local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, app_name FROM $table_name WHERE port = '$port';")
-        fi
-
+        local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, name FROM $table_name WHERE port = '$port';")
         if [ -n "$existing_portdata" ]; then
             local app_name_from_db
             local app_name_from_db=$(echo "$existing_portdata" | awk '{print $2}')
@@ -94,8 +87,30 @@ portExistsInDatabase()
             return 0  # Port exists in the database
         fi
     fi
+
     return 1  # Port does not exist in the database
 }
+
+portOpenExistsInDatabase()
+{
+    local app_name="$1"
+    local port="$2"
+    local type="$3"
+
+    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
+            local table_name=ports
+            local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, name FROM $table_name WHERE port = '$port' AND type = '$type';")
+            if [ -n "$existing_portdata" ]; then
+                local app_name_from_db
+                local app_name_from_db=$(echo "$existing_portdata" | awk '{print $2}')
+                isNotice "Port $port is already used by $app_name_from_db."
+                return 0  # Port exists in the database
+            fi
+    fi
+
+    return 1  # Port does not exist in the database
+}
+
 
 checkAppPorts()
 {
@@ -130,13 +145,12 @@ logPort()
     local port="$2"
 
     # Check if the port already exists in the database
-    if portExistsInDatabase "$app_name" "$port" ""; then
+    if portExistsInDatabase "$app_name" "$port" "" "log"; then
         return
     fi
 
     databasePortInsert "$app_name" "$port"
 }
-
 
 openPort()
 {
@@ -146,12 +160,12 @@ openPort()
     IFS='/' read -r port type <<< "$portdata"
 
     # Check if the port already exists in the database
-    if portExistsInDatabase "$app_name" "$port" "$type"; then
+    if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
         isNotice "Port $port and type $type already opened."
         return
     fi
 
-    databasePortInsert "$app_name" "$portdata"
+    databasePortOpenInsert "$app_name" "$portdata"
 
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local result=$(sudo ufw allow "$port")
@@ -170,8 +184,8 @@ closePort()
     IFS='/' read -r port type <<< "$portdata"
 
     # Check if the port already exists in the database
-    if portExistsInDatabase "$app_name" "$port" "$type"; then
-        databasePortRemove "$app_name" "$portdata"
+    if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
+        databasePortOpenRemove "$app_name" "$portdata"
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
             local result=$(sudo ufw deny "$port")
             checkSuccess "Closing port $port for $app_name in the UFW Firewall"
@@ -186,7 +200,7 @@ closePort()
 
 }
 
-CloseAppPorts()
+removeAppPorts()
 {
     local app_name="$1"
 
@@ -199,7 +213,14 @@ CloseAppPorts()
         closePort jitsimeet-jvb-1 10000/udp
         closePort jitsimeet-jvb-1 4443
     else
-        isNotice "No ports needed to be closed."
+        # This is for logging ports to avoid conflict of ports
+        if [[ "$port_1" != "" ]]; then
+            databasePortRemove $app_name $port_1;
+        fi
+        if [[ "$port_2" != "" ]]; then
+            databasePortRemove $app_name $port_2;
+        fi
+        isNotice "Used port(s) untracked, but no ports needed to be closed."
     fi
 }
 
