@@ -83,7 +83,7 @@ restoreStart()
     echo ""
 
     setupInstallVariables $app_name;
-    checkAppPorts $app_name $port $port_2;
+    checkAppPorts $app_name;
 
     ((menu_number++))
     echo ""

@@ -15,8 +15,6 @@ setupInstallVariables()
     domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
     public_var="CFG_${app_name^^}_PUBLIC"
     whitelist_var="CFG_${app_name^^}_WHITELIST"
-    port_var="CFG_${app_name^^}_PORT"
-    port_2_var="CFG_${app_name^^}_PORT_2"
     authelia_var="CFG_${app_name^^}_AUTHELIA"
 
     # Access the variables using variable indirection
@@ -25,16 +23,12 @@ setupInstallVariables()
     domain_number="${!domain_number_var}"
     public="${!public_var}"
     whitelist="${!whitelist_var}"
-    port="${!port_var}"
-    port_2="${!port_2_var}"
     authelia_setup="${!authelia_var}"
 
     # Check if no network needed
     if [ "$host_name" != "" ]; then
-        setupIPsAndHostnames;
-    fi
-    
-    #isSuccessful "App install variables setup successfully." 
+        setupIPsAndHostnames $app_name;
+    fi 
 }
 
 setupIPsAndHostnames()
@@ -55,14 +49,14 @@ setupIPsAndHostnames()
             ssl_crt=${domain_full}.crt
             ip_setup=$ip
             
-            #if [[ "$public" == "true" ]]; then
-                #isSuccessful "Using $host_setup for public domain."
-                #checkSuccess "Match found: $hostname with IP $ip."  # Moved this line inside the conditional block
-            #fi
+            # Setup all ports
+            # Generates port variables: num_ports, openport1, openport2, etc.
+            open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
+            open_initial_ports="${!open_ports_var}"
+            # Generates port variables: num_ports, port1, port2, etc.
+            used_ports_var="CFG_${app_name^^}_PORTS"
+            used_initial_ports="${!used_ports_var}"
 
-            #if [[ $found_match == "true" ]]; then
-                #isSuccessful "App network settings setup successfully."
-            #fi
         fi
     done < "$configs_dir$ip_file"
     
@@ -115,28 +109,52 @@ portOpenExistsInDatabase()
 checkAppPorts()
 {
     local app_name="$1"
-    local port_1="$2"
-    local port_2="$3"
-    
-    # This is where we open the ports
-    if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
-        openPort $app_name 80/tcp
-        openPort $app_name 443/tcp
-    elif [[ "$app_name" == "wireguard" ]]; then
-        openPort $app_name 51820/udp
-    elif [[ "$app_name" == "jitsimeet" ]]; then
-        openPort jitsimeet-jvb-1 10000/udp
-        openPort jitsimeet-jvb-1 4443
+
+    # Open Ports
+    # Check if open_initial_ports is not empty
+    if [ -n "$open_initial_ports" ]; then
+        # Split the configuration into an array using a comma as a delimiter
+        IFS=',' read -ra openports <<< "$open_initial_ports"
+        for i in "${!openports[@]}"; do
+            local variable_name="openport$((i+1))"
+            eval "$variable_name=${openports[i]}"
+        done
+        # Get the number of ports found
+        local open_num_ports="${#openports[@]}"
     else
-        # This is for logging ports to avoid conflict of ports
-        if [[ "$port_1" != "" ]]; then
-            logPort $app_name $port_1;
-        fi
-        if [[ "$port_2" != "" ]]; then
-            logPort $app_name $port_2;
-        fi
-        isNotice "Used port(s) logged, but no ports needed to be opened."
+        isNotice "No data found for open port configuration."
     fi
+
+    # Loop through the port variables and log each port
+    for i in "${!openports[@]}"; do
+        local variable_name="openport$((i+1))"
+        local open_port_value="${!variable_name}"
+        openPort "$app_name" "$open_port_value"
+    done
+
+    # Used Ports
+    # Check if used_initial_ports is not empty
+    if [ -n "$used_initial_ports" ]; then
+        # Split the configuration into an array using a comma as a delimiter
+        IFS=',' read -ra usedports <<< "$used_initial_ports"
+        for i in "${!usedports[@]}"; do
+            local variable_name="usedport$((i+1))"
+            eval "$variable_name=${usedports[i]}"
+        done
+        # Get the number of ports found
+        local used_num_ports="${#usedports[@]}"
+    else
+        isNotice "No data found for used port configuration."
+    fi
+
+    # Loop through the port variables and log each port
+    for i in "${!usedports[@]}"; do
+        local variable_name="usedport$((i+1))"
+        local used_port_value="${!variable_name}"
+        logPort "$app_name" "$open_port_value"
+    done
+
+    isNotice "All ports have been added and opened (if required)."
 }
 
 logPort()
@@ -145,7 +163,7 @@ logPort()
     local port="$2"
 
     # Check if the port already exists in the database
-    if portExistsInDatabase "$app_name" "$port" "" "log"; then
+    if portExistsInDatabase "$app_name" "$port"; then
         return
     fi
 
@@ -196,32 +214,70 @@ closePort()
     else
         isNotice "Unable to find port in the database...skipping..."
     fi
+}
 
+unlogPort()
+{
+    local app_name="$1"
+    local port="$2"
 
+    # Check if the port already exists in the database
+    if portExistsInDatabase "$app_name" "$port"; then
+        return
+    fi
+
+    databasePortRemove "$app_name" "$port"
 }
 
 removeAppPorts()
 {
     local app_name="$1"
 
-    if [[ "$app_name" == "traefik" ]] || [[ "$app_name" == "caddy" ]]; then
-        closePort $app_name 80/tcp
-        closePort $app_name 443/tcp
-    elif [[ "$app_name" == "wireguard" ]]; then
-        closePort $app_name 51820/udp
-    elif [[ "$app_name" == "jitsimeet" ]]; then
-        closePort jitsimeet-jvb-1 10000/udp
-        closePort jitsimeet-jvb-1 4443
+    # Open Ports
+    # Check if open_initial_ports is not empty
+    if [ -n "$open_initial_ports" ]; then
+        # Split the configuration into an array using a comma as a delimiter
+        IFS=',' read -ra openports <<< "$open_initial_ports"
+        for i in "${!openports[@]}"; do
+            local variable_name="openport$((i+1))"
+            eval "$variable_name=${openports[i]}"
+        done
+        # Get the number of ports found
+        local open_num_ports="${#openports[@]}"
     else
-        # This is for logging ports to avoid conflict of ports
-        if [[ "$port_1" != "" ]]; then
-            databasePortRemove $app_name $port_1;
-        fi
-        if [[ "$port_2" != "" ]]; then
-            databasePortRemove $app_name $port_2;
-        fi
-        isNotice "Used port(s) untracked, but no ports needed to be closed."
+        isNotice "No data found for open port configuration."
     fi
+
+    # Loop through the port variables and log each port
+    for i in "${!openports[@]}"; do
+        local variable_name="openport$((i+1))"
+        local open_port_value="${!variable_name}"
+        closePort "$app_name" "$open_port_value"
+    done
+
+    # Used Ports
+    # Check if used_initial_ports is not empty
+    if [ -n "$used_initial_ports" ]; then
+        # Split the configuration into an array using a comma as a delimiter
+        IFS=',' read -ra usedports <<< "$used_initial_ports"
+        for i in "${!usedports[@]}"; do
+            local variable_name="usedport$((i+1))"
+            eval "$variable_name=${usedports[i]}"
+        done
+        # Get the number of ports found
+        local used_num_ports="${#usedports[@]}"
+    else
+        isNotice "No data found for used port configuration."
+    fi
+
+    # Loop through the port variables and log each port
+    for i in "${!usedports[@]}"; do
+        local variable_name="usedport$((i+1))"
+        local used_port_value="${!variable_name}"
+        unlogPort "$app_name" "$open_port_value"
+    done
+
+    isNotice "All ports have been removed and closed (if required)."
 }
 
 sshRemote() 

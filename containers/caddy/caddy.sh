@@ -84,7 +84,7 @@ installCaddy()
         echo "---- $menu_number. Checking & Opening ports if required"
         echo ""
 
-        checkAppPorts $app_name $port $port_2;
+        checkAppPorts $app_name;
 
 		((menu_number++))
 		echo ""

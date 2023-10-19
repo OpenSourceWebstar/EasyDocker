@@ -405,7 +405,14 @@ installSQLiteDatabase()
                 setup_table_name=ports
                 if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
                 # Table info here
-                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type, TEXT);")
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER);")
+                checkSuccess "Creating $setup_table_name table"
+                fi
+
+                setup_table_name=ports_open
+                if ! sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$setup_table_name\b"; then
+                # Table info here
+                local result=$(sqlite3 $docker_dir/$db_file "CREATE TABLE IF NOT EXISTS $setup_table_name (name TEXT, port INTEGER, type TEXT);")
                 checkSuccess "Creating $setup_table_name table"
                 fi
 
