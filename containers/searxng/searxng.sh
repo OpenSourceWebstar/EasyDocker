@@ -44,6 +44,13 @@ installSearxng()
 		echo "##########################################"
 		echo ""
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking & Opening ports if required"
+        echo ""
+
+        checkAppPorts $app_name;
+        
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
@@ -105,13 +112,6 @@ installSearxng()
                 dockerDownUpAdditionalYML $app_name
             fi
         fi
-
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking & Opening ports if required"
-        echo ""
-
-        checkAppPorts $app_name;
 
 		((menu_number++))
 		echo ""
