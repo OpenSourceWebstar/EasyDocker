@@ -95,6 +95,7 @@ setupConfigToContainer()
 
                             # Compare the checksums to check if changes were made
                             if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                                source $target_path/$config_file
                                 isSuccessful "Changes have been made to the $config_file."
                             fi
                             break
@@ -153,6 +154,7 @@ setupConfigToContainer()
 
                         # Compare the checksums to check if changes were made
                         if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                            source $target_path/$config_file
                             isSuccessful "Changes have been made to the $config_file."
                         fi
                         break
