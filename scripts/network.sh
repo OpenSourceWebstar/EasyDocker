@@ -77,10 +77,10 @@ portExistsInDatabase()
 
         if [ -n "$app_name_from_db" ]; then
             isError "Port $port is already used by $app_name_from_db."
-            return 0  # Port exists in the database
+            return 1  # Port exists in the database
         else
             isSuccessful "No open port found for $port...continuing..."
-            return 1  # Port does not exist in the database
+            return 0  # Port does not exist in the database
         fi
     fi
 }
