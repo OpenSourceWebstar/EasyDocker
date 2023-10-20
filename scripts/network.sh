@@ -53,9 +53,11 @@ setupIPsAndHostnames()
             # Generates port variables: num_ports, openport1, openport2, etc.
             open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
             open_initial_ports="${!open_ports_var}"
+            echo "open_initial_ports $open_initial_ports"
             # Generates port variables: num_ports, port1, port2, etc.
             used_ports_var="CFG_${app_name^^}_PORTS"
             used_initial_ports="${!used_ports_var}"
+            echo "used_initial_ports $used_initial_ports"
 
         fi
     done < "$configs_dir$ip_file"
@@ -116,21 +118,23 @@ checkAppPorts()
         # Split the configuration into an array using a comma as a delimiter
         IFS=',' read -ra openports <<< "$open_initial_ports"
         for i in "${!openports[@]}"; do
-            local variable_name="openport$((i+1))"
-            eval "$variable_name=${openports[i]}"
+            local open_variable_name="openport$((i+1))"
+            echo "open_variable_name = $open_variable_name"
+            eval "$open_variable_name=${openports[i]}"
         done
-        # Get the number of ports found
-        local open_num_ports="${#openports[@]}"
     else
-        isNotice "No data found for open port configuration."
+        isNotice "No ports found to open."
     fi
 
-    # Loop through the port variables and log each port
-    for i in "${!openports[@]}"; do
-        local variable_name="openport$((i+1))"
-        local open_port_value="${!variable_name}"
-        openPort "$app_name" "$open_port_value"
-    done
+    if [ ${#openports[@]} -gt 0 ]; then
+        for i in "${!openports[@]}"; do
+            local open_variable_name="openport$((i+1))"
+            local open_port_value="${!open_variable_name}"
+            echo "open_variable_name $open_variable_name"
+            echo "open_port_value $open_port_value"
+            openPort "$app_name" "$open_port_value"
+        done
+    fi
 
     # Used Ports
     # Check if used_initial_ports is not empty
@@ -138,21 +142,23 @@ checkAppPorts()
         # Split the configuration into an array using a comma as a delimiter
         IFS=',' read -ra usedports <<< "$used_initial_ports"
         for i in "${!usedports[@]}"; do
-            local variable_name="usedport$((i+1))"
-            eval "$variable_name=${usedports[i]}"
+            local used_variable_name="usedport$((i+1))"
+            echo "used_variable_name = $used_variable_name"
+            eval "$used_variable_name=${usedports[i]}"
         done
-        # Get the number of ports found
-        local used_num_ports="${#usedports[@]}"
     else
-        isNotice "No data found for used port configuration."
+        isNotice "No data found to log."
     fi
 
-    # Loop through the port variables and log each port
-    for i in "${!usedports[@]}"; do
-        local variable_name="usedport$((i+1))"
-        local used_port_value="${!variable_name}"
-        logPort "$app_name" "$open_port_value"
-    done
+    if [ ${#usedports[@]} -gt 0 ]; then
+        for i in "${!usedports[@]}"; do
+            local used_variable_name="usedport$((i+1))"
+            local used_port_value="${!used_variable_name}"
+            echo "used_variable_name $used_variable_name"
+            echo "used_port_value $used_port_value"
+            logPort "$app_name" "$used_port_value"
+        done
+    fi
 
     isNotice "All ports have been added and opened (if required)."
 }
@@ -239,8 +245,8 @@ removeAppPorts()
         # Split the configuration into an array using a comma as a delimiter
         IFS=',' read -ra openports <<< "$open_initial_ports"
         for i in "${!openports[@]}"; do
-            local variable_name="openport$((i+1))"
-            eval "$variable_name=${openports[i]}"
+            local open_variable_name="openport$((i+1))"
+            eval "$open_variable_name=${openports[i]}"
         done
         # Get the number of ports found
         local open_num_ports="${#openports[@]}"
@@ -250,8 +256,8 @@ removeAppPorts()
 
     # Loop through the port variables and log each port
     for i in "${!openports[@]}"; do
-        local variable_name="openport$((i+1))"
-        local open_port_value="${!variable_name}"
+        local open_variable_name="openport$((i+1))"
+        local open_port_value="${!open_variable_name}"
         closePort "$app_name" "$open_port_value"
     done
 
@@ -261,8 +267,8 @@ removeAppPorts()
         # Split the configuration into an array using a comma as a delimiter
         IFS=',' read -ra usedports <<< "$used_initial_ports"
         for i in "${!usedports[@]}"; do
-            local variable_name="usedport$((i+1))"
-            eval "$variable_name=${usedports[i]}"
+            local used_variable_name="usedport$((i+1))"
+            eval "$used_variable_name=${usedports[i]}"
         done
         # Get the number of ports found
         local used_num_ports="${#usedports[@]}"
@@ -272,8 +278,8 @@ removeAppPorts()
 
     # Loop through the port variables and log each port
     for i in "${!usedports[@]}"; do
-        local variable_name="usedport$((i+1))"
-        local used_port_value="${!variable_name}"
+        local used_variable_name="usedport$((i+1))"
+        local used_port_value="${!used_variable_name}"
         unlogPort "$app_name" "$open_port_value"
     done
 

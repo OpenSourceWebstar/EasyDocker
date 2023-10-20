@@ -50,13 +50,6 @@ installCozy()
         echo "###           Install $app_name"
         echo "##########################################"
         echo ""
-
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking & Opening ports if required"
-        echo ""
-
-        checkAppPorts $app_name;
         
 		((menu_number++))
         echo ""
@@ -65,6 +58,13 @@ installCozy()
 
         setupConfigToContainer $app_name install;
         isSuccessful "Install folders and Config files have been setup for $app_name."
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking & Opening ports if required"
+        echo ""
+
+        checkAppPorts $app_name;
 
 		((menu_number++))
         echo ""

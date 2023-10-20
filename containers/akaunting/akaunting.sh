@@ -52,6 +52,13 @@ installAkaunting()
         setupConfigToContainer $app_name install;
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking & Opening ports if required"
+        echo ""
+
+        checkAppPorts $app_name;
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Pulling a default Akaunting docker-compose.yml file and making edits."
@@ -136,13 +143,6 @@ installAkaunting()
 			isNotice "It seems $app_name is already setup, using the normal up command"
 			dockerDownUpAdditionalYML $app_name;
 		fi
-
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking & Opening ports if required"
-        echo ""
-
-        checkAppPorts $app_name;
 
 		((menu_number++))
 		echo ""

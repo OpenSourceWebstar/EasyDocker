@@ -52,6 +52,13 @@ installFail2ban()
         setupConfigToContainer $app_name install;
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking & Opening ports if required"
+        echo ""
+
+        checkAppPorts $app_name;
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
@@ -113,13 +120,6 @@ installFail2ban()
         echo ""
 
 		whitelistAndStartApp $app_name install;
-
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking & Opening ports if required"
-        echo ""
-
-        checkAppPorts $app_name;
 
 		((menu_number++))
 		echo ""
