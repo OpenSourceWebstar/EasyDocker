@@ -13,13 +13,13 @@ services:
      - GF_SERVER_ROOT_URL=http://DOMAINSUBNAMEHERE/
      - GF_INSTALL_PLUGINS=grafana-clock-panel
     ports:
-     - 'PORTHERE:3000'
+     - 'PORT1:3000'
     volumes:
      - ./grafana_storage:/var/lib/grafana
      - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.grafana.entrypoints: web,websecure
       #traefik.http.routers.grafana.rule: Host(`DOMAINSUBNAMEHERE`)

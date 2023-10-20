@@ -12,13 +12,13 @@ services:
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
     ports:
-      - "PORTHERE:8080"
+      - "PORT1:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./trilium-data/:/home/node/trilium-data
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.trilium.entrypoints: web,websecure
       #traefik.http.routers.trilium.rule: Host(`DOMAINSUBNAMEHERE`)

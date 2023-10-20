@@ -7,7 +7,7 @@ services:
     container_name: cozy
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.cozy.entrypoints: web,websecure
       #traefik.http.routers.cozy.rule: HostRegexp:${COZY_TLD},{subdomain:.*}.${COZY_TLD}

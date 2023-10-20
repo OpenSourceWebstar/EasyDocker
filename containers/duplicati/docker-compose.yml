@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #caddy.tls: "internal"
       #traefik.enable: true
       #traefik.http.routers.cozy.entrypoints: web,websecure

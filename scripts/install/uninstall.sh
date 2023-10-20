@@ -34,7 +34,7 @@ uninstallApp()
         echo ""
 
         setupInstallVariables $app_name;
-        removeAppPorts $stored_app_name $port $port_2;
+        removeAppPorts $stored_app_name;
 
         ((menu_number++))
         echo ""

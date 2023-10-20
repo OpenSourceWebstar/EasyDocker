@@ -9,25 +9,25 @@ services:
     image: gitlab/gitlab-ce:latest
     restart: always
     ports:
-      - "SECONDPORT:22"
+      - "PORT2:22"
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url DOMAINSUBNAMEHERE
         nginx['listen_https'] = false
-        nginx['listen_port'] = PORTHERE
+        nginx['listen_port'] = PORT1
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.gitlab.rule: Host(DOMAINSUBNAMEHERE)
       #traefik.http.routers.gitlab.entrypoints: web,websecure
       #traefik.http.routers.gitlab.tls.certresolver: production
-      #traefik.http.services.gitlab.loadbalancer.server.port: PORTHERE
+      #traefik.http.services.gitlab.loadbalancer.server.port: PORT1
       #traefik.docker.network: vpn
       #traefik.tcp.routers.gitlab-ssh.rule: HostSNI(DOMAINSUBNAMEHERE)
       #traefik.tcp.routers.gitlab-ssh.entrypoints: ssh
       #traefik.tcp.routers.gitlab-ssh.service: gitlab-ssh-svc
-      #traefik.tcp.services.gitlab-ssh-svc.loadbalancer.server.port: SECONDPORT
+      #traefik.tcp.services.gitlab-ssh-svc.loadbalancer.server.port: PORT2
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.gitlab.middlewares: my-whitelist-in-docker@docker
     volumes:

@@ -12,7 +12,7 @@ services:
       vpn:
         aliases: []
     expose:
-      - PORTHERE
+      - PORT1
     environment:
       AUTHELIA_JWT_SECRET_FILE: /secrets/JWT_SECRET
       AUTHELIA_SESSION_SECRET_FILE: /secrets/SESSION_SECRET

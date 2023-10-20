@@ -29,7 +29,7 @@ services:
       - ./wireguard-data:/etc/wireguard
     ports:
       - "51820:51820/udp"
-      - "PORTHERE:51821/tcp"
+      - "PORT1:51821/tcp"
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -39,13 +39,13 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.wireguard.entrypoints: web,websecure
       #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.wireguard.tls: true
       #traefik.http.routers.wireguard.tls.certresolver: production
-      #traefik.http.services.wireguard.loadbalancer.server.port: PORTHERE
+      #traefik.http.services.wireguard.loadbalancer.server.port: PORT1
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.wireguard.middlewares: my-whitelist-in-docker@docker
     networks:

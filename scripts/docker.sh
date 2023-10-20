@@ -317,8 +317,8 @@ editComposeFileDefault()
         -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
         -e "s|PUBLICIPHERE|$public_ip|g" \
         -e "s|IPADDRESSHERE|$ip_setup|g" \
-        -e "s|PORTHERE|$port|g" \
-        -e "s|SECONDPORT|$port_2|g" \
+        -e "s|PORT1|$usedport1|g" \
+        -e "s|PORT2|$usedport2|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$compose_file")
     checkSuccess "Updating Compose file for $app_name"
@@ -356,8 +356,8 @@ editComposeFileApp()
         -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
         -e "s|PUBLICIPHERE|$public_ip|g" \
         -e "s|IPADDRESSHERE|$ip_setup|g" \
-        -e "s|PORTHERE|$port|g" \
-        -e "s|SECONDPORT|$port_2|g" \
+        -e "s|PORT1|$usedport1|g" \
+        -e "s|PORT2|$usedport2|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$compose_file")
     checkSuccess "Updating Compose file for $app_name (Using additional yml file)"
@@ -395,8 +395,8 @@ editEnvFileDefault()
         -e "s|PUBLICIPHERE|$public_ip|g" \
         -e "s|IPADDRESSHERE|$ip_setup|g" \
         -e "s|IPWHITELIST|$CFG_IPS_WHITELIST|g" \
-        -e "s|PORTHERE|$port|g" \
-        -e "s|SECONDPORT|$port_2|g" \
+        -e "s|PORT1|$usedport1|g" \
+        -e "s|PORT2|$usedport2|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$env_file")
     checkSuccess "Updating .env file for $app_name"
@@ -419,8 +419,8 @@ editCustomFile()
         -e "s|PUBLICIPHERE|$public_ip|g" \
         -e "s|IPADDRESSHERE|$ip_setup|g" \
         -e "s|IPWHITELIST|$CFG_IPS_WHITELIST|g" \
-        -e "s|PORTHERE|$port|g" \
-        -e "s|SECONDPORT|$port_2|g" \
+        -e "s|PORT1|$usedport1|g" \
+        -e "s|PORT2|$usedport2|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$custompathandfile")
     checkSuccess "Updating $customfile file for $app_name"

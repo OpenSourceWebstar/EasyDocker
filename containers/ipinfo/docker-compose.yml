@@ -10,10 +10,10 @@ services:
     image: peterdavehello/ipinfo.tw:latest
     restart: unless-stopped
     ports:
-      - PORTHERE:8080
+      - PORT1:8080
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.ipinfo.entrypoints: web,websecure
       #traefik.http.routers.ipinfo.rule: Host(`DOMAINSUBNAMEHERE`)

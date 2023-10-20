@@ -10,7 +10,7 @@ services:
     container_name: vaultwarden
     image: vaultwarden/server:latest
     ports:
-      - PORTHERE:80
+      - PORT1:80
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./vaultwarden-ssl/:/ssl/
@@ -42,7 +42,7 @@ services:
       #- ROCKET_TLS={certs="ssl/cert.pem",key="ssl/key.pem"}
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.vaultwarden.entrypoints: web,websecure
       #traefik.http.routers.vaultwarden.rule: Host(`DOMAINSUBNAMEHERE`)

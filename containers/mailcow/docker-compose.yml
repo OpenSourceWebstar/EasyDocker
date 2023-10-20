@@ -10,12 +10,12 @@ services:
           ipv4_address: IPADDRESSHERE
       #labels:
         #caddy: DOMAINSUBNAMEHERE
-        #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+        #caddy.reverse_proxy: IPADDRESSHERE:PORT1
         #traefik.enable: true
         #traefik.http.routers.moo.rule: Host(`${MAILCOW_HOSTNAME}`)
         #traefik.http.routers.moo.tls: true
         #traefik.http.routers.moo.tls.certresolver: production
-        #traefik.http.services.moo.loadbalancer.server.port: PORTHERE
+        #traefik.http.services.moo.loadbalancer.server.port: PORT1
         #traefik.http.routers.moo.entrypoints: websecure
         #traefik.docker.network: vpn
         #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST

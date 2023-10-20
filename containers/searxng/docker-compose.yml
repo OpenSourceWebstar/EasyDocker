@@ -9,7 +9,7 @@ services:
     container_name: searxng
     image: searxng/searxng:latest
     ports:
-     - PORTHERE:8080
+     - PORT1:8080
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -29,7 +29,7 @@ services:
         max-file: "1"
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.searxng.entrypoints: web,websecure
       #traefik.http.routers.searxng.rule: Host(`DOMAINSUBNAMEHERE`)

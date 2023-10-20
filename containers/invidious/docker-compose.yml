@@ -10,7 +10,7 @@ services:
     # image: quay.io/invidious/invidious:latest-arm64 # ARM64/AArch64 devices
     restart: unless-stopped
     ports:
-      - PORTHERE:3000
+      - PORT1:3000
     environment:
       # Please read the following file for a comprehensive list of all available
       # configuration options and their associated syntax:
@@ -41,7 +41,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.invidious.entrypoints: web,websecure
       #traefik.http.routers.invidious.rule: Host(`DOMAINSUBNAMEHERE`)

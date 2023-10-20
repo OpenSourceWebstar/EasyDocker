@@ -7,7 +7,7 @@ services:
     container_name: akaunting
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.akaunting.entrypoints: web,websecure
       #traefik.http.routers.akaunting.rule: Host(`DOMAINSUBNAMEHERE`)

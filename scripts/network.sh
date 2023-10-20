@@ -49,14 +49,37 @@ setupIPsAndHostnames()
             ssl_crt=${domain_full}.crt
             ip_setup=$ip
             
-            # Setup all ports
+            # Open Ports
             # Generates port variables: num_ports, openport1, openport2, etc.
             open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
             open_initial_ports="${!open_ports_var}"
+            # Check if open_initial_ports is not empty
+            if [ -n "$open_initial_ports" ]; then
+                # Split the configuration into an array using a comma as a delimiter
+                IFS=',' read -ra openports <<< "$open_initial_ports"
+                for i in "${!openports[@]}"; do
+                    local open_variable_name="openport$((i+1))"
+                    eval "$open_variable_name=${openports[i]}"
+                done
+            else
+                isNotice "No ports found to open."
+            fi
 
-            # Generates port variables: num_ports, port1, port2, etc.
+            # Used Ports
+            # Generates port variables: num_ports, usedport1, usedport2, etc.
             used_ports_var="CFG_${app_name^^}_PORTS"
             used_initial_ports="${!used_ports_var}"
+            # Check if used_initial_ports is not empty
+            if [ -n "$used_initial_ports" ]; then
+                # Split the configuration into an array using a comma as a delimiter
+                IFS=',' read -ra usedports <<< "$used_initial_ports"
+                for i in "${!usedports[@]}"; do
+                    used_variable_name="usedport$((i+1))"
+                    eval "$used_variable_name=${usedports[i]}"
+                done
+            else
+                isNotice "No data found to log."
+            fi
         fi
     done < "$configs_dir$ip_file"
     
@@ -84,7 +107,7 @@ portExistsInDatabase()
         fi
     fi
 }
-#scan for already installed apps & the ports they use and add them to the db
+
 portOpenExistsInDatabase()
 {
     local app_name="$1"
@@ -109,38 +132,12 @@ checkAppPorts()
 {
     local app_name="$1"
 
-    # Open Ports
-    # Check if open_initial_ports is not empty
-    if [ -n "$open_initial_ports" ]; then
-        # Split the configuration into an array using a comma as a delimiter
-        IFS=',' read -ra openports <<< "$open_initial_ports"
-        for i in "${!openports[@]}"; do
-            local open_variable_name="openport$((i+1))"
-            eval "$open_variable_name=${openports[i]}"
-        done
-    else
-        isNotice "No ports found to open."
-    fi
-
     if [ ${#openports[@]} -gt 0 ]; then
         for i in "${!openports[@]}"; do
             local open_variable_name="openport$((i+1))"
             local open_port_value="${!open_variable_name}"
             openPort "$app_name" "$open_port_value"
         done
-    fi
-
-    # Used Ports
-    # Check if used_initial_ports is not empty
-    if [ -n "$used_initial_ports" ]; then
-        # Split the configuration into an array using a comma as a delimiter
-        IFS=',' read -ra usedports <<< "$used_initial_ports"
-        for i in "${!usedports[@]}"; do
-            local used_variable_name="usedport$((i+1))"
-            eval "$used_variable_name=${usedports[i]}"
-        done
-    else
-        isNotice "No data found to log."
     fi
 
     if [ ${#usedports[@]} -gt 0 ]; then
@@ -225,38 +222,12 @@ removeAppPorts()
 {
     local app_name="$1"
 
-    # Open Ports
-    # Check if open_initial_ports is not empty
-    if [ -n "$open_initial_ports" ]; then
-        # Split the configuration into an array using a comma as a delimiter
-        IFS=',' read -ra openports <<< "$open_initial_ports"
-        for i in "${!openports[@]}"; do
-            local open_variable_name="openport$((i+1))"
-            eval "$open_variable_name=${openports[i]}"
-        done
-    else
-        isNotice "No data found for open port configuration."
-    fi
-
     # Loop through the port variables and log each port
     for i in "${!openports[@]}"; do
         local open_variable_name="openport$((i+1))"
         local open_port_value="${!open_variable_name}"
         closePort "$app_name" "$open_port_value"
     done
-
-    # Used Ports
-    # Check if used_initial_ports is not empty
-    if [ -n "$used_initial_ports" ]; then
-        # Split the configuration into an array using a comma as a delimiter
-        IFS=',' read -ra usedports <<< "$used_initial_ports"
-        for i in "${!usedports[@]}"; do
-            local used_variable_name="usedport$((i+1))"
-            eval "$used_variable_name=${usedports[i]}"
-        done
-    else
-        isNotice "No data found for used port configuration."
-    fi
 
     # Loop through the port variables and log each port
     for i in "${!usedports[@]}"; do
@@ -267,6 +238,8 @@ removeAppPorts()
 
     isNotice "All ports have been removed and closed (if required)."
 }
+
+#scan for already installed apps & the ports they use and add them to the db
 
 sshRemote() 
 {

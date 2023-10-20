@@ -11,7 +11,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
-      - PORTHERE:9090
+      - PORT1:9090
     restart: unless-stopped
     volumes:
       - ./prometheus:/etc/prometheus
@@ -19,7 +19,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORTHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.prometheus.entrypoints: web,websecure
       #traefik.http.routers.prometheus.rule: Host(`DOMAINSUBNAMEHERE`)

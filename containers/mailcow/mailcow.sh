@@ -196,7 +196,7 @@ installMailcow()
 		local result=$(sudo sed -i "s/IPADDRESSHERE/$ip_setup/g" $containers_dir$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating IP Address in the docker-compose.$app_name.yml file"
 
-		local result=$(sudo sed -i "s/PORTHERE/$COWP80C/g" $containers_dir$app_name/docker-compose.$app_name.yml)
+		local result=$(sudo sed -i "s/PORT1/$COWP80C/g" $containers_dir$app_name/docker-compose.$app_name.yml)
 		checkSuccess "Updating Port to $$COWP80C in the docker-compose.$app_name.yml file"
 		
 		if [[ "$using_caddy" == "true" ]]; then

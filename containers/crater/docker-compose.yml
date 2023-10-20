@@ -53,7 +53,7 @@ services:
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     #labels:
       #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORTHERE"
+      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.nginx.entrypoints: web,websecure
       #traefik.http.routers.nginx.rule: Host(`DOMAINSUBNAMEHERE`)
