@@ -53,12 +53,10 @@ setupIPsAndHostnames()
             # Generates port variables: num_ports, openport1, openport2, etc.
             open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
             open_initial_ports="${!open_ports_var}"
-            echo "open_initial_ports $open_initial_ports"
+
             # Generates port variables: num_ports, port1, port2, etc.
             used_ports_var="CFG_${app_name^^}_PORTS"
             used_initial_ports="${!used_ports_var}"
-            echo "used_initial_ports $used_initial_ports"
-
         fi
     done < "$configs_dir$ip_file"
     
@@ -75,16 +73,16 @@ portExistsInDatabase()
 
     if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
         local table_name=ports
-        local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, name FROM $table_name WHERE port = '$port';")
-        if [ -n "$existing_portdata" ]; then
-            local app_name_from_db
-            local app_name_from_db=$(echo "$existing_portdata" | awk '{print $2}')
-            isNotice "Port $port is already used by $app_name_from_db."
+        local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port';")
+
+        if [ -n "$app_name_from_db" ]; then
+            isError "Port $port is already used by $app_name_from_db."
             return 0  # Port exists in the database
+        else
+            isSuccessful "No open port found for $port...continuing..."
+            return 1  # Port does not exist in the database
         fi
     fi
-
-    return 1  # Port does not exist in the database
 }
 
 portOpenExistsInDatabase()
@@ -94,19 +92,18 @@ portOpenExistsInDatabase()
     local type="$3"
 
     if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
-            local table_name=ports
-            local existing_portdata=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port, name FROM $table_name WHERE port = '$port' AND type = '$type';")
-            if [ -n "$existing_portdata" ]; then
-                local app_name_from_db
-                local app_name_from_db=$(echo "$existing_portdata" | awk '{print $2}')
-                isNotice "Port $port is already used by $app_name_from_db."
-                return 0  # Port exists in the database
-            fi
+        local table_name=ports_open
+        local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port' AND type = '$type';")
+
+        if [ -n "$app_name_from_db" ]; then
+            isError "Port $port and type $type is already open for $app_name_from_db."
+            return 0  # Port exists in the database
+        else
+            isSuccessful "Port $port not open...continuing..."
+            return 1  # Port does not exist in the database
+        fi
     fi
-
-    return 1  # Port does not exist in the database
 }
-
 
 checkAppPorts()
 {
@@ -119,7 +116,6 @@ checkAppPorts()
         IFS=',' read -ra openports <<< "$open_initial_ports"
         for i in "${!openports[@]}"; do
             local open_variable_name="openport$((i+1))"
-            echo "open_variable_name = $open_variable_name"
             eval "$open_variable_name=${openports[i]}"
         done
     else
@@ -130,8 +126,6 @@ checkAppPorts()
         for i in "${!openports[@]}"; do
             local open_variable_name="openport$((i+1))"
             local open_port_value="${!open_variable_name}"
-            echo "open_variable_name $open_variable_name"
-            echo "open_port_value $open_port_value"
             openPort "$app_name" "$open_port_value"
         done
     fi
@@ -143,7 +137,6 @@ checkAppPorts()
         IFS=',' read -ra usedports <<< "$used_initial_ports"
         for i in "${!usedports[@]}"; do
             local used_variable_name="usedport$((i+1))"
-            echo "used_variable_name = $used_variable_name"
             eval "$used_variable_name=${usedports[i]}"
         done
     else
@@ -154,8 +147,6 @@ checkAppPorts()
         for i in "${!usedports[@]}"; do
             local used_variable_name="usedport$((i+1))"
             local used_port_value="${!used_variable_name}"
-            echo "used_variable_name $used_variable_name"
-            echo "used_port_value $used_port_value"
             logPort "$app_name" "$used_port_value"
         done
     fi
