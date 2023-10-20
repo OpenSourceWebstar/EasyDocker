@@ -84,7 +84,7 @@ portExistsInDatabase()
         fi
     fi
 }
-
+#scan for already installed apps & the ports they use and add them to the db
 portOpenExistsInDatabase()
 {
     local app_name="$1"
@@ -239,8 +239,6 @@ removeAppPorts()
             local open_variable_name="openport$((i+1))"
             eval "$open_variable_name=${openports[i]}"
         done
-        # Get the number of ports found
-        local open_num_ports="${#openports[@]}"
     else
         isNotice "No data found for open port configuration."
     fi
@@ -261,8 +259,6 @@ removeAppPorts()
             local used_variable_name="usedport$((i+1))"
             eval "$used_variable_name=${usedports[i]}"
         done
-        # Get the number of ports found
-        local used_num_ports="${#usedports[@]}"
     else
         isNotice "No data found for used port configuration."
     fi
@@ -271,7 +267,7 @@ removeAppPorts()
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
-        unlogPort "$app_name" "$open_port_value"
+        unlogPort "$app_name" "$used_port_value"
     done
 
     isNotice "All ports have been removed and closed (if required)."
