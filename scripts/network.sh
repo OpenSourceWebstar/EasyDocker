@@ -218,11 +218,6 @@ unlogPort()
     local app_name="$1"
     local port="$2"
 
-    # Check if the port already exists in the database
-    if portExistsInDatabase "$app_name" "$port"; then
-        return
-    fi
-
     databasePortRemove "$app_name" "$port"
 }
 
