@@ -18,7 +18,7 @@ whitelistScan()
 {
     echo ""
     echo "#####################################"
-    echo "###       Whitelist Updater       ###"
+    echo "###     Whitelist/Port Updater    ###"
     echo "#####################################"
     echo ""
     for app_name_dir in "$containers_dir"/*/; do
@@ -27,9 +27,12 @@ whitelistScan()
 
             # Starting variable for app
             setupInstallVariables $app_name;
-
+    
             # Always keep YML updated
             whitelistUpdateYML $app_name;
+
+            # Update ports for the app
+            checkAppPorts $app_name;
         fi
     done
 

@@ -100,10 +100,10 @@ portExistsInDatabase()
 
         if [ -n "$app_name_from_db" ]; then
             isError "Port $port is already used by $app_name_from_db."
-            return 1  # Port exists in the database
+            return 0  # Port exists in the database
         else
             isSuccessful "No open port found for $port...continuing..."
-            return 0  # Port does not exist in the database
+            return 1  # Port does not exist in the database
         fi
     fi
 }
@@ -157,11 +157,9 @@ logPort()
     local port="$2"
 
     # Check if the port already exists in the database
-    if portExistsInDatabase "$app_name" "$port"; then
-        return
+    if ! portExistsInDatabase "$app_name" "$port"; then
+        databasePortInsert "$app_name" "$port"
     fi
-
-    databasePortInsert "$app_name" "$port"
 }
 
 openPort()
@@ -172,12 +170,11 @@ openPort()
     IFS='/' read -r port type <<< "$portdata"
 
     # Check if the port already exists in the database
-    if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
-        isNotice "Port $port and type $type already opened."
+    if ! portOpenExistsInDatabase "$app_name" "$port" "$type"; then
+        databasePortOpenInsert "$app_name" "$portdata"
+    else
         return
     fi
-
-    databasePortOpenInsert "$app_name" "$portdata"
 
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local result=$(sudo ufw allow "$port")
@@ -207,6 +204,7 @@ closePort()
         fi
     else
         isNotice "Unable to find port in the database...skipping..."
+        return
     fi
 }
 
