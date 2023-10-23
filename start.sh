@@ -109,6 +109,7 @@ startInstall()
     installPortainer;
     installPrometheus;
     installTraefik;
+    installVirtualmin;
     installWatchtower;
     installWireguard;
 

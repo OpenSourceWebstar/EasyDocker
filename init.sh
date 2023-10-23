@@ -3,6 +3,7 @@
 param1="$1"
 
 sudo_user_name=easydocker
+hostname="virtualmin"
 repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
 sshd_config="/etc/ssh/sshd_config"
 sudo_bashrc="/home/$sudo_user_name/.bashrc"
@@ -37,14 +38,57 @@ initializeScript()
 		echo "This script must be run as root."
 		exit 1
 	fi
+	echo ""
+	echo "####################################################"
+	echo "###              Initial Questions               ###"
+	echo "####################################################"
+	echo ""
+	read -p "Do you want to install Virtualmin? (Y/n): " install_virtualmin
+	if [[ "$install_virtualmin" == [yY] ]]; then
+		while true; do
+			# Prompt the user for the domain they want to use with Virtualmin
+			read -p "What domain would you like to use with Virtualmin (e.g test.com) " domain_virtualmin
+
+			# Check if the input contains "@" and is not empty
+			if [[ "$domain_virtualmin" =~ .+@.+\..+ ]]; then
+				break  # Valid format, exit the loop
+			else
+				echo "Invalid domain format. Please enter a valid domain in the format 'user@domain.com'."
+			fi
+		done
+	fi
 
 	echo ""
 	echo "####################################################"
 	echo "###          Updating Operating System           ###"
 	echo "####################################################"
 	echo ""
-	apt-get update
-	apt-get upgrade -y
+	sudo apt-get update
+	sudo apt-get dist-upgrade -y
+
+    if [ -n "$hostname" ] && [ -n "$domain_virtualmin" ]; then
+        if ! grep -q "127.0.1.1\s$hostname.$domain_virtualmin $hostname" /etc/hosts; then
+            sudo sed -i "1i 127.0.1.1\t$domain_virtualmin $hostname" /etc/hosts
+            echo "Hostname and FQDN added to the top of /etc/hosts."
+        else
+            echo "The entries for '$domain_virtualmin' and '$hostname' already exist in /etc/hosts. No changes made."
+        fi
+    fi
+
+	if [[ "$install_virtualmin" == [yY] ]]; then
+		local current_hostname=$(cat /etc/hostname)
+		if [ "$current_hostname" != "$hostname" ]; then
+			echo "$hostname" | sudo tee /etc/hostname > /dev/null
+			echo "Hostname updated to '$hostname'."
+			echo ""
+			echo "The system will reboot to apply the changes."
+			echo "Please rerun this script after reboot..."
+			sleep 5
+			reboot
+		else
+			echo "Hostname is already set to '$hostname'. No update needed."
+		fi
+	fi
 	echo "SUCCESS: OS Updated"
 
 	echo ""
@@ -52,7 +96,7 @@ initializeScript()
 	echo "###         Installing Prerequired Apps          ###"
 	echo "####################################################"
 	echo ""
-	apt-get install sudo git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
+	sudo apt-get install sudo git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "SUCCESS: Prerequisite apps installed."
 
 	echo ""
@@ -127,14 +171,53 @@ initializeScript()
 		echo "SUCCESS: easydocker command already installed."
 	fi
 
+	if [[ "$install_virtualmin" == [yY] ]]; then
+		echo ""
+		echo "####################################################"
+		echo "###      	      Virtualmin Install               ###"
+		echo "####################################################"
+		echo ""
+
+		# Download the Virtualmin auto-install script
+		cd / && wget https://software.virtualmin.com/gpl/scripts/virtualmin-install.sh
+
+		# Make the script executable
+		chmod +x virtualmin-install.sh
+
+		# Run the Virtualmin auto-install script with sudo
+		sudo ./virtualmin-install.sh
+
+		while true; do
+			# Prompt the user for the new password
+			read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
+			echo
+
+			# Check if the password is not empty and meets the minimum length requirement (e.g., 8 characters)
+			if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
+				# Change the Webmin 'root' user password
+				sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
+				sudo systemctl stop webmin
+				echo "Password changed and Webmin restarted successfully."
+				break
+			else
+				echo "Password is too short or empty. Please provide a password with at least 8 characters."
+			fi
+		done
+	else
+		echo "Virtualmin installation not required."
+	fi
+
 	echo ""
 	echo "####################################################"
 	echo "###      EasyDocker Initilization Complete       ###"
 	echo "####################################################"
 	echo ""
-	echo "You can now use the easydocker command under the $sudo_user_name."
+	echo "You can now use the 'easydocker' command under the $sudo_user_name."
 	echo ""
-	echo "Enjoy!"
+	echo "If you have installed Virtualmin, please run EasyDocker to finalize the setup."
+	echo "Otherwise run 'sudo systemctl start'"
+	echo ""
+	echo "Thank you & Enjoy! <3"
 	echo ""
 	exit
 }
