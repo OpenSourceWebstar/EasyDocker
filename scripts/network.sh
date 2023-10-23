@@ -58,7 +58,7 @@ setupIPsAndHostnames()
             # Generates port variables: usedport1, usedport2, etc.
             used_ports_var="CFG_${app_name^^}_PORTS"
             used_initial_ports="${!used_ports_var}"
-            if [[ "$used_initial_ports" != "" ]]; then
+            if [ -n "$used_initial_ports" ]; then
                 IFS=',' read -ra usedports <<< "$used_initial_ports"
                 for i in "${!usedports[@]}"; do
                     used_variable_name="usedport$((i+1))"
@@ -75,7 +75,7 @@ setupIPsAndHostnames()
             # Generates port variables: openport1, openport2, etc.
             open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
             open_initial_ports="${!open_ports_var}"
-            if [[ "$open_initial_ports" != "" ]]; then
+            if [ -n "$open_initial_ports" ]; then
                 IFS=',' read -ra openports <<< "$open_initial_ports"
                 for i in "${!openports[@]}"; do
                     local open_variable_name="openport$((i+1))"
@@ -97,16 +97,18 @@ portExistsInDatabase()
     local app_name="$1"
     local port="$2"
 
-    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
-        local table_name=ports
-        local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port';")
+    if [[ $port != "" ]]; then
+        if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
+            local table_name=ports
+            local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port';")
 
-        if [ -n "$app_name_from_db" ]; then
-            isError "Port $port is already used by $app_name_from_db."
-            return 0  # Port exists in the database
-        else
-            isSuccessful "No open port found for $port...continuing..."
-            return 1  # Port does not exist in the database
+            if [ -n "$app_name_from_db" ]; then
+                isError "Port $port is already used by $app_name_from_db."
+                return 0  # Port exists in the database
+            else
+                #isSuccessful "No open port found for $port...continuing..."
+                return 1  # Port does not exist in the database
+            fi
         fi
     fi
 }
@@ -117,16 +119,20 @@ portOpenExistsInDatabase()
     local port="$2"
     local type="$3"
 
-    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
-        local table_name=ports_open
-        local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port' AND type = '$type';")
+    if [[ $port != "" ]]; then
+        if [[ $type != "" ]]; then
+            if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
+                local table_name=ports_open
+                local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port' AND type = '$type';")
 
-        if [ -n "$app_name_from_db" ]; then
-            isError "Port $port and type $type is already open for $app_name_from_db."
-            return 0  # Port exists in the database
-        else
-            isSuccessful "Port $port not open...continuing..."
-            return 1  # Port does not exist in the database
+                if [ -n "$app_name_from_db" ]; then
+                    isError "Port $port and type $type is already open for $app_name_from_db."
+                    return 0  # Port exists in the database
+                else
+                    isSuccessful "Port $port not open...continuing..."
+                    return 1  # Port does not exist in the database
+                fi
+            fi
         fi
     fi
 }
@@ -139,7 +145,9 @@ checkAppPorts()
         for i in "${!openports[@]}"; do
             local open_variable_name="openport$((i+1))"
             local open_port_value="${!open_variable_name}"
-            openPort "$app_name" "$open_port_value"
+            if [[ $open_port_value != "" ]]; then
+                openPort "$app_name" "$open_port_value"
+            fi
         done
     fi
 
@@ -147,7 +155,9 @@ checkAppPorts()
         for i in "${!usedports[@]}"; do
             local used_variable_name="usedport$((i+1))"
             local used_port_value="${!used_variable_name}"
-            logPort "$app_name" "$used_port_value"
+            if [[ $used_port_value != "" ]]; then
+                logPort "$app_name" "$used_port_value"
+            fi
         done
     fi
 
@@ -159,9 +169,11 @@ logPort()
     local app_name="$1"
     local port="$2"
 
-    # Check if the port already exists in the database
-    if ! portExistsInDatabase "$app_name" "$port"; then
-        databasePortInsert "$app_name" "$port"
+    if [[ $port != "" ]]; then
+        # Check if the port already exists in the database
+        if ! portExistsInDatabase "$app_name" "$port"; then
+            databasePortInsert "$app_name" "$port"
+        fi
     fi
 }
 
@@ -170,21 +182,23 @@ openPort()
     local app_name="$1" # $app_name if ufw-docker, number if ufw
     local portdata="$2" # port/type if ufw-docker, empty if ufw
 
-    IFS='/' read -r port type <<< "$portdata"
+    if [[ $portdata != "" ]]; then
+        IFS='/' read -r port type <<< "$portdata"
 
-    # Check if the port already exists in the database
-    if ! portOpenExistsInDatabase "$app_name" "$port" "$type"; then
-        databasePortOpenInsert "$app_name" "$portdata"
-    else
-        return
-    fi
+        # Check if the port already exists in the database
+        if ! portOpenExistsInDatabase "$app_name" "$port" "$type"; then
+            databasePortOpenInsert "$app_name" "$portdata"
+        else
+            return
+        fi
 
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        local result=$(sudo ufw allow "$port")
-        checkSuccess "Opening port $port for $app_name in the UFW Firewall"
-    elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        local result=$(sudo ufw-docker allow "$app_name" "$port")
-        checkSuccess "Opening port $port for $$app_name in the UFW-Docker Firewall"
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            local result=$(sudo ufw allow "$port")
+            checkSuccess "Opening port $port for $app_name in the UFW Firewall"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            local result=$(sudo ufw-docker allow "$app_name" "$port")
+            checkSuccess "Opening port $port for $$app_name in the UFW-Docker Firewall"
+        fi
     fi
 }
 
@@ -193,21 +207,23 @@ closePort()
     local app_name="$1" # $app_name if ufw-docker, number if ufw
     local portdata="$2" # port/type if ufw-docker, empty if ufw
 
-    IFS='/' read -r port type <<< "$portdata"
+    if [[ $portdata != "" ]]; then
+        IFS='/' read -r port type <<< "$portdata"
 
-    # Check if the port already exists in the database
-    if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
-        databasePortOpenRemove "$app_name" "$portdata"
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            local result=$(sudo ufw deny "$port")
-            checkSuccess "Closing port $port for $app_name in the UFW Firewall"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            local result=$(sudo ufw-docker deny "$app_name" "$port")
-            checkSuccess "Closing port $port for $$app_name in the UFW-Docker Firewall"
+        # Check if the port already exists in the database
+        if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
+            databasePortOpenRemove "$app_name" "$portdata"
+            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                local result=$(sudo ufw deny "$port")
+                checkSuccess "Closing port $port for $app_name in the UFW Firewall"
+            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                local result=$(sudo ufw-docker deny "$app_name" "$port")
+                checkSuccess "Closing port $port for $$app_name in the UFW-Docker Firewall"
+            fi
+        else
+            isNotice "Unable to find port in the database...skipping..."
+            return
         fi
-    else
-        isNotice "Unable to find port in the database...skipping..."
-        return
     fi
 }
 
@@ -216,8 +232,10 @@ unlogPort()
     local app_name="$1"
     local port="$2"
     
-    if portExistsInDatabase "$app_name" "$port"; then
-        databasePortRemove "$app_name" "$port"
+    if [[ $port != "" ]]; then
+        if portExistsInDatabase "$app_name" "$port"; then
+            databasePortRemove "$app_name" "$port"
+        fi
     fi
 }
 
@@ -229,14 +247,18 @@ removeAppPorts()
     for i in "${!openports[@]}"; do
         local open_variable_name="openport$((i+1))"
         local open_port_value="${!open_variable_name}"
-        closePort "$app_name" "$open_port_value"
+        if [[ $open_port_value != "" ]]; then
+            closePort "$app_name" "$open_port_value"
+        fi
     done
 
     # Loop through the port variables and log each port
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
-        unlogPort "$app_name" "$used_port_value"
+        if [[ $used_port_value != "" ]]; then
+            unlogPort "$app_name" "$used_port_value"
+        fi
     done
 
     isNotice "All ports have been removed and closed (if required)."
