@@ -48,37 +48,37 @@ setupIPsAndHostnames()
             ssl_key=${domain_full}.key
             ssl_crt=${domain_full}.crt
             ip_setup=$ip
-            
+
             # Open Ports
-            # Generates port variables: num_ports, openport1, openport2, etc.
+            # Clean previous data (unset openport* variables)
+            for varname in $(compgen -A variable | grep -E "^openport[0-9]+"); do
+                unset "$varname"
+            done
+            # Generates port variables: openport1, openport2, etc.
             open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
             open_initial_ports="${!open_ports_var}"
-            # Check if open_initial_ports is not empty
             if [ -n "$open_initial_ports" ]; then
-                # Split the configuration into an array using a comma as a delimiter
                 IFS=',' read -ra openports <<< "$open_initial_ports"
                 for i in "${!openports[@]}"; do
                     local open_variable_name="openport$((i+1))"
                     eval "$open_variable_name=${openports[i]}"
                 done
-            else
-                isNotice "No ports found to open."
             fi
 
             # Used Ports
-            # Generates port variables: num_ports, usedport1, usedport2, etc.
+            # Clean previous data (unset openport* variables)
+            for varname in $(compgen -A variable | grep -E "^usedport[0-9]+"); do
+                unset "$varname"
+            done
+            # Generates port variables: usedport1, usedport2, etc.
             used_ports_var="CFG_${app_name^^}_PORTS"
             used_initial_ports="${!used_ports_var}"
-            # Check if used_initial_ports is not empty
             if [ -n "$used_initial_ports" ]; then
-                # Split the configuration into an array using a comma as a delimiter
                 IFS=',' read -ra usedports <<< "$used_initial_ports"
                 for i in "${!usedports[@]}"; do
                     used_variable_name="usedport$((i+1))"
                     eval "$used_variable_name=${usedports[i]}"
                 done
-            else
-                isNotice "No data found to log."
             fi
         fi
     done < "$configs_dir$ip_file"
@@ -148,7 +148,7 @@ checkAppPorts()
         done
     fi
 
-    isNotice "All ports have been added and opened (if required)."
+    #isNotice "All ports have been added and opened (if required)."
 }
 
 logPort()
@@ -212,8 +212,10 @@ unlogPort()
 {
     local app_name="$1"
     local port="$2"
-
-    databasePortRemove "$app_name" "$port"
+    
+    if portExistsInDatabase "$app_name" "$port"; then
+        databasePortRemove "$app_name" "$port"
+    fi
 }
 
 removeAppPorts()
