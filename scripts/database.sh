@@ -181,7 +181,7 @@ databaseAppScan()
         # Delete the entry from the apps table
         local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM apps WHERE name = '$app_name';")
         checkSuccess "Removing $app_name from the apps database."
-        
+
         removePortsFromDatabase $app_name;
 
         ((updated_count++)) # Increment updated_count
@@ -790,6 +790,24 @@ databaseRemoveUsedPort()
     local port="$2"
     local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM ports WHERE app_name = '$app_name' AND port = '$port';")
     checkSuccess "Removing used port entry for $port of $app_name from the database."
+}
+
+databaseGetUsedPortsForApp() 
+{
+    local app_name="$1"
+    local used_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports WHERE app_name = '$app_name';")
+    local db_ports=()
+    IFS=$'\n' read -r -a db_ports <<< "$used_ports"
+    echo "${db_ports[@]}"
+}
+
+databaseGetOpenPortsForApp() 
+{
+    local app_name="$1"
+    local open_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports_open WHERE app_name = '$app_name';")
+    local db_ports_open=()
+    IFS=$'\n' read -r -a db_ports_open <<< "$open_ports"
+    echo "${db_ports_open[@]}"
 }
 
 databaseBackupInsert()

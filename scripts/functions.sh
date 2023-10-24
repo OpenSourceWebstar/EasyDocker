@@ -285,6 +285,18 @@ dashyUpdateConf()
     fi
 }
 
+containsElement() 
+{
+    local element="$1"
+    local array=("$@")
+    for item in "${array[@]}"; do
+        if [[ "$item" == "$element" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 passwordValidation()
 {
     # Password Setup for DB with complexity checking
