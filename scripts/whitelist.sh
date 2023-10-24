@@ -35,7 +35,8 @@ whitelistScan()
             checkAppPorts $app_name scan;
         fi
     done
-
+    
+    handleAllConflicts;
     isSuccessful "All application whitelists are up to date."
 }
 

@@ -177,9 +177,13 @@ databaseAppScan()
     # Remove entries from the database for folders that no longer exist
     for folder_name in "${folders_to_remove[@]}"; do
         isNotice "Folder $folder_name no longer exists. Removing from the Database."
-        # Delete the entry from the database
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM apps WHERE name = '$folder_name';")
-        checkSuccess "Removing $folder_name from the apps database."
+
+        # Delete the entry from the apps table
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM apps WHERE name = '$app_name';")
+        checkSuccess "Removing $app_name from the apps database."
+        
+        removePortsFromDatabase $app_name;
+
         ((updated_count++)) # Increment updated_count
     done
 
@@ -188,18 +192,24 @@ databaseAppScan()
         checkSuccess "All apps are up to date."
     fi
 
-    # Check and uninstall apps that contain only a config file and are empty
+    # Check and uninstall apps that contain only a config file, are empty, have only a migrate.txt file, or both
     for folder_name in $folder_names; do
         folder_path="$containers_dir/$folder_name"
         if [ -d "$folder_path" ]; then
             local num_files=$(sudo find "$folder_path" -maxdepth 1 -type f | wc -l)
             
-            # Check if the folder is empty or contains only a config file
+            # Check if the folder is empty, contains only a config file, has only a migrate.txt file, or contains both
             if [ "$num_files" -eq 0 ]; then
                 isNotice "Uninstalling $folder_name because it is empty."
                 uninstallApp "$folder_name"
             elif [ "$num_files" -eq 1 ] && [ -f "$folder_path/$folder_name.config" ]; then
                 isNotice "Uninstalling $folder_name because it contains only a config file."
+                uninstallApp "$folder_name"
+            elif [ "$num_files" -eq 1 ] && [ -f "$folder_path/migrate.txt" ]; then
+                isNotice "Uninstalling $folder_name because it contains only a migrate.txt file."
+                uninstallApp "$folder_name"
+            elif [ "$num_files" -eq 2 ] && [ -f "$folder_path/$folder_name.config" ] && [ -f "$folder_path/migrate.txt" ]; then
+                isNotice "Uninstalling $folder_name because it contains both a config file and a migrate.txt file."
                 uninstallApp "$folder_name"
             fi
         else
@@ -749,6 +759,37 @@ databasePortOpenRemove()
         local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
         checkSuccess "Deleting port $port and type $type for $app_name for the $table_name table."
     fi
+}
+
+databaseGetOpenPorts()
+{
+    local app_name="$1"
+    local open_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port || '/' || type FROM open_ports WHERE app_name = '$app_name';")
+    echo "$open_ports"
+}
+
+databaseGetOpenPort()
+{
+    local app_name="$1"
+    local port="$2"
+    local type="$3"
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM open_ports WHERE app_name = '$app_name' AND port = '$port' AND type = '$type';")
+    checkSuccess "Removing open port entry for $port/$type of $app_name from the database."
+}
+
+databaseGetUsedPorts()
+{
+    local app_name="$1"
+    local used_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports WHERE app_name = '$app_name';")
+    echo "$used_ports"
+}
+
+databaseRemoveUsedPort()
+{
+    local app_name="$1"
+    local port="$2"
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM ports WHERE app_name = '$app_name' AND port = '$port';")
+    checkSuccess "Removing used port entry for $port of $app_name from the database."
 }
 
 databaseBackupInsert()
