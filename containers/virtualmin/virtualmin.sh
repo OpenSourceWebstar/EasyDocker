@@ -11,39 +11,38 @@ installVirtualmin()
         virtualmin=i
     fi
 
-    # Check if Virtualmin is already installed
-	if [[ "$OS" == [1234567] ]]; then
-        ISVIRTUALMIN=$( (sudo systemctl status webmin) 2>&1 )
-        if [[ "$ISVIRTUALMIN" == *"could not be found."* ]]; then
-            isSuccessful "Virtualmin is installed on this sytem...continuing..."
-            if isAppInstalled "traefik"; then
-                if [[ "$virtualmin" == *[cCtTuUsSrRiI]* ]]; then
-                    setupConfigToContainer --silent virtualmin;
-                    local app_name=$CFG_VIRTUALMIN_APP_NAME
-                    setupInstallVariables $app_name;
-                fi
-                
-                if [[ "$virtualmin" == *[cC]* ]]; then
-                    editAppConfig $app_name;
-                fi
+    if [[ "$virtualmin" == *[cCtTuUsSrRiI]* ]]; then
+        setupConfigToContainer --silent virtualmin;
+        local app_name=$CFG_VIRTUALMIN_APP_NAME
+        setupInstallVariables $app_name;
+    fi
+    
+    if [[ "$virtualmin" == *[cC]* ]]; then
+        editAppConfig $app_name;
+    fi
 
-                if [[ "$virtualmin" == *[uU]* ]]; then
-                    uninstallApp $app_name;
-                fi
+    if [[ "$virtualmin" == *[uU]* ]]; then
+        uninstallApp $app_name;
+    fi
 
-                if [[ "$virtualmin" == *[sS]* ]]; then
-                    shutdownApp $app_name;
-                fi
+    if [[ "$virtualmin" == *[sS]* ]]; then
+        shutdownApp $app_name;
+    fi
 
-                if [[ "$virtualmin" == *[rR]* ]]; then
-                    if [[ $compose_setup == "default" ]]; then
-                        dockerDownUpDefault $app_name;
-                    elif [[ $compose_setup == "app" ]]; then
-                        dockerDownUpAdditionalYML $app_name;
-                    fi
-                fi
-
-                if [[ "$virtualmin" == *[iI]* ]]; then
+    if [[ "$virtualmin" == *[rR]* ]]; then
+        if [[ $compose_setup == "default" ]]; then
+            dockerDownUpDefault $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            dockerDownUpAdditionalYML $app_name;
+        fi
+    fi
+    
+    if [[ "$virtualmin" == *[iI]* ]]; then
+        if [[ "$OS" == [1234567] ]]; then
+            ISVIRTUALMIN=$( (sudo systemctl status webmin) 2>&1 )
+            if [[ "$ISVIRTUALMIN" == *"could not be found."* ]]; then
+                isSuccessful "Virtualmin is installed on this sytem...continuing..."
+                if isAppInstalled "traefik"; then
                     echo ""
                     echo "##########################################"
                     echo "###          Install $app_name"
