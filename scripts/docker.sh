@@ -576,8 +576,8 @@ scanFileForRandomPassword()
             local random_password=$(openssl rand -base64 12 | tr -d '+/=')
             
             # Capture the content before "RANDOMIZEDPASSWORD"
-            local config_content=$(sudo sed -n "s/RANDOMIZEDPASSWORD.*$/${random_password}/p" "$file")
-            
+            local config_content=$(sudo sed -n "s/.*RANDOMIZEDPASSWORD \(.*\)/\1/p" "$file")
+
             # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
             sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$file"
             
@@ -586,7 +586,6 @@ scanFileForRandomPassword()
         done
     fi
 }
-
 
 setupEnvFile()
 {
