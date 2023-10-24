@@ -96,17 +96,37 @@ portExistsInDatabase()
 {
     local app_name="$1"
     local port="$2"
+    local flag="$3"
 
     if [[ $port != "" ]]; then
         if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
             local table_name=ports
             local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port';")
 
-            if [ -n "$app_name_from_db" ]; then
+            if [[ "$app_name" != "$app_name_from_db" ]]; then
+                isError "Unable to use port $port for application $app_name"
                 isError "Port $port is already used by $app_name_from_db."
+                isError "This WILL cause issues, please find a unique port for $app_name"
+
+                # Create a port conflict
+                declare -A portConflicts
+                addPortConflict "$app_name" "$port" "$app_name_from_db"
+
+                return 0  # Port exists in the database
+            elif [[ "$app_name" == "$app_name_from_db" ]]; then
+                if [[ $flag != "scan" ]]; then
+                    isNotice "Port $port is already setup for $app_name_from_db."
+                fi
+                return 0  # Port exists in the database
+            elif [ -n "$app_name_from_db" ]; then
+                if [[ $flag != "scan" ]]; then
+                    isNotice "Port $port is already used by $app_name_from_db."
+                fi
                 return 0  # Port exists in the database
             else
-                #isSuccessful "No open port found for $port...continuing..."
+                if [[ $flag != "scan" ]]; then
+                    isSuccessful "No port found for $port...continuing..."
+                fi
                 return 1  # Port does not exist in the database
             fi
         fi
@@ -118,6 +138,7 @@ portOpenExistsInDatabase()
     local app_name="$1"
     local port="$2"
     local type="$3"
+    local flag="$4"
 
     if [[ $port != "" ]]; then
         if [[ $type != "" ]]; then
@@ -125,11 +146,30 @@ portOpenExistsInDatabase()
                 local table_name=ports_open
                 local app_name_from_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM $table_name WHERE port = '$port' AND type = '$type';")
 
-                if [ -n "$app_name_from_db" ]; then
+                if [[ "$app_name" != "$app_name_from_db" ]]; then
+                    isError "Unable to use port $port for application $app_name"
                     isError "Port $port and type $type is already open for $app_name_from_db."
+                    isError "This WILL cause issues, please find a unique port for $app_name"
+
+                    # Create an open port conflict
+                    declare -A openPortConflicts
+                    addOpenPortConflict "$app_name" "$port" "$type" "$app_name_from_db"
+                    
+                    return 0  # Port exists in the database
+                elif [[ "$app_name" == "$app_name_from_db" ]]; then
+                    if [[ $flag != "scan" ]]; then
+                        isNotice "Port $port is already open and setup for $app_name_from_db."
+                    fi
+                    return 0  # Port exists in the database
+                elif [ -n "$app_name_from_db" ]; then
+                    if [[ $flag != "scan" ]]; then
+                        isNotice "Port $port is already open and used by $app_name_from_db."
+                    fi
                     return 0  # Port exists in the database
                 else
-                    #isNotice "Port $port not currently in the database...continuing..."
+                    if [[ $flag != "scan" ]]; then
+                        isSuccessful "No open port found for $port...continuing..."
+                    fi
                     return 1  # Port does not exist in the database
                 fi
             fi
@@ -137,16 +177,40 @@ portOpenExistsInDatabase()
     fi
 }
 
+addOpenPortConflict() 
+{
+    local app_name="$1"
+    local port="$2"
+    local type="$3"
+    local app_name_from_db="$4"
+    
+    if [ -n "$app_name" ] && [ -n "$port" ] && [ -n "$type" ] && [ -n "$app_name_from_db" ]; then
+        openPortConflicts["$app_name"]+="Port $port and type $type are already open and used by $app_name_from_db. "
+    fi
+}
+
+addPortConflict() 
+{
+    local app_name="$1"
+    local port="$2"
+    local app_name_from_db="$3"
+    
+    if [ -n "$app_name" ] && [ -n "$port" ] && [ -n "$app_name_from_db" ]; then
+        portConflicts["$app_name"]+="Port $port is already used by $app_name_from_db. "
+    fi
+}
+
 checkAppPorts()
 {
     local app_name="$1"
+    local flag="$2"
 
     if [ ${#openports[@]} -gt 0 ]; then
         for i in "${!openports[@]}"; do
             local open_variable_name="openport$((i+1))"
             local open_port_value="${!open_variable_name}"
             if [[ $open_port_value != "" ]]; then
-                openPort "$app_name" "$open_port_value"
+                openPort "$app_name" "$open_port_value" "$flag"
             fi
         done
     fi
@@ -156,11 +220,12 @@ checkAppPorts()
             local used_variable_name="usedport$((i+1))"
             local used_port_value="${!used_variable_name}"
             if [[ $used_port_value != "" ]]; then
-                logPort "$app_name" "$used_port_value"
+                logPort "$app_name" "$used_port_value" "$flag"
             fi
         done
     fi
-
+    
+    handleAllConflicts;
     #isNotice "All ports have been added and opened (if required)."
 }
 
@@ -168,10 +233,11 @@ logPort()
 {
     local app_name="$1"
     local port="$2"
+    local flag="$3"
 
     if [[ $port != "" ]]; then
         # Check if the port already exists in the database
-        if ! portExistsInDatabase "$app_name" "$port"; then
+        if ! portExistsInDatabase "$app_name" "$port" "$flag"; then
             databasePortInsert "$app_name" "$port"
         fi
     fi
@@ -181,12 +247,13 @@ openPort()
 {
     local app_name="$1" # $app_name if ufw-docker, number if ufw
     local portdata="$2" # port/type if ufw-docker, empty if ufw
+    local flag="$3"
 
     if [[ $portdata != "" ]]; then
         IFS='/' read -r port type <<< "$portdata"
 
         # Check if the port already exists in the database
-        if ! portOpenExistsInDatabase "$app_name" "$port" "$type"; then
+        if ! portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
             databasePortOpenInsert "$app_name" "$portdata"
         else
             return
@@ -264,7 +331,74 @@ removeAppPorts()
     isNotice "All ports have been removed and closed (if required)."
 }
 
-#scan for already installed apps & the ports they use and add them to the db
+handleAllConflicts() 
+{
+    for app_name in "${!portConflicts[@]}"; do
+        portConflictFound "$app_name"
+    done
+
+    for app_name in "${!openPortConflicts[@]}"; do
+        openPortConflictFound "$app_name"
+    done
+}
+
+portConflictFound() 
+{
+    local app_name="$1"
+
+    if [ -n "${portConflicts[$app_name]}" ]; then
+        echo ""
+        echo "##########################################"
+        echo "######    Port Conflict(s) Found    ######"
+        echo "##########################################"
+        echo ""
+        isNotice "Port conflicts for $app_name:"
+        echo "${portConflicts[$app_name]}"
+        while true; do
+            echo ""
+            isNotice "Please edit the ports in the configuration file for $app_name ."
+            echo ""
+            isQuestion "Would you like to edit the config for $app_name? (y/n): "
+            read -p "" portconfigedit_choice
+            if [[ -n "$portconfigedit_choice" ]]; then
+                if [[ "$portconfigedit_choice" =~ [yY] ]]; then
+                    editAppConfig "$app_name"
+                fi
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+    fi
+}
+
+openPortConflictFound() 
+{
+    local app_name="$1"
+
+    if [ -n "${openPortConflicts[$app_name]}" ]; then
+        echo ""
+        echo "###############################################"
+        echo "######    Open Port Conflict(s) Found    ######"
+        echo "###############################################"
+        echo ""
+        isNotice "Open port conflicts for $app_name:"
+        echo "${openPortConflicts[$app_name]}"
+        while true; do
+            echo ""
+            isNotice "Please edit the ports in the configuration file for $app_name ."
+            echo ""
+            isQuestion "Would you like to edit the config for $app_name? (y/n): "
+            read -p "" openportconfigedit_choice
+            if [[ -n "$openportconfigedit_choice" ]]; then
+                if [[ "$openportconfigedit_choice" =~ [yY] ]]; then
+                    editAppConfig "$app_name"
+                fi
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+    fi
+}
 
 sshRemote() 
 {

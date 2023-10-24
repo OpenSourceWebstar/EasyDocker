@@ -32,7 +32,7 @@ whitelistScan()
             whitelistUpdateYML $app_name;
 
             # Update ports for the app
-            checkAppPorts $app_name;
+            checkAppPorts $app_name scan;
         fi
     done
 
