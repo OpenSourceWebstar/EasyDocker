@@ -237,6 +237,7 @@ unlogPort()
     local app_name="$1"
     local port="$2"
     local flag="$3"
+
     if [[ $port != "" ]]; then
         if [[ $flag == "stale" ]]; then
             isNotice "Old stale port $port found for $app_name and is being removed from the database."
@@ -254,11 +255,11 @@ removeStalePorts()
     local open_ports=("${@:3}")
 
     for open_port in "${open_ports[@]}"; do
-        closePort "$app_name" "$open_port"
+        closePort "$app_name" "$open_port" stale
     done
 
     for used_port in "${used_ports[@]}"; do
-        unlogPort "$app_name" "$used_port"
+        unlogPort "$app_name" "$used_port" stale
     done
 }
 
