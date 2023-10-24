@@ -764,7 +764,7 @@ databasePortOpenRemove()
 databaseGetOpenPorts()
 {
     local app_name="$1"
-    local open_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port || '/' || type FROM open_ports WHERE app_name = '$app_name';")
+    local open_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port || '/' || type FROM open_ports WHERE name = '$app_name';")
     echo "$open_ports"
 }
 
@@ -773,14 +773,14 @@ databaseGetOpenPort()
     local app_name="$1"
     local port="$2"
     local type="$3"
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM open_ports WHERE app_name = '$app_name' AND port = '$port' AND type = '$type';")
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM open_ports WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
     checkSuccess "Removing open port entry for $port/$type of $app_name from the database."
 }
 
 databaseGetUsedPorts()
 {
     local app_name="$1"
-    local used_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports WHERE app_name = '$app_name';")
+    local used_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports WHERE name = '$app_name';")
     echo "$used_ports"
 }
 
@@ -788,14 +788,14 @@ databaseRemoveUsedPort()
 {
     local app_name="$1"
     local port="$2"
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM ports WHERE app_name = '$app_name' AND port = '$port';")
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM ports WHERE name = '$app_name' AND port = '$port';")
     checkSuccess "Removing used port entry for $port of $app_name from the database."
 }
 
 databaseGetUsedPortsForApp() 
 {
     local app_name="$1"
-    local used_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports WHERE app_name = '$app_name';")
+    local used_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports WHERE name = '$app_name';")
     local db_ports=()
     IFS=$'\n' read -r -a db_ports <<< "$used_ports"
     echo "${db_ports[@]}"
@@ -804,7 +804,7 @@ databaseGetUsedPortsForApp()
 databaseGetOpenPortsForApp() 
 {
     local app_name="$1"
-    local open_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports_open WHERE app_name = '$app_name';")
+    local open_ports=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports_open WHERE name = '$app_name';")
     local db_ports_open=()
     IFS=$'\n' read -r -a db_ports_open <<< "$open_ports"
     echo "${db_ports_open[@]}"
