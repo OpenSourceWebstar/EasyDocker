@@ -288,13 +288,15 @@ dashyUpdateConf()
 containsElement() 
 {
     local element="$1"
-    local array=("$@")
-    for item in "${array[@]}"; do
-        if [[ "$item" == "$element" ]]; then
-            return 0
+    shift
+    local arr=("$@")
+
+    for item in "${arr[@]}"; do
+        if [[ "$item" == *"$element"* ]]; then
+            return 0  # Substring found
         fi
     done
-    return 1
+    return 1  # Substring not found
 }
 
 passwordValidation()

@@ -102,38 +102,32 @@ checkAppPorts()
     local app_name="$1"
     local flag="$2"
 
-    # Get the list of ports associated with the app from the database (ports and ports_open)
     local db_used_ports=($(databaseGetUsedPortsForApp "$app_name"))
     local db_open_ports=($(databaseGetOpenPortsForApp "$app_name"))
 
-    # Loop through open ports and check if they are in the database (ports_open)
-    for i in "${!openports[@]}"; do
-        local open_variable_name="openport$((i+1))"
-        local open_port_value="${!open_variable_name}"
-        if [[ $open_port_value != "" ]]; then
-            # Check if the port is in the ports_open table in the database
-            if ! containsElement "$open_port_value" "${db_open_ports[@]}"; then
-                # Port is not in the database; add it
-                openPort "$app_name" "$open_port_value" "$flag"
-            fi
-        fi
-    done
-
-    # Loop through used ports and check if they are in the database (ports)
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
         if [[ $used_port_value != "" ]]; then
             # Check if the port is in the ports table in the database
             if ! containsElement "$used_port_value" "${db_used_ports[@]}"; then
-                # Port is not in the database; add it
-                logPort "$app_name" "$used_port_value" "$flag"
+                usePort "$app_name" "$used_port_value" "$flag"
             fi
         fi
     done
 
-    # Remove ports from the database (ports and ports_open) that are no longer in the current lists
-    removeStalePorts "$app_name" "${db_used_ports[@]}" "${db_open_ports[@]}"
+    for i in "${!openports[@]}"; do
+        local open_variable_name="openport$((i+1))"
+        local open_port_value="${!open_variable_name}"
+        if [[ $open_port_value != "" ]]; then
+            # Check if the port is in the ports_open table in the database
+            if ! containsElement "$open_port_value" "${db_open_ports[@]}"; then
+                openPort "$app_name" "$open_port_value" "$flag"
+            fi
+        fi
+    done
+
+    #removeStalePorts "$app_name" "${db_used_ports[@]}" "${db_open_ports[@]}"
 }
 
 openPort()
@@ -162,7 +156,7 @@ openPort()
     fi
 }
 
-logPort()
+usePort()
 {
     local app_name="$1"
     local port="$2"
@@ -197,7 +191,7 @@ removeAppPorts()
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
         if [[ $used_port_value != "" ]]; then
-            unlogPort "$app_name" "$used_port_value"
+            unusePort "$app_name" "$used_port_value"
         fi
     done
 
@@ -232,7 +226,7 @@ closePort()
     fi
 }
 
-unlogPort()
+unusePort()
 {
     local app_name="$1"
     local port="$2"
@@ -259,7 +253,7 @@ removeStalePorts()
     done
 
     for used_port in "${used_ports[@]}"; do
-        unlogPort "$app_name" "$used_port" stale
+        unusePort "$app_name" "$used_port" stale
     done
 }
 
