@@ -206,6 +206,16 @@ initializeScript()
 				echo "Password is too short or empty. Please provide a password with at least 8 characters."
 			fi
 		done
+
+		echo "NOTICE - Now that Virtualmin is setup "
+		echo ""
+		echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificat.e"
+		echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
+		echo ""
+		echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
+		echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
+		echo ""
+		echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
 	else
 		echo "Virtualmin installation not required."
 	fi
