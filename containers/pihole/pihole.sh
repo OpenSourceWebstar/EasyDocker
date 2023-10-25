@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : system
-# Description : Pi-Hole & Unbound - DNS Server *NOT RECOMMENDED* (c/u/s/r/i):
+# Description : Pi-Hole & Unbound - DNS Server (c/u/s/r/i):
 
 installPihole()
 {

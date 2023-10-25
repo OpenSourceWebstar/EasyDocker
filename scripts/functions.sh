@@ -369,7 +369,7 @@ showInstallInstructions()
     echo "###       Usage Instructions      ###"
     echo "#####################################"
     echo ""
-    isNotice "TIP - You can use multiple options at once, but it will be in the order above"
+    isNotice "TIP - You can use multiple options at once, but it will be in the order below"
     echo ""
     isNotice "Please select 'c' to edit the config."
     isNotice "Please select 't' to use the tools."

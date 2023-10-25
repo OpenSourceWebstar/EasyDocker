@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Category : system
-# Description : Caddy - Reverse Proxy *NOT RECOMMENDED* (c/u/s/r/i):
+# Category : old
+# Description : Caddy - Reverse Proxy (c/u/s/r/i):
 
 installCaddy()
 {
