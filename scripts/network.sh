@@ -379,7 +379,6 @@ portOpenExistsInDatabase()
                         isError "This WILL cause issues, please find a unique port for $app_name"
                         
                         # Conflict start
-                        declare -a openPortConflicts
                         addOpenPortConflict "$app_name" "$port" "$type" "$app_name_from_db"
                         
                         return 0  # Port exists in the database
