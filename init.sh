@@ -43,17 +43,20 @@ initializeScript()
 	echo "###              Initial Questions               ###"
 	echo "####################################################"
 	echo ""
+	echo "NOTICE - EasyDocker can work alongside Virtualmin"
+	echo "Please only install if you need it"
+	echo ""
 	read -p "Do you want to install Virtualmin? (Y/n): " install_virtualmin
 	if [[ "$install_virtualmin" == [yY] ]]; then
 		while true; do
 			# Prompt the user for the domain they want to use with Virtualmin
-			read -p "What domain would you like to use with Virtualmin (e.g test.com) " domain_virtualmin
+			read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. example.com): " domain_virtualmin
 
-			# Check if the input contains "@" and is not empty
-			if [[ "$domain_virtualmin" =~ .+@.+\..+ ]]; then
+			# Check if the input appears to be a valid domain (FQDN)
+			if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
 				break  # Valid format, exit the loop
 			else
-				echo "Invalid domain format. Please enter a valid domain in the format 'user@domain.com'."
+				echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. example.com)."
 			fi
 		done
 	fi
