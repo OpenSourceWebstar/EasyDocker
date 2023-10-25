@@ -282,9 +282,6 @@ portExistsInDatabase()
                     if [[ $flag != "scan" ]]; then
                         isNotice "Port $port is already setup for $app_name_from_db."
                     fi
-                    if [[ $flag == "install" ]]; then
-                        disallow_used_port=true
-                    fi
                     return 0  # Port exists in the database
                 elif [ -n "$app_name_from_db" ]; then
                     if [[ $flag != "scan" ]]; then
@@ -386,9 +383,6 @@ portOpenExistsInDatabase()
                     elif [[ "$app_name" == "$app_name_from_db" ]]; then
                         if [[ $flag != "scan" ]]; then
                             isNotice "Port $port is already open and setup for $app_name_from_db."
-                        fi
-                        if [[ $flag == "install" ]]; then
-                            disallow_open_port=true
                         fi
                         return 0  # Port exists in the database
                     elif [ -n "$app_name_from_db" ]; then
