@@ -269,6 +269,7 @@ portExistsInDatabase()
     local app_name="$1"
     local port="$2"
     local flag="$3"
+    disallow_used_port=""
 
     if [[ $port != "" ]]; then
         if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
@@ -281,6 +282,7 @@ portExistsInDatabase()
                     isError "Unable to use port $port for application $app_name"
                     isError "Port $port is already used by $app_name_from_db."
                     isError "This WILL cause issues, please find a unique port for $app_name"
+                    disallow_used_port=true
 
                     # Conflict start
                     addPortConflict "$app_name" "$port" "$app_name_from_db"
@@ -290,22 +292,26 @@ portExistsInDatabase()
                     if [[ $flag != "scan" ]]; then
                         isNotice "Port $port is already setup for $app_name_from_db."
                     fi
+                    disallow_used_port=true
                     return 0  # Port exists in the database
                 elif [ -n "$app_name_from_db" ]; then
                     if [[ $flag != "scan" ]]; then
                         isNotice "Port $port is already used by $app_name_from_db."
                     fi
+                    disallow_used_port=true
                     return 0  # Port exists in the database
                 else
                     if [[ $flag != "scan" ]]; then
                         isSuccessful "No port found for $port...continuing..."
                     fi
+                    disallow_used_port=false
                     return 1  # Port does not exist in the database
                 fi
             else
                 if [[ $flag != "scan" ]]; then
                     isSuccessful "No application found for port $port...continuing..."
                 fi
+                disallow_used_port=false
                 return 1  # No application found for the port, no conflict
             fi
         fi
@@ -368,6 +374,7 @@ portOpenExistsInDatabase()
     local port="$2"
     local type="$3"
     local flag="$4"
+    disallow_open_port=""
 
     if [[ $port != "" ]]; then
         if [[ $type != "" ]]; then
@@ -381,7 +388,8 @@ portOpenExistsInDatabase()
                         isError "Unable to use port $port for application $app_name"
                         isError "Port $port and type $type is already open for $app_name_from_db."
                         isError "This WILL cause issues, please find a unique port for $app_name"
-                        
+                        disallow_open_port=true
+
                         # Conflict start
                         addOpenPortConflict "$app_name" "$port" "$type" "$app_name_from_db"
                         
@@ -390,22 +398,26 @@ portOpenExistsInDatabase()
                         if [[ $flag != "scan" ]]; then
                             isNotice "Port $port is already open and setup for $app_name_from_db."
                         fi
+                        disallow_open_port=true
                         return 0  # Port exists in the database
                     elif [ -n "$app_name_from_db" ]; then
                         if [[ $flag != "scan" ]]; then
                             isNotice "Port $port is already open and used by $app_name_from_db."
                         fi
+                        disallow_open_port=true
                         return 0  # Port exists in the database
                     else
                         if [[ $flag != "scan" ]]; then
                             isSuccessful "No open port found for $port...continuing..."
                         fi
+                        disallow_open_port=false
                         return 1  # Port does not exist in the database
                     fi
                 else
                     if [[ $flag != "scan" ]]; then
                         isSuccessful "No application found for port $port...continuing..."
                     fi
+                    disallow_open_port=false
                     return 1  # No application found for the port, no conflict
                 fi
             fi

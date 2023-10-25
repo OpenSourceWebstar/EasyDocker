@@ -57,8 +57,18 @@ installWireguard()
         echo "---- $menu_number. Checking & Opening ports if required"
         echo ""
 
-        checkAppPorts $app_name;
-
+        checkAppPorts $app_name install;
+        if [[ $disallow_used_port == "true" ]]; then
+            isError "A used port conflict has occured, setup is cancelling..."
+            disallow_used_port=""
+            return
+        fi
+        if [[ $disallow_open_port == "true" ]]; then
+            isError "An open port conflict has occured, setup is cancelling..."
+            disallow_open_port=""
+            return
+        fi
+        
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
