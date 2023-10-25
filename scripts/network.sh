@@ -102,9 +102,6 @@ checkAppPorts()
     local app_name="$1"
     local flag="$2"
 
-    local db_used_ports=$(databaseGetUsedPorts "$app_name")
-    local db_open_ports=$(databaseGetOpenPorts "$app_name")
-
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
@@ -302,12 +299,8 @@ portExistsInDatabase()
                 if [[ $flag != "scan" ]]; then
                     isSuccessful "Port $port is free...continuing..."
                 fi
-                if [[ $flag == "install" ]]; then
-                    disallow_used_port=false
-                fi
                 return 1  # Port does not exist in the database
             fi
-
         fi
     fi
 }
@@ -409,10 +402,7 @@ portOpenExistsInDatabase()
                     fi
                 else
                     if [[ $flag != "scan" ]]; then
-                        isSuccessful "Port $port is free to be openned...continuing..."
-                    fi
-                    if [[ $flag == "install" ]]; then
-                        disallow_open_port=false
+                        isSuccessful "Port $port is free to be opened...continuing..."
                     fi
                     return 1  # Port does not exist in the database
                 fi
