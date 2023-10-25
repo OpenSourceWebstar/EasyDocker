@@ -66,11 +66,15 @@ installDashy()
             isError "A used port conflict has occured, setup is cancelling..."
             disallow_used_port=""
             return
+        else
+            isSuccessful "No used port conflicts found, setup is continuing..."
         fi
         if [[ $disallow_open_port == "true" ]]; then
             isError "An open port conflict has occured, setup is cancelling..."
             disallow_open_port=""
             return
+        else
+            isSuccessful "No open port conflicts found, setup is continuing..."
         fi
         
 		((menu_number++))
