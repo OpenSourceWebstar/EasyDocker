@@ -62,7 +62,16 @@ installDashy()
         echo ""
 
         checkAppPorts $app_name install;
-		checkAllowOrDenyPorts;
+        if [[ $disallow_used_port == "true" ]]; then
+            isError "A used port conflict has occured, setup is cancelling..."
+            disallow_used_port=""
+            return
+        fi
+        if [[ $disallow_open_port == "true" ]]; then
+            isError "An open port conflict has occured, setup is cancelling..."
+            disallow_open_port=""
+            return
+        fi
         
 		((menu_number++))
         echo ""
