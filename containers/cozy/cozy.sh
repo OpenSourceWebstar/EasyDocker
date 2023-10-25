@@ -65,16 +65,7 @@ installCozy()
         echo ""
 
         checkAppPorts $app_name install;
-        if [[ $disallow_used_port == "true" ]]; then
-            isError "A used port conflict has occured, setup is cancelling..."
-            disallow_used_port=""
-            return
-        fi
-        if [[ $disallow_open_port == "true" ]]; then
-            isError "An open port conflict has occured, setup is cancelling..."
-            disallow_open_port=""
-            return
-        fi
+		checkAllowOrDenyPorts;
         
 		((menu_number++))
         echo ""
