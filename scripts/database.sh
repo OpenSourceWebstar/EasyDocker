@@ -289,16 +289,16 @@ databaseListInstalledApps()
     fi
 
     # Execute the query and store the results in a variable for installed apps only (status = 1)
-    local results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name, install_date, install_time FROM apps WHERE status = 1;")
+    local results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT apps.name, apps.install_date, apps.install_time, GROUP_CONCAT(ports.port, ',') AS Ports FROM apps LEFT JOIN ports ON apps.name = ports.name WHERE apps.status = 1 GROUP BY apps.name;")
 
     # Check if results variable is not empty
     if [ -n "$results" ]; then
         # Print the column headers
-        printf "%-12s| %-12s | %-12s\n" "Name" "Install Date" "Install Time"
-        echo "--------------------------------------"
+        printf "%-12s| %-12s | %-12s | %-12s\n" "Name" "Install Date" "Install Time" "Ports"
+        echo "-------------------------------------------------"
 
         # Read and print each row of the results
-        while IFS="|" read -r name install_date install_time; do
+        while IFS="|" read -r name install_date install_time ports; do
             if [ -z "$install_date" ]; then
                 # If install_date is empty, update it with the current date
                 install_date=$(date +"%Y-%m-%d")
@@ -309,7 +309,7 @@ databaseListInstalledApps()
                 install_time=$(date +"%H:%M:%S")
                 sudo sqlite3 "$docker_dir/$db_file" "UPDATE apps SET install_time = '$install_time' WHERE name = '$name';"
             fi
-            printf "%-12s| %-12s | %-12s\n" "$name" "$install_date" "$install_time"
+            printf "%-12s| %-12s | %-12s | %-12s\n" "$name" "$install_date" "$install_time" "$ports"
         done <<< "$results"
 
         if [[ "$toollistinstalledapps" == [yY] ]]; then
