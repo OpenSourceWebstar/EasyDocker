@@ -163,6 +163,8 @@ usePort()
         # Check if the port already exists in the database
         if ! portExistsInDatabase "$app_name" "$port" "$flag"; then
             databasePortInsert "$app_name" "$port"
+        else
+            return
         fi
     fi
 }
@@ -235,6 +237,8 @@ unusePort()
         fi
         if portExistsInDatabase "$app_name" "$port" "$flag"; then
             databasePortRemove "$app_name" "$port";
+        else
+            return
         fi
     fi
 }
@@ -282,7 +286,9 @@ portExistsInDatabase()
                     isError "Unable to use port $port for application $app_name"
                     isError "Port $port is already used by $app_name_from_db."
                     isError "This WILL cause issues, please find a unique port for $app_name"
-                    disallow_used_port=true
+                    if [[ $flag == "install" ]]; then
+                        disallow_used_port=true
+                    fi
 
                     # Conflict start
                     addPortConflict "$app_name" "$port" "$app_name_from_db"
@@ -292,19 +298,25 @@ portExistsInDatabase()
                     if [[ $flag != "scan" ]]; then
                         isNotice "Port $port is already setup for $app_name_from_db."
                     fi
-                    disallow_used_port=true
+                    if [[ $flag == "install" ]]; then
+                        disallow_used_port=true
+                    fi
                     return 0  # Port exists in the database
                 elif [ -n "$app_name_from_db" ]; then
                     if [[ $flag != "scan" ]]; then
                         isNotice "Port $port is already used by $app_name_from_db."
                     fi
-                    disallow_used_port=true
+                    if [[ $flag == "install" ]]; then
+                        disallow_used_port=true
+                    fi
                     return 0  # Port exists in the database
                 else
                     if [[ $flag != "scan" ]]; then
                         isSuccessful "No port found for $port...continuing..."
                     fi
-                    disallow_used_port=false
+                    if [[ $flag == "install" ]]; then
+                        disallow_used_port=false
+                    fi
                     return 1  # Port does not exist in the database
                 fi
             fi
@@ -382,7 +394,9 @@ portOpenExistsInDatabase()
                         isError "Unable to use port $port for application $app_name"
                         isError "Port $port and type $type is already open for $app_name_from_db."
                         isError "This WILL cause issues, please find a unique port for $app_name"
-                        disallow_open_port=true
+                        if [[ $flag == "install" ]]; then
+                            disallow_open_port=true
+                        fi
 
                         # Conflict start
                         addOpenPortConflict "$app_name" "$port" "$type" "$app_name_from_db"
@@ -392,19 +406,25 @@ portOpenExistsInDatabase()
                         if [[ $flag != "scan" ]]; then
                             isNotice "Port $port is already open and setup for $app_name_from_db."
                         fi
-                        disallow_open_port=true
+                        if [[ $flag == "install" ]]; then
+                            disallow_open_port=true
+                        fi
                         return 0  # Port exists in the database
                     elif [ -n "$app_name_from_db" ]; then
                         if [[ $flag != "scan" ]]; then
                             isNotice "Port $port is already open and used by $app_name_from_db."
                         fi
-                        disallow_open_port=true
+                        if [[ $flag == "install" ]]; then
+                            disallow_open_port=true
+                        fi
                         return 0  # Port exists in the database
                     else
                         if [[ $flag != "scan" ]]; then
                             isSuccessful "No open port found for $port...continuing..."
                         fi
-                        disallow_open_port=false
+                        if [[ $flag == "install" ]]; then
+                            disallow_open_port=false
+                        fi
                         return 1  # Port does not exist in the database
                     fi
                 fi
