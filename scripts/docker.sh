@@ -121,6 +121,8 @@ setupConfigToContainer()
                         [yY])
                             isNotice "Resetting $app_name config file."
                             copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                            source $target_path/$config_file
+                            setupConfigToContainer $app_name;
                             break
                             ;;
                         [nN])
