@@ -174,17 +174,22 @@ databaseAppScan()
         fi
     done
 
-    # Remove entries from the database for folders that no longer exist
-    for folder_name in "${folders_to_remove[@]}"; do
-        isNotice "Folder $folder_name no longer exists. Removing from the Database."
+    # Get a list of folder names that exist in the database but not in the current folder structure
+    for folder_name in "${existing_folder_names[@]}"; do
+        if [ ! -d "$containers_dir/$folder_name" ]; then
+            # Check if this folder is actually associated with an entry in the database
+            if [[ " ${folder_names[@]} " =~ " $folder_name " ]]; then
+                isNotice "Folder $folder_name no longer exists. Removing from the Database."
 
-        # Delete the entry from the apps table
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM apps WHERE name = '$app_name';")
-        checkSuccess "Removing $app_name from the apps database."
+                # Delete the entry from the apps table
+                local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM apps WHERE name = '$app_name';")
+                checkSuccess "Removing $app_name from the apps database."
 
-        removePortsFromDatabase $app_name;
+                removePortsFromDatabase $app_name;
 
-        ((updated_count++)) # Increment updated_count
+                ((updated_count++)) # Increment updated_count
+            fi
+        fi
     done
 
     # Check if all apps are up to date
