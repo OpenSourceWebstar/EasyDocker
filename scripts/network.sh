@@ -300,7 +300,7 @@ portExistsInDatabase()
                 fi
             else
                 if [[ $flag != "scan" ]]; then
-                    isSuccessful "No port found for $port...continuing..."
+                    isSuccessful "Port $port is free...continuing..."
                 fi
                 if [[ $flag == "install" ]]; then
                     disallow_used_port=false
@@ -409,7 +409,7 @@ portOpenExistsInDatabase()
                     fi
                 else
                     if [[ $flag != "scan" ]]; then
-                        isSuccessful "No open port found for $port...continuing..."
+                        isSuccessful "Port $port is free to be openned...continuing..."
                     fi
                     if [[ $flag == "install" ]]; then
                         disallow_open_port=false
