@@ -20,7 +20,7 @@ services:
       #traefik.http.routers.ipinfo.tls: true
       #traefik.http.routers.ipinfo.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.ipinfo.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.ipinfo.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:

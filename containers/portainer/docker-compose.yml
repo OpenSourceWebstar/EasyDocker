@@ -27,7 +27,7 @@ services:
       #traefik.http.services.portainer.loadbalancer.server.port: 9000
       #traefik.http.routers.portainer.middlewares: authelia@docker
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.portainer.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.portainer.middlewares:
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

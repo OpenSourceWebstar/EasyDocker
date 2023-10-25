@@ -25,7 +25,7 @@ services:
       #traefik.http.routers.trilium.tls: true
       #traefik.http.routers.trilium.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.trilium.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.trilium.middlewares:
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

@@ -47,7 +47,7 @@ services:
       #traefik.http.routers.wireguard.tls.certresolver: production
       #traefik.http.services.wireguard.loadbalancer.server.port: PORT1
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.wireguard.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.wireguard.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

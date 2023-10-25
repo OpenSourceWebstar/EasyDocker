@@ -25,7 +25,7 @@ services:
       #traefik.http.routers.speedtest.tls: true
       #traefik.http.routers.speedtest.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.speedtest.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.speedtest.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:

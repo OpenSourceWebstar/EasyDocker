@@ -35,7 +35,7 @@ services:
       #traefik.http.routers.killbill.tls: true
       #traefik.http.routers.killbill.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.killbill.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.killbill.middlewares:
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

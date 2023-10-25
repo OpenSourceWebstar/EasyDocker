@@ -25,7 +25,7 @@ services:
       #traefik.http.routers.traefik.tls: true
       #traefik.http.routers.traefik.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.traefik.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.traefik.middlewares:
     restart: unless-stopped
     networks:
       vpn:

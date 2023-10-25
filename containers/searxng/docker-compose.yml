@@ -36,7 +36,7 @@ services:
       #traefik.http.routers.searxng.tls: true
       #traefik.http.routers.searxng.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.searxng.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.searxng.middlewares:
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

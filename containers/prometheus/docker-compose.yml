@@ -26,7 +26,7 @@ services:
       #traefik.http.routers.prometheus.tls: true
       #traefik.http.routers.prometheus.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.prometheus.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.prometheus.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

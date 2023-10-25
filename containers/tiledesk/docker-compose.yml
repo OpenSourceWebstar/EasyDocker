@@ -24,7 +24,7 @@ services:
       #traefik.http.routers.tiledesk.tls: true
       #traefik.http.routers.tiledesk.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.tiledesk.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.tiledesk.middlewares:
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

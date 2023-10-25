@@ -26,7 +26,7 @@ services:
       #traefik.http.routers.grafana.tls: true
       #traefik.http.routers.grafana.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.grafana.middlewares: my-whitelist-in-docker@docker
+      #traefik.http.routers.grafana.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

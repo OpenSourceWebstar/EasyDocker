@@ -19,7 +19,7 @@ services:
         #traefik.http.routers.moo.entrypoints: websecure
         #traefik.docker.network: vpn
         #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-        #traefik.http.routers.moo.middlewares: my-whitelist-in-docker@docker
+        #traefik.http.routers.moo.middlewares:
 
     certdumper:
       image: ghcr.io/kereis/traefik-certs-dumper:latest

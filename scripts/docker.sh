@@ -440,131 +440,90 @@ editCustomFile()
     isSuccessful "Updated the $customfile file"
 }
 
+
+setupTraefikLabelsEnableLabels()
+{
+    local temp_file="$1"
+    
+    local result=$(sudo sed -i "s/#labels:/labels:/g" "$temp_file")
+    checkSuccess "Enable labels for Traefik option options on public setup"
+}
+
+setupTraefikLabelsEnableAllTraefik()
+{
+    local temp_file="$1"
+    
+    local result=$(sudo sed -i "s/#traefik/traefik/g" "$temp_file")
+    checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
+}
+
+setupTraefikLabelsSetupMiddlewares()
+{
+    local temp_file="$1"
+
+    # Check if the line with .middlewares: exists
+    middlewares_line=""
+    while IFS= read -r line; do
+        if [[ "$line" == *".middlewares:" ]]; then
+            middlewares_line="$line"
+            continue
+        fi
+
+        echo "$line" >> "$temp_file"
+    done < "$compose_file"
+
+    # Add both middlewares if Authelia and Whitelist are enabled
+    if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
+        middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker my-whitelist-in-docker@docker}"
+    elif [[ "$authelia_setup" == "true" ]]; then
+        middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker}"
+    elif [[ "$whitelist" == "true" ]]; then
+        middlewares_line="${middlewares_line//.middlewares:/.middlewares:}"
+    fi
+
+    echo "$middlewares_line" >> "$temp_file"
+}
+
 setupTraefikLabels() 
 {
     local compose_file="$1"
     local temp_file="/tmp/temp_compose_file.yml"
 
+    # Create or truncate the temporary file
+    > "$temp_file"
+    sudo cp "$compose_file" "$temp_file"
+
+    setupTraefikLabelsSetupMiddlewares $temp_file;
+
     # No Whitelist Data
     if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-        # Authelia Enabled
         if [[ "$authelia_setup" == "true" ]]; then
-            # Enable Labels
-            local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
-            checkSuccess "Enable labels for Traefik option options on public setup"
-
-            # Create or truncate the temporary file
-            > "$temp_file"
-
-            # Enable all Traefik lines with no whitelist
+            setupTraefikLabelsEnableLabels $temp_file;
             while IFS= read -r line; do
                 if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
                     line="${line//#/}"
                 fi
                 echo "$line" >> "$temp_file"
             done < "$compose_file"
-
-            # Replace the original file with the updated one
-            result=$(sudo mv "$temp_file" "$compose_file")
-
-            isSuccessful "Enabling Traefik options for public setup, with authelia enabled and no whitelist found."
-        # Authelia Disabled
-        elif [[ "$authelia_setup" == "false" ]] || [[ "$authelia_setup" == "" ]]; then
-            # Enable Labels
-            local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
-            checkSuccess "Enable labels for Traefik option options on public setup"
-
-            # Create or truncate the temporary file
-            > "$temp_file"
-
-            # Enable all Traefik lines with no whitelist and authelia disabled
+        fi
+    # Whitelist Data
+    else
+        if [[ "$whitelist" == "false" ]]; then
+            setupTraefikLabelsEnableLabels $temp_file;
             while IFS= read -r line; do
-                if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* && "$line" != *"authelia@docker"* ]]; then
+                if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
                     line="${line//#/}"
                 fi
                 echo "$line" >> "$temp_file"
             done < "$compose_file"
-
-            # Replace the original file with the updated one
-            result=$(sudo mv "$temp_file" "$compose_file")
-
-            isSuccessful "Enabling Traefik options for public setup, with authelia enabled and no whitelist found."
         fi
-    # Whitelist Data
-    else
-        # Authelia Enabled
-        if [[ "$authelia_setup" == "true" ]]; then
-            # Enable Labels
-            local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
-            checkSuccess "Enable labels for Traefik option options on public setup"
-
-            # Whitelist Enabled
-            if [[ "$whitelist" == "true" ]]; then
-                local result=$(sudo sed -i "s/#traefik/traefik/g" "$compose_file")
-                checkSuccess "Enabling Traefik options for public setup and whitelist enabled"
-            # Whitelist Disabled
-            elif [[ "$whitelist" == "false" ]]; then
-                # Create or truncate the temporary file
-                > "$temp_file"
-
-                # Enable all Traefik lines with no whitelist if "authelia" is in the line
-                while IFS= read -r line; do
-                    if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* ]]; then
-                        line="${line//#/}"
-                    fi
-                    echo "$line" >> "$temp_file"
-                done < "$compose_file"
-
-                # Replace the original file with the updated one
-                result=$(sudo mv "$temp_file" "$compose_file")
-                checkSuccess "Enabling Traefik options for public setup and whitelist disabled"
-            fi
-        # Authelia Disabled
-        elif [[ "$authelia_setup" == "false" ]] || [[ "$authelia_setup" == "" ]]; then
-            # Enable Labels
-            local result=$(sudo sed -i "s/#labels:/labels:/g" "$compose_file")
-            checkSuccess "Enable labels for Traefik option options on public setup"
-
-            # Whitelist Enabled
-            if [[ "$whitelist" == "true" ]]; then
-                # Create or truncate the temporary file
-                > "$temp_file"
-
-                # Enable all Traefik lines with whitelist but no authelia
-                while IFS= read -r line; do
-                    if [[ "$line" == *"#traefik"* && "$line" != *"authelia@docker"* ]]; then
-                        line="${line//#/}"
-                    fi
-                    echo "$line" >> "$temp_file"
-                done < "$compose_file"
-
-                # Replace the original file with the updated one
-                result=$(sudo mv "$temp_file" "$compose_file")
-
-                checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
-            fi
-
-            # Whitelist Disabled
-            if [[ "$whitelist" == "false" ]]; then
-                # Create or truncate the temporary file
-                > "$temp_file"
-
-                # Enable all Traefik lines with no whitelist or authelia
-                while IFS= read -r line; do
-                    if [[ "$line" == *"#traefik"* && "$line" != *"whitelist"* && "$line" != *"authelia@docker"* ]]; then
-                        line="${line//#/}"
-                    fi
-                    echo "$line" >> "$temp_file"
-                done < "$compose_file"
-
-                # Replace the original file with the updated one
-                result=$(sudo mv "$temp_file" "$compose_file")
-
-                checkSuccess "Enabling Traefik options for public setup, and no whitelist found."
-            fi
-
+        if [[ "$whitelist" == "true" && "$authelia_setup" == "true" ]]; then
+            setupTraefikLabelsEnableLabels $temp_file;
+            setupTraefikLabelsEnableAllTraefik $temp_file;
         fi
     fi
+
+    result=$(sudo mv "$temp_file" "$compose_file")
 }
 
 scanFileForRandomPassword()
