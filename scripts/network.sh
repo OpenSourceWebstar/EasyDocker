@@ -102,9 +102,6 @@ checkAppPorts()
     local app_name="$1"
     local flag="$2"
 
-    local db_used_ports=($(databaseGetUsedPortsForApp "$app_name"))
-    local db_open_ports=($(databaseGetOpenPortsForApp "$app_name"))
-
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
@@ -127,7 +124,7 @@ checkAppPorts()
         fi
     done
 
-    #removeStalePorts "$app_name" "${db_used_ports[@]}" "${db_open_ports[@]}"
+    removeStalePorts "$app_name";
 }
 
 openPort()
@@ -213,11 +210,11 @@ closePort()
         if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
             databasePortOpenRemove "$app_name" "$portdata"
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                local result=$(sudo ufw deny "$port")
+                local result=$(sudo ufw delete allow "$port")
                 checkSuccess "Closing port $port for $app_name in the UFW Firewall"
             elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                local result=$(sudo ufw-docker deny "$app_name" "$port")
-                checkSuccess "Closing port $port for $$app_name in the UFW-Docker Firewall"
+                local result=$(sudo ufw-docker delete allow "$app_name" "$port")
+                checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
             fi
         else
             isNotice "Unable to find port in the database...skipping..."
@@ -242,20 +239,27 @@ unusePort()
     fi
 }
 
-removeStalePorts() 
+removeStalePorts()
 {
     local app_name="$1"
-    local used_ports=("${@:2}")
-    local open_ports=("${@:3}")
+    local db_used_ports=($(databaseGetUsedPortsForApp "$app_name"))
+    local db_open_ports=($(databaseGetOpenPortsForApp "$app_name"))
 
-    for open_port in "${open_ports[@]}"; do
-        closePort "$app_name" "$open_port" stale
+    # Remove open ports that exist in the database but not in openports
+    for db_open_port in "${db_open_ports[@]}"; do
+        if ! containsElement "$db_open_port" "${openports[@]}"; then
+            closePort "$app_name" "$db_open_port" stale
+        fi
     done
 
-    for used_port in "${used_ports[@]}"; do
-        unusePort "$app_name" "$used_port" stale
+    # Remove used ports that exist in the database but not in usedports
+    for db_used_port in "${db_used_ports[@]}"; do
+        if ! containsElement "$db_used_port" "${usedports[@]}"; then
+            unusePort "$app_name" "$db_used_port" stale
+        fi
     done
 }
+
 
 ########################
 #      Used Ports      #
