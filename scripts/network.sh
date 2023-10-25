@@ -307,12 +307,6 @@ portExistsInDatabase()
                     disallow_used_port=false
                     return 1  # Port does not exist in the database
                 fi
-            else
-                if [[ $flag != "scan" ]]; then
-                    isSuccessful "No application found for port $port...continuing..."
-                fi
-                disallow_used_port=false
-                return 1  # No application found for the port, no conflict
             fi
         fi
     fi
@@ -413,12 +407,6 @@ portOpenExistsInDatabase()
                         disallow_open_port=false
                         return 1  # Port does not exist in the database
                     fi
-                else
-                    if [[ $flag != "scan" ]]; then
-                        isSuccessful "No application found for port $port...continuing..."
-                    fi
-                    disallow_open_port=false
-                    return 1  # No application found for the port, no conflict
                 fi
             fi
         fi
