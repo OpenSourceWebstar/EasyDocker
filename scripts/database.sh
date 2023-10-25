@@ -525,6 +525,9 @@ databaseSSHScanForKeys()
 databaseDisplayTables() 
 {
     if [[ "$toollistalltables" == [yY] ]]; then
+        local table_number=0
+        local selected_table=""
+
         echo ""
         echo "##########################################"
         echo "###      View Database Table Data      ###"
@@ -544,39 +547,46 @@ databaseDisplayTables()
         fi
 
         # Get a list of existing tables in the database
-        local tables_list=$(sudo sqlite3 "$docker_dir/$db_file" ".tables")
+        local tables_list=($(sudo sqlite3 "$docker_dir/$db_file" ".tables"))
 
         # Check if there are any tables in the database
-        if [ -z "$tables_list" ]; then
+        if [ "${#tables_list[@]}" -eq 0 ]; then
             isError "No tables found in the database."
             return
         fi
 
-        while IFS= read -r table_name; do
-            echo "$table_name"
-        done <<<"$tables_list"
+        while [ "$table_number" -lt "${#tables_list[@]}" ]; do
+            table_number=$((table_number+1))
+            echo "$table_number. ${tables_list[$((table_number-1))]}"
+        done
 
         echo ""
-        isQuestion "Enter the table name to view data (x to exit): "
-        read -p "" table_name
-        echo ""
+        isQuestion "Enter the number of the table to view data (x to exit): "
+        read -p "" selected_table
 
-        if [[ "$table_name" == "x" ]]; then
+        if [[ "$selected_table" == "x" ]]; then
             echo ""
             echo "Exiting."
-        return
-        elif sudo sqlite3 "$docker_dir/$db_file" ".tables" | grep -q "\b$table_name\b"; then
-            # Display all data for the selected table with formatted output
-            echo ""
-            echo "##########################################"
-            echo "###   Displaying $table_name Table Data"
-            echo "##########################################"
-            echo ""
-            sudo sqlite3 -column -header "$docker_dir/$db_file" "SELECT * FROM $table_name;"
-            echo ""
-            read -p "Press Enter to continue..."
+            return
+        elif [[ "$selected_table" =~ ^[0-9]+$ ]] && ((selected_table >= 1)) && ((selected_table <= "${#tables_list[@]}")); then
+            selected_table="${tables_list[$((selected_table-1))]}"
+            while true; do
+                # Display all data for the selected table with formatted output
+                echo ""
+                echo "##########################################"
+                echo "###   Displaying $selected_table Table Data"
+                echo "##########################################"
+                echo ""
+                sudo sqlite3 -column -header "$docker_dir/$db_file" "SELECT * FROM $selected_table;"
+                echo ""
+                isQuestion "Press Enter to continue, or enter 'x' to return to the table list: "
+                read -p "" input
+                if [[ "$input" == "x" ]]; then
+                    break
+                fi
+            done
         else
-            isNotice "Invalid table name. Please try again."
+            isNotice "Invalid table number. Please try again."
         fi
     fi
 }
