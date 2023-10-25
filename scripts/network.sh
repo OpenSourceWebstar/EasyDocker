@@ -104,15 +104,12 @@ checkAppPorts()
 
     local db_used_ports=$(databaseGetUsedPorts "$app_name")
     local db_open_ports=$(databaseGetOpenPorts "$app_name")
-    
+
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
         if [[ $used_port_value != "" ]]; then
-            # Check if the port is in the ports table in the database
-            if ! containsElement "$used_port_value" "${db_used_ports[@]}"; then
-                usePort "$app_name" "$used_port_value" "$flag"
-            fi
+            usePort "$app_name" "$used_port_value" "$flag"
         fi
     done
 
@@ -120,10 +117,7 @@ checkAppPorts()
         local open_variable_name="openport$((i+1))"
         local open_port_value="${!open_variable_name}"
         if [[ $open_port_value != "" ]]; then
-            # Check if the port is in the ports_open table in the database
-            if ! containsElement "$open_port_value" "${db_open_ports[@]}"; then
-                openPort "$app_name" "$open_port_value" "$flag"
-            fi
+            openPort "$app_name" "$open_port_value" "$flag"
         fi
     done
 
@@ -266,7 +260,7 @@ portExistsInDatabase()
     local app_name="$1"
     local port="$2"
     local flag="$3"
-    disallow_used_port=""
+    disallow_used_port=false
 
     if [[ $port != "" ]]; then
         if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
@@ -303,16 +297,17 @@ portExistsInDatabase()
                         disallow_used_port=true
                     fi
                     return 0  # Port exists in the database
-                else
-                    if [[ $flag != "scan" ]]; then
-                        isSuccessful "No port found for $port...continuing..."
-                    fi
-                    if [[ $flag == "install" ]]; then
-                        disallow_used_port=false
-                    fi
-                    return 1  # Port does not exist in the database
                 fi
+            else
+                if [[ $flag != "scan" ]]; then
+                    isSuccessful "No port found for $port...continuing..."
+                fi
+                if [[ $flag == "install" ]]; then
+                    disallow_used_port=false
+                fi
+                return 1  # Port does not exist in the database
             fi
+
         fi
     fi
 }
@@ -373,7 +368,7 @@ portOpenExistsInDatabase()
     local port="$2"
     local type="$3"
     local flag="$4"
-    disallow_open_port=""
+    disallow_open_port=false
 
     if [[ $port != "" ]]; then
         if [[ $type != "" ]]; then
@@ -411,15 +406,15 @@ portOpenExistsInDatabase()
                             disallow_open_port=true
                         fi
                         return 0  # Port exists in the database
-                    else
-                        if [[ $flag != "scan" ]]; then
-                            isSuccessful "No open port found for $port...continuing..."
-                        fi
-                        if [[ $flag == "install" ]]; then
-                            disallow_open_port=false
-                        fi
-                        return 1  # Port does not exist in the database
                     fi
+                else
+                    if [[ $flag != "scan" ]]; then
+                        isSuccessful "No open port found for $port...continuing..."
+                    fi
+                    if [[ $flag == "install" ]]; then
+                        disallow_open_port=false
+                    fi
+                    return 1  # Port does not exist in the database
                 fi
             fi
         fi

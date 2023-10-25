@@ -64,6 +64,7 @@ installInvidious()
             return
         else
             isSuccessful "No used port conflicts found, setup is continuing..."
+            disallow_used_port=""
         fi
         if [[ $disallow_open_port == "true" ]]; then
             isError "An open port conflict has occured, setup is cancelling..."
@@ -71,6 +72,7 @@ installInvidious()
             return
         else
             isSuccessful "No open port conflicts found, setup is continuing..."
+            disallow_open_port=""
         fi
         
 		((menu_number++))
