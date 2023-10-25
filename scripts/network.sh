@@ -102,6 +102,9 @@ checkAppPorts()
     local app_name="$1"
     local flag="$2"
 
+    local db_used_ports=$(databaseGetUsedPorts "$app_name")
+    local db_open_ports=$(databaseGetOpenPorts "$app_name")
+    
     for i in "${!usedports[@]}"; do
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
@@ -139,16 +142,13 @@ openPort()
         # Check if the port already exists in the database
         if ! portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
             databasePortOpenInsert "$app_name" "$portdata"
-        else
-            return
-        fi
-
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            local result=$(sudo ufw allow "$port")
-            checkSuccess "Opening port $port for $app_name in the UFW Firewall"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            local result=$(sudo ufw-docker allow "$app_name" "$port")
-            checkSuccess "Opening port $port for $$app_name in the UFW-Docker Firewall"
+            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                local result=$(sudo ufw allow "$port")
+                checkSuccess "Opening port $port for $app_name in the UFW Firewall"
+            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                local result=$(sudo ufw-docker allow "$app_name" "$port")
+                checkSuccess "Opening port $port for $app_name in the UFW-Docker Firewall"
+            fi
         fi
     fi
 }
@@ -163,8 +163,6 @@ usePort()
         # Check if the port already exists in the database
         if ! portExistsInDatabase "$app_name" "$port" "$flag"; then
             databasePortInsert "$app_name" "$port"
-        else
-            return
         fi
     fi
 }
@@ -218,9 +216,6 @@ closePort()
                 local result=$(sudo ufw-docker delete allow "$app_name" "$port")
                 checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
             fi
-        else
-            isNotice "Unable to find port in the database...skipping..."
-            return
         fi
     fi
 }
@@ -237,8 +232,6 @@ unusePort()
         fi
         if portExistsInDatabase "$app_name" "$port" "$flag"; then
             databasePortRemove "$app_name" "$port";
-        else
-            return
         fi
     fi
 }
