@@ -48,7 +48,13 @@ installVirtualmin()
 	chmod +x virtualmin-install.sh
 
 	# Run the Virtualmin auto-install script with sudo
-	sudo ./virtualmin-install.sh
+	sudo ./virtualmin-install.sh -b LEMP # Using NGINX
+
+	# Disable Firewalld
+	sudo systemctl stop firewalld
+	sudo systemctl disable firewalld
+	virtualmin disable-feature --all-domains --dns
+	echo "Disabled the firewalld & DNS service for EasyDocker"
 
 	while true; do
 		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password

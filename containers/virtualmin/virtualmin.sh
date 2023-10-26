@@ -132,7 +132,7 @@ installVirtualmin()
                 read -s -p "" webmin_password
                 if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
                     resut=$(sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password")
-                    isSuccess "Password changed and Webmin restarted successfully."
+                    isSuccessful "Password changed and Webmin restarted successfully."
                     break
                 else
                     isNotice "Password is too short or empty. Please provide a password with at least 8 characters."
