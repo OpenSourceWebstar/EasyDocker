@@ -274,7 +274,6 @@ dockerDownUpDefault()
     local app_name="$1"
     if [[ "$OS" == [1234567] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
             checkSuccess "Shutting down container for $app_name"
 
@@ -423,8 +422,10 @@ editComposeFileApp()
     fi
 
     if [[ "$public" == "false" ]]; then
-        local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
-        checkSuccess "Disable Traefik options for private setup"
+        if ! grep -q "#labels:" "$compose_file"; then
+            local result=$(sudo sed -i 's/labels:/#labels:/g' "$compose_file")
+            checkSuccess "Disable Traefik options for private setup"
+        fi
     fi
     
     scanFileForRandomPassword $compose_file;
@@ -533,12 +534,18 @@ setupTraefikLabels()
 
     # No Whitelist Data
     if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
-        if [[ "$authelia_setup" == "true" ]]; then
+        sudo sed -i "s/#labels:/labels:/g" "$temp_file"
+        sudo sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
+    else
+        if [[ "$whitelist" == "true" && "$authelia_setup" == "false" ]]; then
+            sudo sed -i "s/#labels:/labels:/g" "$temp_file"
+            sudo sed -i '/#traefik/ s/#//g' "$temp_file"
+        fi
+        if [[ "$whitelist" == "false" && "$authelia_setup" == "false" ]]; then
             sudo sed -i "s/#labels:/labels:/g" "$temp_file"
             sudo sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
         fi
-    else
-        if [[ "$whitelist" == "false" ]]; then
+        if [[ "$whitelist" == "false" && "$authelia_setup" == "true" ]]; then
             sudo sed -i "s/#labels:/labels:/g" "$temp_file"
             sudo sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
         fi
@@ -548,11 +555,11 @@ setupTraefikLabels()
         fi
     fi
 
-    copyFile "$temp_file" "$compose_file" overwrite
+    copyFile --silent "$temp_file" "$compose_file" overwrite
     sudo rm "$temp_file"
 
     local indentation="      "
-    awk -v indentation="$indentation" '/\.middlewares:/ { if ($0 !~ "^" indentation) { $0 = indentation $0 } } 1' "$compose_file" > "$compose_file.tmp" && mv "$compose_file.tmp" "$compose_file"
+    awk -v indentation="$indentation" '/\.middlewares:/ { if ($0 !~ "^" indentation) { $0 = indentation $0 } } 1' "$compose_file" > "$compose_file.tmp" && sudo mv "$compose_file.tmp" "$compose_file"
 }
 
 scanFileForRandomPassword()
