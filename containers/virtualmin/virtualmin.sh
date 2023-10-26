@@ -64,6 +64,28 @@ installVirtualmin()
         echo "---- $menu_number. Checking & Opening ports if required"
         echo ""
 
+        # Port List
+        #Service 	dhcpv6-client (546) 	UDP
+        #Service 	dns (53) 	TCP/UDP
+        #Service 	dns-over-tls (853) 	TCP
+        #Service 	ftp (21) 	TCP
+        #Service 	http (80) 	TCP
+        #Service 	https (443) 	TCP
+        #Service 	imap (143) 	TCP
+        #Service 	imaps (993) 	TCP
+        #Service 	mdns (5353) 	UDP
+        #Service 	pop3 (110) 	TCP
+        #Service 	pop3s (995) 	TCP
+        #Service 	smtp (25) 	TCP
+        #Service 	smtp-submission (587) 	TCP
+        #Service 	smtps (465) 	TCP
+        #Service 	ssh (22) 	TCP
+        #Port 	20 	TCP
+        #Port 	2222 	TCP
+        #Port 	10000-10100 	TCP
+        #Port 	20000 	TCP
+        #Port 	49152-65535 	TCP
+
         checkAppPorts $app_name install;
         if [[ $disallow_used_port == "true" ]]; then
             isError "A used port conflict has occured, setup is cancelling..."
@@ -82,7 +104,7 @@ installVirtualmin()
 
         ((menu_number++))
         echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
         if [[ $compose_setup == "default" ]]; then

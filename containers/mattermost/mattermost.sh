@@ -73,46 +73,6 @@ installMattermost()
         else
             isSuccessful "No open port conflicts found, setup is continuing..."
         fi
-        
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Setting up Ports for $app_name"
-        echo ""
-
-		if [[ "$easy_setup" == "true" ]]; then
-			MATP80C=8011
-			MATP443C=4431
-		else
-			read -rp "Do you want to change the custom HTTP port 8011 for Mattermost? (y/n): " MATP80_PROMPT
-			if [[ "$MATP80_PROMPT" == [yY] ]]; then
-				while true; do
-					read -rp "Enter the port you want to use instead of 80 (#): " MATP80C
-					if [[ $MATP80C =~ ^[0-9]+$ ]]; then
-						echo "Given valid port $MATP80C"
-						break
-					else
-						echo "Ports should only contain numbers, please try again."
-					fi
-				done
-			else
-				MATP80C=8011
-			fi
-
-			read -rp "Do you want to change the custom HTTPS port 4431 for Mattermost? (y/n): " MATP443_PROMPT
-			if [[ "$MATP443_PROMPT" == [yY] ]]; then
-				while true; do
-					read -rp "Enter the port you want to use instead of 443 (#): " MATP443C
-					if [[ $MATP443C =~ ^[0-9]+$ ]]; then
-						echo "Given valid port $MATP443C"
-						break
-					else
-						echo "Ports should only contain numbers, please try again."
-					fi
-				done
-			else
-				MATP443C=4431
-			fi
-		fi
 	
 		((menu_number++))
         echo ""
@@ -137,11 +97,11 @@ installMattermost()
         local result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
 		
-        local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$MATP80C'/' $containers_dir$app_name/.env)
-		checkSuccess "Updating .env file HTTP_PORT to $MATP80C"	
+        local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/.env)
+		checkSuccess "Updating .env file HTTP_PORT to $usedport1"	
 				
-        local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$MATP443C'/' $containers_dir$app_name/.env)
-		checkSuccess "Updating .env file HTTPS_PORT to $MATP443C"	
+        local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/.env)
+		checkSuccess "Updating .env file HTTPS_PORT to $usedport2"	
 		
 		editEnvFileDefault;
 
@@ -182,8 +142,8 @@ mattermostAddToYMLFile()
 EOF
 }
 
-		DCN=docker-compose.nginx.yml
-		DCWN=docker-compose.without-nginx.yml
+		local DCN=docker-compose.nginx.yml
+		local DCWN=docker-compose.without-nginx.yml
 
 		isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
 		read -rp "" MATN
@@ -214,7 +174,6 @@ EOF
 					mattermostAddToYMLFile "$containers_dir$app_name/$DCWN"
 					editCustomFile "$containers_dir$app_name" "$DCWN"
 				fi
-
 				 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
 					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then

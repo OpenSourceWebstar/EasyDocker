@@ -75,7 +75,7 @@ installTiledesk()
         
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Pulling a default $app_name docker-compose.yml file."
+        echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
         if [[ $compose_setup == "default" ]]; then

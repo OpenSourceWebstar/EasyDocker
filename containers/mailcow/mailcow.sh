@@ -74,79 +74,28 @@ installMailcow()
         else
             isSuccessful "No open port conflicts found, setup is continuing..."
         fi
+		
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Checking & Opening ports if required"
+        echo ""
+
+        checkAppPorts $app_name install;
+        if [[ $disallow_used_port == "true" ]]; then
+            isError "A used port conflict has occured, setup is cancelling..."
+            disallow_used_port=""
+            return
+        else
+            isSuccessful "No used port conflicts found, setup is continuing..."
+        fi
+        if [[ $disallow_open_port == "true" ]]; then
+            isError "An open port conflict has occured, setup is cancelling..."
+            disallow_open_port=""
+            return
+        else
+            isSuccessful "No open port conflicts found, setup is continuing..."
+        fi
         
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Initial setup options"
-        echo ""
-
-		if [[ "$easy_setup" == "true" ]]; then
-			COWP80C=8022
-			COWP443C=4432
-			COWCD=n
-			COWLE=y
-			COWPORT=y
-		else
-			isQuestion "8022 will be used for the HTTP Port, are you happy with this? (y/n): "
-			read -rp "" COWP80_PROMPT
-			if [[ "$COWP80_PROMPT" == [nN] ]]; then
-				while true; do
-					read -rp "Enter the port you want to use instead of 8022 (#): " COWP80C
-					if [[ $COWP80C =~ ^[0-9]+$ ]]; then
-						echo "Given valid port $COWP80C"
-						break
-					else
-						echo "Ports should only contain numbers, please try again."
-					fi
-				done
-			else
-				COWP80C=8022
-			fi
-
-			isQuestion "4432 will be used for the HTTPS Port, are you happy with this? (y/n): "
-			read -rp "" COWP443_PROMPT
-
-			if [[ "$COWP443_PROMPT" == [nN] ]]; then
-				while true; do
-					read -rp "Enter the port you want to use instead of 4432 (#): " COWP443C
-					if [[ $COWP443C =~ ^[0-9]+$ ]]; then
-						echo "Given valid port $COWP443C"
-						break
-					else
-						echo "Ports should only contain numbers, please try again."
-					fi
-				done
-			else
-				COWP443C=4432
-			fi
-
-			isQuestion "Do you want to use ClamD Antivirus? (uses lots of resources) (y/n): "
-			read -rp "" COWCD
-		fi
-		
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking to see if all ports are available"
-        echo ""
-		
-		if [[ "$easy_setup" == "false" ]]; then
-			local ports_to_scan="25|$COWP80C|110|143|$COWP443C|465|587|993|995|4190"
-			local scan_result
-
-			scan_local result=$(sudo -u $easydockeruser ss -tlpn | sudo grep  -E -w "$ports_to_scan")
-
-			if [[ -n "$scan_result" ]]; then
-				isError "Some of the specified ports are not free:"
-				isError "Result : $scan_result"
-				exit 1
-			else
-				isSuccessful "All specified ports are free. No conflicts detected."
-			fi
-
-			isQuestion "Are the Ports clear for Mailcow to install? (y/n): "
-			read -rp "" COWPORT
-		fi
-
 		((menu_number++))
 	    echo ""
         echo "---- $menu_number. Pulling Mailcow GitHub repo into the $containers_dir$app_name folder"
@@ -194,24 +143,20 @@ installMailcow()
 		else
 			mailcowSetupGit;
 		fi
+        
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a $app_name docker-compose.yml file."
+        echo ""
 
 		local result=$(copyFile $install_containers_dir$app_name/docker-compose.yml $containers_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
 
-		((menu_number++))
-	    echo ""
-        echo "---- $menu_number. Pulling Mailcow GitHub repo into the /docker/ folder"
-        echo ""
-
-		# Custom values from files
-		local result=$(sudo sed -i "s/DOMAINNAMEHERE/$domain_full/g" $containers_dir$app_name/docker-compose.$app_name.yml)
-		checkSuccess "Updating Domain Name in the docker-compose.$app_name.yml file"
-
-		local result=$(sudo sed -i "s/IPADDRESSHERE/$ip_setup/g" $containers_dir$app_name/docker-compose.$app_name.yml)
-		checkSuccess "Updating IP Address in the docker-compose.$app_name.yml file"
-
-		local result=$(sudo sed -i "s/PORT1/$COWP80C/g" $containers_dir$app_name/docker-compose.$app_name.yml)
-		checkSuccess "Updating Port to $$COWP80C in the docker-compose.$app_name.yml file"
+        if [[ $compose_setup == "default" ]]; then
+		    setupComposeFileNoApp $app_name;
+        elif [[ $compose_setup == "app" ]]; then
+            setupComposeFileApp $app_name;
+        fi
 		
 		if [[ "$using_caddy" == "true" ]]; then
 			# Setup SSL Transfer scripts
@@ -240,21 +185,36 @@ installMailcow()
         echo "---- $menu_number. Running configuration edits to mailserver.conf"
         echo ""
 
-		if [[ "$COWP80_PROMPT" == [yY] ]]; then
-        	local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$COWP80C'/' $containers_dir$app_name/mailcow.conf)
-        	checkSuccess "Updating the mailserver.conf to custom http port"
+		local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/mailcow.conf)
+		checkSuccess "Updating the mailserver.conf to custom http port"
+
+		local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/mailcow.conf)
+		checkSuccess "Updating the mailserver.conf to custom https port"
+
+		while true; do
+			isQuestion "Would you like to disable Lets Encrypt? *RECOMMENDED* (y/n): "
+			read -p "" lets_encrypt_choice
+			if [[ -n "$lets_encrypt_choice" ]]; then
+				break
+			fi
+			isNotice "Please provide a valid input."
+		done
+		if [[ "$lets_encrypt_choice" == [yY] ]]; then
+			local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $containers_dir$app_name/mailcow.conf)
+			checkSuccess "Updating the mailserver.conf to disable SSL install"
 		fi
-		if [[ "$COWP443_PROMPT" == [yY] ]]; then
-        	local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$COWP443C'/' $containers_dir$app_name/mailcow.conf)
-        	checkSuccess "Updating the mailserver.conf to custom https port"
-		fi
-		if [[ "$COWLE" == [yY] ]]; then
-        	local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $containers_dir$app_name/mailcow.conf)
-        	checkSuccess "Updating the mailserver.conf to disable SSL install"
-		fi
-		if [[ "$COWCD" == [nN] ]]; then
-        	local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $containers_dir$app_name/mailcow.conf)
-        	checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
+
+		while true; do
+			isQuestion "Would you like to disable ClamD Antivirus? *Resource Reduction* (y/n): "
+			read -p "" clamd_antivirus_choice
+			if [[ -n "$clamd_antivirus_choice" ]]; then
+				break
+			fi
+			isNotice "Please provide a valid input."
+		done
+		if [[ "$clamd_antivirus_choice" == [yY] ]]; then
+			local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $containers_dir$app_name/mailcow.conf)
+			checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
 		fi
 
 		((menu_number++))
