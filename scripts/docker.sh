@@ -208,13 +208,14 @@ checkAllowedInstall()
         fi
     fi
 
-    if [ "$app_name" == "virtualmin" ]; then
-        if ! checkVirtualminInstalled; then
-            isError "Virtualmin is not installed, it is required."
-            isError "Installation is now aborting..."
-            uninstallApp "$app_name";
-            return 1
+    if [ "$app_name" == "virtualmin" ] && ! checkVirtualminInstalled; then
+        isError "Virtualmin is not installed, it is required."
+        if ! isAppInstalled "traefik"; then
+            isError "Traefik is not installed, it is required."
         fi
+        isError "Installation is now aborting..."
+        uninstallApp "$app_name"
+        return 1
     fi
 
     isSuccessful "Application is allowed to be installed."
