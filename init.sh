@@ -3,7 +3,6 @@
 param1="$1"
 
 sudo_user_name=easydocker
-hostname="virtualmin"
 repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
 sshd_config="/etc/ssh/sshd_config"
 sudo_bashrc="/home/$sudo_user_name/.bashrc"
@@ -50,13 +49,13 @@ initializeScript()
 	if [[ "$install_virtualmin" == [yY] ]]; then
 		while true; do
 			# Prompt the user for the domain they want to use with Virtualmin
-			read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. example.com): " domain_virtualmin
+			read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
 
 			# Check if the input appears to be a valid domain (FQDN)
 			if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
 				break  # Valid format, exit the loop
 			else
-				echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. example.com)."
+				echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
 			fi
 		done
 	fi
@@ -69,19 +68,27 @@ initializeScript()
 	sudo apt-get update
 	sudo apt-get dist-upgrade -y
 
-    if [ -n "$hostname" ] && [ -n "$domain_virtualmin" ]; then
-        if ! grep -q "127.0.1.1\s$hostname.$domain_virtualmin $hostname" /etc/hosts; then
-            sudo sed -i "1i 127.0.1.1\t$domain_virtualmin $hostname" /etc/hosts
-            echo "Hostname and FQDN added to the top of /etc/hosts."
-        else
-            echo "The entries for '$domain_virtualmin' and '$hostname' already exist in /etc/hosts. No changes made."
-        fi
-    fi
-
+	# Virtualmin OS Changes
 	if [[ "$install_virtualmin" == [yY] ]]; then
-		local current_hostname=$(cat /etc/hostname)
-		if [ "$current_hostname" != "$hostname" ]; then
-			echo "$hostname" | sudo tee /etc/hostname > /dev/null
+
+		local hostname="${domain_virtualmin%%.*}" # Before .
+		local domain="${domain_virtualmin#*.}" # After .
+        local hosts_file="/etc/hosts"
+        local hostname_file="/etc/hostname"
+
+		# hosts edits
+        if [[ -f "$hosts_file" ]]; then
+			if [ -n "$hostname" ] && [ -n "$domain" ]; then
+				sudo sed -i '/127.0.1.1/d' "$hosts_file"
+				sudo sed -i "1i 127.0.1.1\t$hostname.$domain $hostname" $hosts_file
+				echo "Hostname and FQDN added to the top of $hosts_file."
+			fi
+		fi
+
+		# hostname edits
+        if [[ -f "$hostname_file" ]]; then
+			echo "" | sudo tee $hostname_file
+			echo "$hostname" | sudo tee $hostname_file > /dev/null
 			echo "Hostname updated to '$hostname'."
 			echo ""
 			echo "The system will reboot to apply the changes."
@@ -92,6 +99,7 @@ initializeScript()
 			echo "Hostname is already set to '$hostname'. No update needed."
 		fi
 	fi
+
 	echo "SUCCESS: OS Updated"
 
 	echo ""
@@ -175,49 +183,24 @@ initializeScript()
 	fi
 
 	if [[ "$install_virtualmin" == [yY] ]]; then
-		echo ""
-		echo "####################################################"
-		echo "###      	      Virtualmin Install               ###"
-		echo "####################################################"
-		echo ""
-
-		# Download the Virtualmin auto-install script
-		cd / && wget https://software.virtualmin.com/gpl/scripts/virtualmin-install.sh
-
-		# Make the script executable
-		chmod +x virtualmin-install.sh
-
-		# Run the Virtualmin auto-install script with sudo
-		sudo ./virtualmin-install.sh
-
-		while true; do
-			# Prompt the user for the new password
-			read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
-			echo
-
-			# Check if the password is not empty and meets the minimum length requirement (e.g., 8 characters)
-			if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
-				# Change the Webmin 'root' user password
-				sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
-				sudo systemctl stop webmin
-				echo "Password changed and Webmin restarted successfully."
-				break
-			else
-				echo "Password is too short or empty. Please provide a password with at least 8 characters."
+		if dpkg -l | grep -q virtualmin; then
+			while true; do
+				echo ""
+				echo "NOTICE - Virtualmin install already found."
+				echo ""
+				echo "QUESTION : Would you like to reinstall Virtualmin? (y/n): "
+				read -p "" reinstall_virtualmin_choice
+				if [[ -n "$reinstall_virtualmin_choice" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$reinstall_virtualmin_choice" == [yY] ]]; then
+				installVirtualmin;
 			fi
-		done
-
-		echo "NOTICE - Now that Virtualmin is setup "
-		echo ""
-		echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificat.e"
-		echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
-		echo ""
-		echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
-		echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
-		echo ""
-		echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
-	else
-		echo "Virtualmin installation not required."
+		else
+			installVirtualmin;
+		fi
 	fi
 
 	echo ""
@@ -233,6 +216,51 @@ initializeScript()
 	echo "Thank you & Enjoy! <3"
 	echo ""
 	exit
+}
+
+installVirtualmin()
+{
+	echo ""
+	echo "####################################################"
+	echo "###      	      Virtualmin Install               ###"
+	echo "####################################################"
+	echo ""
+
+	# Download the Virtualmin auto-install script
+	cd / && wget https://software.virtualmin.com/gpl/scripts/virtualmin-install.sh
+
+	# Make the script executable
+	chmod +x virtualmin-install.sh
+
+	# Run the Virtualmin auto-install script with sudo
+	sudo ./virtualmin-install.sh
+
+	while true; do
+		# Prompt the user for the new password
+		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
+		echo
+
+		# Check if the password is not empty and meets the minimum length requirement (e.g., 8 characters)
+		if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
+			# Change the Webmin 'root' user password
+			sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
+			sudo systemctl stop webmin
+			echo "Password changed and Webmin restarted successfully."
+			break
+		else
+			echo "Password is too short or empty. Please provide a password with at least 8 characters."
+		fi
+	done
+
+	echo "NOTICE - Now that Virtualmin is setup "
+	echo ""
+	echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificat.e"
+	echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
+	echo ""
+	echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
+	echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
+	echo ""
+	echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
 }
 
 if [ "$param1" == "run" ]; then

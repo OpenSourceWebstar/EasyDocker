@@ -100,23 +100,21 @@ installVirtualmin()
         local config_conf="/etc/webmin/config"
 
         if [[ -f "$miniserv_conf" ]]; then
-            if ! sudo grep -q "^ssl=0" "$miniserv_conf"; then
-                echo "ssl=0" | sudo tee -a "$miniserv_conf"
-            fi
-
-            if ! sudo grep -q "^redirect_host=$domain_full" "$miniserv_conf"; then
-                echo "redirect_host=$domain_full" | sudo tee -a "$miniserv_conf"
-            fi
-
-            if ! sudo grep -q "^redirect_port=443" "$miniserv_conf"; then
-                echo "redirect_port=443" | sudo tee -a "$miniserv_conf"
-            fi
+            sudo sed -i '/ssl=/d' "$miniserv_conf"
+            sudo sed -i '/redirect_host=/d' "$miniserv_conf"
+            sudo sed -i '/redirect_port=/d' "$miniserv_conf"
+            echo "ssl=0" | sudo tee -a "$miniserv_conf"
+            echo "redirect_host=$host_setup" | sudo tee -a "$miniserv_conf"
+            echo "redirect_port=443" | sudo tee -a "$miniserv_conf"
+        else
+            isError "Unable to find miniserv.conf, cancelling install..."
         fi
 
         if [[ -f "$config_conf" ]]; then
-            if ! sudo grep -q "^referers=$domain_full" "$config_conf"; then
-                echo "referers=$domain_full" | sudo tee -a "$config_conf"
-            fi
+            sudo sed -i '/referers=/d' "$miniserv_conf"
+            echo "referers=$host_setup" | sudo tee -a "$config_conf"
+        else
+            isError "Unable to find config, cancelling install..."
         fi
 
         local result=$(sudo systemctl restart webmin)
