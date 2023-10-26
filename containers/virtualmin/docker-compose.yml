@@ -14,7 +14,7 @@ networks:
       #traefik.http.middlewares.webmin-redirect-websecure.redirectscheme.scheme: https
       #traefik.http.routers.webmin-web.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.webmin-web.entrypoints: web
-      #traefik.http.routers.webmin-web.middlewares: webmin-redirect-websecure
+      #traefik.http.routers.webmin-web.middlewares:
       #traefik.http.routers.webmin-websecure.entrypoints: websecure
       #traefik.http.routers.webmin-websecure.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.tags: vpn
