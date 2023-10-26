@@ -497,21 +497,17 @@ setupTraefikLabelsSetupMiddlewares()
     local middleware_entries=()
 
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
-        middleware_entries+=("authelia@docker")
         middleware_entries+=("my-whitelist-in-docker")
-        if [[ "$app_name" == "virtualmin" ]]; then
-            middleware_entries+=("webmin-redirect-websecure")
-        fi
-    elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
         middleware_entries+=("authelia@docker")
-        if [[ "$app_name" == "virtualmin" ]]; then
-            middleware_entries+=("webmin-redirect-websecure")
-        fi
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
-        if [[ "$app_name" == "virtualmin" ]]; then
-            middleware_entries+=("webmin-redirect-websecure")
-        fi
+    elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
+        middleware_entries+=("authelia@docker")
+    fi
+
+    # App Specific additions
+    if [[ "$app_name" == "virtualmin" ]]; then
+        middleware_entries+=("webmin-redirect-websecure")
     fi
 
     # Join the middleware entries with commas
