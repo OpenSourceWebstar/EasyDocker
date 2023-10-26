@@ -304,10 +304,12 @@ completeInitMessage()
 	echo "###      EasyDocker Initilization Complete       ###"
 	echo "####################################################"
 	echo ""
+	if dpkg -l | grep -q virtualmin; then
+		echo "For Virtualmin, please run 'easydocker' to finalize the setup."
+		echo "Otherwise run 'sudo systemctl start'"
+		echo ""
+	fi
 	echo "You can now use the 'easydocker' command under the $sudo_user_name."
-	echo ""
-	echo "If you have installed Virtualmin, please run EasyDocker to finalize the setup."
-	echo "Otherwise run 'sudo systemctl start'"
 	echo ""
 	echo "Thank you & Enjoy! <3"
 	echo ""
