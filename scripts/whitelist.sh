@@ -31,7 +31,7 @@ whitelistScan()
             setupInstallVariables $app_name;
     
             # Always keep YML updated
-            whitelistUpdateYML $app_name;
+            whitelistUpdateYML $app_name scan;
 
             # Update ports for the app
             checkAppPorts $app_name scan;
@@ -123,7 +123,7 @@ whitelistUpdateYML()
         fi
     fi
 
-    if [ "$flags" != "restart" ]; then
+    if [ "$flags" == "install" ]; then
         whitelistUpdateCompose $app_name;
         whitelistUpdateRestart $app_name $flags;
         if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
@@ -153,12 +153,40 @@ whitelistUpdateYML()
         did_not_restart=false
     fi
 
+    if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ]; then
+        if [ "$flags" == "scan" ]; then
+            if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The whitelist and timezone for $app_name are now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
+                fi
+            elif [ "$whitelistupdates" == "true" ]; then
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The whitelist for $app_name is now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The whitelist for $app_name is now up to date and restarted."
+                fi
+            elif [ "$timezoneupdates" == "true" ]; then
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The timezone for $app_name is now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The timezone for $app_name is now up to date and restarted."
+                fi
+            fi
+            local whitelistupdates=false
+            local timezoneupdates=false
+            did_not_restart=false
+        fi
+    fi
+
     if [ "$flags" == "restart" ]; then
         whitelistUpdateCompose $app_name;
         whitelistUpdateRestart $app_name $flags;
     fi
-
-
 }
 
 whitelistUpdateCompose()
