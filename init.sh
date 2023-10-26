@@ -91,7 +91,6 @@ askForFQDN()
 			echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
 		fi
 	done
-	domain_virtualmin=$domain_virtualmin
 }
 
 createFQDNFile()
@@ -155,7 +154,12 @@ initializeScript()
 	sudo apt-get update
 	sudo apt-get dist-upgrade -y
 
-	# Virtualmin OS Changes
+
+	echo ""
+	echo "####################################################"
+	echo "###               Virtualmin Edits               ###"
+	echo "####################################################"
+	echo ""
 	if [[ "$install_virtualmin" == [yY] ]]; then
 
 		local hostname="${domain_virtualmin%%.*}" # Before .
