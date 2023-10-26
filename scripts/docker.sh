@@ -182,8 +182,8 @@ checkAllowedInstall()
     local app_name="$1"
 
     if [ "$app_name" == "ufw" ]; then
-        if checkVirtualminInstalled; then
-            isError "Virtualmin is installed, this will conflict with $app_name."
+        if dpkg -l | grep -q firewalld; then
+            isError "Firewalled is installed with Virtualmin, this will conflict with $app_name."
             isError "Installation is now aborting..."
             uninstallApp "$app_name";
             return 1
@@ -200,8 +200,8 @@ checkAllowedInstall()
     fi
 
     if [ "$app_name" == "fail2ban" ]; then
-        if checkVirtualminInstalled; then
-            isError "Virtualmin is installed, this will conflict with $app_name."
+        if dpkg -l | grep -q fail2ban; then
+            isError "Virtualmin Fail2ban is installed, this will conflict with $app_name."
             isError "Installation is now aborting..."
             uninstallApp "$app_name";
             return 1
