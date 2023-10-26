@@ -378,7 +378,7 @@ editComposeFileDefault()
     fi
 
     if [[ "$public" == "true" ]]; then    
-        setupTraefikLabels $compose_file;
+        setupTraefikLabels $app_name $compose_file;
     fi
     
     if [[ "$public" == "false" ]]; then
@@ -419,7 +419,7 @@ editComposeFileApp()
     fi
 
     if [[ "$public" == "true" ]]; then    
-        setupTraefikLabels $compose_file;
+        setupTraefikLabels $app_name $compose_file;
     fi
 
     if [[ "$public" == "false" ]]; then
@@ -488,7 +488,8 @@ editCustomFile()
 
 setupTraefikLabelsSetupMiddlewares() 
 {
-    local temp_file="$1"
+    local app_name="$1"
+    local temp_file="$2"
 
     local middlewares_line=$(grep -m 1 ".middlewares:" "$temp_file")
 
@@ -497,10 +498,19 @@ setupTraefikLabelsSetupMiddlewares()
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
         middleware_entries+=("authelia@docker")
         middleware_entries+=("my-whitelist-in-docker")
+        if [[ "$app_name" == "virtualmin" ]]; then
+            middleware_entries+=("webmin-redirect-websecure")
+        fi
     elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
         middleware_entries+=("authelia@docker")
+        if [[ "$app_name" == "virtualmin" ]]; then
+            middleware_entries+=("webmin-redirect-websecure")
+        fi
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
+        if [[ "$app_name" == "virtualmin" ]]; then
+            middleware_entries+=("webmin-redirect-websecure")
+        fi
     fi
 
     # Join the middleware entries with commas
@@ -512,13 +522,14 @@ setupTraefikLabelsSetupMiddlewares()
 
 setupTraefikLabels() 
 {
-    local compose_file="$1"
+    local app_name="$1"
+    local compose_file="$2"
     local temp_file="/tmp/temp_compose_file.yml"
 
     > "$temp_file"
     sudo cp "$compose_file" "$temp_file"
 
-    setupTraefikLabelsSetupMiddlewares "$temp_file"
+    setupTraefikLabelsSetupMiddlewares "$app_name" "$temp_file"
 
     # No Whitelist Data
     if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
