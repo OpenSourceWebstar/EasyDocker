@@ -199,6 +199,15 @@ checkAllowedInstall()
         fi
     fi
 
+    if [ "$app_name" == "virtualmin" ]; then
+        if ! checkVirtualminInstalled; then
+            isError "Virtualmin is not installed, it is required."
+            isError "Installation is now aborting..."
+            uninstallApp "$app_name";
+            return 1
+        fi
+    fi
+
     isSuccessful "Application is allowed to be installed."
 }
 
