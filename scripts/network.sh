@@ -26,6 +26,17 @@ setupInstallVariables()
     whitelist="${!whitelist_var}"
     authelia_setup="${!authelia_var}"
 
+    # Default Empty config options
+    if [ "$authelia_setup" == "" ]; then
+        authelia_setup=false
+    fi
+    if [ "$whitelist" == "" ]; then
+        whitelist=false
+    fi
+    if [ "$public" == "" ]; then
+        public=false
+    fi
+
     # Check if no network needed
     if [ "$host_name" != "" ]; then
         setupIPsAndHostnames $app_name;
