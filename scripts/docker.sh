@@ -190,6 +190,15 @@ checkAllowedInstall()
         fi
     fi
 
+    if [ "$app_name" == "mailcow" ]; then
+        if checkVirtualminInstalled; then
+            isError "Virtualmin is installed, this will conflict with $app_name."
+            isError "Installation is now aborting..."
+            uninstallApp "$app_name";
+            return 1
+        fi
+    fi
+
     if [ "$app_name" == "fail2ban" ]; then
         if checkVirtualminInstalled; then
             isError "Virtualmin is installed, this will conflict with $app_name."
@@ -482,34 +491,23 @@ setupTraefikLabelsSetupMiddlewares()
 
     local middlewares_line=$(grep -m 1 ".middlewares:" "$temp_file")
 
+    local middleware_entries=()
+
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
-        if ! grep -q "authelia@docker" <<< "$middlewares_line"; then
-            middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker}"
-        fi
-        if ! grep -q "my-whitelist-in-docker@docker" <<< "$middlewares_line"; then
-            middlewares_line="${middlewares_line//.middlewares:/.middlewares: my-whitelist-in-docker@docker}"
-        fi
+        middleware_entries+=("authelia@docker")
+        middleware_entries+=("my-whitelist-in-docker")
     elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
-        if ! grep -q "authelia@docker" <<< "$middlewares_line"; then
-            middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker}"
-        fi
-        if grep -q "my-whitelist-in-docker@docker" <<< "$middlewares_line"; then
-            # Remove my-whitelist-in-docker if it exists when authelia_setup is true
-            middlewares_line="${middlewares_line// my-whitelist-in-docker@docker/}"
-        fi
+        middleware_entries+=("authelia@docker")
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
-        if grep -q "authelia@docker" <<< "$middlewares_line"; then
-            # Remove authelia@docker if it exists when whitelist is true
-            middlewares_line="${middlewares_line// authelia@docker/}"
-        fi
-        if ! grep -q "my-whitelist-in-docker@docker" <<< "$middlewares_line"; then
-            middlewares_line="${middlewares_line//.middlewares:/.middlewares: my-whitelist-in-docker@docker}"
-        fi
+        middleware_entries+=("my-whitelist-in-docker")
     fi
 
-    sed -i "/.middlewares:/c$middlewares_line" "$temp_file"
-}
+    # Join the middleware entries with commas
+    local middlewares_string="$(IFS=,; echo "${middleware_entries[*]}")"
 
+    # Replace the .middlewares line with the updated line
+    sed -i "s/.middlewares:.*/.middlewares: $middlewares_string/" "$temp_file"
+}
 
 setupTraefikLabels() 
 {
