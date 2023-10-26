@@ -6,6 +6,8 @@ sudo_user_name=easydocker
 repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
 sshd_config="/etc/ssh/sshd_config"
 sudo_bashrc="/home/$sudo_user_name/.bashrc"
+hosts_file="/etc/hosts"
+hostname_file="/etc/hostname"
 
 # Directories
 docker_dir="/docker"
@@ -47,17 +49,21 @@ initializeScript()
 	echo ""
 	read -p "Do you want to install Virtualmin? (Y/n): " install_virtualmin
 	if [[ "$install_virtualmin" == [yY] ]]; then
-		while true; do
-			# Prompt the user for the domain they want to use with Virtualmin
-			read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
-
-			# Check if the input appears to be a valid domain (FQDN)
-			if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
-				break  # Valid format, exit the loop
+		# Check if a valid subdomain is already configured in /etc/hosts
+		if [[ -f "$hosts_file" ]]; then
+			existing_subdomain=$(grep -o '^[0-9.]*\s*\(\S*\)' "$hosts_file" | cut -f2)
+			if [ -n "$existing_subdomain" ]; then
+				echo "An existing subdomain is configured: $existing_subdomain"
+				echo "Using this for Installation."
+				domain_virtualmin="$existing_subdomain"
 			else
-				echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
+				# Prompt the user for input
+				read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
 			fi
-		done
+		else
+			# Prompt the user for input if /etc/hosts doesn't exist
+			read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
+		fi
 	fi
 
 	echo ""
@@ -73,8 +79,6 @@ initializeScript()
 
 		local hostname="${domain_virtualmin%%.*}" # Before .
 		local domain="${domain_virtualmin#*.}" # After .
-        local hosts_file="/etc/hosts"
-        local hostname_file="/etc/hostname"
 
 		# hosts edits
         if [[ -f "$hosts_file" ]]; then
