@@ -120,9 +120,7 @@ installVirtualmin()
         fi
 
         local result=$(sudo systemctl restart webmin)
-        checkSuccess "Restarting Webmin."
-        local result=$(sudo systemctl restart virtualmin)  
-        checkSuccess "Restarting Virtualmin."
+        checkSuccess "Restarting Virtualmin (Webmin)"
 
         ((menu_number++))
         echo ""

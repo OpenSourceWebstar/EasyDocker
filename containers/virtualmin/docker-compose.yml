@@ -5,6 +5,7 @@ networks:
     external: true
     name: vpn
 
+services:
   webmin-proxy:
     image: qoomon/docker-host
     restart: always
