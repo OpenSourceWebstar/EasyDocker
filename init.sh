@@ -87,16 +87,15 @@ initializeScript()
 
 		# hostname edits
         if [[ -f "$hostname_file" ]]; then
+			# File updates
 			echo "" | sudo tee $hostname_file
 			echo "$hostname" | sudo tee $hostname_file > /dev/null
 			echo "Hostname updated to '$hostname'."
-			echo ""
-			echo "The system will reboot to apply the changes."
-			echo "Please rerun this script after reboot..."
-			sleep 5
-			reboot
+			# Reload hostname
+			sudo hostnamectl set-hostname $(cat /etc/hostname)
+			echo "Reloaded hostname file"
 		else
-			echo "Hostname is already set to '$hostname'. No update needed."
+			echo "No hostname file found...cancelling setup."
 		fi
 	fi
 
