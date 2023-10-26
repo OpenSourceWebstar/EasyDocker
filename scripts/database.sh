@@ -206,16 +206,76 @@ databaseAppScan()
             # Check if the folder is empty, contains only a config file, has only a migrate.txt file, or contains both
             if [ "$num_files" -eq 0 ]; then
                 isNotice "Uninstalling $folder_name because it is empty."
-                uninstallApp "$folder_name"
+                if [[ "$CFG_REQUIREMENT_AUTO_CLEAN_FOLDERS" != "true" ]]; then
+                    while true; do
+                        echo ""
+                        isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
+                        read -p "" found_empty_remove_choice
+                        if [[ -n "$found_empty_remove_choice" ]]; then
+                            break
+                        fi
+                        isNotice "Please provide a valid input."
+                    done
+                    if [[ "$found_empty_remove_choice" == [yY] ]]; then
+                        uninstallApp "$folder_name";
+                    fi
+                else
+                    uninstallApp "$folder_name";
+                fi
             elif [ "$num_files" -eq 1 ] && [ -f "$folder_path/$folder_name.config" ]; then
                 isNotice "Uninstalling $folder_name because it contains only a config file."
-                uninstallApp "$folder_name"
+                if [[ "$CFG_REQUIREMENT_AUTO_CLEAN_FOLDERS" != "true" ]]; then
+                    while true; do
+                        echo ""
+                        isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
+                        read -p "" found_empty_remove_choice
+                        if [[ -n "$found_empty_remove_choice" ]]; then
+                            break
+                        fi
+                        isNotice "Please provide a valid input."
+                    done
+                    if [[ "$found_empty_remove_choice" == [yY] ]]; then
+                        uninstallApp "$folder_name";
+                    fi
+                else
+                    uninstallApp "$folder_name";
+                fi
             elif [ "$num_files" -eq 1 ] && [ -f "$folder_path/migrate.txt" ]; then
                 isNotice "Uninstalling $folder_name because it contains only a migrate.txt file."
-                uninstallApp "$folder_name"
+                if [[ "$CFG_REQUIREMENT_AUTO_CLEAN_FOLDERS" != "true" ]]; then
+                    while true; do
+                        echo ""
+                        isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
+                        read -p "" found_empty_remove_choice
+                        if [[ -n "$found_empty_remove_choice" ]]; then
+                            break
+                        fi
+                        isNotice "Please provide a valid input."
+                    done
+                    if [[ "$found_empty_remove_choice" == [yY] ]]; then
+                        uninstallApp "$folder_name";
+                    fi
+                else
+                    uninstallApp "$folder_name";
+                fi
             elif [ "$num_files" -eq 2 ] && [ -f "$folder_path/$folder_name.config" ] && [ -f "$folder_path/migrate.txt" ]; then
                 isNotice "Uninstalling $folder_name because it contains both a config file and a migrate.txt file."
-                uninstallApp "$folder_name"
+                if [[ "$CFG_REQUIREMENT_AUTO_CLEAN_FOLDERS" != "true" ]]; then
+                    while true; do
+                        echo ""
+                        isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
+                        read -p "" found_empty_remove_choice
+                        if [[ -n "$found_empty_remove_choice" ]]; then
+                            break
+                        fi
+                        isNotice "Please provide a valid input."
+                    done
+                    if [[ "$found_empty_remove_choice" == [yY] ]]; then
+                        uninstallApp "$folder_name";
+                    fi
+                else
+                    uninstallApp "$folder_name";
+                fi
             fi
         else
             # If the folder doesn't exist in the directory, uninstall it from the database
