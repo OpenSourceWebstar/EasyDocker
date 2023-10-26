@@ -95,31 +95,29 @@ installVirtualmin()
         echo ""
         echo "---- $menu_number. Making edits to the Virtualmin system files."
         echo ""
+        
+        local miniserv_conf="/etc/webmin/miniserv.conf"
+        local config_conf="/etc/webmin/config"
 
-        (
-            local miniserv_conf="/etc/webmin/miniserv.conf"
-            local config_conf="/etc/webmin/config"
-
-            if [[ -f "$miniserv_conf" ]]; then
-                if ! grep -q "^ssl=0" "$miniserv_conf"; then
-                    echo "ssl=0" | sudo tee -a "$miniserv_conf"
-                fi
-
-                if ! grep -q "^redirect_host=$domain_full" "$miniserv_conf"; then
-                    echo "redirect_host=$domain_full" | sudo tee -a "$miniserv_conf"
-                fi
-
-                if ! grep -q "^redirect_port=443" "$miniserv_conf"; then
-                    echo "redirect_port=443" | sudo tee -a "$miniserv_conf"
-                fi
+        if [[ -f "$miniserv_conf" ]]; then
+            if ! sudo grep -q "^ssl=0" "$miniserv_conf"; then
+                echo "ssl=0" | sudo tee -a "$miniserv_conf"
             fi
 
-            if [[ -f "$config_conf" ]]; then
-                if ! grep -q "^referers=$domain_full" "$config_conf"; then
-                    echo "referers=$domain_full" | sudo tee -a "$config_conf"
-                fi
+            if ! sudo grep -q "^redirect_host=$domain_full" "$miniserv_conf"; then
+                echo "redirect_host=$domain_full" | sudo tee -a "$miniserv_conf"
             fi
-        )
+
+            if ! sudo grep -q "^redirect_port=443" "$miniserv_conf"; then
+                echo "redirect_port=443" | sudo tee -a "$miniserv_conf"
+            fi
+        fi
+
+        if [[ -f "$config_conf" ]]; then
+            if ! sudo grep -q "^referers=$domain_full" "$config_conf"; then
+                echo "referers=$domain_full" | sudo tee -a "$config_conf"
+            fi
+        fi
 
         local result=$(sudo systemctl restart webmin)
         checkSuccess "Restarting Webmin."
