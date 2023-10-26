@@ -51,12 +51,8 @@ setupIPsAndHostnames()
             ssl_crt=${domain_full}.crt
             ip_setup=$ip
 
-            # Used Ports
-            # Clean previous data (unset openport* variables)
-            for varname in $(compgen -A variable | grep -E "^usedport[0-9]+"); do
-                unset "$varname"
-            done
-            unset usedports used_ports_var used_initial_ports
+            clearAllPortData;
+            
             # Generates port variables: usedport1, usedport2, etc.
             used_ports_var="CFG_${app_name^^}_PORTS"
             used_initial_ports="${!used_ports_var}"
@@ -68,12 +64,6 @@ setupIPsAndHostnames()
                 done
             fi
 
-            # Open Ports
-            # Clean previous data (unset openport* variables)
-            for varname in $(compgen -A variable | grep -E "^openport[0-9]+"); do
-                unset "$varname"
-            done
-            unset openports open_ports open_initial_ports
             # Generates port variables: openport1, openport2, etc.
             open_ports_var="CFG_${app_name^^}_OPEN_PORTS"
             open_initial_ports="${!open_ports_var}"
@@ -92,6 +82,22 @@ setupIPsAndHostnames()
         isError "No matching hostnames found for $host_name, please fill in the ips_hostname file"
         resetToMenu;
     fi
+}
+
+clearAllPortData()
+{
+    # Open Ports
+    # Clean previous data (unset openport* variables)
+    for varname in $(compgen -A variable | grep -E "^openport[0-9]+"); do
+        unset "$varname"
+    done
+    unset openports open_ports open_initial_ports
+    # Used Ports
+    # Clean previous data (unset openport* variables)
+    for varname in $(compgen -A variable | grep -E "^usedport[0-9]+"); do
+        unset "$varname"
+    done
+    unset usedports used_ports_var used_initial_ports
 }
 
 ########################
@@ -119,6 +125,7 @@ checkAppPorts()
     done
 
     removeStalePorts "$app_name";
+    clearAllPortData;
 }
 
 openPort()
@@ -247,7 +254,6 @@ removeStalePorts()
         fi
     done
 }
-
 
 ########################
 #      Used Ports      #

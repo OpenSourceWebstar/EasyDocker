@@ -303,10 +303,8 @@ checkVirtualminInstalled()
 {
     if [[ "$OS" == [1234567] ]]; then
         if dpkg -l | grep -q virtualmin; then
-            echo "Virtualmin is installed."
             return 0
         else
-            echo "Virtualmin is not installed."
             return 1
         fi
     fi
