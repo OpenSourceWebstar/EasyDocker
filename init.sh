@@ -47,22 +47,36 @@ initializeScript()
 	echo "NOTICE - EasyDocker can work alongside Virtualmin"
 	echo "Please only install if you need it"
 	echo ""
-	read -p "Do you want to install Virtualmin? (Y/n): " install_virtualmin
+	read -p "Do you want to install Virtualmin? (y/n): " install_virtualmin
 	if [[ "$install_virtualmin" == [yY] ]]; then
 		# Check if a valid subdomain is already configured in /etc/hosts
 		if [[ -f "$hosts_file" ]]; then
 			existing_subdomain=$(grep -o '^[0-9.]*\s*\(\S*\)' "$hosts_file" | cut -f2)
 			if [ -n "$existing_subdomain" ]; then
-				echo "An existing subdomain is configured: $existing_subdomain"
-				echo "Using this for Installation."
-				domain_virtualmin="$existing_subdomain"
+				while true; do
+					echo ""
+					echo "NOTICE - An existing subdomain is configured: $existing_subdomain"
+					echo ""
+					echo "QUESTION : Would you like to use $existing_subdomain for your subdomain? (y/n): "
+					read -p "" reinstall_virtualmin_choice
+					if [[ -n "$reinstall_virtualmin_choice" ]]; then
+						break
+					fi
+					isNotice "Please provide a valid input."
+				done
+				if [[ "$reinstall_virtualmin_choice" == [yY] ]]; then
+					domain_virtualmin="$existing_subdomain"
+				fi
+				if [[ "$reinstall_virtualmin_choice" == [nN] ]]; then
+					askForFCDN;
+				fi
 			else
-				# Prompt the user for input
-				read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
+				askForFCDN;
 			fi
 		else
-			# Prompt the user for input if /etc/hosts doesn't exist
-			read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
+			echo "The Hosts file does not exist on your Operating System."
+			echo "Something went wrong... "
+			return;
 		fi
 	fi
 
@@ -82,24 +96,26 @@ initializeScript()
 
 		# hosts edits
         if [[ -f "$hosts_file" ]]; then
-			if [ -n "$hostname" ] && [ -n "$domain" ]; then
-				sudo sed -i '/127.0.1.1/d' "$hosts_file"
-				sudo sed -i "1i 127.0.1.1\t$hostname.$domain $hostname" $hosts_file
-				echo "Hostname and FQDN added to the top of $hosts_file."
-			fi
+			sudo sed -i '/127.0.1.1/d' "$hosts_file"
+			sudo sed -i "1i 127.0.1.1\t$hostname.$domain $hostname" $hosts_file
+			echo "Hostname and FQDN added to the top of $hosts_file."
+		else
+			echo "No hostname file found...cancelling setup."
+			return
 		fi
 
 		# hostname edits
         if [[ -f "$hostname_file" ]]; then
 			# File updates
 			echo "" | sudo tee $hostname_file
-			echo "$hostname" | sudo tee $hostname_file > /dev/null
-			echo "Hostname updated to '$hostname'."
+			echo "$domain_virtualmin" | sudo tee $hostname_file > /dev/null
+			echo "Hostname updated to '$domain_virtualmin'."
 			# Reload hostname
-			sudo hostnamectl set-hostname $(cat /etc/hostname)
+			sudo hostnamectl set-hostname $(cat $hostname_file)
 			echo "Reloaded hostname file"
 		else
 			echo "No hostname file found...cancelling setup."
+			return
 		fi
 	fi
 
@@ -264,6 +280,21 @@ installVirtualmin()
 	echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
 	echo ""
 	echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
+}
+
+askForFCDN()
+{
+	while true; do
+		# Prompt the user for the domain they want to use with Virtualmin
+		read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
+
+		# Check if the input appears to be a valid domain (FQDN)
+		if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
+			break  # Valid format, exit the loop
+		else
+			echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
+		fi
+	done
 }
 
 if [ "$param1" == "run" ]; then
