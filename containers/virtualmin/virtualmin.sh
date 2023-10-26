@@ -111,10 +111,33 @@ installVirtualmin()
         fi
 
         if [[ -f "$config_conf" ]]; then
-            sudo sed -i '/referers=/d' "$miniserv_conf"
+            sudo sed -i '/referers=/d' "$config_conf"
             echo "referers=$host_setup" | sudo tee -a "$config_conf"
         else
             isError "Unable to find config, cancelling install..."
+        fi
+
+        while true; do
+            echo ""
+            isQuestion "Would you like to change the Virtualmin root password? (y/n): "
+            read -p "" virtualmin_pass_choice
+            if [[ -n "$virtualmin_pass_choice" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$virtualmin_pass_choice" == [yY] ]]; then
+            while true; do
+                isQuestion "Enter the new password for the 'root' Webmin user: "
+                read -s -p "" webmin_password
+                if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
+                    resut=$(sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password")
+                    isSuccess "Password changed and Webmin restarted successfully."
+                    break
+                else
+                    isNotice "Password is too short or empty. Please provide a password with at least 8 characters."
+                fi
+            done
         fi
 
         local result=$(sudo systemctl restart webmin)

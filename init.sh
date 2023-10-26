@@ -51,13 +51,8 @@ installVirtualmin()
 	sudo ./virtualmin-install.sh
 
 	while true; do
-		# Prompt the user for the new password
 		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
-		echo
-
-		# Check if the password is not empty and meets the minimum length requirement (e.g., 8 characters)
 		if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
-			# Change the Webmin 'root' user password
 			sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
 			sudo systemctl stop webmin
 			echo "Password changed and Webmin restarted successfully."
