@@ -7,6 +7,7 @@ whitelistAndStartApp()
     local flags="$2"
 
     # Starting variable for app
+    clearAllPortData;
     setupInstallVariables $app_name;
 
     # Always keep YML updated
@@ -26,6 +27,7 @@ whitelistScan()
             local app_name=$(basename "$app_name_dir")
 
             # Starting variable for app
+            clearAllPortData;
             setupInstallVariables $app_name;
     
             # Always keep YML updated

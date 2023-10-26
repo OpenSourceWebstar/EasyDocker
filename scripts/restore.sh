@@ -32,6 +32,7 @@ restoreStart()
     echo "###      Restoring $stored_app_name Docker Folder"
     echo "##########################################"
     echo ""
+    clearAllPortData;
 
     ((menu_number++))
     echo ""

@@ -13,6 +13,7 @@ uninstallApp()
         echo "##########################################"
         echo "###      Uninstalling $stored_app_name"
         echo "##########################################"
+        clearAllPortData;
 
         ((menu_number++))
         echo ""
