@@ -338,8 +338,10 @@ editComposeFileDefault()
     fi
     
     if [[ "$public" == "false" ]]; then
-        local result=$(sudo sed -i '/^labels:/!s/labels:/#labels:/g' "$compose_file")
-        checkSuccess "Disable Traefik options for private setup"
+        if ! grep -q "#labels:" "$compose_file"; then
+            local result=$(sudo sed -i 's/labels:/#labels:/g' "$compose_file")
+            checkSuccess "Disable Traefik options for private setup"
+        fi
     fi
 
     scanFileForRandomPassword $compose_file;
