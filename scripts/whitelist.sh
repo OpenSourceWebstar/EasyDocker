@@ -118,24 +118,29 @@ whitelistUpdateYML()
 
     # Fail2ban specifics
     if [[ "$app_name" == "fail2ban" ]]; then
-        if grep -q "ignoreip = ips_whitelist" "$containers_dir/$app_name/config/$app_name/jail.local"; then
+        local jail_local_file="$containers_dir/$app_name/config/$app_name/jail.local"
+        
+        if [ -f "$jail_local_file" ]; then
+            if grep -q "ignoreip = ips_whitelist" "$jail_local_file"; then
 
-            # Whitelist not setup yet
-            if grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
-                local result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/" "$containers_dir/$app_name/config/$app_name/jail.local")
-                checkSuccess "Update the IP whitelist for $app_name"
-                local whitelistupdates=true
-            fi
+                # Whitelist not set up yet
+                if grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
+                    local result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/" "$jail_local_file")
+                    checkSuccess "Update the IP whitelist for $app_name"
+                    local whitelistupdates=true
+                fi
 
-            # If the IPs are setup already but needs an update
-            local current_ip_range=$(grep "ignoreip = " "$containers_dir/$app_name/config/$app_name/jail.local" | cut -d ' ' -f 2)
-            if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
-                local result=$(sudo sed -i "s/ignoreip = ips_whitelist/ignoreip = $CFG_IPS_WHITELIST/" "$containers_dir/$app_name/config/$app_name/jail.local")
-                checkSuccess "Update the IP whitelist for $app_name"
-                local whitelistupdates=true
+                # If the IPs are set up already but need an update
+                local current_ip_range=$(grep "ignoreip = " "$jail_local_file" | cut -d ' ' -f 2)
+                if [ "$current_ip_range" != "$CFG_IPS_WHITELIST" ]; then
+                    local result=$(sudo sed -i "s/ignoreip = ips_whitelist/ignoreip = $CFG_IPS_WHITELIST/" "$jail_local_file")
+                    checkSuccess "Update the IP whitelist for $app_name"
+                    local whitelistupdates=true
+                fi
             fi
         fi
     fi
+
 
     if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ] || [ "$autheliaupdates" == "true" ]; then
         if [ "$flags" != "restart" ]; then

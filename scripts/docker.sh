@@ -185,6 +185,7 @@ checkAllowedInstall()
         if checkVirtualminInstalled; then
             isError "Virtualmin is installed, this will conflict with $app_name."
             isError "Installation is now aborting..."
+            uninstallApp "$app_name";
             return 1
         fi
     fi
@@ -193,6 +194,7 @@ checkAllowedInstall()
         if checkVirtualminInstalled; then
             isError "Virtualmin is installed, this will conflict with $app_name."
             isError "Installation is now aborting..."
+            uninstallApp "$app_name";
             return 1
         fi
     fi
