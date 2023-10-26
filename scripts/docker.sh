@@ -442,30 +442,47 @@ editCustomFile()
     isSuccessful "Updated the $customfile file"
 }
 
-setupTraefikLabelsEnableLabels()
-{
-    local temp_file="$1"
-    
-    local result=$(sudo sed -i "s/#labels:/labels:/g" "$temp_file")
-    checkSuccess "Enable labels for Traefik option options on public setup"
-}
-
 setupTraefikLabelsSetupMiddlewares() 
 {
     local temp_file="$1"
+    local indentation="      "
 
     local middlewares_line=$(grep -m 1 ".middlewares:" "$temp_file")
 
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
-        middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker my-whitelist-in-docker@docker}"
+        if ! grep -q "authelia@docker" <<< "$middlewares_line"; then
+            middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker}"
+        fi
+        if ! grep -q "my-whitelist-in-docker@docker" <<< "$middlewares_line"; then
+            middlewares_line="${middlewares_line//.middlewares:/.middlewares: my-whitelist-in-docker@docker}"
+        fi
     elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
-        middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker}"
-    elif [[ "$authelia_setup" == "false" && "$whitelist" == "true"  ]]; then
-        middlewares_line="${middlewares_line//.middlewares:/.middlewares: my-whitelist-in-docker@docker}"
+        if ! grep -q "authelia@docker" <<< "$middlewares_line"; then
+            middlewares_line="${middlewares_line//.middlewares:/.middlewares: authelia@docker}"
+        fi
+        if grep -q "my-whitelist-in-docker@docker" <<< "$middlewares_line"; then
+            # Remove my-whitelist-in-docker if it exists when authelia_setup is true
+            middlewares_line="${middlewares_line// my-whitelist-in-docker@docker/}"
+        fi
+    elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
+        if grep -q "authelia@docker" <<< "$middlewares_line"; then
+            # Remove authelia@docker if it exists when whitelist is true
+            middlewares_line="${middlewares_line// authelia@docker/}"
+        fi
+        if ! grep -q "my-whitelist-in-docker@docker" <<< "$middlewares_line"; then
+            middlewares_line="${middlewares_line//.middlewares:/.middlewares: my-whitelist-in-docker@docker}"
+        fi
     fi
 
     sed -i "/.middlewares:/c$middlewares_line" "$temp_file"
+
+    local indentation="      "
+    # Use grep to check if the desired indentation is present before updating
+    if ! grep -q "^$indentation\.middlewares:" "$compose_file"; then
+        sed -i "/.middlewares:/s/^/$indentation/" "$compose_file"
+    fi
 }
+
 
 setupTraefikLabels() 
 {
@@ -480,15 +497,17 @@ setupTraefikLabels()
     # No Whitelist Data
     if [[ "$CFG_IPS_WHITELIST" == "" ]]; then
         if [[ "$authelia_setup" == "true" ]]; then
-            sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
+            sudo sed -i "s/#labels:/labels:/g" "$temp_file"
+            sudo sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
         fi
     else
         if [[ "$whitelist" == "false" ]]; then
-            sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
+            sudo sed -i "s/#labels:/labels:/g" "$temp_file"
+            sudo sed -i -e '/#traefik/ s/#//g' -e '/#whitelist/ s/#//g' "$temp_file"
         fi
         if [[ "$whitelist" == "true" && "$authelia_setup" == "true" ]]; then
-            sed -i '/#traefik/ s/#//g' "$temp_file"
-            setupTraefikLabelsEnableAllTraefik "$temp_file"
+            sudo sed -i "s/#labels:/labels:/g" "$temp_file"
+            sudo sed -i '/#traefik/ s/#//g' "$temp_file"
         fi
     fi
 
