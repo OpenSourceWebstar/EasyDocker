@@ -49,7 +49,6 @@ whitelistUpdateYML()
 
     local whitelistupdates=false
     local timezoneupdates=false
-    local autheliaupdates=false
 
     if [[ $compose_setup == "default" ]]; then
         local compose_file="docker-compose.yml"
@@ -124,36 +123,34 @@ whitelistUpdateYML()
         fi
     fi
 
-    if [ "$whitelistupdates" == "true" ] || [ "$timezoneupdates" == "true" ]; then
-        if [ "$flags" != "restart" ]; then
-            whitelistUpdateCompose $app_name;
-            whitelistUpdateRestart $app_name $flags;
-            if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
-                if [ "$did_not_restart" == "true" ]; then
-                    isSuccessful "The whitelist and timezone for $app_name are now up to date."
-                    isNotice "Please restart $app_name to apply any updates."
-                else
-                    isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
-                fi
-            elif [ "$whitelistupdates" == "true" ]; then
-                if [ "$did_not_restart" == "true" ]; then
-                    isSuccessful "The whitelist for $app_name is now up to date."
-                    isNotice "Please restart $app_name to apply any updates."
-                else
-                    isSuccessful "The whitelist for $app_name is now up to date and restarted."
-                fi
-            elif [ "$timezoneupdates" == "true" ]; then
-                if [ "$did_not_restart" == "true" ]; then
-                    isSuccessful "The timezone for $app_name is now up to date."
-                    isNotice "Please restart $app_name to apply any updates."
-                else
-                    isSuccessful "The timezone for $app_name is now up to date and restarted."
-                fi
+    if [ "$flags" != "restart" ]; then
+        whitelistUpdateCompose $app_name;
+        whitelistUpdateRestart $app_name $flags;
+        if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
+            if [ "$did_not_restart" == "true" ]; then
+                isSuccessful "The whitelist and timezone for $app_name are now up to date."
+                isNotice "Please restart $app_name to apply any updates."
+            else
+                isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
             fi
-            local whitelistupdates=false
-            local timezoneupdates=false
-            did_not_restart=false
+        elif [ "$whitelistupdates" == "true" ]; then
+            if [ "$did_not_restart" == "true" ]; then
+                isSuccessful "The whitelist for $app_name is now up to date."
+                isNotice "Please restart $app_name to apply any updates."
+            else
+                isSuccessful "The whitelist for $app_name is now up to date and restarted."
+            fi
+        elif [ "$timezoneupdates" == "true" ]; then
+            if [ "$did_not_restart" == "true" ]; then
+                isSuccessful "The timezone for $app_name is now up to date."
+                isNotice "Please restart $app_name to apply any updates."
+            else
+                isSuccessful "The timezone for $app_name is now up to date and restarted."
+            fi
         fi
+        local whitelistupdates=false
+        local timezoneupdates=false
+        did_not_restart=false
     fi
 
     if [ "$flags" == "restart" ]; then
