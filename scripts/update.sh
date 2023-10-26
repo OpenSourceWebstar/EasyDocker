@@ -260,7 +260,7 @@ gitUseExistingBackup()
 
     echo ""
     isNotice "You have restored the configuration files for EasyDocker."
-    isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new configs are loaded."
+    isNotice "To avoid any issues please rerun the 'easydocker' command."
     echo ""
     exit
     update_done=true
@@ -302,7 +302,7 @@ gitFolderResetAndBackup()
     isSuccessful "Custom changes have been discarded successfully"
     echo ""
     isNotice "You have updated your version of EasyDocker."
-    isNotice "To avoid any issues please rerun the 'easydocker' command to make sure all new changes are loaded."
+    isNotice "To avoid any issues please rerun the 'easydocker'."
     echo ""
     exit
     update_done=true

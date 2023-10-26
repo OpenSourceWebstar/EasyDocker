@@ -120,7 +120,7 @@ changeRootOwnedFilesAndFolders()
     local result=$(sudo find "$dir_to_change" -type d -user root -exec sudo chown "$user_name:$user_name" {} \;)
     checkSuccess "Find directories owned by root and change ownership"
 
-    isSuccessful "Ownership of root-owned files and directories in '$dir_to_change' has been changed to '$user_name'."
+    isSuccessful "Updated ownership of root-owned files and directories."
 }
 
 changeRootOwnedFile()
