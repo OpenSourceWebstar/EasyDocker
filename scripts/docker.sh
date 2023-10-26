@@ -177,6 +177,29 @@ setupConfigToContainer()
     loadFiles "app_configs";
 }
 
+checkAllowedInstall()
+{
+    local app_name="$1"
+
+    if [ "$app_name" == "ufw" ]; then
+        if checkVirtualminInstalled; then
+            isError "Virtualmin is installed, this will conflict with $app_name."
+            isError "Installation is now aborting..."
+            return 1
+        fi
+    fi
+
+    if [ "$app_name" == "fail2ban" ]; then
+        if checkVirtualminInstalled; then
+            isError "Virtualmin is installed, this will conflict with $app_name."
+            isError "Installation is now aborting..."
+            return 1
+        fi
+    fi
+
+    isSuccessful "Application is allowed to be installed."
+}
+
 setupComposeFileNoApp()
 {
     local app_name="$1"
@@ -445,7 +468,6 @@ editCustomFile()
 setupTraefikLabelsSetupMiddlewares() 
 {
     local temp_file="$1"
-    local indentation="      "
 
     local middlewares_line=$(grep -m 1 ".middlewares:" "$temp_file")
 
@@ -475,12 +497,6 @@ setupTraefikLabelsSetupMiddlewares()
     fi
 
     sed -i "/.middlewares:/c$middlewares_line" "$temp_file"
-
-    local indentation="      "
-    # Use grep to check if the desired indentation is present before updating
-    if ! grep -q "^$indentation\.middlewares:" "$compose_file"; then
-        sed -i "/.middlewares:/s/^/$indentation/" "$compose_file"
-    fi
 }
 
 
@@ -513,6 +529,9 @@ setupTraefikLabels()
 
     copyFile "$temp_file" "$compose_file" overwrite
     sudo rm "$temp_file"
+
+    local indentation="      "
+    awk -v indentation="$indentation" '/\.middlewares:/ { if ($0 !~ "^" indentation) { $0 = indentation $0 } } 1' "$compose_file" > "$compose_file.tmp" && mv "$compose_file.tmp" "$compose_file"
 }
 
 scanFileForRandomPassword()

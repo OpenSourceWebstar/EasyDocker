@@ -10,12 +10,26 @@ installUFW()
             echo "##########################################"
             echo "###     Install UFW Firewall           ###"
             echo "##########################################"
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Checking if $app_name can be installed."
+            echo ""
+
+            checkAllowedInstall "ufw" || return 1
+
+            ((menu_number++))
             echo ""
             echo "---- $menu_number. Installing using linux package installer"
             echo ""
 
             local result=$(yes | sudo apt-get install ufw )
             checkSuccess "Installing UFW package"
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Updating Firewall Rules"
+            echo ""
 
             local result=$(sudo ufw allow 22)
             checkSuccess "Enabling Port 22 through the firewall"
@@ -41,6 +55,11 @@ installUFW()
             echo ""
             local result=$(sudo ufw --force enable)
             checkSuccess "Enabling UFW Firewall"
+
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Changing logging options"
+            echo ""
 
             local result=$(yes | sudo ufw logging off)
             checkSuccess "Disabling UFW Firewall Logging"
