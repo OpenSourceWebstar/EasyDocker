@@ -32,6 +32,66 @@ install_configs_dir="$script_dir/configs/"
 install_containers_dir="$script_dir/containers/"
 install_scripts_dir="$script_dir/scripts/"
 
+installVirtualmin()
+{
+	echo ""
+	echo "####################################################"
+	echo "###      	      Virtualmin Install               ###"
+	echo "####################################################"
+	echo ""
+
+	# Download the Virtualmin auto-install script
+	cd / && wget https://software.virtualmin.com/gpl/scripts/virtualmin-install.sh
+
+	# Make the script executable
+	chmod +x virtualmin-install.sh
+
+	# Run the Virtualmin auto-install script with sudo
+	sudo ./virtualmin-install.sh
+
+	while true; do
+		# Prompt the user for the new password
+		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
+		echo
+
+		# Check if the password is not empty and meets the minimum length requirement (e.g., 8 characters)
+		if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
+			# Change the Webmin 'root' user password
+			sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
+			sudo systemctl stop webmin
+			echo "Password changed and Webmin restarted successfully."
+			break
+		else
+			echo "Password is too short or empty. Please provide a password with at least 8 characters."
+		fi
+	done
+
+	echo "NOTICE - Now that Virtualmin is setup "
+	echo ""
+	echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificat.e"
+	echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
+	echo ""
+	echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
+	echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
+	echo ""
+	echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
+}
+
+askForFCDN()
+{
+	while true; do
+		# Prompt the user for the domain they want to use with Virtualmin
+		read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
+
+		# Check if the input appears to be a valid domain (FQDN)
+		if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
+			break  # Valid format, exit the loop
+		else
+			echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
+		fi
+	done
+}
+
 initializeScript()
 {
 	# Check if script is run as root
@@ -222,6 +282,12 @@ initializeScript()
 		fi
 	fi
 
+	completeInitMessage $sudo_user_name;
+}
+
+completeInitMessage()
+{
+	local sudo_user_name="$1"
 	echo ""
 	echo "####################################################"
 	echo "###      EasyDocker Initilization Complete       ###"
@@ -235,66 +301,6 @@ initializeScript()
 	echo "Thank you & Enjoy! <3"
 	echo ""
 	exit
-}
-
-installVirtualmin()
-{
-	echo ""
-	echo "####################################################"
-	echo "###      	      Virtualmin Install               ###"
-	echo "####################################################"
-	echo ""
-
-	# Download the Virtualmin auto-install script
-	cd / && wget https://software.virtualmin.com/gpl/scripts/virtualmin-install.sh
-
-	# Make the script executable
-	chmod +x virtualmin-install.sh
-
-	# Run the Virtualmin auto-install script with sudo
-	sudo ./virtualmin-install.sh
-
-	while true; do
-		# Prompt the user for the new password
-		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
-		echo
-
-		# Check if the password is not empty and meets the minimum length requirement (e.g., 8 characters)
-		if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
-			# Change the Webmin 'root' user password
-			sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
-			sudo systemctl stop webmin
-			echo "Password changed and Webmin restarted successfully."
-			break
-		else
-			echo "Password is too short or empty. Please provide a password with at least 8 characters."
-		fi
-	done
-
-	echo "NOTICE - Now that Virtualmin is setup "
-	echo ""
-	echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificat.e"
-	echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
-	echo ""
-	echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
-	echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
-	echo ""
-	echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
-}
-
-askForFCDN()
-{
-	while true; do
-		# Prompt the user for the domain they want to use with Virtualmin
-		read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
-
-		# Check if the input appears to be a valid domain (FQDN)
-		if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
-			break  # Valid format, exit the loop
-		else
-			echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
-		fi
-	done
 }
 
 if [ "$param1" == "run" ]; then
