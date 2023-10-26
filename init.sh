@@ -8,6 +8,7 @@ sshd_config="/etc/ssh/sshd_config"
 sudo_bashrc="/home/$sudo_user_name/.bashrc"
 hosts_file="/etc/hosts"
 hostname_file="/etc/hostname"
+fqdn_file="/root/easydocker-fqdn.txt"
 
 # Directories
 docker_dir="/docker"
@@ -77,7 +78,7 @@ installVirtualmin()
 	echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
 }
 
-askForFCDN()
+askForFQDN()
 {
 	while true; do
 		# Prompt the user for the domain they want to use with Virtualmin
@@ -90,6 +91,13 @@ askForFCDN()
 			echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
 		fi
 	done
+	domain_virtualmin=$domain_virtualmin
+}
+
+createFQDNFile()
+{
+	touch "$fqdn_file"
+	echo "$domain_virtualmin" > "$fqdn_file"
 }
 
 initializeScript()
@@ -109,9 +117,9 @@ initializeScript()
 	echo ""
 	read -p "Do you want to install Virtualmin? (y/n): " install_virtualmin
 	if [[ "$install_virtualmin" == [yY] ]]; then
-		# Check if a valid subdomain is already configured in /etc/hosts
-		if [[ -f "$hosts_file" ]]; then
-			existing_subdomain=$(grep -o '^[0-9.]*\s*\(\S*\)' "$hosts_file" | cut -f2)
+		# Check if a valid subdomain is already stored in easydocker-fqdn.txt
+		if [[ -f "$fqdn_file" ]]; then
+			existing_subdomain=$(head -n 1 "$fqdn_file")
 			if [ -n "$existing_subdomain" ]; then
 				while true; do
 					echo ""
@@ -128,15 +136,14 @@ initializeScript()
 					domain_virtualmin="$existing_subdomain"
 				fi
 				if [[ "$reinstall_virtualmin_choice" == [nN] ]]; then
-					askForFCDN;
+					askForFQDN;
 				fi
 			else
-				askForFCDN;
+				askForFQDN;
 			fi
 		else
-			echo "The Hosts file does not exist on your Operating System."
-			echo "Something went wrong... "
-			return;
+			askForFQDN;
+			createFQDNFile;
 		fi
 	fi
 
