@@ -25,7 +25,6 @@ services:
       #traefik.http.routers.portainer.tls: true
       #traefik.http.routers.portainer.tls.certresolver: production
       #traefik.http.services.portainer.loadbalancer.server.port: 9000
-      #traefik.http.routers.portainer.middlewares: authelia@docker
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.portainer.middlewares:
     networks:
