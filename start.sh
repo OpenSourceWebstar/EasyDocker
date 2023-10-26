@@ -23,6 +23,8 @@ startPreInstall()
     echo "#######################################################"
     echo ""
 
+    clearAllPortData;
+
     #######################################################
     ###          Install for Operating System           ###
     #######################################################
@@ -68,7 +70,8 @@ startPreInstall()
 
 startScan()
 {
-	databasePathInsert $initial_path_save
+	databasePathInsert $initial_path_save;
+    clearAllPortData;
 	if [[ $CFG_REQUIREMENT_MIGRATE == "true" ]]; then
 		migrateCheckForMigrateFiles;
 		migrateGenerateTXTAll;
@@ -93,6 +96,8 @@ startInstall()
     echo "###                Starting Setup                   ###"
     echo "#######################################################"
     echo ""
+
+    clearAllPortData;
 
     #######################################################
     ###                Install System Apps              ###

@@ -21,7 +21,6 @@ whitelistScan()
     echo "###     Whitelist/Port Updater    ###"
     echo "#####################################"
     echo ""
-    clearAllPortData;
     for app_name_dir in "$containers_dir"/*/; do
         if [ -d "$app_name_dir" ]; then
             local app_name=$(basename "$app_name_dir")
