@@ -160,8 +160,8 @@ installAdguard()
 		echo "    NOTICE : Setup is needed in order to get Adguard online"
         echo ""
         echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
+        echo "    External : http://$public_ip:$usedport1/"
+        echo "    Local : http://$ip_setup:$usedport1/"
         echo ""
 
 		menu_number=0

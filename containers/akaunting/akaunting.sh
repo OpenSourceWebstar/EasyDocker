@@ -93,8 +93,8 @@ installAkaunting()
 		local result=$(sudo sed -i 's|- akaunting-db:/var/lib/mysql|- ./akaunting-db/:/var/lib/mysql|g' $containers_dir$app_name/docker-compose.yml)
 		checkSuccess "Updating akaunting-db to persistant storage"
 
-		local result=$(sudo sed -i "s|8080|$port|g" $containers_dir$app_name/docker-compose.yml)
-		checkSuccess "Updating port 8080 to $port in docker-compose.yml"
+		local result=$(sudo sed -i "s|8080|$usedport1|g" $containers_dir$app_name/docker-compose.yml)
+		checkSuccess "Updating port 8080 to $usedport1 in docker-compose.yml"
 		
 		# Find the last instance of "networks:" in the file and get its line number
 		last_network=$(sudo grep  -n 'networks:' "$containers_dir$app_name/docker-compose.yml" | cut -d: -f1 | tail -n 1)
@@ -172,8 +172,8 @@ installAkaunting()
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""
         echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
+        echo "    External : http://$public_ip:$usedport1/"
+        echo "    Local : http://$ip_setup:$usedport1/"
         echo ""
 
 		menu_number=0

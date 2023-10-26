@@ -94,22 +94,22 @@ if [[ "$public" == "true" ]]; then
 
 runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$port
+OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$usedport1
 OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
 ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
 ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
-HTTP_PORT=$port
+HTTP_PORT=$usedport1
 EOF"
 fi
 
 if [[ "$public" == "false" ]]; then	
 runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=IPADDRESSHERE:$port
+OWNCLOUD_DOMAIN=IPADDRESSHERE:$usedport1
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
 ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
 ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
-HTTP_PORT=$port
+HTTP_PORT=$usedport1
 EOF"
 fi
 		editEnvFileDefault;
@@ -142,8 +142,8 @@ fi
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""
         echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$port/"
-        echo "    Local : http://$ip_setup:$port/"
+        echo "    External : http://$public_ip:$usedport1/"
+        echo "    Local : http://$ip_setup:$usedport1/"
         echo ""
 		    
 		menu_number=0

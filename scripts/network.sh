@@ -125,7 +125,6 @@ checkAppPorts()
     done
 
     removeStalePorts "$app_name";
-    clearAllPortData;
 }
 
 openPort()
