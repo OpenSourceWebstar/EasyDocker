@@ -142,23 +142,59 @@ whitelistUpdateYML()
             whitelistUpdateCompose $app_name;
             whitelistUpdateRestart $app_name $flags;
             if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
-                isSuccessful "The whitelist, timezone, and Authelia for $app_name are now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The whitelist, timezone, and Authelia for $app_name are now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The whitelist, timezone, and Authelia for $app_name are now up to date and restarted."
+                fi
             elif [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
-                isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The whitelist and timezone for $app_name are now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The whitelist and timezone for $app_name are now up to date and restarted."
+                fi
             elif [ "$whitelistupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
-                isSuccessful "The whitelist and Authelia for $app_name are now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The whitelist and Authelia for $app_name are now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The whitelist and Authelia for $app_name are now up to date and restarted."
+                fi
             elif [ "$timezoneupdates" == "true" ] && [ "$autheliaupdates" == "true" ]; then
-                isSuccessful "The timezone and Authelia for $app_name are now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The timezone and Authelia for $app_name are now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The timezone and Authelia for $app_name are now up to date and restarted."
+                fi
             elif [ "$whitelistupdates" == "true" ]; then
-                isSuccessful "The whitelist for $app_name is now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The whitelist for $app_name is now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The whitelist for $app_name is now up to date and restarted."
+                fi
             elif [ "$timezoneupdates" == "true" ]; then
-                isSuccessful "The timezone for $app_name is now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The timezone for $app_name is now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The timezone for $app_name is now up to date and restarted."
+                fi
             elif [ "$autheliaupdates" == "true" ]; then
-                isSuccessful "The Authelia for $app_name is now up to date and restarted."
+                if [ "$did_not_restart" == "true" ]; then
+                    isSuccessful "The Authelia for $app_name is now up to date."
+                    isNotice "Please restart $app_name to apply any updates."
+                else
+                    isSuccessful "The Authelia for $app_name is now up to date and restarted."
+                fi
             fi
             local whitelistupdates=false
             local timezoneupdates=false
             local autheliaupdates=false
+            did_not_restart=false
         fi
     fi
 
@@ -202,8 +238,12 @@ whitelistUpdateRestart()
                 fi
                 isNotice "Please provide a valid input."
             done
-            if [[ "$restart_choice" =~ [yY] ]]; then
+            if [[ "$restart_choice" == [yY] ]]; then
                 dockerDownUpDefault $app_name;
+                did_not_restart=false
+            fi
+            if [[ "$restart_choice" == [nN] ]]; then
+                did_not_restart=true
             fi
         fi
     elif [[ $compose_setup == "app" ]]; then
@@ -224,6 +264,10 @@ whitelistUpdateRestart()
             done
             if [[ "$restart_choice" =~ [yY] ]]; then
                 dockerDownUpAdditionalYML $app_name;
+                did_not_restart=false
+            fi
+            if [[ "$restart_choice" == [nN] ]]; then
+                did_not_restart=true
             fi
         fi
     fi
