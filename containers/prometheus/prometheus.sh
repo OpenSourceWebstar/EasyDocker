@@ -84,6 +84,9 @@ installPrometheus()
             setupComposeFileApp $app_name;
         fi
 
+        local result=$(mkdirFolders "$containers_dir$app_name/$app_name")
+        checkSuccess "Created $app_name folder in $app_name"
+
         local result=$(createTouch "$containers_dir$app_name/$app_name/$app_name.yml")
         checkSuccess "Created $app_name.yml file for $app_name"
 
