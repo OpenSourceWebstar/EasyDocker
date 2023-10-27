@@ -385,9 +385,9 @@ portOpenExistsInDatabase()
                 # If app_name_from_db is found
                 if [[ ! -z "$app_name_from_db" ]]; then
                     if [[ "$app_name" != "$app_name_from_db" ]]; then
-                        isError "Unable to use port $port for application $app_name"
-                        isError "Port $port and type $type is already open for $app_name_from_db."
-                        isError "This WILL cause issues, please find a unique port for $app_name"
+                        isNotice "Unable to use port $port for application $app_name"
+                        isNotice "Port $port and type $type is already open for $app_name_from_db."
+                        isNotice "This WILL cause issues, please find a unique port for $app_name"
                         if [[ $flag == "install" ]]; then
                             disallow_open_port=true
                         fi
