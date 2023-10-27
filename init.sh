@@ -55,6 +55,8 @@ installVirtualmin()
 	sudo systemctl disable firewalld
 	virtualmin disable-feature --all-domains --dns
 	echo "Disabled the firewalld & DNS service for EasyDocker"
+	sudo sed -i 's/80 default_server/8033 default_server/g' /etc/nginx/sites-available/default
+	echo "Changing port 80 to port 8033"
 
 	while true; do
 		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
@@ -154,7 +156,6 @@ initializeScript()
 	echo ""
 	sudo apt-get update
 	sudo apt-get dist-upgrade -y
-
 
 	echo ""
 	echo "####################################################"
