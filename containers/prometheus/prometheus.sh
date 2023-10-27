@@ -5,12 +5,6 @@
 
 installPrometheus()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        prometheus=i
-    fi
-
     if [[ "$prometheus" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent prometheus;
         local app_name=$CFG_PROMETHEUS_APP_NAME

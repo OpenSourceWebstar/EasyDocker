@@ -299,17 +299,6 @@ containsElement()
     return 1  # Substring not found
 }
 
-checkVirtualminInstalled() 
-{
-    if [[ "$OS" == [1234567] ]]; then
-        if dpkg -l | grep -q virtualmin; then
-            return 0
-        else
-            return 1
-        fi
-    fi
-}
-
 passwordValidation()
 {
     # Password Setup for DB with complexity checking

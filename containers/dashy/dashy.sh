@@ -5,12 +5,6 @@
 
 installDashy()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        dashy=i
-    fi
-
     if [[ "$dashy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent dashy;
         local app_name=$CFG_DASHY_APP_NAME

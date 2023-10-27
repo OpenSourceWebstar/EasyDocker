@@ -5,12 +5,6 @@
 
 installCozy()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        cozy=i
-    fi
-
     if [[ "$cozy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent cozy;
         local app_name=$CFG_COZY_APP_NAME

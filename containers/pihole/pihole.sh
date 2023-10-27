@@ -5,12 +5,6 @@
 
 installPihole()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        pihole=i
-    fi
-
     if [[ "$pihole" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent pihole;
         local app_name=$CFG_PIHOLE_APP_NAME

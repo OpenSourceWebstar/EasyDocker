@@ -5,12 +5,6 @@
 
 installInvidious()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        invidious=i
-    fi
-
     if [[ "$invidious" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent invidious;
         local app_name=$CFG_INVIDIOUS_APP_NAME

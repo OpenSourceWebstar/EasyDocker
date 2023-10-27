@@ -5,12 +5,6 @@
 
 installKimai()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        kimai=i
-    fi
-
     if [[ "$kimai" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent kimai;
         local app_name=$CFG_KIMAI_APP_NAME

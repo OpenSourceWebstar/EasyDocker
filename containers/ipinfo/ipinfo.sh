@@ -5,12 +5,6 @@
 
 installIpinfo()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        ipinfo=i
-    fi
-
     if [[ "$ipinfo" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent ipinfo;
         local app_name=$CFG_IPINFO_APP_NAME

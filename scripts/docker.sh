@@ -182,7 +182,7 @@ checkAllowedInstall()
     local app_name="$1"
 
     if [ "$app_name" == "mailcow" ]; then
-        if checkVirtualminInstalled; then
+        if checkAppInstalled "virtualmin" "linux"; then
             isError "Virtualmin is installed, this will conflict with $app_name."
             isError "Installation is now aborting..."
             uninstallApp "$app_name";
@@ -190,17 +190,83 @@ checkAllowedInstall()
         fi
     fi
 
-    if [ "$app_name" == "virtualmin" ] && ! checkVirtualminInstalled; then
-        isError "Virtualmin is not installed, it is required."
-        if ! isAppInstalled "traefik"; then
-            isError "Traefik is not installed, it is required."
-        fi
-        isError "Installation is now aborting..."
+    if [ "$app_name" == "virtualmin" ] && ! checkAppInstalled "virtualmin" "linux" "check_active"; then
+        isError "Virtualmin is not installed or running, it is required."
         uninstallApp "$app_name"
         return 1
+    else
+        if ! checkAppInstalled "traefik" "docker"; then
+			while true; do
+				echo ""
+				isNotice "Traefik is not installed, it is required."
+				echo ""
+				isQuestion "Would you like to install Traefik? (y/n): "
+				read -p "" virtualmin_traefik_choice
+				if [[ -n "$virtualmin_traefik_choice" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$virtualmin_traefik_choice" == [yY] ]]; then
+                installApp traefik;
+			fi
+			if [[ "$virtualmin_traefik_choice" == [nN] ]]; then
+                isError "Installation is now aborting..."
+                uninstallApp "$app_name"
+                return 1
+			fi
+        fi
     fi
 
     isSuccessful "Application is allowed to be installed."
+}
+
+checkAppInstalled() 
+{
+    local app_name="$1"
+    local flag="$2"
+    local check_active="$3"
+
+    if [ "$flag" = "linux" ]; then
+        # Check if the package is installed
+        if dpkg -l | grep -q "^ii $app_name"; then
+            # Package is installed, now check if it should also check if the service is running
+            if [ "$check_active" = "check_active" ]; then
+                if systemctl is-active --quiet "$app_name"; then
+                    return 0  # Installed and running
+                else
+                    return 1  # Installed but not running
+                fi
+            else
+                return 0  # Installed
+            fi
+        else
+            return 2  # Not installed
+        fi
+    elif [ "$flag" = "docker" ]; then
+        # Query the database to check if the app is installed in Docker
+        results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
+        if [ -n "$results" ]; then
+            return 0  # Installed in Docker
+        else
+            return 2  # Not installed in Docker
+        fi
+    else
+        return 3  # Invalid flag
+    fi
+}
+
+installApp()
+{
+    local $app_name="$1"
+    local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
+    local installFuncName="install${app_name_ucfirst}"
+
+    # Create a variable with the name of $app_name and set its value to "i"
+    declare "$app_name=i"
+
+    # Call the installation function
+    ${installFuncName}
 }
 
 setupComposeFileNoApp()
@@ -489,13 +555,13 @@ setupTraefikLabelsSetupMiddlewares()
 
     local middleware_entries=()
 
-    if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
+    if [[ "$authelia_setup" == "true" && checkAppInstalled "authelia" "docker" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
+        middleware_entries+=("authelia@docker")
+    elif [[ "$authelia_setup" == "true" && checkAppInstalled "authelia" "docker" && "$whitelist" == "false" ]]; then
         middleware_entries+=("authelia@docker")
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
-    elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
-        middleware_entries+=("authelia@docker")
     fi
 
     # Join the middleware entries with commas

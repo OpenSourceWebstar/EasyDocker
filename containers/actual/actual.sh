@@ -5,12 +5,6 @@
 
 installActual()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        actual=i
-    fi
-
     if [[ "$actual" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent actual;
         local app_name=$CFG_ACTUAL_APP_NAME

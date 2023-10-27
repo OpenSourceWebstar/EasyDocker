@@ -5,12 +5,6 @@
 
 installTrilium()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        trilium=i
-    fi
-
     if [[ "$trilium" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent trilium;
         local app_name=$CFG_TRILIUM_APP_NAME

@@ -5,12 +5,6 @@
 
 installAuthelia()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        authelia=i
-    fi
-
     if [[ "$authelia" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent authelia;
         local app_name=$CFG_AUTHELIA_APP_NAME

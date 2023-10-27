@@ -5,12 +5,6 @@
 
 installAdguard()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        adguard=i
-    fi
-
     if [[ "$adguard" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent adguard;
         local app_name=$CFG_ADGUARD_APP_NAME

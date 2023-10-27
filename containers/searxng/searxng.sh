@@ -5,12 +5,6 @@
 
 installSearxng()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        searxng=i
-    fi
-
     if [[ "$searxng" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent searxng;
 		local app_name=$CFG_SEARXNG_APP_NAME

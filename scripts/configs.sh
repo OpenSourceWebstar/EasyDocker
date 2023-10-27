@@ -223,9 +223,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $reinstallafterconfig in
                                             [yY])
                                                 isNotice "Reinstalling $config_app_name now..."
-                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${config_app_name:0:1})${config_app_name:1}"
-                                                local installFuncName="install${app_name_ucfirst}"
-                                                ${installFuncName} install
+                                                installApp $config_app_name;
                                                 break  # Exit the loop
                                                 ;;
                                             [nN])
@@ -295,9 +293,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $reinstallafterconfig in
                                             [yY])
                                                 isNotice "Reinstalling $config_app_name now..."
-                                                local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${config_app_name:0:1})${config_app_name:1}"
-                                                local installFuncName="install${app_name_ucfirst}"
-                                                ${installFuncName} install
+                                                installApp $config_app_name;
                                                 break  # Exit the loop
                                                 ;;
                                             [nN])
@@ -468,9 +464,7 @@ editAppConfig()
                     # Run to see if edits have removed any variables
                     checkConfigFilesMissingVariables;
                     # Convert the first letter of app_name to uppercase
-                    local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
-                    local installFuncName="install${app_name_ucfirst}"
-                    ${installFuncName} install 
+                    installApp $config_app_name;
                 fi
             else
                 isNotice "No changes were made to the $app_name configuration."

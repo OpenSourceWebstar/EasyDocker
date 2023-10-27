@@ -5,12 +5,6 @@
 
 installWireguard()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        wireguard=i
-    fi
-
     if [[ "$wireguard" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent wireguard;
         local app_name=$CFG_WIREGUARD_APP_NAME

@@ -5,18 +5,10 @@ installUFW()
    if [[ "$CFG_REQUIREMENT_UFW" == "true" ]]; then
     	ISUFW=$( (sudo ufw status ) 2>&1 )
 		if [[ "$ISUFW" == *"command not found"* ]]; then
-        	((menu_number++))
             echo ""
             echo "##########################################"
             echo "###     Install UFW Firewall           ###"
             echo "##########################################"
-
-            ((menu_number++))
-            echo ""
-            echo "---- $menu_number. Checking if $app_name can be installed."
-            echo ""
-
-            checkAllowedInstall "ufw" || return 1
 
             ((menu_number++))
             echo ""

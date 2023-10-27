@@ -5,12 +5,6 @@
 
 installKillbill()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        killbill=i
-    fi
-
     if [[ "$killbill" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent killbill;
         local app_name=$CFG_KILLBILL_APP_NAME

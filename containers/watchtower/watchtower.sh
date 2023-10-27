@@ -5,12 +5,6 @@
 
 installWatchtower()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        watchtower=i
-    fi
-
     if [[ "$watchtower" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent watchtower;
         local app_name=$CFG_WATCHTOWER_APP_NAME

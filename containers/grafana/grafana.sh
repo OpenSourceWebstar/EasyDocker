@@ -5,12 +5,6 @@
 
 installGrafana()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        grafana=i
-    fi
-
     if [[ "$grafana" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent grafana;
         local app_name=$CFG_GRAFANA_APP_NAME

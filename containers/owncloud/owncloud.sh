@@ -5,12 +5,6 @@
 
 installOwncloud()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        owncloud=i
-    fi
-
     if [[ "$owncloud" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent owncloud;
         local app_name=$CFG_OWNCLOUD_APP_NAME

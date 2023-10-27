@@ -5,12 +5,6 @@
 
 installTiledesk()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        tiledesk=i
-    fi
-
     if [[ "$tiledesk" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent tiledesk;
 		local app_name=$CFG_TILEDESK_APP_NAME

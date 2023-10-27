@@ -5,12 +5,6 @@
 
 installVirtualmin()
 {
-    local passedValue="$1"
-
-    if [[ "$passedValue" == "install" ]]; then
-        virtualmin=i
-    fi
-
     if [[ "$virtualmin" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer --silent virtualmin;
         local app_name=$CFG_VIRTUALMIN_APP_NAME

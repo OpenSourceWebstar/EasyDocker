@@ -385,34 +385,6 @@ databaseListInstalledApps()
     fi
 }
 
-isAppInstalled() 
-{
-    local app_name="$1"
-
-    # Check if sqlite3 is available
-    if ! command -v sudo sqlite3 &> /dev/null; then
-        echo "sqlite3 command not found. Make sure it's installed."
-        return 1
-    fi
-
-    # Check if database file is available
-    if [ ! -f "$docker_dir/$db_file" ]; then
-        echo "Database file not found. Make sure it's installed."
-        return 1
-    fi
-
-    # Execute the query to check if the app is installed (status = 1)
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE name = '$app_name' AND status = 1;")
-
-    if [ -n "$result" ]; then
-        echo "The app '$app_name' is installed."
-        return 0
-    else
-        echo "The app '$app_name' is not installed."
-        return 1
-    fi
-}
-
 databaseCycleThroughListApps()
 {
     local name=$1
