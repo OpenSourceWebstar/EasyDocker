@@ -5,13 +5,14 @@ whitelistAndStartApp()
 {
     local app_name="$1"
     local flags="$2"
+    local norestart="$3"
 
     # Starting variable for app
     clearAllPortData;
     setupInstallVariables $app_name;
 
     # Always keep YML updated
-    whitelistUpdateYML $app_name $flags;
+    whitelistUpdateYML $app_name $flags $norestart;
 }
 
 # Function to update IP whitelist in YAML files
@@ -46,6 +47,7 @@ whitelistUpdateYML()
 {
     local app_name="$1"
     local flags="$2"
+    local norestart="$3"
 
     local whitelistupdates=false
     local timezoneupdates=false
@@ -125,7 +127,9 @@ whitelistUpdateYML()
 
     if [ "$flags" == "install" ]; then
         whitelistUpdateCompose $app_name;
-        whitelistUpdateRestart $app_name $flags;
+        if [[ $norestart != "norestart"]]
+            whitelistUpdateRestart $app_name $flags;
+        fi
         if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
             if [ "$did_not_restart" == "true" ]; then
                 isSuccessful "The whitelist and timezone for $app_name are now up to date."
@@ -185,7 +189,9 @@ whitelistUpdateYML()
 
     if [ "$flags" == "restart" ]; then
         whitelistUpdateCompose $app_name;
-        whitelistUpdateRestart $app_name $flags;
+        if [[ $norestart != "norestart"]]
+            whitelistUpdateRestart $app_name $flags;
+        fi
     fi
 }
 

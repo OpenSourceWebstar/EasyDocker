@@ -136,7 +136,7 @@ installAkaunting()
         echo "---- $menu_number. Running the docker-compose.yml to install and start Akaunting"
         echo ""
 
-		whitelistAndStartApp $app_name install;
+		whitelistAndStartApp $app_name install norestart;
 
 		# Check if this is a first time setup
 		if [ -f "$containers_dir$app_name/SETUPINITIALIZED" ]; then
