@@ -11,8 +11,8 @@ services:
     hostname: pihole
     domainname: DOMAINSUBNAMEHERE
     ports:
-      - 53:53/tcp
-      - 53:53/udp
+      #- 53:53/tcp
+      #- 53:53/udp
       - 3232:80/tcp #Allows use of different when other docker containers use port 80
       # - 443:443/tcp #Allows use of https
       # - 5335:5335/tcp # Uncomment to enable unbound access on local server
