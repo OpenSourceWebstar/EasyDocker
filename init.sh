@@ -70,9 +70,10 @@ installVirtualmin()
 		fi
 	done
 
+	echo ""
 	echo "NOTICE - Now that Virtualmin is setup "
 	echo ""
-	echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificat.e"
+	echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificate."
 	echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
 	echo ""
 	echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
