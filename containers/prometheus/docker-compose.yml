@@ -8,6 +8,7 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    user: "DOCKERINSTALLUSERID:DOCKERINSTALLUSERID"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:

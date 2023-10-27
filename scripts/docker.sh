@@ -354,6 +354,7 @@ editComposeFileDefault()
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
         "$compose_file")
         checkSuccess "Updating Compose file docker socket for $app_name"
     fi
@@ -395,6 +396,7 @@ editComposeFileApp()
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
         "$compose_file")
         checkSuccess "Updating Compose file docker socket for $app_name"
     fi
@@ -432,6 +434,14 @@ editEnvFileDefault()
     "$env_file")
     checkSuccess "Updating .env file for $app_name"
     
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        local result=$(sudo sed -i \
+            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
+        "$env_file")
+        checkSuccess "Updating Compose file docker socket for $app_name"
+    fi
+
     scanFileForRandomPassword $env_file;
 
     isSuccessful "Updated the .env file"
@@ -460,6 +470,7 @@ editCustomFile()
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
         "$custompathandfile")
         checkSuccess "Updating Compose file docker socket for $app_name"
     fi
@@ -485,11 +496,6 @@ setupTraefikLabelsSetupMiddlewares()
         middleware_entries+=("my-whitelist-in-docker")
     elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
         middleware_entries+=("authelia@docker")
-    fi
-
-    # App Specific additions
-    if [[ "$app_name" == "virtualmin" ]]; then
-        middleware_entries+=("webmin-redirect-websecure")
     fi
 
     # Join the middleware entries with commas
