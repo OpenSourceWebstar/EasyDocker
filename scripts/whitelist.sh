@@ -127,7 +127,7 @@ whitelistUpdateYML()
 
     if [ "$flags" == "install" ]; then
         whitelistUpdateCompose $app_name;
-        if [[ $norestart != "norestart"]]
+        if [[ $norestart != "norestart" ]]; then
             whitelistUpdateRestart $app_name $flags;
         fi
         if [ "$whitelistupdates" == "true" ] && [ "$timezoneupdates" == "true" ]; then
@@ -189,7 +189,7 @@ whitelistUpdateYML()
 
     if [ "$flags" == "restart" ]; then
         whitelistUpdateCompose $app_name;
-        if [[ $norestart != "norestart"]]
+        if [[ $norestart != "norestart" ]]; then
             whitelistUpdateRestart $app_name $flags;
         fi
     fi
