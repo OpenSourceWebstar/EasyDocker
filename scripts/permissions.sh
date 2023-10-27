@@ -194,24 +194,40 @@ mkdirFolders()
     done
 }
 
-copyToTempFolder() 
+backupContainerFilesToTemp() 
 {
-    local source_folder="$1"
+    local app_name="$1"
+    local source_folder="$containers_dir$app_name"
+
     temp_backup_folder="temp_$(date +%Y%m%d%H%M%S)_$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 6)"
 
-    local result=$(mkdir "$temp_backup_folder")
+    local result=$(mkdirFolders "$temp_backup_folder")
     checkSuccess "Creating temp folder for backing up purposes."
-    local result=$(cp -r "$source_folder"/* "$temp_backup_folder")
-    checkSuccess "Copying files to temp folder."
+
+    if [[ $compose_setup == "default" ]]; then
+        local compose_file="docker-compose.yml"
+    elif [[ $compose_setup == "app" ]]; then
+        local compose_file="docker-compose.$app_name.yml"
+    fi
+
+    local source_filenames=("$app_name.config" "migrate.txt" "$compose_file")
+    # Iterate over the list and call moveFile for each source file
+    for source_filename in "${source_filenames[@]}"; do
+        source_file="$source_folder/$source_filename"
+        target_file="$temp_backup_folder/$source_filename"
+        moveFile "$source_file" "$target_file"
+        checkSuccess "Moving $source_filename to $temp_backup_folder"
+    done
 }
 
-copyBackAndDeleteTempFolder() 
+backupContainerFilesRestore() 
 {
-    local source_folder="$1"
+    local app_name="$1"
+    local source_folder="$containers_dir$app_name"
 
     if [ -d "$temp_backup_folder" ]; then
-        local result=$(cp -r "$temp_backup_folder"/* "$source_folder")
-        checkSuccess "Copying files from temp folder to $(basename "$source_folder") folder."
+        local result=$(copyFiles "$temp_backup_folder" "$source_folder")
+        checkSuccess "Copying files from temp folder to $app_name folder."
         local result=$(rm -rf "$temp_backup_folder")
         checkSuccess "Removing temp folder as no longer needed."
     fi
@@ -428,14 +444,18 @@ moveFile()
     local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
-    local result=$(sudo mv "$file" "$save_dir")
-    checkSuccess "Moving $file_name to $save_dir"
+    if [ -e "$file" ]; then
+        local result=$(sudo mv "$file" "$save_dir")
+        checkSuccess "Moving $file_name to $save_dir"
 
-    if [[ $clean_dir == *"$containers_dir"* ]]; then
-        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
-        checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
+        if [[ $clean_dir == *"$containers_dir"* ]]; then
+            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
+            checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
+        else
+            local result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
+            checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
+        fi
     else
-        local result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
-        checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
+        isNotice "Source file does not exist: $file"
     fi
 }
