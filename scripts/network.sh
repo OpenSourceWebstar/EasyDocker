@@ -149,13 +149,15 @@ openPort()
 
         # Check if the port already exists in the database
         if ! portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
-            databasePortOpenInsert "$app_name" "$portdata"
-            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                local result=$(sudo ufw allow "$port")
-                checkSuccess "Opening port $port for $app_name in the UFW Firewall"
-            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                local result=$(sudo ufw-docker allow "$app_name" "$port")
-                checkSuccess "Opening port $port for $app_name in the UFW-Docker Firewall"
+            if [[ $disallow_open_port == "false" ]]; then
+                databasePortOpenInsert "$app_name" "$portdata"
+                if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                    local result=$(sudo ufw allow "$port")
+                    checkSuccess "Opening port $port for $app_name in the UFW Firewall"
+                elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                    local result=$(sudo ufw-docker allow "$app_name" "$port")
+                    checkSuccess "Opening port $port for $app_name in the UFW-Docker Firewall"
+                fi
             fi
         fi
     fi
@@ -170,7 +172,9 @@ usePort()
     if [[ $port != "" ]]; then
         # Check if the port already exists in the database
         if ! portExistsInDatabase "$app_name" "$port" "$flag"; then
-            databasePortInsert "$app_name" "$port"
+            if [[ $disallow_used_port == "false" ]]; then
+                databasePortInsert "$app_name" "$port"
+            fi
         fi
     fi
 }
@@ -216,13 +220,15 @@ closePort()
         IFS='/' read -r port type <<< "$portdata"
         # Check if the port already exists in the database
         if portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
-            databasePortOpenRemove "$app_name" "$portdata"
-            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                local result=$(sudo ufw delete allow "$port")
-                checkSuccess "Closing port $port for $app_name in the UFW Firewall"
-            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                local result=$(sudo ufw-docker delete allow "$app_name" "$port")
-                checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
+            if [[ $disallow_open_port == "false" ]]; then
+                databasePortOpenRemove "$app_name" "$portdata"
+                if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                    local result=$(sudo ufw delete allow "$port")
+                    checkSuccess "Closing port $port for $app_name in the UFW Firewall"
+                elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                    local result=$(sudo ufw-docker delete allow "$app_name" "$port")
+                    checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
+                fi
             fi
         fi
     fi
@@ -239,7 +245,9 @@ unusePort()
             isNotice "Old stale port $port found for $app_name and is being removed from the database."
         fi
         if portExistsInDatabase "$app_name" "$port" "$flag"; then
-            databasePortRemove "$app_name" "$port";
+            if [[ $disallow_used_port == "false" ]]; then
+                databasePortRemove "$app_name" "$port";
+            fi
         fi
     fi
 }
