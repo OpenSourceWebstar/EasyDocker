@@ -26,11 +26,7 @@ installMailcow()
 	fi
 
 	if [[ "$mailcow" == *[rR]* ]]; then
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
-        fi
+        dockerDownUp $app_name;
 	fi
 
     if [[ "$mailcow" == *[iI]* ]]; then
@@ -230,7 +226,7 @@ installMailcow()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerDownUpAdditionalYML $app_name;
+		dockerDownUp $app_name;
 
 		((menu_number++))
 		echo ""

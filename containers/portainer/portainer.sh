@@ -24,11 +24,7 @@ installPortainer()
     fi
 
     if [[ "$portainer" == *[rR]* ]]; then
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
-        fi
+        dockerDownUp $app_name;
     fi
 
     if [[ "$portainer" == *[iI]* ]]; then
@@ -91,11 +87,7 @@ installPortainer()
         echo ""
 
 		whitelistAndStartApp $app_name install;
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
-        fi
+        dockerDownUp $app_name;
 
 		((menu_number++))
 		echo ""

@@ -24,11 +24,7 @@ installSearxng()
 	fi
 
 	if [[ "$searxng" == *[rR]* ]]; then
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
-        fi
+        dockerDownUp $app_name;
 	fi
 
 	if [[ "$searxng" == *[iI]* ]]; then
@@ -114,11 +110,7 @@ installSearxng()
             local result=$(sudo sed -i "s/simple_style: auto/simple_style: $CFG_SEARXNG_THEME/" "$containers_dir$app_name/searxng-data/settings.yml")
             checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
-            if [[ $compose_setup == "default" ]]; then
-                dockerDownUpDefault $app_name
-            elif [[ $compose_setup == "app" ]]; then
-                dockerDownUpAdditionalYML $app_name
-            fi
+            dockerDownUp $app_name;
         fi
 
 		((menu_number++))

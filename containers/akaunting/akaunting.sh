@@ -24,11 +24,7 @@ installAkaunting()
 	fi
 
     if [[ "$akaunting" == *[rR]* ]]; then
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
-        fi
+        dockerDownUp $app_name;
     fi
 
     if [[ "$akaunting" == *[iI]* ]]; then
@@ -138,26 +134,26 @@ installAkaunting()
 
 		whitelistAndStartApp $app_name install norestart;
 
-		# Check if this is a first time setup
-		if [ -f "$containers_dir$app_name/SETUPINITIALIZED" ]; then
-			isNotice "Running setup as initial setup file not found."
+        # Check if the file exists
+        if [ -f "$containers_dir$app_name/SETUPINITIALIZED" ]; then
+            isNotice "Running setup as initial setup file not found."
 
-			local result=$(createTouch $containers_dir$app_name/SETUPINITIALIZED)
-			checkSuccess "Creating initizilation file"
+            local result=$(createTouch "$containers_dir$app_name/SETUPINITIALIZED")
+            checkSuccess "Creating initialization file"
 
-			if [[ "$OS" == [1234567] ]]; then
-				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && AKAUNTING_SETUP=true docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)")
-					isSuccessful "Starting $app_name up with initial setup flag"
-				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					local result=$(cd $containers_dir$app_name && AKAUNTING_SETUP=true sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-					isSuccessful "Starting $app_name up with initial setup flag"
-				fi
-			fi
-		else
-			isNotice "It seems $app_name is already setup, using the normal up command"
-			dockerDownUpAdditionalYML $app_name;
-		fi
+            if [[ "$OS" == [1234567] ]]; then
+                if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                    local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && AKAUNTING_SETUP=true docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+                    isSuccessful "Starting $app_name up with initial setup flag"
+                elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+                    local result=$(cd "$containers_dir$app_name" && AKAUNTING_SETUP=true sudo -u "$easydockeruser" docker-compose -f docker-compose.yml -f docker-compose."$app_name".yml up -d)
+                    isSuccessful "Starting $app_name up with initial setup flag"
+                fi
+            fi
+        else
+            isNotice "It seems $app_name is already set up, using the normal up command"
+            dockerDownUp $app_name;
+        fi
 
 		((menu_number++))
 		echo ""

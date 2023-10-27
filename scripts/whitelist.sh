@@ -211,55 +211,28 @@ whitelistUpdateRestart()
     local app_name="$1"
     local flags="$2"
 
-    if [[ $compose_setup == "default" ]]; then
-        if [[ $flags == "install" ]] ; then
-            dockerDownUpDefault $app_name;
+    if [[ $flags == "install" ]] ; then
+        dockerDownUp $app_name;
+        did_not_restart=false
+    elif [[ $flags == "" ]] || [[ $flags == "restart" ]]; then
+        while true; do
+            echo ""
+            isNotice "Changes have been made to the $app_name configuration."
+            echo ""
+            isQuestion "Would you like to restart $app_name? (y/n): "
+            echo ""
+            read -p "" restart_choice
+            if [[ -n "$restart_choice" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$restart_choice" == [yY] ]]; then
+            dockerDownUp $app_name;
             did_not_restart=false
-        elif [[ $flags == "" ]] || [[ $flags == "restart" ]]; then
-            while true; do
-                echo ""
-                isNotice "Changes have been made to the $app_name configuration."
-                echo ""
-                isQuestion "Would you like to restart $app_name? (y/n): "
-                echo ""
-                read -p "" restart_choice
-                if [[ -n "$restart_choice" ]]; then
-                    break
-                fi
-                isNotice "Please provide a valid input."
-            done
-            if [[ "$restart_choice" == [yY] ]]; then
-                dockerDownUpDefault $app_name;
-                did_not_restart=false
-            fi
-            if [[ "$restart_choice" == [nN] ]]; then
-                did_not_restart=true
-            fi
         fi
-    elif [[ $compose_setup == "app" ]]; then
-        if [[ $flags == "install" ]]; then
-            dockerDownUpDefault $app_name;
-        elif [[ $flags == "" ]] || [[ $flags == "restart" ]]; then
-            while true; do
-                echo ""
-                isNotice "Changes have been made to the $app_name configuration."
-                echo ""
-                isQuestion "Would you like to restart $app_name? (y/n): "
-                echo ""
-                read -p "" restart_choice
-                if [[ -n "$restart_choice" ]]; then
-                    break
-                fi
-                isNotice "Please provide a valid input."
-            done
-            if [[ "$restart_choice" =~ [yY] ]]; then
-                dockerDownUpAdditionalYML $app_name;
-                did_not_restart=false
-            fi
-            if [[ "$restart_choice" == [nN] ]]; then
-                did_not_restart=true
-            fi
+        if [[ "$restart_choice" == [nN] ]]; then
+            did_not_restart=true
         fi
     fi
-
 }

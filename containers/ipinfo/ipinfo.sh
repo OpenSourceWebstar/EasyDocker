@@ -24,11 +24,7 @@ installIpinfo()
 	fi
 
 	if [[ "$ipinfo" == *[rR]* ]]; then
-        if [[ $compose_setup == "default" ]]; then
-		    dockerDownUpDefault $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            dockerDownUpAdditionalYML $app_name;
-        fi
+        dockerDownUp $app_name;
 	fi
 
     if [[ "$ipinfo" == *[iI]* ]]; then
