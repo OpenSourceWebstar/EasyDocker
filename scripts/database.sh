@@ -788,10 +788,12 @@ databasePortRemove()
     local app_name="$1"
     local port="$2"
 
-    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ] && [ $disallow_used_port == "false" ]; then
-        local table_name=ports
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port';")
-        checkSuccess "Deleting port $port for $app_name for the $table_name table."
+    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
+        if [[ $disallow_used_port == "false" ]]; then
+            local table_name=ports
+            local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port';")
+            checkSuccess "Deleting port $port for $app_name for the $table_name table."
+        fi
     fi
 }
 
@@ -803,10 +805,11 @@ databasePortOpenRemove()
     # Split the portdata into port and type
     IFS='/' read -r port type <<< "$portdata"
 
-    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ] && [ $disallow_open_port == "false" ]; then
-        local table_name=ports_open
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
-        checkSuccess "Deleting port $port and type $type for $app_name for the $table_name table."
+    if [ -f "$docker_dir/$db_file" ] && [ -n "$app_name" ]; then
+        if [[ $disallow_open_port == "false" ]]; then
+            local result=$(sudo sqlite3 "$docker_dir/$db_file" "DELETE FROM $table_name WHERE name = '$app_name' AND port = '$port' AND type = '$type';")
+            checkSuccess "Deleting port $port and type $type for $app_name for the $table_name table."
+        fi
     fi
 }
 
