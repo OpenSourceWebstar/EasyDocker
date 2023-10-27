@@ -72,8 +72,15 @@ installAkaunting()
         echo "---- $menu_number. Pulling a default Akaunting docker-compose.yml file and making edits."
         echo ""
 
+        copyToTempFolder $containers_dir$app_name;
 		local result=$(runCommandForDockerInstallUser "cd $containers_dir && git clone https://github.com/akaunting/docker $containers_dir$app_name")
 		checkSuccess "Cloning the Akaunting GitHub repo"
+        copyBackAndDeleteTempFolder $containers_dir$app_name;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Pulling a $app_name docker-compose.yml file."
+        echo ""
 
         if [[ $compose_setup == "default" ]]; then
 		    setupComposeFileNoApp $app_name;
