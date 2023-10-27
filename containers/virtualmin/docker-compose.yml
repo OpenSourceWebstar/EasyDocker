@@ -6,23 +6,22 @@ networks:
     name: vpn
 
 services:
-  webmin-proxy:
+  virtualmin-proxy:
     image: qoomon/docker-host
     restart: always
     cap_add: ["NET_ADMIN", "NET_RAW"]
     #labels:
       #traefik.enable: true
-      #traefik.http.middlewares.webmin-redirect-websecure.redirectscheme.scheme: https
-      #traefik.http.routers.webmin-web.rule: Host(`DOMAINSUBNAMEHERE`)
-      #traefik.http.routers.webmin-web.entrypoints: web
-      #traefik.http.routers.webmin-web.middlewares:
-      #traefik.http.routers.webmin-websecure.entrypoints: websecure
-      #traefik.http.routers.webmin-websecure.rule: Host(`DOMAINSUBNAMEHERE`)
-      #traefik.tags: vpn
-      #traefik.docker.network: vpn
-      #traefik.http.routers.webmin-websecure.tls: true
-      #traefik.http.routers.webmin-websecure.tls.certresolver: production
-      #traefik.http.services.webmin-global.loadbalancer.server.port: PORT1
+      #traefik.http.routers.virtualmin-web.entrypoints: web,websecure
+      #traefik.http.routers.virtualmin-web.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.virtualmin-web.tls: true
+      #traefik.http.routers.virtualmin-web.tls.certresolver: production
+      #traefik.http.services.virtualmin-web.loadbalancer.server.port: PORT1
+      #traefik.http.routers.virtualmin-admin.entrypoints: web,websecure
+      #traefik.http.routers.virtualmin-admin.rule: Host(`virtualmin.DOMAINNAMEHERE`)
+      #traefik.http.routers.virtualmin-admin.tls: true
+      #traefik.http.routers.virtualmin-admin.tls.certresolver: production
+      #traefik.http.services.virtualmin-admin.loadbalancer.server.port: PORT2
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

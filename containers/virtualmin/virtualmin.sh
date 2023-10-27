@@ -127,7 +127,7 @@ installVirtualmin()
             sudo sed -i '/redirect_port=/d' "$miniserv_conf"
             echo "ssl=0" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
             echo "redirect_host=$host_setup" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
-            echo "redirect_port=443" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
+            echo "redirect_port=$usedport1" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
         else
             isError "Unable to find miniserv.conf, cancelling install..."
         fi
