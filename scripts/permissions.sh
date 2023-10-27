@@ -194,6 +194,29 @@ mkdirFolders()
     done
 }
 
+copyToTempFolder() 
+{
+    local source_folder="$1"
+    temp_backup_folder="temp_$(date +%Y%m%d%H%M%S)_$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 6)"
+
+    local result=$(mkdir "$temp_backup_folder")
+    checkSuccess "Creating temp folder for backing up purposes."
+    local result=$(cp -r "$source_folder"/* "$temp_backup_folder")
+    checkSuccess "Copying files to temp folder."
+}
+
+copyBackAndDeleteTempFolder() 
+{
+    local source_folder="$1"
+
+    if [ -d "$temp_backup_folder" ]; then
+        local result=$(cp -r "$temp_backup_folder"/* "$source_folder")
+        checkSuccess "Copying files from temp folder to $(basename "$source_folder") folder."
+        local result=$(rm -rf "$temp_backup_folder")
+        checkSuccess "Removing temp folder as no longer needed."
+    fi
+}
+
 copyFolder() 
 {
     local folder="$1"
