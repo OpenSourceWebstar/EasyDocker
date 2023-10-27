@@ -42,6 +42,13 @@ installMailcow()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Checking if $app_name can be installed."
+        echo ""
+
+        checkAllowedInstall "$app_name" || return 1
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 

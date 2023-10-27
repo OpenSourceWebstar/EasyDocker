@@ -230,29 +230,32 @@ checkAppInstalled()
     local flag="$2"
     local check_active="$3"
 
+    echo "app_name $app_name"
+    echo "flag $flag"
+
     if [ "$flag" = "linux" ]; then
         if dpkg -l | grep -q "^ii $app_name"; then
             if [ "$check_active" = "check_active" ]; then
                 if systemctl is-active --quiet "$app_name"; then
-                    echo "running" > /dev/null
+                    echo "running"
                 else
-                    echo "installed" > /dev/null
+                    echo "installed"
                 fi
             else
-                echo "installed" > /dev/null
+                echo "installed"
             fi
         else
-            echo "not_installed" > /dev/null
+            echo "not_installed"
         fi
     elif [ "$flag" = "docker" ]; then
         results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
         if [ -n "$results" ]; then
-            echo "installed" > /dev/null
+            echo "installed"
         else
-            echo "not_installed" > /dev/null
+            echo "not_installed"
         fi
     else
-        echo "invalid_flag" > /dev/null
+        echo "invalid_flag"
     fi
 }
 
@@ -555,11 +558,15 @@ setupTraefikLabelsSetupMiddlewares()
 
     local middleware_entries=()
 
-    if [[ "$authelia_setup" == "true" && $(checkAppInstalled "authelia" "docker") == "installed" && "$whitelist" == "true" ]]; then
+    if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
-        middleware_entries+=("authelia@docker")
-    elif [[ "$authelia_setup" == "true" && $(checkAppInstalled "authelia" "docker") == "installed" && "$whitelist" == "false" ]]; then
-        middleware_entries+=("authelia@docker")
+        if [[ $(checkAppInstalled "authelia" "docker") == "installed" ]]; then
+            middleware_entries+=("authelia@docker")
+        fi
+    elif [[ "$authelia_setup" == "true" && "$whitelist" == "false" ]]; then
+        if [[ $(checkAppInstalled "authelia" "docker") == "installed" ]]; then
+            middleware_entries+=("authelia@docker")
+        fi
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
     fi
