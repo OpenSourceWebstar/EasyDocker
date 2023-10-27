@@ -75,6 +75,7 @@ fixPermissionsBeforeStart()
         changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
     fi
 
+    # Traefik
     if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
         updateFileOwnership "${containers_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
         local result=$(sudo chmod 600 "${containers_dir}traefik/etc/certs/acme.json")
@@ -86,10 +87,15 @@ fixPermissionsBeforeStart()
         checkSuccess "Set permissions to traefik.yml file for traefik"
     fi
 
+    # Prometheus
     if [ -f "${containers_dir}prometheus/prometheus/prometheus.yml" ]; then
         updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
+    fi
+    if [ -d "${containers_dir}prometheus/prometheus" ]; then
         local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")
         checkSuccess "Set permissions to prometheus folder."
+    fi
+    if [ -d "${containers_dir}prometheus/prom_data" ]; then
         local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prom_data")
         checkSuccess "Set permissions to prom_data folder."
     fi
