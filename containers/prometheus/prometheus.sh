@@ -84,8 +84,8 @@ installPrometheus()
             setupComposeFileApp $app_name;
         fi
 
-		local result=$(copyResource "$app_name" "prometheus.yml" "prometheus/prometheus.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
-		checkSuccess "Copying prometheus.yml to containers folder."
+		local result=$(copyResource "$app_name" "$app_name.yml" "$app_name/$app_name.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		checkSuccess "Copying $app_name.yml to containers folder."
 
 		((menu_number++))
         echo ""
