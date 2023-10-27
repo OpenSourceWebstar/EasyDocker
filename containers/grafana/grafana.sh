@@ -97,6 +97,12 @@ installGrafana()
         echo ""
 
 		whitelistAndStartApp $app_name install;
+        
+        # Grafana
+        if [ -d "${containers_dir}grafana/grafana_storage" ]; then
+            local result=$(sudo chmod 777 "${containers_dir}grafana/grafana_storage")
+            checkSuccess "Set permissions to grafana_storage folder."
+        fi
 
 		((menu_number++))
 		echo ""
