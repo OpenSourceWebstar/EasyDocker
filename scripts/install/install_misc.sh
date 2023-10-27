@@ -207,9 +207,11 @@ checkBackupCrontabApp()
                         local config_file="$containers_dir$name/$name.config"
                         result=$(sudo sed -i 's/BACKUP=true/BACKUP=false/' $config_file)
                         checkSuccess "Disabled backups in the config for $name"
+                        source $config_file
                     elif [[ "$name" == "full" ]]; then
                         result=$(sudo sed -i 's/CFG_BACKUP_FULL=true/CFG_BACKUP_FULL=false/' $configs_dir$config_file_backup)
                         checkSuccess "Disabled $name backups in $config_file_backup."
+                        source $config_file
                     fi
                 fi
             fi
