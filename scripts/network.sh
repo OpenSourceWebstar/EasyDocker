@@ -187,7 +187,7 @@ removeAppPorts()
         local open_variable_name="openport$((i+1))"
         local open_port_value="${!open_variable_name}"
         if [[ $open_port_value != "" ]]; then
-            closePort "$app_name" "$open_port_value"
+            closePort "$app_name" "$open_port_value" remove
         fi
     done
 
@@ -196,7 +196,7 @@ removeAppPorts()
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
         if [[ $used_port_value != "" ]]; then
-            unusePort "$app_name" "$used_port_value"
+            unusePort "$app_name" "$used_port_value" remove
         fi
     done
 
@@ -215,7 +215,7 @@ closePort()
         fi
         IFS='/' read -r port type <<< "$portdata"
         # Check if the port already exists in the database
-        if portOpenExistsInDatabase "$app_name" "$port" "$type"; then
+        if portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
             databasePortOpenRemove "$app_name" "$portdata"
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
                 local result=$(sudo ufw delete allow "$port")
@@ -286,7 +286,7 @@ portExistsInDatabase()
                     isError "Unable to use port $port for application $app_name"
                     isError "Port $port is already used by $app_name_from_db."
                     isError "This WILL cause issues, please find a unique port for $app_name"
-                    if [[ $flag == "install" ]]; then
+                    if [[ $flag == "install" ]] || [[ $flag == "remove" ]]; then
                         disallow_used_port=true
                     fi
 
@@ -303,7 +303,7 @@ portExistsInDatabase()
                     if [[ $flag != "scan" ]]; then
                         isNotice "Port $port is already used by $app_name_from_db."
                     fi
-                    if [[ $flag == "install" ]]; then
+                    if [[ $flag == "install" ]] || [[ $flag == "remove" ]]; then
                         disallow_used_port=true
                     fi
                     return 0  # Port exists in the database
@@ -388,7 +388,7 @@ portOpenExistsInDatabase()
                         isNotice "Unable to use port $port for application $app_name"
                         isNotice "Port $port and type $type is already open for $app_name_from_db."
                         isNotice "This WILL cause issues, please find a unique port for $app_name"
-                        if [[ $flag == "install" ]]; then
+                        if [[ $flag == "install" ]] || [[ $flag == "remove" ]]; then
                             disallow_open_port=true
                         fi
 
@@ -405,7 +405,7 @@ portOpenExistsInDatabase()
                         if [[ $flag != "scan" ]]; then
                             isNotice "Port $port is already open and used by $app_name_from_db."
                         fi
-                        if [[ $flag == "install" ]]; then
+                        if [[ $flag == "install" ]] || [[ $flag == "remove" ]]; then
                             disallow_open_port=true
                         fi
                         return 0  # Port exists in the database
