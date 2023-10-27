@@ -90,6 +90,8 @@ fixPermissionsBeforeStart()
         updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
         local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")
         checkSuccess "Set permissions to prometheus folder."
+        local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prom_data")
+        checkSuccess "Set permissions to prom_data folder."
     fi
 }
 
