@@ -13,12 +13,12 @@ services:
     #labels:
       #traefik.enable: true
       #traefik.http.routers.virtualmin-web.entrypoints: web,websecure
-      #traefik.http.routers.virtualmin-web.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.virtualmin-web.rule: Host(`webhost.DOMAINNAMEHERE`)
       #traefik.http.routers.virtualmin-web.tls: true
       #traefik.http.routers.virtualmin-web.tls.certresolver: production
       #traefik.http.services.virtualmin-web.loadbalancer.server.port: PORT1
       #traefik.http.routers.virtualmin-admin.entrypoints: web,websecure
-      #traefik.http.routers.virtualmin-admin.rule: Host(`virtualmin.DOMAINNAMEHERE`)
+      #traefik.http.routers.virtualmin-admin.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.virtualmin-admin.tls: true
       #traefik.http.routers.virtualmin-admin.tls.certresolver: production
       #traefik.http.services.virtualmin-admin.loadbalancer.server.port: PORT2
