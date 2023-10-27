@@ -310,7 +310,7 @@ portExistsInDatabase()
                 fi
             else
                 if [[ $flag != "scan" ]]; then
-                    isSuccessful "Port $port is free...continuing..."
+                    isSuccessful "Used Port $port does not exist in the database...continuing..."
                 fi
                 return 1  # Port does not exist in the database
             fi
@@ -412,7 +412,7 @@ portOpenExistsInDatabase()
                     fi
                 else
                     if [[ $flag != "scan" ]]; then
-                        isSuccessful "Port $port does not exist in the database...continuing..."
+                        isSuccessful "Open Port $port does not exist in the database...continuing..."
                     fi
                     return 1  # Port does not exist in the database
                 fi
