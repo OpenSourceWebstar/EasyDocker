@@ -177,46 +177,49 @@ setupConfigToContainer()
     loadFiles "app_configs";
 }
 
-checkAllowedInstall()
+checkAllowedInstall() 
 {
     local app_name="$1"
 
-    if [ "$app_name" == "mailcow" ]; then
-        if checkAppInstalled "virtualmin" "linux"; then
-            isError "Virtualmin is installed, this will conflict with $app_name."
-            isError "Installation is now aborting..."
-            uninstallApp "$app_name";
-            return 1
-        fi
-    fi
-
-    if [ "$app_name" == "virtualmin" ] && ! checkAppInstalled "virtualmin" "linux" "check_active"; then
-        isError "Virtualmin is not installed or running, it is required."
-        uninstallApp "$app_name"
-        return 1
-    else
-        if ! checkAppInstalled "traefik" "docker"; then
-			while true; do
-				echo ""
-				isNotice "Traefik is not installed, it is required."
-				echo ""
-				isQuestion "Would you like to install Traefik? (y/n): "
-				read -p "" virtualmin_traefik_choice
-				if [[ -n "$virtualmin_traefik_choice" ]]; then
-					break
-				fi
-				isNotice "Please provide a valid input."
-			done
-			if [[ "$virtualmin_traefik_choice" == [yY] ]]; then
-                installApp traefik;
-			fi
-			if [[ "$virtualmin_traefik_choice" == [nN] ]]; then
+    case "$app_name" in
+        "mailcow")
+            if checkAppInstalled "virtualmin" "linux" == "installed"; then
+                isError "Virtualmin is installed, this will conflict with $app_name."
                 isError "Installation is now aborting..."
                 uninstallApp "$app_name"
                 return 1
-			fi
-        fi
-    fi
+            fi
+            ;;
+        "virtualmin")
+            if checkAppInstalled "virtualmin" "linux" == "not_installed"; then
+                isError "Virtualmin is not installed or running, it is required."
+                uninstallApp "$app_name"
+                return 1
+            else
+                if ! checkAppInstalled "traefik" "docker" == "installed"; then
+                    while true; do
+                        echo ""
+                        isNotice "Traefik is not installed, it is required."
+                        echo ""
+                        isQuestion "Would you like to install Traefik? (y/n): "
+                        read -p "" virtualmin_traefik_choice
+                        if [[ -n "$virtualmin_traefik_choice" ]]; then
+                            break
+                        fi
+                        isNotice "Please provide a valid input."
+                    done
+                    if [[ "$virtualmin_traefik_choice" == [yY] ]]; then
+                        installApp traefik
+                    fi
+                    if [[ "$virtualmin_traefik_choice" == [nN] ]]; then
+                        isError "Installation is now aborting..."
+                        uninstallApp "$app_name"
+                        return 1
+                    fi
+                fi
+            fi
+            ;;
+    esac
 
     isSuccessful "Application is allowed to be installed."
 }
@@ -228,31 +231,28 @@ checkAppInstalled()
     local check_active="$3"
 
     if [ "$flag" = "linux" ]; then
-        # Check if the package is installed
         if dpkg -l | grep -q "^ii $app_name"; then
-            # Package is installed, now check if it should also check if the service is running
             if [ "$check_active" = "check_active" ]; then
                 if systemctl is-active --quiet "$app_name"; then
-                    return 0  # Installed and running
+                    echo "running" > /dev/null
                 else
-                    return 1  # Installed but not running
+                    echo "installed" > /dev/null
                 fi
             else
-                return 0  # Installed
+                echo "installed" > /dev/null
             fi
         else
-            return 2  # Not installed
+            echo "not_installed" > /dev/null
         fi
     elif [ "$flag" = "docker" ]; then
-        # Query the database to check if the app is installed in Docker
         results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
         if [ -n "$results" ]; then
-            return 0  # Installed in Docker
+            echo "installed" > /dev/null
         else
-            return 2  # Not installed in Docker
+            echo "not_installed" > /dev/null
         fi
     else
-        return 3  # Invalid flag
+        echo "invalid_flag" > /dev/null
     fi
 }
 
@@ -555,19 +555,17 @@ setupTraefikLabelsSetupMiddlewares()
 
     local middleware_entries=()
 
-    if [[ "$authelia_setup" == "true" && $(checkAppInstalled "authelia" "docker") -eq 0 && "$whitelist" == "true" ]]; then
+    if [[ "$authelia_setup" == "true" && $(checkAppInstalled "authelia" "docker") == "installed" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
         middleware_entries+=("authelia@docker")
-    elif [[ "$authelia_setup" == "true" && $(checkAppInstalled "authelia" "docker") -eq 0 && "$whitelist" == "false" ]]; then
+    elif [[ "$authelia_setup" == "true" && $(checkAppInstalled "authelia" "docker") == "installed" && "$whitelist" == "false" ]]; then
         middleware_entries+=("authelia@docker")
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
         middleware_entries+=("my-whitelist-in-docker")
     fi
 
-    # Join the middleware entries with commas
     local middlewares_string="$(IFS=,; echo "${middleware_entries[*]}")"
 
-    # Replace the .middlewares line with the updated line
     sed -i "s/.middlewares:.*/.middlewares: $middlewares_string/" "$temp_file"
 }
 
