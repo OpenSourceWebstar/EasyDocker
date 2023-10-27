@@ -85,6 +85,12 @@ fixPermissionsBeforeStart()
         local result=$(sudo chmod 600 "${containers_dir}traefik/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for traefik"
     fi
+
+    if [ -f "${containers_dir}prometheus/prometheus/prometheus.yml" ]; then
+        updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
+        local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")
+        checkSuccess "Set permissions to prometheus folder."
+    fi
 }
 
 changeRootOwnedFilesAndFolders() 
