@@ -11,7 +11,7 @@ services:
     hostname: pihole
     domainname: DOMAINSUBNAMEHERE
     ports:
-      - 3232:80/tcp #Allows use of different when other docker containers use port 80
+      - PORT1:80/tcp #Allows use of different when other docker containers use port 80
       # - 53:53/tcp
       # - 53:53/udp      
       # - 443:443/tcp #Allows use of https
@@ -43,6 +43,7 @@ services:
       #traefik.http.routers.pihole.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.pihole.tls: true
       #traefik.http.routers.pihole.tls.certresolver: production
+      #traefik.http.services.pihole.loadbalancer.server.port: PORT1
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.pihole.middlewares:
     networks:

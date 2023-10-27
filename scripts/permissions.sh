@@ -92,12 +92,18 @@ fixPermissionsBeforeStart()
         updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
     fi
     if [ -d "${containers_dir}prometheus/prometheus" ]; then
-        local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")
+        local result=$(sudo chmod 777 "${containers_dir}prometheus/prometheus")
         checkSuccess "Set permissions to prometheus folder."
     fi
     if [ -d "${containers_dir}prometheus/prom_data" ]; then
-        local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prom_data")
+        local result=$(sudo chmod 777 "${containers_dir}prometheus/prom_data")
         checkSuccess "Set permissions to prom_data folder."
+    fi
+
+    # Grafana
+    if [ -d "${containers_dir}grafana/grafana_storage" ]; then
+        local result=$(sudo chmod 777 "${containers_dir}grafana/grafana_storage")
+        checkSuccess "Set permissions to grafana_storage folder."
     fi
 }
 
