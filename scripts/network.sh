@@ -291,9 +291,9 @@ portExistsInDatabase()
             # If app_name_from_db is found
             if [[ ! -z "$app_name_from_db" ]]; then
                 if [[ "$app_name" != "$app_name_from_db" ]]; then
-                    isError "Unable to use port $port for application $app_name"
-                    isError "Port $port is already used by $app_name_from_db."
-                    isError "This WILL cause issues, please find a unique port for $app_name"
+                    isNotice "Unable to use port $port for application $app_name"
+                    isNotice "Port $port is already used by $app_name_from_db."
+                    isNotice "This WILL cause issues, please find a unique port for $app_name"
                     if [[ $flag == "install" ]] || [[ $flag == "remove" ]]; then
                         disallow_used_port=true
                     fi
