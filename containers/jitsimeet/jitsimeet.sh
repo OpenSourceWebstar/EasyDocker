@@ -130,13 +130,13 @@ installJitsimeet()
 		local result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		local result=$(echo "JVB_PORT=10000" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_PORT=$usedport1" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		local result=$(echo "JVB_TCP_MAPPED_PORT=4443" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_MAPPED_PORT=$usedport2" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		local result=$(echo "JVB_TCP_PORT=4443" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_PORT=$usedport2" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
 
 		local result=$(cd "$containers_dir$app_name" && sudo ./gen-passwords.sh)

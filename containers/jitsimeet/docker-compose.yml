@@ -115,6 +115,7 @@ services:
             #traefik.http.routers.jitismeet.rule: Host(`DOMAINSUBNAMEHERE`)
             #traefik.http.routers.jitismeet.tls: true
             #traefik.http.routers.jitismeet.tls.certresolver: production
+            #traefik.http.services.portainer.loadbalancer.server.port: 9000
             #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
             #traefik.http.routers.jitismeet.middlewares:
 
@@ -272,7 +273,7 @@ services:
         labels:
             traefik.udp.routers.jvb.entrypoints: video
             traefik.udp.routers.jvb.service: jvb
-            traefik.udp.services.jvb.loadbalancer.server.port: 10000
+            traefik.udp.services.jvb.loadbalancer.server.port: PORT1
 
 # Custom network so all services can communicate using a FQDN
 networks:
