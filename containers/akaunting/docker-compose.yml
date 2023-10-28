@@ -13,6 +13,8 @@ services:
       #traefik.http.routers.akaunting.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.akaunting.tls: true
       #traefik.http.routers.akaunting.tls.certresolver: production
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.akaunting.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
