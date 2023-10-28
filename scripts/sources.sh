@@ -142,7 +142,7 @@ loadFiles()
             source "$(echo "$file" | sed 's|/docker/install//||')"
             #echo "$load_type FILE $(echo "$file" | sed 's|/docker/install//||')"
         fi
-    done < <(sudo find "$folder_dir" -maxdepth 1 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
+    done < <(sudo find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
 }
 
 sourceScripts "start";
