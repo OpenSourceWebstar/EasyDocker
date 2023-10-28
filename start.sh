@@ -141,7 +141,6 @@ startInstall()
 	installJitsimeet;
 	installKillbill;
 	installActual;
-    installAkaunting;
     installKimai;
 	installMattermost;
 

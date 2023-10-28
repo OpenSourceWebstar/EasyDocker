@@ -411,7 +411,6 @@ resetToMenu()
     tiledesk=n
     gitlab=n
     actual=n
-    akaunting=n
     cozy=n
     duplicati=n
     caddy=n

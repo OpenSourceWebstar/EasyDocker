@@ -58,7 +58,6 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | User           | <a href="https://github.com/kimai/kimai">Kimai - Online-Timetracker</a>                       | Tested & Working |
 | User           | <a href="https://github.com/Tiledesk/tiledesk">Tiledesk - Live Chat Platform</a> *UNFINISHED*       | Needs Finishing  |
 | User           | <a href="https://gitlab.com/gitlab-org/gitlab">GitLab - DevOps Platform</a> *UNFINISHED*            | Needs Testing    |
-| User           | <a href="https://github.com/akaunting/docker">Akaunting - Invoicing Solution</a> *UNFINISHED*      | Needs Testing    |
 | Old            | <a href="https://github.com/duplicati/duplicati">Duplicati - Backups</a>                     | Tested & Working |
 | Old            | <a href="https://github.com/vsellier/easy-cozy">Cozy - Cloud Platfrom</a> *BROKEN             | Needs Fixing     |
 
