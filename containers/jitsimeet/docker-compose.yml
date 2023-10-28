@@ -115,7 +115,7 @@ services:
             #traefik.http.routers.jitismeet.rule: Host(`DOMAINSUBNAMEHERE`)
             #traefik.http.routers.jitismeet.tls: true
             #traefik.http.routers.jitismeet.tls.certresolver: production
-            #traefik.http.services.portainer.loadbalancer.server.port: 9000
+            #traefik.http.services.jitismeet.loadbalancer.server.port: PORT2
             #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
             #traefik.http.routers.jitismeet.middlewares:
 
