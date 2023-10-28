@@ -118,6 +118,7 @@ services:
             #traefik.http.services.jitismeet.loadbalancer.server.port: PORT1
             #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
             #traefik.http.routers.jitismeet.middlewares:
+            #traefik.docker.network: vpn
 
     # XMPP server
     prosody:
@@ -270,14 +271,14 @@ services:
             vpn:
                 ipv4_address: 10.8.1.118
             meet.jitsi:
-        labels:
-            traefik.udp.routers.jvb.entrypoints: video
-            traefik.udp.routers.jvb.service: jvb
-            traefik.udp.services.jvb.loadbalancer.server.port: PORT2
+        #labels:
+            #traefik.udp.routers.jvb.entrypoints: video
+            #traefik.udp.routers.jvb.service: jvb
+            #traefik.udp.services.jvb.loadbalancer.server.port: PORT2
+            #traefik.docker.network: vpn
 
 # Custom network so all services can communicate using a FQDN
 networks:
     meet.jitsi:
-    # traefik: change the following line to your external docker network 
     vpn:
         external: true
