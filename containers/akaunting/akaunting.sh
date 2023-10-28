@@ -135,10 +135,10 @@ installAkaunting()
 		whitelistAndStartApp $app_name install norestart;
 
         # Check if the file exists
-        if [ -f "$containers_dir$app_name/setup_init.txt" ]; then
+        if [ -f "$containers_dir${app_name}setup_init.txt" ]; then
             isNotice "Running setup as initial setup file not found."
 
-            local result=$(createTouch "$containers_dir$app_name/setup_init.txt")
+            local result=$(createTouch "$containers_dir${app_name}setup_init.txt")
             checkSuccess "Creating initialization file"
 
             if [[ "$OS" == [1234567] ]]; then
