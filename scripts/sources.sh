@@ -122,16 +122,17 @@ loadFiles()
 {
     local load_type="$1"
     local file_pattern
+    local folder_dir
 
     if [ "$load_type" = "easydocker_configs" ]; then
-        local file_pattern="config_*"
-        local folder_dir="$configs_dir"
+        file_pattern="config_*"
+        folder_dir="$configs_dir"
     elif [ "$load_type" = "app_configs" ]; then
-        local file_pattern="*.config"
-        local folder_dir="$containers_dir"
+        file_pattern="*.config"
+        folder_dir="$containers_dir"
     elif [ "$load_type" = "containers" ]; then
-        local file_pattern="*.sh"
-        local folder_dir="$install_containers_dir"
+        file_pattern="*.sh"
+        folder_dir="$install_containers_dir"
     else
         echo "Invalid load type: $load_type"
         return
@@ -140,9 +141,10 @@ loadFiles()
     while IFS= read -r -d '' file; do
         if [ -f "$file" ]; then
             source "$(echo "$file" | sed 's|/docker/install//||')"
-            #echo "$load_type FILE $(echo "$file" | sed 's|/docker/install//||')"
+            # echo "$load_type FILE $(echo "$file" | sed 's|/docker/install//||')"
         fi
-    done < <(sudo find "$folder_dir" -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
+    done < <(sudo find "$folder_dir" -maxdepth 1 -type f -name "$file_pattern" -print0)
 }
+
 
 sourceScripts "start";
