@@ -134,8 +134,9 @@ installAkaunting()
 
 		whitelistAndStartApp $app_name install norestart;
 
-        # Check if the file exists
-        if [ -f "$containers_dir${app_name}setup_init.txt" ]; then
+        # Check initial setup
+        if ! grep -q "#installed" $containers_dir$app_name/env/db.env; then
+            echo "#installed" >> $containers_dir$app_name/env/db.env
             isNotice "Running setup as initial setup file not found."
 
             local result=$(createTouch "$containers_dir${app_name}setup_init.txt")
