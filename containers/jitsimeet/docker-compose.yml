@@ -109,13 +109,13 @@ services:
                     - ${XMPP_DOMAIN}
         #labels:
             #caddy: DOMAINSUBNAMEHERE
-            #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
+            #caddy.reverse_proxy: "IPADDRESSHERE:PORT2"
             #traefik.enable: true
             #traefik.http.routers.jitismeet.entrypoints: web,websecure
             #traefik.http.routers.jitismeet.rule: Host(`DOMAINSUBNAMEHERE`)
             #traefik.http.routers.jitismeet.tls: true
             #traefik.http.routers.jitismeet.tls.certresolver: production
-            #traefik.http.services.jitismeet.loadbalancer.server.port: PORT1
+            #traefik.http.services.jitismeet.loadbalancer.server.port: PORT2
             #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
             #traefik.http.routers.jitismeet.middlewares:
             #traefik.docker.network: vpn
@@ -274,7 +274,7 @@ services:
         #labels:
             #traefik.udp.routers.jvb.entrypoints: video
             #traefik.udp.routers.jvb.service: jvb
-            #traefik.udp.services.jvb.loadbalancer.server.port: PORT2
+            #traefik.udp.services.jvb.loadbalancer.server.port: PORT3
             #traefik.docker.network: vpn
 
 # Custom network so all services can communicate using a FQDN

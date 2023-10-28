@@ -125,8 +125,11 @@ installJitsimeet()
 		local result=$(sudo sed -i "s|HTTP_PORT=8000|HTTP_PORT=$usedport1|g" $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file with HTTP_PORT to $usedport1"
 
-		local result=$(echo "ENABLE_HTTP_REDIRECT=1" | sudo tee -a "$containers_dir$app_name/.env")
-		checkSuccess "Updating .env file with option : ENABLE_HTTP_REDIRECT"
+		local result=$(sudo sed -i "s|HTTPS_PORT=8443|HTTPS_PORT=$usedport2|g" $containers_dir$app_name/.env)
+		checkSuccess "Updating .env file with HTTP_PORT to $usedport2"
+
+		#local result=$(echo "ENABLE_HTTP_REDIRECT=1" | sudo tee -a "$containers_dir$app_name/.env")
+		#checkSuccess "Updating .env file with option : ENABLE_HTTP_REDIRECT"
 
 		# Values are missing from the .env by default for some reason
 		# https://github.com/jitsi/docker-jitsi-meet/commit/12051700562d9826f9e024ad649c4dd9b88f94de#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5
@@ -136,13 +139,13 @@ installJitsimeet()
 		local result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		local result=$(echo "JVB_PORT=$usedport3" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_PORT=$usedport4" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		local result=$(echo "JVB_TCP_MAPPED_PORT=$usedport4" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_MAPPED_PORT=$usedport5" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		local result=$(echo "JVB_TCP_PORT=$usedport4" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_PORT=$usedport5" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
 
 		local result=$(cd "$containers_dir$app_name" && sudo ./gen-passwords.sh)
@@ -154,6 +157,28 @@ installJitsimeet()
         echo ""
 
 		whitelistAndStartApp $app_name install;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Adjusting $app_name docker system files for port changes."
+        echo ""
+
+        runCommandForDockerInstallUser "docker cp '$app_name: /etc/nginx/sites-available/default' '$containers_dir$app_name'"
+
+		local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/default)
+		checkSuccess "Updating Docker NGINX default site port 80 to $usedport1"
+
+		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_nameweb/default)
+		checkSuccess "Updating Docker NGINX default site port 443 to $usedport2"
+
+		local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/rootfs/defaults/default)
+		checkSuccess "Updating NGINX default site port 80 to $usedport1"
+
+		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_nameweb/rootfs/defaults/default)
+		checkSuccess "Updating NGINX default site port 443 to $usedport2"
+
+        runCommandForDockerInstallUser "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
+		dockerDownUp $app_name;
 
 		((menu_number++))
 		echo ""
