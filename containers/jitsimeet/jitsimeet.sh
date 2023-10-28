@@ -122,6 +122,12 @@ installJitsimeet()
 		local result=$(sudo sed -i "s|#PUBLIC_URL=https://meet.example.com|PUBLIC_URL=https://$host_setup|g" $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file with Public URL to $host_setup"
 
+		local result=$(sudo sed -i "s|HTTP_PORT=8000|HTTP_PORT=$usedport1|g" $containers_dir$app_name/.env)
+		checkSuccess "Updating .env file with HTTP_PORT to $usedport1"
+
+		local result=$(echo "ENABLE_HTTP_REDIRECT=1" | sudo tee -a "$containers_dir$app_name/.env")
+		checkSuccess "Updating .env file with option : ENABLE_HTTP_REDIRECT"
+
 		# Values are missing from the .env by default for some reason
 		# https://github.com/jitsi/docker-jitsi-meet/commit/12051700562d9826f9e024ad649c4dd9b88f94de#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5
 		local result=$(echo "XMPP_DOMAIN=meet.jitsi" | sudo tee -a "$containers_dir$app_name/.env")
@@ -130,13 +136,13 @@ installJitsimeet()
 		local result=$(echo "XMPP_SERVER=xmpp.meet.jitsi" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : XMPP_SERVER"
 
-		local result=$(echo "JVB_PORT=$usedport1" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_PORT=$usedport3" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_PORT"
 
-		local result=$(echo "JVB_TCP_MAPPED_PORT=$usedport2" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_MAPPED_PORT=$usedport4" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_MAPPED_PORT"
 
-		local result=$(echo "JVB_TCP_PORT=$usedport2" | sudo tee -a "$containers_dir$app_name/.env")
+		local result=$(echo "JVB_TCP_PORT=$usedport4" | sudo tee -a "$containers_dir$app_name/.env")
 		checkSuccess "Updating .env file with missing option : JVB_TCP_PORT"
 
 		local result=$(cd "$containers_dir$app_name" && sudo ./gen-passwords.sh)
