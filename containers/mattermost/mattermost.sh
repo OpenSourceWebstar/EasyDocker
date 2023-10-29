@@ -155,9 +155,6 @@ EOF
 					removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
 					mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
 					setupFileWithConfigData "$app_name" "$DCWN";
-				fi
-				 
-				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
                     dockerDown "$app_name" "$DCWN";
                     dockerUp "$app_name" "$DCWN";
 				fi
