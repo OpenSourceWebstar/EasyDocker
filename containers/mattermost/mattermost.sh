@@ -113,12 +113,14 @@ mattermostAddToYMLFile()
 {
   local file_path="$1"
   sudo tee -a "$file_path" <<EOF
-    labels:
-      traefik.enable: true
-      traefik.http.routers.mattermost.entrypoints: web,websecure
-      traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`)
-      traefik.http.routers.mattermost.tls: true
-      traefik.http.routers.mattermost.tls.certresolver: production
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.mattermost.entrypoints: web,websecure
+      #traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`)
+      #traefik.http.routers.mattermost.tls: true
+      #traefik.http.routers.mattermost.tls.certresolver: production
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.actual.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
@@ -140,21 +142,9 @@ EOF
 		isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
 		read -rp "" MATN
     	if [[ "$MATN" == [nN] ]]; then
-			if [[ "$OS" == [1234567] ]]; then
-				if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
-					checkSuccess "Shutting down nginx container"
-
-					local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCN up -d")
-					checkSuccess "Starting up nginx container"
-				elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-					local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
-					checkSuccess "Shutting down nginx container"
-
-					local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCN up -d)
-					checkSuccess "Starting up nginx container"
-				fi
-			fi
+            dockerDown "$app_name" "$DCWN";
+            dockerDown "$app_name" "$DCN";
+            dockerUp "$app_name" "$DCN";
 		fi
 
 		if [[ "$MATN" == [yY] ]]; then
@@ -162,27 +152,14 @@ EOF
 				if grep -q "vpn:" $containers_dir$app_name/$DCWN; then
 					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
 				else			
-					removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN"
-					mattermostAddToYMLFile "$containers_dir$app_name/$DCWN"
-					editCustomFile "$containers_dir$app_name" "$DCWN"
+					removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
+					mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
+					setupFileWithConfigData "$containers_dir$app_name" "$DCWN";
 				fi
 				 
 				if [ -f "docker-compose.yml" ] && [ -f "$DCWN" ]; then
-					if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-						local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN down")
-						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
-
-            			isNotice "Starting container for $app_name, this may take a while..."
-						local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose -f docker-compose.yml -f $DCWN up -d")
-						checkSuccess "Started container for $app_name - (Without Nginx Compose File)"
-					elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-						local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN down)
-						checkSuccess "Shutting down container for $app_name - (Without Nginx Compose File)"
-						
-            			isNotice "Starting container for $app_name, this may take a while..."
-						local result=$(cd $containers_dir$app_name && sudo -u $easydockeruser docker-compose -f docker-compose.yml -f $DCWN up -d)
-						checkSuccess "Started container for $app_name - (Without Nginx Compose File)"
-					fi
+                    dockerDown "$app_name" "$DCWN";
+                    dockerUp "$app_name" "$DCWN";
 				fi
 			fi
 		fi

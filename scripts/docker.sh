@@ -307,6 +307,14 @@ setupComposeFile()
 dockerDownUp()
 {
     local app_name="$1"
+    
+    dockerDown $app_name;
+    dockerUp $app_name;
+}
+
+dockerDown()
+{
+    local app_name="$1"
     local custom_compose="$2"
     # Compose file public variable for restarting etc
     if [[ $compose_setup == "default" ]]; then
@@ -320,43 +328,56 @@ dockerDownUp()
 
     if [[ "$OS" == [1234567] ]]; then
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-
-            isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
-            checkSuccess "Started container for $app_name"
-
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-
-            local result=$(sudo -u $easydockeruser docker-compose down)
+            local result=$(sudo -u $easydockeruser docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
-
-            isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(sudo -u $easydockeruser docker-compose up -d)
-            checkSuccess "Started container for $app_name"
-
         fi
     else
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-
-            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
+            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-            
-            isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose up -d")
-            checkSuccess "Started container for $app_name"
-
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-
-            local result=$(sudo -u $easydockeruser docker-compose down)
+            local result=$(sudo -u $easydockeruser docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
-            
+        fi
+    fi
+}
+
+dockerUp()
+{
+    local app_name="$1"
+    local custom_compose="$2"
+    # Compose file public variable for restarting etc
+    if [[ $compose_setup == "default" ]]; then
+        local setup_compose="-f docker-compose.yml"
+    elif [[ $compose_setup == "app" ]]; then
+        local setup_compose="-f docker-compose.yml -f docker-compose.$app_name.yml"
+    fi
+    if [[ $custom_compose != "" ]]; then
+        local setup_compose="-f docker-compose.yml -f $custom_compose.yml"
+    fi
+
+    if [[ "$OS" == [1234567] ]]; then
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            isNotice "Starting container for $app_name, this may take a while..."
+            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
+            checkSuccess "Started container for $app_name"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(sudo -u $easydockeruser docker-compose up -d)
             checkSuccess "Started container for $app_name"
-
+        fi
+    else
+        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            isNotice "Starting container for $app_name, this may take a while..."
+            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
+            checkSuccess "Started container for $app_name"
+        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            isNotice "Starting container for $app_name, this may take a while..."
+            local result=$(sudo -u $easydockeruser docker-compose $setup_compose up -d)
+            checkSuccess "Started container for $app_name"
         fi
     fi
 }
