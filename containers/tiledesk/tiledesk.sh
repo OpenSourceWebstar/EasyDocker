@@ -68,11 +68,7 @@ installTiledesk()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 
 		local result=$(cd $containers_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		

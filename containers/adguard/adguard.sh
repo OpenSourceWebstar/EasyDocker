@@ -68,11 +68,7 @@ installAdguard()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 
 		local result=$(copyResource "$app_name" "unbound.conf" "unbound.conf" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."

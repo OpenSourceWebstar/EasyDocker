@@ -149,11 +149,7 @@ installMailcow()
 		local result=$(copyFile $install_containers_dir$app_name/docker-compose.yml $containers_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 		
 		if [[ "$using_caddy" == "true" ]]; then
 			# Setup SSL Transfer scripts

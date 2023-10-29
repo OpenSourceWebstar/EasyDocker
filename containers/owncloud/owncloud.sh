@@ -69,36 +69,36 @@ installOwncloud()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Setup .env file for $app_name"
         echo ""
 
-        result=$(sudo curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > $containers_dir$app_name/webpage.html)
+        local webpage_file="/tmp/webpage.html" 
+        # Download the webpage to the temporary directory
+        result=$(sudo curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > "$webpage_file")
         checkSuccess "Downloading server_release_notes webpage to extract latest version."
 
         if [ $? -eq 0 ]; then
-            local latest_version=$(sudo grep -o 'Changes in [0-9.-]*' webpage.html | sudo awk -F " " '{print $3}' | sudo sort -V | sudo tail -n 1)
+            # Extract the latest version from the temporary HTML file
+            local latest_version=$(sudo grep -o 'Changes in [0-9.-]*' "$webpage_file" | sudo awk -F " " '{print $3}' | sudo sort -V | sudo tail -n 1)
             if [ -n "$latest_version" ]; then
-                isSuccessful "Latest Retreived Version: $latest_version"
+                isSuccessful "Latest Retrieved Version: $latest_version"
                 isSuccessful "Using for installation"
                 owncloud_version="$latest_version"
             else
                 isNotice "Failed to extract the latest version from the webpage."
                 isNotice "Defaulting to config value."
             fi
+
+            # Remove the temporary HTML file
+            result=$(sudo rm "$webpage_file")
+            checkSuccess "Remove the temporary HTML file"
         else
             isNotice "Failed to retrieve the web page."
         fi
-
-        result=$(sudo rm $containers_dir$app_name/webpage.html)
-        checkSuccess "Remove the temporary HTML file"
 
 if [[ "$public" == "true" ]]; then	
 

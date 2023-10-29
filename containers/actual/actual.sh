@@ -68,11 +68,7 @@ installActual()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 
 		# SSL Cert is needed to load, using self signed
 		if [ -f "$ssl_dir$ssl_key" ]; then

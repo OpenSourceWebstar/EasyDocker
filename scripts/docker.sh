@@ -174,6 +174,7 @@ setupConfigToContainer()
         fi
     fi
 
+    scanFileForRandomPassword "$target_path/$config_file";
     loadFiles "app_configs";
 }
 
@@ -276,8 +277,15 @@ setupComposeFileNoApp()
 {
     local app_name="$1"
     local target_path="$containers_dir$app_name"
-    local source_file="$install_containers_dir$app_name/docker-compose.yml"
     
+    if [[ $compose_setup == "default" ]]; then
+        local compose_file="docker-compose.yml";
+    elif [[ $compose_setup == "app" ]]; then
+        local compose_file="docker-compose.$app_name.yml";
+    fi
+
+    local source_file="$install_containers_dir$app_name/$compose_file"
+
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
         return 1
@@ -288,7 +296,7 @@ setupComposeFileNoApp()
         return 1
     fi
     
-    copyFile "$source_file" "$target_path/docker-compose.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "$source_file" "$target_path/$compose_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."

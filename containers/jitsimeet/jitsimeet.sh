@@ -95,11 +95,7 @@ installJitsimeet()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -163,21 +159,21 @@ installJitsimeet()
         echo "---- $menu_number. Adjusting $app_name docker system files for port changes."
         echo ""
 
-        runCommandForDockerInstallUser "docker cp '$app_name: /etc/nginx/sites-available/default' '$containers_dir$app_name'"
+        #runCommandForDockerInstallUser "docker exec -it $app_name /bin/bash && cd /"
 
-		local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/default)
-		checkSuccess "Updating Docker NGINX default site port 80 to $usedport1"
+		#local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/default)
+		#checkSuccess "Updating Docker NGINX default site port 80 to $usedport1"
 
-		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_nameweb/default)
-		checkSuccess "Updating Docker NGINX default site port 443 to $usedport2"
+		#local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_nameweb/default)
+		#checkSuccess "Updating Docker NGINX default site port 443 to $usedport2"
 
-		local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/rootfs/defaults/default)
+		local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_name/web/rootfs/defaults/default)
 		checkSuccess "Updating NGINX default site port 80 to $usedport1"
 
-		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_nameweb/rootfs/defaults/default)
+		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_name/web/rootfs/defaults/default)
 		checkSuccess "Updating NGINX default site port 443 to $usedport2"
 
-        runCommandForDockerInstallUser "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
+        #runCommandForDockerInstallUser "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
 		dockerDownUp $app_name;
 
 		((menu_number++))

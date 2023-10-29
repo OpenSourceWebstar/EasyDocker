@@ -101,11 +101,7 @@ installCozy()
 		local result=$(mkdirFolders $containers_dir/$app_name/db $containers_dir/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
-        if [[ $compose_setup == "default" ]]; then
-		    setupComposeFileNoApp $app_name;
-        elif [[ $compose_setup == "app" ]]; then
-            setupComposeFileApp $app_name;
-        fi
+        setupComposeFile $app_name;
 
 		local result=$(sudo sed -i '35,$ d' $containers_dir/$app_name/docker-compose.yml)
 		checkSuccess "Removing line 35 from the docker-compose.yml file"

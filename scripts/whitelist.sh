@@ -126,7 +126,7 @@ whitelistUpdateYML()
     fi
 
     if [ "$flags" == "install" ]; then
-        whitelistUpdateCompose $app_name;
+        editComposeFile $app_name;
         if [[ $norestart != "norestart" ]]; then
             whitelistUpdateRestart $app_name $flags;
         fi
@@ -188,21 +188,10 @@ whitelistUpdateYML()
     fi
 
     if [ "$flags" == "restart" ]; then
-        whitelistUpdateCompose $app_name;
+        editComposeFile $app_name;
         if [[ $norestart != "norestart" ]]; then
             whitelistUpdateRestart $app_name $flags;
         fi
-    fi
-}
-
-whitelistUpdateCompose()
-{
-    local app_name="$1"
-
-    if [[ $compose_setup == "default" ]]; then
-        editComposeFileDefault $app_name;
-    elif [[ $compose_setup == "app" ]]; then
-        editComposeFileApp $app_name;
     fi
 }
 
