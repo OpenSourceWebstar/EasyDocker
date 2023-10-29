@@ -126,7 +126,7 @@ whitelistUpdateYML()
     fi
 
     if [ "$flags" == "install" ]; then
-        editComposeFile $app_name;
+        setupFileWithConfigData $app_name;
         if [[ $norestart != "norestart" ]]; then
             whitelistUpdateRestart $app_name $flags;
         fi
@@ -188,7 +188,7 @@ whitelistUpdateYML()
     fi
 
     if [ "$flags" == "restart" ]; then
-        editComposeFile $app_name;
+        setupFileWithConfigData $app_name;
         if [[ $norestart != "norestart" ]]; then
             whitelistUpdateRestart $app_name $flags;
         fi

@@ -307,11 +307,15 @@ setupComposeFile()
 dockerDownUp()
 {
     local app_name="$1"
+    local custom_compose="$2"
     # Compose file public variable for restarting etc
     if [[ $compose_setup == "default" ]]; then
-        setup_compose="-f docker-compose.yml"
+        local setup_compose="-f docker-compose.yml"
     elif [[ $compose_setup == "app" ]]; then
-        setup_compose="-f docker-compose.yml -f docker-compose.$app_name.yml"
+        local setup_compose="-f docker-compose.yml -f docker-compose.$app_name.yml"
+    fi
+    if [[ $custom_compose != "" ]]; then
+        local setup_compose="-f docker-compose.yml -f $custom_compose.yml"
     fi
 
     if [[ "$OS" == [1234567] ]]; then
@@ -357,17 +361,20 @@ dockerDownUp()
     fi
 }
 
-editComposeFile()
+setupFileWithConfigData()
 {
     local app_name="$1"
-
+    local custom_file="$2"
     if [[ $compose_setup == "default" ]]; then
-        local compose_file_name="docker-compose.yml";
+        local file_name="docker-compose.yml";
     elif [[ $compose_setup == "app" ]]; then
-        local compose_file_name="docker-compose.$app_name.yml";
+        local file_name="docker-compose.$app_name.yml";
+    fi
+    if [[ $custom_file != "" ]]; then
+        local file_name="$custom_file"
     fi
 
-    local compose_file="$containers_dir$app_name/$compose_file_name"
+    local full_file_path="$containers_dir$app_name/$file_name"
 
     local result=$(sudo sed -i \
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
@@ -378,95 +385,34 @@ editComposeFile()
         -e "s|PORT1|$usedport1|g" \
         -e "s|PORT2|$usedport2|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
-    "$compose_file")
-    checkSuccess "Updating Compose file for $app_name"
+    "$full_file_path")
+    checkSuccess "Updating $file_name for $app_name"
     
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
             -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
-        "$compose_file")
-        checkSuccess "Updating Compose file docker socket for $app_name"
+        "$full_file_path")
+        checkSuccess "Updating docker socket for $app_name"
     fi
 
-    if [[ "$public" == "true" ]]; then    
-        setupTraefikLabels $app_name $compose_file;
-    fi
-    
-    if [[ "$public" == "false" ]]; then
-        if ! grep -q "#labels:" "$compose_file"; then
-            local result=$(sudo sed -i 's/labels:/#labels:/g' "$compose_file")
-            checkSuccess "Disable Traefik options for private setup"
+    if [[ $file_name == *".yml"* ]]; then
+        if [[ "$public" == "true" ]]; then    
+            setupTraefikLabels $app_name $full_file_path;
+        fi
+        
+        if [[ "$public" == "false" ]]; then
+            if ! grep -q "#labels:" "$full_file_path"; then
+                local result=$(sudo sed -i 's/labels:/#labels:/g' "$full_file_path")
+                checkSuccess "Disable Traefik options for private setup"
+            fi
         fi
     fi
 
-    scanFileForRandomPassword $compose_file;
+    scanFileForRandomPassword $full_file_path;
     
     isSuccessful "Updated the $app_name docker-compose.yml"
-}
-
-editEnvFileDefault()
-{
-    local env_file="$containers_dir$app_name/.env"
-    
-    local result=$(sudo sed -i \
-        -e "s|DOMAINNAMEHERE|$domain_full|g" \
-        -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
-        -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
-        -e "s|PUBLICIPHERE|$public_ip|g" \
-        -e "s|IPADDRESSHERE|$ip_setup|g" \
-        -e "s|IPWHITELIST|$CFG_IPS_WHITELIST|g" \
-        -e "s|PORT1|$usedport1|g" \
-        -e "s|PORT2|$usedport2|g" \
-        -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
-    "$env_file")
-    checkSuccess "Updating .env file for $app_name"
-    
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-        local result=$(sudo sed -i \
-            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
-        "$env_file")
-        checkSuccess "Updating Compose file docker socket for $app_name"
-    fi
-
-    scanFileForRandomPassword $env_file;
-
-    isSuccessful "Updated the .env file"
-}
-
-editCustomFile()
-{
-    local custompath="$1"    
-    local customfile="$2"
-    local custompathandfile="$custompath/$customfile"
-    
-    local result=$(sudo sed -i \
-        -e "s|DOMAINNAMEHERE|$domain_full|g" \
-        -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
-        -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
-        -e "s|PUBLICIPHERE|$public_ip|g" \
-        -e "s|IPADDRESSHERE|$ip_setup|g" \
-        -e "s|IPWHITELIST|$CFG_IPS_WHITELIST|g" \
-        -e "s|PORT1|$usedport1|g" \
-        -e "s|PORT2|$usedport2|g" \
-        -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
-    "$custompathandfile")
-    checkSuccess "Updating $customfile file for $app_name"
-    
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-        local result=$(sudo sed -i \
-            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
-            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
-        "$custompathandfile")
-        checkSuccess "Updating Compose file docker socket for $app_name"
-    fi
-    
-    scanFileForRandomPassword $custompathandfile;
-
-    isSuccessful "Updated the $customfile file"
 }
 
 setupTraefikLabelsSetupMiddlewares() 

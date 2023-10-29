@@ -122,7 +122,7 @@ ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
 HTTP_PORT=$usedport1
 EOF"
 fi
-		editEnvFileDefault;
+		setupFileWithConfigData $app_name ".env";
 
 		((menu_number++))
         echo ""

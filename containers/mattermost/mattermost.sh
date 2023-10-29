@@ -95,7 +95,7 @@ installMattermost()
         local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $usedport2"	
 		
-		editEnvFileDefault;
+		setupFileWithConfigData $app_name ".env";
 
 		((menu_number++))
         echo ""
