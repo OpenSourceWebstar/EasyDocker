@@ -72,8 +72,10 @@ installMattermost()
         local result=$(mkdirFolders $containers_dir$app_name)
 		checkSuccess "Creating $app_name install folder"
 
+        backupContainerFilesToTemp $app_name;
         local result=$(sudo -u $easydockeruser git clone https://github.com/mattermost/docker $containers_dir$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
+        backupContainerFilesRestore $app_name;
 
         local result=$(copyFile $containers_dir$app_name/env.example $containers_dir$app_name/.env)
 		checkSuccess "Copying example .env file for setup"
