@@ -147,9 +147,9 @@ mattermostAddToYMLFile()
       vpn:
         ipv4_address: 10.8.1.105
 
-  networks:
-    vpn:
-      external: true
+networks:
+  vpn:
+    external: true
 EOF
 }
 
