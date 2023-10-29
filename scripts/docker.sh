@@ -438,8 +438,8 @@ editEnvFileDefault()
 
 editCustomFile()
 {
-    local customfile="$1"
-    local custompath="$2"
+    local custompath="$1"    
+    local customfile="$2"
     local custompathandfile="$custompath/$customfile"
     
     local result=$(sudo sed -i \
