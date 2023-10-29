@@ -307,7 +307,7 @@ setupComposeFile()
 dockerDownUp()
 {
     local app_name="$1"
-    
+
     dockerDown $app_name;
     dockerUp $app_name;
 }
@@ -323,7 +323,7 @@ dockerDown()
         local setup_compose="-f docker-compose.yml -f docker-compose.$app_name.yml"
     fi
     if [[ $custom_compose != "" ]]; then
-        local setup_compose="-f docker-compose.yml -f $custom_compose.yml"
+        local setup_compose="-f docker-compose.yml -f $custom_compose"
     fi
 
     if [[ "$OS" == [1234567] ]]; then
@@ -356,7 +356,7 @@ dockerUp()
         local setup_compose="-f docker-compose.yml -f docker-compose.$app_name.yml"
     fi
     if [[ $custom_compose != "" ]]; then
-        local setup_compose="-f docker-compose.yml -f $custom_compose.yml"
+        local setup_compose="-f docker-compose.yml -f $custom_compose"
     fi
 
     if [[ "$OS" == [1234567] ]]; then
