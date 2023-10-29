@@ -273,18 +273,18 @@ installApp()
     ${installFuncName}
 }
 
-setupComposeFileNoApp()
+setupComposeFile()
 {
     local app_name="$1"
     local target_path="$containers_dir$app_name"
     
     if [[ $compose_setup == "default" ]]; then
-        local compose_file="docker-compose.yml";
+        local compose_file_name="docker-compose.yml";
     elif [[ $compose_setup == "app" ]]; then
-        local compose_file="docker-compose.$app_name.yml";
+        local compose_file_name="docker-compose.$app_name.yml";
     fi
 
-    local source_file="$install_containers_dir$app_name/$compose_file"
+    local source_file="$install_containers_dir$app_name/$compose_file_name"
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -297,30 +297,6 @@ setupComposeFileNoApp()
     fi
     
     copyFile "$source_file" "$target_path/$compose_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
-    
-    if [ $? -ne 0 ]; then
-        isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
-        return 1
-    fi
-}
-
-setupComposeFileApp()
-{
-    local app_name="$1"
-    local target_path="$containers_dir$app_name"
-    local source_file="$install_containers_dir$app_name/docker-compose.yml"
-    
-    if [ "$app_name" == "" ]; then
-        isError "The app_name is empty."
-        return 1
-    fi
-    
-    if [ ! -f "$source_file" ]; then
-        isError ""Error: "The source file '$source_file' does not exist."
-        return 1
-    fi
-    
-    copyFile "$source_file" "$target_path/docker-compose.$app_name.yml" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
@@ -381,11 +357,18 @@ dockerDownUp()
     fi
 }
 
-editComposeFileDefault()
+editComposeFile()
 {
     local app_name="$1"
-    local compose_file="$containers_dir$app_name/docker-compose.yml"
-    
+
+    if [[ $compose_setup == "default" ]]; then
+        local compose_file_name="docker-compose.yml";
+    elif [[ $compose_setup == "app" ]]; then
+        local compose_file_name="docker-compose.$app_name.yml";
+    fi
+
+    local compose_file="$containers_dir$app_name/$compose_file_name"
+
     local result=$(sudo sed -i \
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
         -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
@@ -421,48 +404,6 @@ editComposeFileDefault()
     scanFileForRandomPassword $compose_file;
     
     isSuccessful "Updated the $app_name docker-compose.yml"
-}
-
-editComposeFileApp()
-{
-    local app_name="$1"
-    local compose_file="$containers_dir$app_name/docker-compose.$app_name.yml"
-
-    local result=$(sudo sed -i \
-        -e "s|DOMAINNAMEHERE|$domain_full|g" \
-        -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
-        -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
-        -e "s|PUBLICIPHERE|$public_ip|g" \
-        -e "s|IPADDRESSHERE|$ip_setup|g" \
-        -e "s|PORT1|$usedport1|g" \
-        -e "s|PORT2|$usedport2|g" \
-        -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
-    "$compose_file")
-    checkSuccess "Updating Compose file for $app_name (Using additional yml file)"
-    
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-        local result=$(sudo sed -i \
-            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
-            -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
-        "$compose_file")
-        checkSuccess "Updating Compose file docker socket for $app_name"
-    fi
-
-    if [[ "$public" == "true" ]]; then    
-        setupTraefikLabels $app_name $compose_file;
-    fi
-
-    if [[ "$public" == "false" ]]; then
-        if ! grep -q "#labels:" "$compose_file"; then
-            local result=$(sudo sed -i 's/labels:/#labels:/g' "$compose_file")
-            checkSuccess "Disable Traefik options for private setup"
-        fi
-    fi
-    
-    scanFileForRandomPassword $compose_file;
-
-    isSuccessful "Updated the docker-compose.$app_name.yml"
 }
 
 editEnvFileDefault()
