@@ -210,13 +210,15 @@ backupContainerFilesToTemp()
         local compose_file="docker-compose.$app_name.yml"
     fi
 
-    local source_filenames=("$app_name.config" "migrate.txt" "$compose_file")
+    local source_filenames=("$app_name.config" "migrate.txt" "$compose_file" ".env")
     # Iterate over the list and call moveFile for each source file
     for source_filename in "${source_filenames[@]}"; do
         source_file="$source_folder/$source_filename"
-        target_file="$temp_backup_folder/$source_filename"
-        moveFile "$source_file" "$target_file"
-        checkSuccess "Moving $source_filename to $temp_backup_folder"
+        target_file="$source_file"
+        if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
+            moveFile "$source_file" "$target_file"
+            checkSuccess "Moving $source_filename to $temp_backup_folder"
+        fi
     done
 }
 
