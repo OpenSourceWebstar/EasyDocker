@@ -48,7 +48,7 @@ installMailcow()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -150,7 +150,7 @@ installMailcow()
 		
 		if [[ "$using_caddy" == "true" ]]; then
 			# Setup SSL Transfer scripts
-			local result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $containers_dir$app_name/caddy-to-mailcow-ssl.sh $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile "loud" $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $containers_dir$app_name/caddy-to-mailcow-ssl.sh $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
 			local result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $containers_dir$app_name/caddy-to-mailcow-ssl.sh)

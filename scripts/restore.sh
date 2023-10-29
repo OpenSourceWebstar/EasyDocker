@@ -50,7 +50,7 @@ restoreStart()
     echo "---- $menu_number. Getting backup file to restore"
     echo ""
 
-    restoreCopyFile "$remote_path_clean";
+    restorecopyFile "$remote_path_clean";
 
     ((menu_number++))
     echo ""
@@ -575,7 +575,7 @@ restoreCopyFile()
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
+        local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
         # Extract the date from the filename (assuming the date format is YYYY-MM-DD)
@@ -592,7 +592,7 @@ restoreCopyFile()
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
+        local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     fi
 }

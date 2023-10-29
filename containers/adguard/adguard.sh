@@ -6,7 +6,7 @@
 installAdguard()
 {
     if [[ "$adguard" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer --silent adguard;
+        setupConfigToContainer silent adguard;
         local app_name=$CFG_ADGUARD_APP_NAME
     	setupInstallVariables $app_name;
     fi
@@ -39,7 +39,7 @@ installAdguard()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))

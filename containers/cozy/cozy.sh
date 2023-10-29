@@ -6,7 +6,7 @@
 installCozy()
 {
     if [[ "$cozy" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer --silent cozy;
+        setupConfigToContainer silent cozy;
         local app_name=$CFG_COZY_APP_NAME
         # Custom Cozy Variables
         # Additional non default apps to be installed
@@ -45,7 +45,7 @@ installCozy()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -77,7 +77,7 @@ installCozy()
 		local result=$(sudo -u $sudo_user_name git clone https://github.com/vsellier/easy-cozy.git $containers_dir/$app_name)
 		checkSuccess "Cloning the Easy-Cozy from GitHub"
 		
-		local result=$(copyFile $containers_dir/$app_name/env.template $containers_dir/$app_name/.env $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
+		local result=$(copyFile "loud" $containers_dir/$app_name/env.template $containers_dir/$app_name/.env $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
 		local result=$(sudo sed -i "s|DATAdocker_dirECTORY=/var/lib/cozy/db|DATAdocker_dirECTORY=$containers_dir/$app_name/db|g" $containers_dir/$app_name/.env)

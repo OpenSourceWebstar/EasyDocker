@@ -6,7 +6,7 @@
 installAuthelia()
 {
     if [[ "$authelia" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer --silent authelia;
+        setupConfigToContainer silent authelia;
         local app_name=$CFG_AUTHELIA_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -39,7 +39,7 @@ installAuthelia()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))

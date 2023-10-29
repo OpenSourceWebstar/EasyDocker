@@ -200,7 +200,7 @@ backupContainerFilesRestore()
     local source_folder="$containers_dir$app_name"
 
     if [ -d "$temp_backup_folder" ]; then
-        local result=$(copyFiles "$temp_backup_folder" "$source_folder" $CFG_DOCKER_INSTALL_USER)
+        local result=$(copyFiles "loud" "$temp_backup_folder" "$source_folder" $CFG_DOCKER_INSTALL_USER)
         checkSuccess "Copying files from temp folder to $app_name folder."
         local result=$(rm -rf "$temp_backup_folder")
         checkSuccess "Removing temp folder as no longer needed."
@@ -270,46 +270,40 @@ copyResource()
 
 copyFile() 
 {
-    local silent_flag=""
-    if [ "$1" == "--silent" ]; then
-        silent_flag="$1"
-        shift
-    fi
-
-    local file="$1"
+    local silent_flag="$1"
+    local file="$2"
     local file_name=$(basename "$file")
-    local save_dir="$2"
+    local save_dir="$3"
     local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
-    local user_name="$3" 
-    local flags="$4"
+    local user_name="$4" 
+    local flags="$5"
 
     if [[ $flags == "overwrite" ]]; then
         flags_full="-f"
     fi
-
-    local result=$(sudo cp $flags_full "$file" "$save_dir")
-    if [ -z "$silent_flag" ]; then
+    
+    if [ "$silent_flag" == "loud" ]; then
+        local result=$(sudo cp $flags_full "$file" "$save_dir")
         checkSuccess "Copying $file_name to $save_dir"
+    elif [ "$silent_flag" == "silent" ]; then
+        local result=$(sudo cp $flags_full "$file" "$save_dir")
     fi
 
-    local result=$(sudo chown $user_name:$user_name "$save_dir")
-    if [ -z "$silent_flag" ]; then
+    if [ "$silent_flag" == "loud" ]; then
+        local result=$(sudo chown $user_name:$user_name "$save_dir")
         checkSuccess "Updating $save_dir_file with $user_name ownership"
+    elif [ "$silent_flag" == "silent" ]; then
+        local result=$(sudo chown $user_name:$user_name "$save_dir")
     fi
 }
 
 copyFiles() 
 {
-    local silent_flag=""
-    if [ "$1" == "--silent" ]; then
-        silent_flag="$1"
-        shift
-    fi
-
-    local source="$1"
-    local save_dir="$2"
-    local user_name="$3"
+    local silent_flag="$1"
+    local source="$2"
+    local save_dir="$3"
+    local user_name="$4"
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     # Ensure the source path is expanded to a list of files
@@ -323,14 +317,18 @@ copyFiles()
     for file in "${files[@]}"; do
         local file_name=$(basename "$file")
 
-        local result=$(sudo cp -f "$file" "$save_dir")
-        if [ -z "$silent_flag" ]; then
+        if [ "$silent_flag" == "loud" ]; then
+            local result=$(sudo cp -f "$file" "$save_dir")
             checkSuccess "Copying $file_name to $save_dir"
+        elif [ "$silent_flag" == "silent" ]; then
+            local result=$(sudo cp -f "$file" "$save_dir")
         fi
 
-        local result=$(sudo chown $user_name:$user_name "$save_dir/$file_name")
-        if [ -z "$silent_flag" ]; then
+        if [ "$silent_flag" == "loud" ]; then
+            local result=$(sudo chown $user_name:$user_name "$save_dir/$file_name")
             checkSuccess "Updating $file_name with $user_name ownership"
+        elif [ "$silent_flag" == "silent" ]; then
+            local result=$(sudo chown $user_name:$user_name "$save_dir/$file_name")
         fi
     done
 }

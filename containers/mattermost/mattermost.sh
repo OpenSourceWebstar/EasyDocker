@@ -57,7 +57,7 @@ installMattermost()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -94,7 +94,7 @@ installMattermost()
 		checkSuccess "Cloning Mattermost GitHub"
         backupContainerFilesRestore $app_name;
 
-        local result=$(copyFile $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
+        local result=$(copyFile "loud" $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
 		checkSuccess "Copying example .env file for setup"
 
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})

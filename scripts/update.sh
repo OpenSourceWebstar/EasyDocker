@@ -94,7 +94,7 @@ gitCheckEasyDockerConfigFilesExist()
         local file_path="$install_configs_dir$file"
         if [ -f "$file_path" ]; then
             if [ ! -f "$configs_dir$file" ]; then
-                copyFile --silent "$file_path" "$configs_dir$file" "$sudo_user_name"
+                copyFile "silent" "$file_path" "$configs_dir$file" "$sudo_user_name"
             fi
             ((file_found_count++))
         else

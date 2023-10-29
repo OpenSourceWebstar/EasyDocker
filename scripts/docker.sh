@@ -28,14 +28,10 @@ runCommandForDockerInstallUser()
 
 setupConfigToContainer()
 {
-    local silent_flag=""
-    if [ "$1" == "--silent" ]; then
-        silent_flag="$1"
-        shift
-    fi
+    local silent_flag="$1"
+    local app_name="$2"
+    local flags="$3"
 
-    local app_name="$1"
-    local flags="$2"
     local target_path="$containers_dir$app_name"
     local source_file="$install_containers_dir$app_name/$app_name.config"
     local config_file="$app_name.config"
@@ -46,14 +42,14 @@ setupConfigToContainer()
     fi
 
     if [ -d "$target_path" ]; then
-        if [ -z "$silent_flag" ]; then
+        if [ "$silent_flag" == "loud" ]; then
             isNotice "The directory '$target_path' already exists."
         fi
     else
-        if [ -z "$silent_flag" ]; then
+        if [ "$silent_flag" == "loud" ]; then
             mkdirFolders "$CFG_DOCKER_INSTALL_USER" "$target_path"
-        else
-            mkdirFolders "$CFG_DOCKER_INSTALL_USER" "$silent_flag" "$target_path"
+        elif [ "$silent_flag" == "silent" ]; then
+            mkdirFolders "$silent_flag" "$CFG_DOCKER_INSTALL_USER" "$target_path"
         fi
     fi
 
@@ -63,11 +59,11 @@ setupConfigToContainer()
     fi
 
     if [ ! -f "$target_path/$config_file" ]; then
-        if [ -z "$silent_flag" ]; then
+        if [ "$silent_flag" == "loud" ]; then
             isNotice "Copying config file to '$target_path/$config_file'..."
-            copyFile "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
-        else
-            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+        elif [ "$silent_flag" == "silent" ]; then
+            copyFile "loud" "$silent_flag" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
     fi
 
@@ -120,9 +116,9 @@ setupConfigToContainer()
                     case $resetconfigaccept in
                         [yY])
                             isNotice "Resetting $app_name config file."
-                            copyFile "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+                            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
                             source $target_path/$config_file
-                            setupConfigToContainer $app_name;
+                            setupConfigToContainer "loud" $app_name;
                             break
                             ;;
                         [nN])
@@ -136,7 +132,7 @@ setupConfigToContainer()
             fi
         else
             isNotice "Config file for $app_name does not exist. Creating it..."
-            copyFile "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
             echo ""
             isNotice "Config file for $app_name contains no edits."
             echo ""
@@ -296,7 +292,7 @@ setupComposeFile()
         return 1
     fi
     
-    copyFile "$source_file" "$target_path/$compose_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "loud" "$source_file" "$target_path/$compose_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
@@ -497,7 +493,7 @@ setupTraefikLabels()
         fi
     fi
 
-    copyFile --silent "$temp_file" "$compose_file" $CFG_DOCKER_INSTALL_USER overwrite
+    copyFile "silent" "$temp_file" "$compose_file" $CFG_DOCKER_INSTALL_USER overwrite
     sudo rm "$temp_file"
 
     local indentation="      "
@@ -530,7 +526,7 @@ scanFileForRandomPassword()
 
 setupEnvFile()
 {
-    local result=$(copyFile $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
+    local result=$(copyFile "loud" $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Setting up .env file to path"
 }
 

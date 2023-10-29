@@ -6,7 +6,7 @@
 installFail2ban()
 {
     if [[ "$fail2ban" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer --silent fail2ban;
+        setupConfigToContainer silent fail2ban;
         local app_name=$CFG_FAIL2BAN_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -46,7 +46,7 @@ installFail2ban()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))

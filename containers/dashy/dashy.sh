@@ -6,7 +6,7 @@
 installDashy()
 {
     if [[ "$dashy" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer --silent dashy;
+        setupConfigToContainer silent dashy;
         local app_name=$CFG_DASHY_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -43,7 +43,7 @@ installDashy()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer $app_name install;
+        setupConfigToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
