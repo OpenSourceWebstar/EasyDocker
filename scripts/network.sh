@@ -152,11 +152,11 @@ openPort()
             if [[ $disallow_open_port == "false" ]]; then
                 databasePortOpenInsert "$app_name" "$portdata"
                 if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                    local result=$(sudo ufw allow "$port")
-                    checkSuccess "Opening port $port for $app_name in the UFW Firewall"
+                    local result=$(sudo ufw allow "$port/$type"")
+                    checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                    local result=$(sudo ufw-docker allow "$app_name" "$port")
-                    checkSuccess "Opening port $port for $app_name in the UFW-Docker Firewall"
+                    local result=$(sudo ufw-docker allow "$app_name" "$port/$type")
+                    checkSuccess "Opening port $port and type $type for $app_name in the UFW-Docker Firewall"
                 fi
             fi
         fi
@@ -223,11 +223,11 @@ closePort()
             if [[ $disallow_open_port == "false" ]]; then
                 databasePortOpenRemove "$app_name" "$portdata"
                 if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                    local result=$(sudo ufw delete allow "$port")
-                    checkSuccess "Closing port $port for $app_name in the UFW Firewall"
+                    local result=$(sudo ufw delete allow "$port/$type")
+                    checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                    local result=$(sudo ufw-docker delete allow "$app_name" "$port")
-                    checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
+                    local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type")
+                    checkSuccess "Closing port $port and type $type for $app_name in the UFW-Docker Firewall"
                 fi
             fi
         fi
