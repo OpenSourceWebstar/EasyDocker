@@ -25,7 +25,24 @@ installMattermost()
 	fi
 
 	if [[ "$mattermost" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        while true; do
+            isQuestion "Do you have a Reverse Proxy setup for $app_name? (y/n): "
+            read -rp "" acceptproxymattermost
+            if [[ "$acceptproxymattermost" =~ ^[yYnN]$ ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input (y/n)."
+        done
+    	if [[ "$MATN" == [nN] ]]; then
+            dockerDown "$app_name" "$DCWN";
+            dockerDown "$app_name" "$DCN";
+            dockerUp "$app_name" "$DCN";
+		fi
+		if [[ "$MATN" == [yY] ]]; then
+            dockerDown "$app_name" "$DCN";		
+            dockerDown "$app_name" "$DCWN";
+            dockerUp "$app_name" "$DCWN";
+		fi
 	fi
 
     if [[ "$mattermost" == *[iI]* ]]; then
