@@ -120,7 +120,7 @@ mattermostAddToYMLFile()
       #traefik.http.routers.mattermost.tls: true
       #traefik.http.routers.mattermost.tls.certresolver: production
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.actual.middlewares:
+      #traefik.http.routers.mattermost.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
