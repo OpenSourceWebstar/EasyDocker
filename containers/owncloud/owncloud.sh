@@ -80,11 +80,11 @@ installOwncloud()
         echo "---- $menu_number. Setup .env file for $app_name"
         echo ""
 
-        result=$(curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > $containers_dir$app_name/webpage.html)
+        result=$(sudo curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > $containers_dir$app_name/webpage.html)
         checkSuccess "Downloading server_release_notes webpage to extract latest version."
 
         if [ $? -eq 0 ]; then
-            local latest_version=$(grep -o 'Changes in [0-9.-]*' webpage.html | awk -F " " '{print $3}' | sort -V | tail -n 1)
+            local latest_version=$(sudo grep -o 'Changes in [0-9.-]*' webpage.html | sudo awk -F " " '{print $3}' | sudo sort -V | sudo tail -n 1)
             if [ -n "$latest_version" ]; then
                 isSuccessful "Latest Retreived Version: $latest_version"
                 isSuccessful "Using for installation"
@@ -97,7 +97,7 @@ installOwncloud()
             isNotice "Failed to retrieve the web page."
         fi
 
-        result=$(rm $containers_dir$app_name/webpage.html)
+        result=$(sudo rm $containers_dir$app_name/webpage.html)
         checkSuccess "Remove the temporary HTML file"
 
 if [[ "$public" == "true" ]]; then	
