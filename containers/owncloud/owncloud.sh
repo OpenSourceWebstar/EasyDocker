@@ -80,6 +80,26 @@ installOwncloud()
         echo "---- $menu_number. Setup .env file for $app_name"
         echo ""
 
+        result=$(curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > $containers_dir$app_name/webpage.html)
+        checkSuccess "Downloading server_release_notes webpage to extract latest version."
+
+        if [ $? -eq 0 ]; then
+            local latest_version=$(grep -o 'Changes in [0-9.-]*' webpage.html | awk -F " " '{print $3}' | sort -V | tail -n 1)
+            if [ -n "$latest_version" ]; then
+                isSuccessful "Latest Retreived Version: $latest_version"
+                isSuccessful "Using for installation"
+                owncloud_version="$latest_version"
+            else
+                isNotice "Failed to extract the latest version from the webpage."
+                isNotice "Defaulting to config value."
+            fi
+        else
+            isNotice "Failed to retrieve the web page."
+        fi
+
+        result=$(rm $containers_dir$app_name/webpage.html)
+        checkSuccess "Remove the temporary HTML file"
+
 if [[ "$public" == "true" ]]; then	
 
 runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
