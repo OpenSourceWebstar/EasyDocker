@@ -74,16 +74,16 @@ installActual()
 		if [ -f "$ssl_dir$ssl_key" ]; then
 			checkSuccess "Self Signed SSL Certificate found, installing...."
 
-			local result=$(mkdirFolders $containers_dir$app_name/actual-data)
+			local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
-			local result=$(copyFile $install_containers_dir$app_name/resources/config.json $containers_dir$app_name/actual-data/config.json | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $install_containers_dir$app_name/resources/config.json $containers_dir$app_name/actual-data/config.json $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying config.json to actual-data folder"
 
-			local result=$(copyFile $ssl_dir$ssl_crt $containers_dir$app_name/actual-data/cert.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $ssl_dir$ssl_crt $containers_dir$app_name/actual-data/cert.pem $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying cert to actual-data folder"
 
-			local result=$(copyFile $ssl_dir$ssl_key $containers_dir$app_name/actual-data/key.pem | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $ssl_dir$ssl_key $containers_dir$app_name/actual-data/key.pem $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying key to actual-data folder"
 			
 		else

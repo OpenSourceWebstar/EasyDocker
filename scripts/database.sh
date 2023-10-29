@@ -467,7 +467,7 @@ databaseCycleThroughListApps()
 databaseCycleThroughListAppsCrontab() 
 {
     local show_header=$1
-    local ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
+    local ISCRON=$( (sudo -u $sudo_user_name crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -476,7 +476,7 @@ databaseCycleThroughListAppsCrontab()
     fi
 
     # Check to see if crontab is not installed
-    if ! sudo -u $easydockeruser crontab -l | grep -q "cron is set up for $easydockeruser" > /dev/null 2>&1; then
+    if ! sudo -u $sudo_user_name crontab -l | grep -q "cron is set up for $sudo_user_name" > /dev/null 2>&1; then
         isNotice "Crontab is not set up, skipping until it's found."
         return 1
     fi
@@ -928,7 +928,7 @@ databaseCronJobsInsert()
 databaseRemoveFile()
 {
 	if [[ "$tooldeletedb" == [yY] ]]; then
-        local result=$(sudo -u $easydockeruser rm $docker_dir/$db_file)
+        local result=$(sudo -u $sudo_user_name rm $docker_dir/$db_file)
         checkSuccess "Removing $db_file file"
     fi
 }

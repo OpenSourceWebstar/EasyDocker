@@ -40,7 +40,7 @@ checkRequirements()
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
 		ISUFW=$( (sudo ufw status ) 2>&1 )
 		ISUFWD=$( (sudo ufw-docker) 2>&1 )
-		ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
+		ISCRON=$( (sudo -u $sudo_user_name crontab -l) 2>&1 )
 
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 			local ISUSER=$( (sudo id -u "$CFG_DOCKER_INSTALL_USER"))
@@ -216,7 +216,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_CRONTAB == "true" ]]; then
 		### Crontab
-		if [[ "$ISCRON" != *"command not found"* ]] && sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
+		if [[ "$ISCRON" != *"command not found"* ]] && sudo -u $sudo_user_name crontab -l 2>/dev/null | grep -q "cron is set up for $sudo_user_name"; then
 			isSuccessful "Crontab is successfully set up."
 		else
 			isNotice "Crontab not installed. Setup will start soon."

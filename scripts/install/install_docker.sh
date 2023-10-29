@@ -11,13 +11,13 @@ installDocker()
             checkSuccess "Downloading & Installing Docker"
 
             if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-                local result=$(sudo -u $easydockeruser systemctl start docker)
+                local result=$(sudo -u $sudo_user_name systemctl start docker)
                 checkSuccess "Starting Docker Service"
 
-                local result=$(sudo -u $easydockeruser systemctl enable docker)
+                local result=$(sudo -u $sudo_user_name systemctl enable docker)
                 checkSuccess "Enabling Docker Service"
 
-                local result=$(sudo -u $easydockeruser usermod -aG docker $USER)
+                local result=$(sudo -u $sudo_user_name usermod -aG docker $USER)
                 checkSuccess "Adding user to 'docker' group"
             fi
         fi
@@ -62,7 +62,7 @@ installDockerCompose()
         ######################################
 
         if [[ "$OS" == "4" ]]; then
-            sudo -u $easydockeruser pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
+            sudo -u $sudo_user_name pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
         fi
 
         echo ""
@@ -149,11 +149,11 @@ installDockerCheck()
     #### Test if Docker Service is Running ###
     ##########################################
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        ISACT=$( (sudo -u $easydockeruser systemctl is-active docker ) 2>&1 )
+        ISACT=$( (sudo -u $sudo_user_name systemctl is-active docker ) 2>&1 )
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Checking Docker service status. Waiting if not found."
             while [[ "$ISACT" != "active" ]] && [[ $X -le 10 ]]; do
-                sudo -u $easydockeruser systemctl start docker | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                sudo -u $sudo_user_name systemctl start docker | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
                 sleep 10s &
                 pid=$! # Process Id of the previous running command
                 spin='-\|/'
@@ -165,7 +165,7 @@ installDockerCheck()
                     sleep .1
                 done
                 printf "\r"
-                ISACT=`sudo -u $easydockeruser systemctl is-active docker`
+                ISACT=`sudo -u $sudo_user_name systemctl is-active docker`
                 let X=X+1
                 echo "$X"
             done
@@ -235,8 +235,8 @@ installDockerRootless()
                 else
                     local result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
                     checkSuccess "Adding kernel.unprivileged_userns_clone=1 to $sysctl..."
-                    local result=$(sudo -u $easydockeruser sysctl --system)
-                    checkSuccess "Running sudo -u $easydockeruser sysctl --system..."
+                    local result=$(sudo -u $sudo_user_name sysctl --system)
+                    checkSuccess "Running sudo -u $sudo_user_name sysctl --system..."
                 fi
             fi
 

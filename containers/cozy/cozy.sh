@@ -74,10 +74,10 @@ installCozy()
         echo "---- $menu_number. Pulling from $app_name GitHub."
         echo ""
 
-		local result=$(sudo -u $easydockeruser git clone https://github.com/vsellier/easy-cozy.git $containers_dir/$app_name)
+		local result=$(sudo -u $sudo_user_name git clone https://github.com/vsellier/easy-cozy.git $containers_dir/$app_name)
 		checkSuccess "Cloning the Easy-Cozy from GitHub"
 		
-		local result=$(copyFile $containers_dir/$app_name/env.template $containers_dir/$app_name/.env | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		local result=$(copyFile $containers_dir/$app_name/env.template $containers_dir/$app_name/.env $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Coping .env template into .env for usage"
 
 		local result=$(sudo sed -i "s|DATAdocker_dirECTORY=/var/lib/cozy/db|DATAdocker_dirECTORY=$containers_dir/$app_name/db|g" $containers_dir/$app_name/.env)
@@ -98,7 +98,7 @@ installCozy()
 		local result=$(sudo sed -i "s|COZY_ADMIN_PASSPHRASE=changeme|COZY_ADMIN_PASSPHRASE=$CFG_COZY_ADMIN_PASSPHRASE|g" $containers_dir/$app_name/.env)
 		checkSuccess "Update the Admin Passphrase to the specified password in the apps config"
 		
-		local result=$(mkdirFolders $containers_dir/$app_name/db $containers_dir/$app_name/storage)
+		local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir/$app_name/db $containers_dir/$app_name/storage)
 		checkSuccess "Creating db and storage folders"
 
         setupComposeFile $app_name;
@@ -132,11 +132,11 @@ installCozy()
         echo ""
 
 		# Setting up a single instance of Cozy
-		local result=$(cd $containers_dir/$app_name && sudo -u $easydockeruser ./create-instance.sh $cozy_user_1)
+		local result=$(cd $containers_dir/$app_name && sudo -u $sudo_user_name ./create-instance.sh $cozy_user_1)
 		checkSuccess "Creating instance of $app_name for $cozy_user_1"
 
 		if [[ "$cozy_user_1_apps_enabled" == true ]]; then
-			local result=$(sudo -u $easydockeruser ./application.sh $cozy_user_1 $cozy_user_1_apps)
+			local result=$(sudo -u $sudo_user_name ./application.sh $cozy_user_1 $cozy_user_1_apps)
 			checkSuccess "Setting up applications for $app_name for $cozy_user_1"
 		fi
 

@@ -51,9 +51,9 @@ setupConfigToContainer()
         fi
     else
         if [ -z "$silent_flag" ]; then
-            mkdirFolders "$target_path"
+            mkdirFolders "$CFG_DOCKER_INSTALL_USER" "$target_path"
         else
-            mkdirFolders "$silent_flag" "$target_path"
+            mkdirFolders "$CFG_DOCKER_INSTALL_USER" "$silent_flag" "$target_path"
         fi
     fi
 
@@ -65,9 +65,9 @@ setupConfigToContainer()
     if [ ! -f "$target_path/$config_file" ]; then
         if [ -z "$silent_flag" ]; then
             isNotice "Copying config file to '$target_path/$config_file'..."
-            copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
         else
-            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
     fi
 
@@ -120,7 +120,7 @@ setupConfigToContainer()
                     case $resetconfigaccept in
                         [yY])
                             isNotice "Resetting $app_name config file."
-                            copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+                            copyFile "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
                             source $target_path/$config_file
                             setupConfigToContainer $app_name;
                             break
@@ -136,7 +136,7 @@ setupConfigToContainer()
             fi
         else
             isNotice "Config file for $app_name does not exist. Creating it..."
-            copyFile "$source_file" "$target_path/$config_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
             echo ""
             isNotice "Config file for $app_name contains no edits."
             echo ""
@@ -296,7 +296,7 @@ setupComposeFile()
         return 1
     fi
     
-    copyFile "$source_file" "$target_path/$compose_file" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "$source_file" "$target_path/$compose_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
@@ -331,7 +331,7 @@ dockerDown()
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            local result=$(sudo -u $easydockeruser docker-compose $setup_compose down)
+            local result=$(sudo -u $sudo_user_name docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     else
@@ -339,7 +339,7 @@ dockerDown()
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            local result=$(sudo -u $easydockeruser docker-compose $setup_compose down)
+            local result=$(sudo -u $sudo_user_name docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     fi
@@ -366,7 +366,7 @@ dockerUp()
             checkSuccess "Started container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(sudo -u $easydockeruser docker-compose up -d)
+            local result=$(sudo -u $sudo_user_name docker-compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     else
@@ -376,7 +376,7 @@ dockerUp()
             checkSuccess "Started container for $app_name"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(sudo -u $easydockeruser docker-compose $setup_compose up -d)
+            local result=$(sudo -u $sudo_user_name docker-compose $setup_compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     fi
@@ -497,7 +497,7 @@ setupTraefikLabels()
         fi
     fi
 
-    copyFile --silent "$temp_file" "$compose_file" overwrite
+    copyFile --silent "$temp_file" "$compose_file" $CFG_DOCKER_INSTALL_USER overwrite
     sudo rm "$temp_file"
 
     local indentation="      "
@@ -530,7 +530,7 @@ scanFileForRandomPassword()
 
 setupEnvFile()
 {
-    local result=$(copyFile $containers_dir$app_name/env.example $containers_dir$app_name/.env)
+    local result=$(copyFile $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Setting up .env file to path"
 }
 
@@ -541,7 +541,7 @@ dockerStopAllApps()
         local result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
         checkSuccess "Stopping all docker containers"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        local result=$(sudo -u $easydockeruser docker stop $(docker ps -a -q))
+        local result=$(sudo -u $sudo_user_name docker stop $(docker ps -a -q))
         checkSuccess "Stopping all docker containers"
     fi
 }
@@ -553,7 +553,7 @@ dockerStartAllApps()
         local result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-        local result=$(sudo -u $easydockeruser docker restart $(docker ps -a -q))
+        local result=$(sudo -u $sudo_user_name docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
 }

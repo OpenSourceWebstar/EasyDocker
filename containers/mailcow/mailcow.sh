@@ -111,7 +111,7 @@ installMailcow()
 			# Clone the Git repository
 			local result=$(sudo rm -rf "$mailcow_source_dir")
 			checkSuccess "Deleting mailcow directory git."
-			local result=$(sudo -u $easydockeruser git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $easydockeruser git config --global --add safe.directory $containers_dir$app_name)
+			local result=$(sudo -u $sudo_user_name git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $sudo_user_name git config --global --add safe.directory $containers_dir$app_name)
 			checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 			# Restore the backup content
 			if [ -d "$mailcow_backup_dir" ]; then
@@ -146,14 +146,11 @@ installMailcow()
         echo "---- $menu_number. Pulling a $app_name docker-compose.yml file."
         echo ""
 
-		local result=$(copyFile $install_containers_dir$app_name/docker-compose.yml $containers_dir$app_name/docker-compose.$app_name.yml | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
-		checkSuccess "Copying docker-compose.$app_name.yml to the $app_name folder"
-
         setupComposeFile $app_name;
 		
 		if [[ "$using_caddy" == "true" ]]; then
 			# Setup SSL Transfer scripts
-			local result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $containers_dir$app_name/caddy-to-mailcow-ssl.sh | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $containers_dir$app_name/caddy-to-mailcow-ssl.sh $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
 			
 			local result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $containers_dir$app_name/caddy-to-mailcow-ssl.sh)
@@ -161,10 +158,10 @@ installMailcow()
 			
 			# Setup crontab
 			job="0 * * * * /bin/bash $containers_dir$app_name/caddy-to-mailcow-ssl.sh"
-			if ( sudo -u $easydockeruser crontab -l | grep -q -F "$job" ); then
+			if ( sudo -u $sudo_user_name crontab -l | grep -q -F "$job" ); then
 				isNotice "Cron job already exists, ignoring..."
 			else
-			( sudo -u $easydockeruser crontab -l ; echo "$job" ) | sudo -u $easydockeruser crontab -
+			( sudo -u $sudo_user_name crontab -l ; echo "$job" ) | sudo -u $sudo_user_name crontab -
 				isSuccessful "Cron job added successfully!"
 			fi
 		fi

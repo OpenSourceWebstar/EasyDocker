@@ -14,7 +14,7 @@ function checkSuccess()
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}SUCCESS:${NC} $1"
         if [ -f "$logs_dir/$docker_log_file" ]; then
-            echo "SUCCESS: $1" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" >/dev/null
+            echo "SUCCESS: $1" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" >/dev/null
         fi
     else
         echo -e "${RED}ERROR:${NC} $1"
@@ -34,15 +34,15 @@ function checkSuccess()
         
         if [[ "$error_occurred" == [xX] ]]; then
             # Log the error output to the log file
-            echo "ERROR: $1" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
-            echo "===================================" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
+            echo "ERROR: $1" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file"
+            echo "===================================" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file"
             exit 1  # Exit the script with a non-zero status to stop the current action
         fi
         
         if [[ "$error_occurred" == [mM] ]]; then
             # Log the error output to the log file
-            echo "ERROR: $1" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
-            echo "===================================" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file"
+            echo "ERROR: $1" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file"
+            echo "===================================" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file"
             resetToMenu
         fi
     fi

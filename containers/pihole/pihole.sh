@@ -107,7 +107,7 @@ installPihole()
                     checkSuccess "Updating DNS in resolved.conf"
 
                     # Restarting systemd-resolved to apply changes
-                    local result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
+                    local result=$(sudo -u $sudo_user_name systemctl restart systemd-resolved)
                     checkSuccess "Restarting systemd-resolved"
                 fi
                 # Debian 12

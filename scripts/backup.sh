@@ -138,14 +138,14 @@ backupZipFile()
     fi
 
     isNotice "The new Backup file will be named : ${backup_file_name}.zip"
-    local result=$(mkdirFolders $backup_save_directory)
+    local result=$(mkdirFolders "loud" $sudo_user_name $backup_save_directory)
     checkSuccess "Creating Backup folder in case it doesn't exist"
     isNotice "Starting Compression, this may take a while"
     if [ "$app_name" == "full" ]; then
         # Create a temporary directory
         local temp_dir=$(mktemp -d)
 
-        local result=$(mkdirFolders "$temp_dir/$(basename "$docker_dir")")
+        local result=$(mkdirFolders "loud" $sudo_user_name "$temp_dir/$(basename "$docker_dir")")
         checkSuccess "Create the $docker_dir inside the temporary directory"
 
         local result=$(cd $docker_dir && sudo cp -r --parents database.db containers/ ssl/ install/configs/ "$temp_dir/$(basename "$docker_dir")")
@@ -318,7 +318,7 @@ backupFindLatestFile()
 
     if [ "$app_name" == "full" ]; then
         cd $backup_save_directory
-        local latest_backup_file=$(sudo -u $easydockeruser ls -t *"$backupDate.zip" | head -n 1)
+        local latest_backup_file=$(sudo -u $sudo_user_name ls -t *"$backupDate.zip" | head -n 1)
         isNotice "Latest backup found file: $latest_backup_file"
         if [ -z "$latest_backup_file" ]; then
             isNotice "No backup files found for $app_name on $backupDate."
@@ -361,7 +361,7 @@ backupTransferFile()
         if [ "$CFG_BACKUP_REMOTE_1_TYPE" == "SSH" ]; then
             if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP" true; then
                 checkSuccess "SSH connection to $CFG_BACKUP_REMOTE_1_IP is established."
-                local result=$(sudo -u $easydockeruser scp -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$backup_location_clean")
+                local result=$(sudo -u $sudo_user_name scp -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$backup_location_clean")
                 checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
             else
                 checkSuccess "Unable to connect to SSH for $CFG_BACKUP_REMOTE_1_IP"
@@ -370,7 +370,7 @@ backupTransferFile()
             if sshRemote "$CFG_BACKUP_REMOTE_1_PASS" $CFG_BACKUP_REMOTE_1_PORT "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP" "mkdir -p \"$backup_location_clean\""; then
                 isSuccessful "Creating remote folders"
                 isNotice "Transfer of $app_name to $CFG_BACKUP_REMOTE_1_IP. Please wait... it may take a while..."
-                if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP:$backup_location_clean"; then
+                if sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_1_USER@$CFG_BACKUP_REMOTE_1_IP:$backup_location_clean"; then
                     isSuccessful "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_1_IP"
                 else
                     isError "SCP failed to upload file to $backup_location_clean"
@@ -386,7 +386,7 @@ backupTransferFile()
         if [ "$CFG_BACKUP_REMOTE_2_TYPE" == "SSH" ]; then
             if ssh -o ConnectTimeout=10 "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP" true; then
                 checkSuccess "SSH connection to $CFG_BACKUP_REMOTE_2_IP is established."
-                local result=$(sudo -u $easydockeruser scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$backup_location_clean")
+                local result=$(sudo -u $sudo_user_name scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$backup_location_clean")
                 checkSuccess "Transfering $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
             else
                 checkSuccess "Unable to connect to SSH for $CFG_BACKUP_REMOTE_2_IP"
@@ -395,7 +395,7 @@ backupTransferFile()
             if sshRemote "$CFG_BACKUP_REMOTE_2_PASS" $CFG_BACKUP_REMOTE_2_PORT "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP" "mkdir -p \"$backup_location_clean\""; then
                 isSuccessful "Creating remote folders"
                 isNotice "Transfer of $app_name to $CFG_BACKUP_REMOTE_2_IP. Please wait... it may take a while..."
-                if sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP:$backup_location_clean"; then
+                if sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$latest_backup_file" "$CFG_BACKUP_REMOTE_2_USER@$CFG_BACKUP_REMOTE_2_IP:$backup_location_clean"; then
                     isSuccessful "Transferring $app_name backup to Remote Backup Host - $CFG_BACKUP_REMOTE_2_IP"
                 else
                     isError "SCP failed to upload file to $backup_location_clean"

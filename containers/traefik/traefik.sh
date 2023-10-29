@@ -71,7 +71,7 @@ installTraefik()
         setupComposeFile $app_name;
 		
         # Create necessary directories and set permissions
-        local result=$(mkdirFolders "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs")
+        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs")
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
         # Create and secure the acme.json file

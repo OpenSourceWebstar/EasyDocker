@@ -70,7 +70,7 @@ installAdguard()
 
         setupComposeFile $app_name;
 
-		local result=$(copyResource "$app_name" "unbound.conf" "unbound.conf" | sudo -u $easydockeruser tee -a "$logs_dir/$docker_log_file" 2>&1)
+		local result=$(copyResource "$app_name" "unbound.conf" "unbound.conf" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
 
 		((menu_number++))
@@ -110,7 +110,7 @@ installAdguard()
                     checkSuccess "Updating DNS in resolved.conf"
 
                     # Restarting systemd-resolved to apply changes
-                    local result=$(sudo -u $easydockeruser systemctl restart systemd-resolved)
+                    local result=$(sudo -u $sudo_user_name systemctl restart systemd-resolved)
                     checkSuccess "Restarting systemd-resolved"
                 fi
                 # Debian 12

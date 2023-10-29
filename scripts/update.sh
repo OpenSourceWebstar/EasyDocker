@@ -27,10 +27,10 @@ checkUpdates()
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
 		# Update Git to ignore changes in file permissions
-		sudo -u $easydockeruser git config core.fileMode false
+		sudo -u $sudo_user_name git config core.fileMode false
 		# Update Git with email address
-		sudo -u $easydockeruser git config --global user.name "$CFG_INSTALL_NAME"
-		sudo -u $easydockeruser git config --global user.email "$CFG_EMAIL"
+		sudo -u $sudo_user_name git config --global user.name "$CFG_INSTALL_NAME"
+		sudo -u $sudo_user_name git config --global user.email "$CFG_EMAIL"
 
         # Check if there are edited (modified) files
         if git status --porcelain | grep -q "^ M"; then
@@ -94,9 +94,7 @@ gitCheckEasyDockerConfigFilesExist()
         local file_path="$install_configs_dir$file"
         if [ -f "$file_path" ]; then
             if [ ! -f "$configs_dir$file" ]; then
-                copyFile --silent "$file_path" "$configs_dir$file"
-            #else
-                #isNotice "Config File $file already exists in $configs_dir. Skipping."
+                copyFile --silent "$file_path" "$configs_dir$file" "$sudo_user_name"
             fi
             ((file_found_count++))
         else
@@ -212,10 +210,10 @@ gitCheckForUpdate()
 {
     # Check the status of the local repository
     cd "$script_dir"
-    sudo -u $easydockeruser git fetch > /dev/null 2>&1
-    if sudo -u $easydockeruser git status | grep -q "Your branch is ahead"; then
+    sudo -u $sudo_user_name git fetch > /dev/null 2>&1
+    if sudo -u $sudo_user_name git status | grep -q "Your branch is ahead"; then
         isSuccessful "The repository is up to date...continuing..."
-    elif sudo -u $easydockeruser git status | grep -q "Your branch is up to date with"; then
+    elif sudo -u $sudo_user_name git status | grep -q "Your branch is up to date with"; then
         isSuccessful "The repository is up to date...continuing..."
     else
         isNotice "Updates found."
@@ -249,7 +247,7 @@ gitUseExistingBackup()
 
     gitReset;
     
-    local result=$(copyFolders "$backup_install_dir$backup_install_dir/$backup_file_without_zip/" "$docker_dir")
+    local result=$(copyFolders "$backup_install_dir$backup_install_dir/$backup_file_without_zip/" "$docker_dir" "$sudo_user_name")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
     gitCleanInstallBackups;
@@ -276,23 +274,23 @@ gitFolderResetAndBackup()
     update_done=false
 
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
-        local result=$(mkdirFolders "$backup_install_dir/$backupFolder")
+        local result=$(mkdirFolders "loud" $sudo_user_name "$backup_install_dir/$backupFolder")
         checkSuccess "Create the backup folder"
     fi
     local result=$(cd $backup_install_dir)
     checkSuccess "Going into the backup install folder"
 
-    local result=$(copyFolder "$configs_dir" "$backup_install_dir/$backupFolder")
+    local result=$(copyFolder "$configs_dir" "$backup_install_dir/$backupFolder" "$sudo_user_name")
     checkSuccess "Copy the configs to the backup folder"
-    local result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder")
+    local result=$(copyFolder "$logs_dir" "$backup_install_dir/$backupFolder" "$sudo_user_name")
     checkSuccess "Copy the logs to the backup folder"
     
     gitReset;
     
-    local result=$(copyFolders "$backup_install_dir/$backupFolder/" "$docker_dir")
+    local result=$(copyFolders "$backup_install_dir/$backupFolder/" "$docker_dir" "$sudo_user_name")
     checkSuccess "Copy the backed up folders back into the installation directory"
 
-    local result=$(sudo -u $easydockeruser zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
+    local result=$(sudo -u $sudo_user_name zip -r "$backup_install_dir/$backupFolder.zip" "$backup_install_dir/$backupFolder")
     checkSuccess "Zipping up the the backup folder for safe keeping"
 
     gitCleanInstallBackups;
@@ -314,20 +312,20 @@ gitUntrackFiles()
     cd $script_dir
     sudo git config core.fileMode false
     isSuccessful "Removing configs and logs from git for git changes"
-    local result=$(sudo -u $easydockeruser git commit -m "Stop tracking ignored files")
+    local result=$(sudo -u $sudo_user_name git commit -m "Stop tracking ignored files")
     checkSuccess "Removing tracking ignored files"
 }
 
 gitReset()
 {
     # Reset git
-    local result=$(sudo -u $easydockeruser rm -rf $script_dir)
+    local result=$(sudo -u $sudo_user_name rm -rf $script_dir)
     checkSuccess "Deleting all Git files"
-    local result=$(mkdirFolders "$script_dir")
+    local result=$(mkdirFolders "loud" $sudo_user_name "$script_dir")
     checkSuccess "Create the directory if it doesn't exist"
     cd "$script_dir"
     checkSuccess "Going into the install folder"
-    local result=$(sudo -u $easydockeruser git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
+    local result=$(sudo -u $sudo_user_name git clone "$repo_url" "$script_dir" > /dev/null 2>&1)
     checkSuccess "Clone the Git repository"
 }
 

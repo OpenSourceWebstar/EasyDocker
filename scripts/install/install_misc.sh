@@ -9,22 +9,22 @@ installSwapfile()
             echo "######       Increasing Swapfile      ######"
             echo "############################################"
             echo ""
-            ISSWAP=$( (sudo -u $easydockeruser swapoff /swapfile) 2>&1 )
+            ISSWAP=$( (sudo -u $sudo_user_name swapoff /swapfile) 2>&1 )
             if [[ "$ISSWAP" != *"No such file or directory"* ]]; then
-                local result=$(sudo -u $easydockeruser swapoff /swapfile)
+                local result=$(sudo -u $sudo_user_name swapoff /swapfile)
                 isSuccessful "Turning off /swapfile (if needed)"
             fi
 
-            local result=$(sudo -u $easydockeruser fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
+            local result=$(sudo -u $sudo_user_name fallocate -l $CFG_SWAPFILE_SIZE /swapfile)
             checkSuccess "Allocating $CFG_SWAPFILE_SIZE to the /swapfile"
             
             local result=$(sudo chmod 0600 /swapfile)
             checkSuccess "Adding permissions to the /swapfile"
 
-            local result=$(sudo -u $easydockeruser mkswap /swapfile)
+            local result=$(sudo -u $sudo_user_name mkswap /swapfile)
             checkSuccess "Swapping to the new /swapfile"
 
-            local result=$(sudo -u $easydockeruser swapon /swapfile)
+            local result=$(sudo -u $sudo_user_name swapon /swapfile)
             checkSuccess "Enabling the new /swapfile"
         fi
     fi
@@ -105,16 +105,16 @@ installCrontab()
             checkSuccess "Updating apt for post installation"
             local result=$(sudo apt install cron -y)
             isSuccessful "Installing crontab application"
-            local result=$(sudo -u $easydockeruser crontab -l)
+            local result=$(sudo -u $sudo_user_name crontab -l)
             isSuccessful "Enabling crontab on the system"
         fi
 
-        search_line="# cron is set up for $easydockeruser"
-        cron_output=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
+        search_line="# cron is set up for $sudo_user_name"
+        cron_output=$(sudo -u $sudo_user_name crontab -l 2>/dev/null)
 
         if [[ ! $cron_output == *"$search_line"* ]]; then
-            local result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "# cron is set up for $easydockeruser") | sudo -u $easydockeruser crontab - 2>/dev/null )
-            checkSuccess "Setting up crontab for $easydockeruser user"
+            local result=$( (sudo -u $sudo_user_name crontab -l 2>/dev/null; echo "# cron is set up for $sudo_user_name") | sudo -u $sudo_user_name crontab - 2>/dev/null )
+            checkSuccess "Setting up crontab for $sudo_user_name user"
         fi
 
         export VISUAL=nano
@@ -127,7 +127,7 @@ installCrontab()
 # Function to remove all crontab data
 deleteCrontab() 
 {
-    echo "" | sudo -u $easydockeruser crontab -
+    echo "" | sudo -u $sudo_user_name crontab -
     echo "All crontab data has been deleted."
 }
 
@@ -135,7 +135,7 @@ removeBackupCrontabApp()
 {
     local name="$1"
     # Remove the crontab entry for the specified application
-    sudo -u $easydockeruser crontab -l | grep -v "$name" | sudo -u $easydockeruser crontab -
+    sudo -u $sudo_user_name crontab -l | grep -v "$name" | sudo -u $sudo_user_name crontab -
     isSuccessful "Automatic backups for $name have been removed."
 }
 
@@ -144,7 +144,7 @@ removeBackupCrontabAppFolderRemoved()
     local name="$1"
 
     # Check if the crontab entry exists for the specified application
-    if sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+    if sudo -u $sudo_user_name crontab -l | grep -q "$name"; then
         echo ""
         isNotice "Application $name is no longer installed."
         while true; do
@@ -175,7 +175,7 @@ checkBackupCrontabApp()
 
     # Check if the configuration variable is set to true
     if [[ -n "${!config_variable}" && "${!config_variable}" == "true" ]]; then
-        if ! sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+        if ! sudo -u $sudo_user_name crontab -l | grep -q "$name"; then
             echo ""
             isNotice "Automatic Backups for $name are not set up."
             while true; do
@@ -217,7 +217,7 @@ checkBackupCrontabApp()
             fi
         fi
     elif [[ -n "${!config_variable}" && "${!config_variable}" == "false" ]]; then
-        if sudo -u $easydockeruser crontab -l | grep -q "$name"; then
+        if sudo -u $sudo_user_name crontab -l | grep -q "$name"; then
             echo ""
             isNotice "Automatic Backups for $name are set up but disabled in the configs."
             while true; do
@@ -241,10 +241,10 @@ installCrontabSSHScan()
     local cron_job="*/5 * * * * cd /docker/install/ && chmod 0775 crontab.sh && ./crontab.sh sshscan"
 
     # Check if the cron job does not exist in the user's crontab
-    if ! sudo -u $easydockeruser crontab -l | grep -qF "$cron_job"; then
-        local result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$marker") | sudo -u $easydockeruser crontab - )
+    if ! sudo -u $sudo_user_name crontab -l | grep -qF "$cron_job"; then
+        local result=$( (sudo -u $sudo_user_name crontab -l 2>/dev/null; echo "$marker") | sudo -u $sudo_user_name crontab - )
         checkSuccess "Add the SSHScan marker to the crontab"
-        local result=$( (sudo -u $easydockeruser crontab -l 2>/dev/null; echo "$cron_job") | sudo -u $easydockeruser crontab - )
+        local result=$( (sudo -u $sudo_user_name crontab -l 2>/dev/null; echo "$cron_job") | sudo -u $sudo_user_name crontab - )
         checkSuccess "Adding SSH Scaning to the Crontab"
     else
         isNotice "Cron job for SSH scan already exists. Skipping insertion."
@@ -263,7 +263,7 @@ installSetupCrontab()
     echo ""
 
     # Check to see if already instealled
-    if ! sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
+    if ! sudo -u $sudo_user_name crontab -l 2>/dev/null | grep -q "cron is set up for $sudo_user_name"; then
         isError "Crontab is not setup"
         return
     fi
@@ -276,7 +276,7 @@ installSetupCrontab()
 
     local apps_comment="# CRONTAB BACKUP APPS"
     local full_comment="# CRONTAB BACKUP FULL"
-    local existing_crontab=$(sudo -u $easydockeruser crontab -l 2>/dev/null)
+    local existing_crontab=$(sudo -u $sudo_user_name crontab -l 2>/dev/null)
     
 
     if ! echo "$existing_crontab" | grep -q "$full_comment"; then
@@ -299,7 +299,7 @@ $crontab_entry")
         checkSuccess "Insert the non-full entry after the apps comment"
     fi
 
-    local result=$(echo "$existing_crontab" | sudo -u $easydockeruser crontab -)
+    local result=$(echo "$existing_crontab" | sudo -u $sudo_user_name crontab -)
     checkSuccess "Set the updated crontab"
     
     crontab_full_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
@@ -312,7 +312,7 @@ $crontab_entry")
 installSetupCrontabTiming() 
 {
     local entry_name=$1
-    ISCRON=$( (sudo -u $easydockeruser crontab -l) 2>&1 )
+    ISCRON=$( (sudo -u $sudo_user_name crontab -l) 2>&1 )
 
     # Check to see if installed
     if [[ "$ISCRON" == *"command not found"* ]]; then
@@ -321,7 +321,7 @@ installSetupCrontabTiming()
     fi
 
     # Check to see if already setup
-    if ! sudo -u $easydockeruser crontab -l 2>/dev/null | grep -q "cron is set up for $easydockeruser"; then
+    if ! sudo -u $sudo_user_name crontab -l 2>/dev/null | grep -q "cron is set up for $sudo_user_name"; then
         isError "Crontab is not setup"
         return 1
     fi
@@ -351,7 +351,7 @@ installSetupCrontabTiming()
     new_minute_value=$((id * $CFG_BACKUP_CRONTAB_APP_INTERVAL))
 
     # Step 2: Locate the existing crontab entry in the crontab file
-    crontab_entry_to_update=$(sudo -u $easydockeruser crontab -l | grep "$entry_name")
+    crontab_entry_to_update=$(sudo -u $sudo_user_name crontab -l | grep "$entry_name")
 
     # Check if the entry exists in the crontab
     if [[ -z "$crontab_entry_to_update" ]]; then
@@ -367,9 +367,9 @@ installSetupCrontabTiming()
     # Assuming CFG_BACKUP_CRONTAB_APP is set to "0 5 * * *"
     crontab_app_value=$(echo "$CFG_BACKUP_CRONTAB_APP" | cut -d' ' -f2)
 
-    local result=$(sudo -u $easydockeruser crontab -l | grep -v "$entry_name" | sudo -u $easydockeruser crontab - )
+    local result=$(sudo -u $sudo_user_name crontab -l | grep -v "$entry_name" | sudo -u $sudo_user_name crontab - )
     checkSuccess "Remove the existing crontab entry"
-    local result=$( (sudo -u $easydockeruser crontab -l; echo "$updated_crontab_entry") | sudo -u $easydockeruser crontab - )
+    local result=$( (sudo -u $sudo_user_name crontab -l; echo "$updated_crontab_entry") | sudo -u $sudo_user_name crontab - )
     checkSuccess "Add the updated crontab entry"
 
     isSuccessful "Crontab entry for '$entry_name' updated successfully."
@@ -393,7 +393,7 @@ installSQLiteDatabase()
                     local result=$(sudo touch $docker_dir/$db_file)
                     checkSuccess "Creating SQLite $db_file file"
 
-                    local result=$(sudo chmod 755 $docker_dir/$db_file && sudo chown $easydockeruser $docker_dir/$db_file)
+                    local result=$(sudo chmod 755 $docker_dir/$db_file && sudo chown $sudo_user_name $docker_dir/$db_file)
                     checkSuccess "Changing permissions for SQLite $db_file file"
                 fi
 

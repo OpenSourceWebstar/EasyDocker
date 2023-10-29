@@ -99,13 +99,13 @@ installTiledesk()
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-				local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
+				local result=$(sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
-					local result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					local result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					checkSuccess "Starting public docker-compose.$app_name.yml"
 				else
-					local result=$(sudo -u $easydockeruser docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
+					local result=$(sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			fi

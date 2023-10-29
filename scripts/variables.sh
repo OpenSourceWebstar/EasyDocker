@@ -2,8 +2,6 @@
 trap exitScript SIGINT
 # Directories are contained in init.sh
 
-easydockeruser=easydocker
-
 # Define text colors
 GREEN='\033[0;32m'
 RED='\033[0;31m'

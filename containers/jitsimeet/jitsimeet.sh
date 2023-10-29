@@ -72,7 +72,7 @@ installJitsimeet()
 		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $git_url | cut -d/ -f3- | tail -n1)
 		echo "The latest tag is: $latest_tag"
 
-		local result=$(mkdirFolders $containers_dir$app_name)
+		local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name)
 		checkSuccess "Creating $app_name container installation folder"
 		local result=$(cd $containers_dir$app_name && sudo rm -rf $containers_dir$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"

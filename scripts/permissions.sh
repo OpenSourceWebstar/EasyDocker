@@ -38,19 +38,19 @@ fixFolderPermissions()
         local result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
         checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
 
-        local result=$(sudo find "$containers_dir" "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
-        checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
-
-        # Install user
-        local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
-
         local result=$(sudo chmod +x "$docker_dir" > /dev/null 2>&1)
         checkSuccess "Updating $docker_dir with execute permissions."
 
+        local result=$(sudo find "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
+        checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+
+        # Install user
+        #local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
+        #checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
+
         # Update permissions after
-        local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
-        checkSuccess "Updating $containers_dir with $sudo_user_name read permissions" 
+        #local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
+        #checkSuccess "Updating $containers_dir with $sudo_user_name read permissions" 
     fi
 }
 
@@ -89,20 +89,20 @@ fixPermissionsBeforeStart()
 
     # Prometheus
     if [ -f "${containers_dir}prometheus/prometheus/prometheus.yml" ]; then
-        updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
+        #updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
     fi
     if [ -d "${containers_dir}prometheus/prometheus" ]; then
-        local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")
+        #local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")
         checkSuccess "Set permissions to prometheus folder."
     fi
     if [ -d "${containers_dir}prometheus/prom_data" ]; then
-        local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prom_data")
+       # local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prom_data")
         checkSuccess "Set permissions to prom_data folder."
     fi
 
     # Grafana
     if [ -d "${containers_dir}grafana/grafana_storage" ]; then
-        local result=$(sudo chmod -R 777 "${containers_dir}grafana/grafana_storage")
+        #local result=$(sudo chmod -R 777 "${containers_dir}grafana/grafana_storage")
         checkSuccess "Set permissions to grafana_storage folder."
     fi
 }
@@ -165,13 +165,10 @@ changeRootOwnedFile()
 
 mkdirFolders() 
 {
-    local silent_flag=""
-    if [ "$1" == "--silent" ]; then
-        silent_flag="$1"
-        shift  # Remove the first parameter (the silence flag)
-    fi
+    local silent_flag="$1"
+    local user_name="$2"
 
-    for dir_path in "$@"; do
+    for dir_path in "${@:3}"; do
         local folder_name=$(basename "$dir_path")
         local clean_dir=$(echo "$dir_path" | sed 's#//*#/#g')
 
@@ -179,20 +176,14 @@ mkdirFolders()
         if [ -z "$silent_flag" ]; then
             checkSuccess "Creating $folder_name directory"
         fi
-        
-        if [[ $clean_dir == *"$containers_dir"* ]]; then
-            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$dir_path")
-            if [ -z "$silent_flag" ]; then
-                checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
-            fi
-        else
-            local result=$(sudo chown $easydockeruser:$easydockeruser "$dir_path")
-            if [ -z "$silent_flag" ]; then
-                checkSuccess "Updating $folder_name with $easydockeruser ownership"
-            fi
+
+        local result=$(sudo chown $user_name:$user_name "$dir_path")
+        if [ "$silent_flag" == "silent" ]; then
+            checkSuccess "Updating $folder_name with $user_name ownership"
         fi
     done
 }
+
 
 backupContainerFilesToTemp() 
 {
@@ -201,7 +192,7 @@ backupContainerFilesToTemp()
 
     temp_backup_folder="temp_$(date +%Y%m%d%H%M%S)_$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 6)"
 
-    local result=$(mkdirFolders "$temp_backup_folder")
+    local result=$(mkdirFolders "loud" $sudo_user_name "$temp_backup_folder")
     checkSuccess "Creating temp folder for backing up purposes."
 
     if [[ $compose_setup == "default" ]]; then
@@ -215,7 +206,7 @@ backupContainerFilesToTemp()
     for source_filename in "${source_filenames[@]}"; do
         source_file="$source_folder/$source_filename"
         target_file="$source_file"
-        if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
+        if [ -f "$source_file" ]; then
             moveFile "$source_file" "$target_file"
             checkSuccess "Moving $source_filename to $temp_backup_folder"
         fi
@@ -228,7 +219,7 @@ backupContainerFilesRestore()
     local source_folder="$containers_dir$app_name"
 
     if [ -d "$temp_backup_folder" ]; then
-        local result=$(copyFiles "$temp_backup_folder" "$source_folder")
+        local result=$(copyFiles "$temp_backup_folder" "$source_folder" $CFG_DOCKER_INSTALL_USER)
         checkSuccess "Copying files from temp folder to $app_name folder."
         local result=$(rm -rf "$temp_backup_folder")
         checkSuccess "Removing temp folder as no longer needed."
@@ -240,24 +231,21 @@ copyFolder()
     local folder="$1"
     local folder_name=$(basename "$folder")
     local save_dir="$2"
+    local user_name="$3"
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     local result=$(sudo cp -rf "$folder" "$save_dir")
     checkSuccess "Coping $folder_name to $save_dir"
 
-    if [[ $clean_dir == *"$containers_dir"* ]]; then
-        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$folder_name")
-        checkSuccess "Updating $folder_name with $CFG_DOCKER_INSTALL_USER ownership"
-    else
-        local result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir/$folder_name")
-        checkSuccess "Updating $folder_name with $easydockeruser ownership"
-    fi
+    local result=$(sudo chown $user_name:$user_name "$save_dir/$folder_name")
+    checkSuccess "Updating $folder_name with $user_name ownership"
 }
 
 copyFolders() 
 {
     local source="$1"
     local save_dir="$2"
+    local user_name="$3"
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     # Ensure the source path is expanded to a list of subdirectories
@@ -274,19 +262,8 @@ copyFolders()
         local result=$(sudo cp -rf "$subdir" "$save_dir")
         checkSuccess "Copying $subdir_name to $save_dir"
 
-        if [[ $clean_dir == *"$containers_dir"* ]]; then
-            local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$subdir_name")
-            checkSuccess "Updating $subdir_name with $CFG_DOCKER_INSTALL_USER ownership"
-        elif [[ $clean_dir == *"$configs_dir"* ]]; then
-            local result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
-            checkSuccess "Updating $subdir_name with $easydockeruser ownership"
-        elif [[ $clean_dir == *"$logs_dir"* ]]; then
-            local result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
-            checkSuccess "Updating $subdir_name with $easydockeruser ownership"
-        else
-            local result=$(sudo chown -R $easydockeruser:$easydockeruser "$save_dir/$subdir_name")
-            checkSuccess "Updating $subdir_name with $easydockeruser ownership"
-        fi
+        local result=$(sudo chown -R $user_name:$user_name "$save_dir/$subdir_name")
+        checkSuccess "Updating $subdir_name with $user_name ownership"
     done
 }
 
@@ -323,7 +300,8 @@ copyFile()
     local save_dir="$2"
     local save_dir_file=$(basename "$save_dir")
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
-    local flags="$3"
+    local user_name="$3" 
+    local flags="$4"
 
     if [[ $flags == "overwrite" ]]; then
         flags_full="-f"
@@ -334,16 +312,9 @@ copyFile()
         checkSuccess "Copying $file_name to $save_dir"
     fi
 
-    if [[ $clean_dir == *"$containers_dir"* ]]; then
-        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
-        if [ -z "$silent_flag" ]; then
-            checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
-        fi
-    else
-        local result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
-        if [ -z "$silent_flag" ]; then
-            checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
-        fi
+    local result=$(sudo chown $user_name:$user_name "$save_dir")
+    if [ -z "$silent_flag" ]; then
+        checkSuccess "Updating $save_dir_file with $user_name ownership"
     fi
 }
 
@@ -357,6 +328,7 @@ copyFiles()
 
     local source="$1"
     local save_dir="$2"
+    local user_name="$3"
     local clean_dir=$(echo "$save_dir" | sed 's#//*#/#g')
 
     # Ensure the source path is expanded to a list of files
@@ -375,16 +347,9 @@ copyFiles()
             checkSuccess "Copying $file_name to $save_dir"
         fi
 
-        if [[ $clean_dir == *"$containers_dir"* ]]; then
-            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir/$file_name")
-            if [ -z "$silent_flag" ]; then
-                checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
-            fi
-        else
-            local result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir/$file_name")
-            if [ -z "$silent_flag" ]; then
-                checkSuccess "Updating $file_name with $easydockeruser ownership"
-            fi
+        local result=$(sudo chown $user_name:$user_name "$save_dir/$file_name")
+        if [ -z "$silent_flag" ]; then
+            checkSuccess "Updating $file_name with $user_name ownership"
         fi
     done
 }
@@ -392,6 +357,7 @@ copyFiles()
 createTouch() 
 {
     local file="$1"
+    local user_name="$2"
     local file_name=$(basename "$file")
     local file_dir=$(dirname "$file")
     local clean_dir=$(echo "$file" | sed 's#//*#/#g')
@@ -399,13 +365,8 @@ createTouch()
     local result=$(sudo touch "$clean_dir")
     checkSuccess "Touching $file_name to $file_dir"
 
-    if [[ $clean_dir == *"$containers_dir"* ]]; then
-        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
-        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
-    else
-        local result=$(sudo chown $easydockeruser:$easydockeruser "$file")
-        checkSuccess "Updating $file_name with $easydockeruser ownership"
-    fi
+    local result=$(sudo chown $user_name:$user_name "$file")
+    checkSuccess "Updating $file_name with $user_name ownership"
 }
 
 updateFileOwnership() 
@@ -415,13 +376,8 @@ updateFileOwnership()
     local clean_dir=$(echo "$file" | sed 's#//*#/#g')
     local user_name="$2"
 
-    if [[ $clean_dir == *"$containers_dir"* ]]; then
-        local result=$(sudo chown $user_name:$user_name "$file")
-        checkSuccess "Updating $file_name with $user_name ownership"
-    else
-        local result=$(sudo chown $easydockeruser:$easydockeruser "$file")
-        checkSuccess "Updating $file_name with $easydockeruser ownership"
-    fi
+    local result=$(sudo chown $user_name:$user_name "$file")
+    checkSuccess "Updating $file_name with $user_name ownership"
 }
 
 zipFile() 
@@ -434,8 +390,8 @@ zipFile()
     local result=$(sudo zip -r -MM -e -P $passphrase $zip_file $zip_directory)
     checkSuccess "Zipped up $(basename "$zip_file")"
 
-    local result=$(sudo chown $easydockeruser:$easydockeruser "$zip_file")
-    checkSuccess "Updating $(basename "$zip_file") with $easydockeruser ownership"
+    local result=$(sudo chown $sudo_user_name:$sudo_user_name "$zip_file")
+    checkSuccess "Updating $(basename "$zip_file") with $sudo_user_name ownership"
 }
 
 moveFile() 
@@ -450,12 +406,9 @@ moveFile()
         local result=$(sudo mv "$file" "$save_dir")
         checkSuccess "Moving $file_name to $save_dir"
 
-        if [[ $clean_dir == *"$containers_dir"* ]]; then
-            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$save_dir")
-            checkSuccess "Updating $save_dir_file with $CFG_DOCKER_INSTALL_USER ownership"
-        else
-            local result=$(sudo chown $easydockeruser:$easydockeruser "$save_dir")
-            checkSuccess "Updating $save_dir_file with $easydockeruser ownership"
+        if [[ $clean_dir != *"$containers_dir"* ]]; then
+            local result=$(sudo chown $sudo_user_name:$sudo_user_name "$save_dir")
+            checkSuccess "Updating $save_dir_file with $sudo_user_name ownership"
         fi
     else
         isNotice "Source file does not exist: $file"

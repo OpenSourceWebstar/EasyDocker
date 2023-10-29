@@ -575,24 +575,24 @@ restoreCopyFile()
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
         # Extract the date from the filename (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | cut -d'-' -f1-3)
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
         if [[ "$remote_server" == "1" ]]; then
-            local result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            local result=$(sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"
         elif [[ "$remote_server" == "2" ]]; then
-            local result=$(sudo -u $easydockeruser sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+            local result=$(sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
             checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_2_IP to $RESTORE_SAVE_DIRECTORY"
         fi
     elif [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
         # Extract the date from the filename using sed (assuming the date format is YYYY-MM-DD)
         RestoreBackupDate=$(echo "$chosen_backup_file" | sed -E 's/.*-([0-9]{4}-[0-9]{2}-[0-9]{2})\.zip/\1/')
         isNotice "The Backup file is $chosen_backup_file, using this for restore."
-        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY")
+        local result=$(copyFile "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
         checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
     fi
 }
