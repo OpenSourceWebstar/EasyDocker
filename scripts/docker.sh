@@ -178,9 +178,20 @@ checkAllowedInstall()
 {
     local app_name="$1"
 
+    #if [ "$status" == "installed" ]; then
+    #elif [ "$status" == "running" ]; then
+    #elif [ "$status" == "not_installed" ]; then
+    #elif [ "$status" == "invalid_flag" ]; then
+
     case "$app_name" in
         "mailcow")
-            if checkAppInstalled "webmin" "linux" == "installed"; then
+            status=$(checkAppInstalled "webmin" "linux" "check_active")
+            if [ "$status" == "installed" ]; then
+                isError "Virtualmin is installed, this will conflict with $app_name."
+                isError "Installation is now aborting..."
+                uninstallApp "$app_name"
+                return 1
+            elif [ "$status" == "running" ]; then
                 isError "Virtualmin is installed, this will conflict with $app_name."
                 isError "Installation is now aborting..."
                 uninstallApp "$app_name"
@@ -188,32 +199,41 @@ checkAllowedInstall()
             fi
             ;;
         "virtualmin")
-            if checkAppInstalled "webmin" "linux" == "not_installed"; then
-                isError "Virtualmin is not installed or running, it is required."
-                uninstallApp "$app_name"
-                return 1
-            else
-                if checkAppInstalled "traefik" "docker" == "not_installed"; then
-                    while true; do
-                        echo ""
-                        isNotice "Traefik is not installed, it is required."
-                        echo ""
-                        isQuestion "Would you like to install Traefik? (y/n): "
-                        read -p "" virtualmin_traefik_choice
-                        if [[ -n "$virtualmin_traefik_choice" ]]; then
-                            break
-                        fi
-                        isNotice "Please provide a valid input."
-                    done
-                    if [[ "$virtualmin_traefik_choice" == [yY] ]]; then
-                        installApp traefik
+            status=$(checkAppInstalled "webmin" "linux" "check_active")
+            if [ "$status" == "not_installed" ]; then
+              isError "Virtualmin is not installed or running, it is required."
+              uninstallApp "$app_name"
+              return 1
+            elif [ "$status" == "invalid_flag" ]; then
+              isError "Invalid flag provided..cancelling install..."
+              uninstallApp "$app_name"
+              return 1
+            fi
+            status=$(checkAppInstalled "traefik" "docker")
+            if [ "$status" == "not_installed" ]; then
+                while true; do
+                    echo ""
+                    isNotice "Traefik is not installed, it is required."
+                    echo ""
+                    isQuestion "Would you like to install Traefik? (y/n): "
+                    read -p "" virtualmin_traefik_choice
+                    if [[ -n "$virtualmin_traefik_choice" ]]; then
+                        break
                     fi
-                    if [[ "$virtualmin_traefik_choice" == [nN] ]]; then
-                        isError "Installation is now aborting..."
-                        uninstallApp "$app_name"
-                        return 1
-                    fi
+                    isNotice "Please provide a valid input."
+                done
+                if [[ "$virtualmin_traefik_choice" == [yY] ]]; then
+                    installApp traefik;
                 fi
+                if [[ "$virtualmin_traefik_choice" == [nN] ]]; then
+                    isError "Installation is now aborting..."
+                    uninstallApp "$app_name"
+                    return 1
+                fi
+            elif [ "$status" == "invalid_flag" ]; then
+              isError "Invalid flag provided..cancelling install..."
+              uninstallApp "$app_name"
+              return 1
             fi
             ;;
     esac
@@ -226,34 +246,31 @@ checkAppInstalled()
     local app_name="$1"
     local flag="$2"
     local check_active="$3"
-
-    echo "app_name $app_name"
-    echo "flag $flag"
+    local package_status=""
 
     if [ "$flag" = "linux" ]; then
-        if dpkg -l | grep -q "^ii $app_name"; then
+        if dpkg -l | grep -q "$app_name"; then
+            package_status="installed"
             if [ "$check_active" = "check_active" ]; then
                 if systemctl is-active --quiet "$app_name"; then
-                    echo "running"
-                else
-                    echo "installed"
+                    package_status="running"
                 fi
-            else
-                echo "installed"
             fi
         else
-            echo "not_installed"
+            package_status="not_installed"
         fi
     elif [ "$flag" = "docker" ]; then
         results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
         if [ -n "$results" ]; then
-            echo "installed"
+            package_status="installed"
         else
-            echo "not_installed"
+            package_status="not_installed"
         fi
     else
-        echo "invalid_flag"
+        package_status="invalid_flag"
     fi
+
+    echo "$package_status"
 }
 
 installApp()
