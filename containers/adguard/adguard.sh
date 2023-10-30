@@ -89,56 +89,41 @@ installAdguard()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo "---- $menu_number. Initial install started for $app_name"
+        echo ""
+        echo ""
+		echo "    NOTICE : Setup is needed in order to get Adguard online"
+        echo "    NOTICE : Below are the urls for the setup ONLY."
+        echo "    NOTICE : You can press next x5 until the installation is complete."
+        echo ""
+        echo "    External : http://$public_ip:$usedport1/"
+        echo "    Local : http://$ip_setup:$usedport1/"
+        echo ""
         echo ""
 
-        result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" $containers_dir$app_name/conf/AdGuardHome.yaml)
-        checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
-        DockerUpDown $app_name;
+        while true; do
+            echo ""
+            isNotice "Setup is now available, please follow the instructions above."
+            echo ""
+            isQuestion "Have you followed the instructions above? (y/n): "
+            read -p "" adguard_instructions
+            if [[ "$adguard_instructions" != [yY] ]]; then
+                break
+            fi
+            isNotice "Please confirm the setup or provide a valid input."
+        done
+        if [[ "$adguard_instructions" == [yY] ]]; then
+            result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" $containers_dir$app_name/conf/AdGuardHome.yaml)
+            checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
+            DockerUpDown $app_name;
+        fi
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Editing local variables for DNS server to $app_name"
         echo ""
-
-        if grep -q "$ip_setup" /etc/resolv.conf; then
-            isSuccessful "DNS Server Already setup, no need to make changes"
-        else
-            isQuestion "Do you want to change the default DNS server on the host to use Adguard? (y/n): "
-            read -rp "" ADGUARDDNS
-
-            if [[ "$ADGUARDDNS" =~ ^[yY]$ ]]; then
-                # Debian 10/11
-            	if [[ "$OS" == [12] ]]; then 
-                    # Updating nameserver address in /etc/resolv.conf
-                    local result=$(sudo sed -i "/nameserver/c\#nameserver\nameserver $ip_setup" /etc/resolv.conf)
-                    checkSuccess "Updating nameserver in resolv.conf"
-
-                    # Updating DNS address in /etc/systemd/resolved.conf
-                    local result=$(sudo sed -i "/DNS=/c\#DNS=\nDNS=$ip_setup" /etc/systemd/resolved.conf)
-                    checkSuccess "Updating DNS in resolved.conf"
-
-                    # Restarting systemd-resolved to apply changes
-                    local result=$(sudo -u $sudo_user_name systemctl restart systemd-resolved)
-                    checkSuccess "Restarting systemd-resolved"
-                fi
-                # Debian 12
-            	if [[ "$OS" == [3] ]]; then
-                    # Check if the line exists in /etc/resolv.conf
-                    if grep -q "nameserver $ip_setup" /etc/resolv.conf; then
-                        isNotice "The 'nameserver $ip_setup' exists in /etc/resolv.conf."
-                    else
-                        # Updating nameserver address in /etc/resolv.conf
-                        local result=$(sudo sed -i "/nameserver/c\#nameserver\nnameserver $ip_setup" /etc/resolv.conf)
-                        checkSuccess "Updating nameserver in resolv.conf"
-                    fi
-
-                    # Update DNS address using resolvectl
-                    local result=$(sudo resolvectl dns eth0 $ip_setup)
-                    checkSuccess "Updating DNS using resolvectl"
-                fi
-            fi
-        fi
+        
+        updateDNS;
 
 		((menu_number++))
 		echo ""
@@ -152,11 +137,6 @@ installAdguard()
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
-		echo "    NOTICE : Setup is needed in order to get Adguard online"
-        echo "    NOTICE : Below are the urls for the setup ONLY."
-        echo ""
-        echo "    External : http://$public_ip:$usedport1/"
-        echo "    Local : http://$ip_setup:$usedport1/"
         echo ""
         echo "    NOTICE : Below are the URLs for the admin panel to use after you have setup Adguard"
         echo ""

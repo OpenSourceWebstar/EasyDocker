@@ -527,6 +527,42 @@ removePortsFromDatabase()
     done
 }
 
+updateDNS() 
+{
+	if [[ "$OS" == [1234567] ]]; then
+        # Remove all existing nameserver lines
+        sudo sed -i '/^nameserver/d' /etc/resolv.conf
+
+        # Check if AdGuard is installed
+        status=$(checkAppInstalled "adguard" "docker")
+        if [ "$status" == "installed" ]; then
+            setupInstallVariables adguard;
+            adguard_host_name="$host_name"
+        else
+            adguard_host_name="$CFG_DNS_SERVER_1"
+        fi
+
+        # Check if Pi-hole is installed
+        status=$(checkAppInstalled "pihole" "docker")
+        if [ "$status" == "installed" ]; then
+            setupInstallVariables pihole;
+            pihole_host_name="$host_name"
+        else
+            pihole_host_name="$CFG_DNS_SERVER_2"
+        fi
+
+        # Add the custom DNS servers to /etc/resolv.conf
+        if [ "$adguard_host_name" == *"10.8.1"* ]; then
+            echo "nameserver $adguard_host_name" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $pihole_host_name" | sudo tee -a /etc/resolv.conf
+        else
+            echo "nameserver $pihole_host_name" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $adguard_host_name" | sudo tee -a /etc/resolv.conf
+        fi
+        isSuccessful "Resolv.conf has been updated with the latest DNS settings."
+    fi
+}
+
 sshRemote() 
 {
     local ssh_pass="$1"
