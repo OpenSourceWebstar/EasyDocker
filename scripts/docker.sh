@@ -431,6 +431,8 @@ setupFileWithConfigData()
         -e "s|IPADDRESSHERE|$ip_setup|g" \
         -e "s|PORT1|$usedport1|g" \
         -e "s|PORT2|$usedport2|g" \
+        -e "s|PORT3|$usedport3|g" \
+        -e "s|PORT4|$usedport4|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
     "$full_file_path")
     checkSuccess "Updating $file_name for $app_name"
