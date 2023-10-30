@@ -144,10 +144,16 @@ installAdguard()
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
 		echo "    NOTICE : Setup is needed in order to get Adguard online"
+        echo "    NOTICE : Below are the urls for the setup ONLY."
         echo ""
-        echo "    Public : https://$host_setup/"
         echo "    External : http://$public_ip:$usedport1/"
         echo "    Local : http://$ip_setup:$usedport1/"
+        echo ""
+        echo "    NOTICE : Below are the URLs for the admin panel to use after you have setup Adguard"
+        echo ""
+        echo "    Public : https://$host_setup/"
+        echo "    External : http://$public_ip:$usedport2/"
+        echo "    Local : http://$ip_setup:$usedport2/"
         echo ""
 
 		menu_number=0

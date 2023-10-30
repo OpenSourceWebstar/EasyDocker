@@ -34,25 +34,13 @@ services:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.adguard-setup.entrypoints: web,websecure
-      #traefik.http.routers.adguard-setup.rule: Host(`setup.DOMAINSUBNAMEHERE`)
-      #traefik.http.routers.adguard-setup.tls: true
-      #traefik.http.routers.adguard-setup.tls.certresolver: production
-      #traefik.http.services.adguard-setup.loadbalancer.server.port: PORT1
-      #traefik.http.routers.adguard-setup.middlewares:
       #traefik.http.routers.adguard-admin.entrypoints: web,websecure
       #traefik.http.routers.adguard-admin.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.adguard-admin.tls: true
       #traefik.http.routers.adguard-admin.tls.certresolver: production
       #traefik.http.services.adguard-admin.loadbalancer.server.port: PORT2
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.adguard-admin.middlewares:
-      #traefik.tcp.routers.adguard-dot.rule: HostSNI(`DOMAINSUBNAMEHERE`)
-      #traefik.tcp.routers.adguard-dot.entrypoints: web,websecure
-      #traefik.tcp.routers.adguard-dot.tls: true
-      #traefik.tcp.routers.adguard-dot.service: adguard
-      #traefik.tcp.services.adguard-dot.loadbalancer.server.port: 53
-      #traefik.http.routers.adguard-dot.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - "./work:/opt/adguardhome/work"
