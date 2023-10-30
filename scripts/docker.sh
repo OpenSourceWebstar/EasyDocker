@@ -180,7 +180,7 @@ checkAllowedInstall()
 
     case "$app_name" in
         "mailcow")
-            if checkAppInstalled "virtualmin" "linux" == "installed"; then
+            if checkAppInstalled "webmin" "linux" == "installed"; then
                 isError "Virtualmin is installed, this will conflict with $app_name."
                 isError "Installation is now aborting..."
                 uninstallApp "$app_name"
@@ -188,12 +188,12 @@ checkAllowedInstall()
             fi
             ;;
         "virtualmin")
-            if checkAppInstalled "virtualmin" "linux" == "not_installed"; then
+            if checkAppInstalled "webmin" "linux" == "not_installed"; then
                 isError "Virtualmin is not installed or running, it is required."
                 uninstallApp "$app_name"
                 return 1
             else
-                if ! checkAppInstalled "traefik" "docker" == "installed"; then
+                if checkAppInstalled "traefik" "docker" == "not_installed"; then
                     while true; do
                         echo ""
                         isNotice "Traefik is not installed, it is required."
