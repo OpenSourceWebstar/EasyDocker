@@ -497,8 +497,9 @@ setupTraefikLabels()
     sudo rm "$temp_file"
 
     local indentation="      "
-    if grep -q '\.middlewares:' "$compose_file"; then
-        sudo awk -v indentation="$indentation" '/\.middlewares:/ { if ($0 !~ "^" indentation) { $0 = indentation $0 } } 1' "$compose_file" > "$compose_file.tmp" && sudo mv "$compose_file.tmp" "$compose_file"
+    if sudo grep -q '\.middlewares:' "$compose_file"; then
+        sudo awk -v indentation="$indentation" '/\.middlewares:/ { if ($0 !~ "^" indentation) { $0 = indentation $0 } } 1' "$compose_file" | sudo tee "$compose_file.tmp" > /dev/null
+        sudo mv "$compose_file.tmp" "$compose_file"
     fi
 }
 
