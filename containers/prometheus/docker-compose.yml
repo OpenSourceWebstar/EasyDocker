@@ -11,6 +11,7 @@ services:
     user: "DOCKERINSTALLUSERID:DOCKERINSTALLUSERID"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--web.listen-address=0.0.0.0:PORT1"
     ports:
       - PORT1:9090
     restart: unless-stopped
