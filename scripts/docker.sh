@@ -61,9 +61,9 @@ setupConfigToContainer()
     if [ ! -f "$target_path/$config_file" ]; then
         if [ "$silent_flag" == "loud" ]; then
             isNotice "Copying config file to '$target_path/$config_file'..."
-            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
         elif [ "$silent_flag" == "silent" ]; then
-            copyFile "loud" "$silent_flag" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
     fi
 

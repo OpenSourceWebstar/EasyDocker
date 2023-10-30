@@ -77,7 +77,7 @@ installActual()
 			local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/actual-data)
 			checkSuccess "Create actual-data folder"
 			
-			local result=$(copyFile $install_containers_dir$app_name/resources/config.json $containers_dir$app_name/actual-data/config.json $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
+			local result=$(copyFile "loud" $install_containers_dir$app_name/resources/config.json $containers_dir$app_name/actual-data/config.json $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 			checkSuccess "Copying config.json to actual-data folder"
 
 			local result=$(copyFile "loud" $ssl_dir$ssl_crt $containers_dir$app_name/actual-data/cert.pem $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
