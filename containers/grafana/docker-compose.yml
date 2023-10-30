@@ -10,8 +10,9 @@ services:
     container_name: grafana
     restart: unless-stopped
     environment:
-     - GF_SERVER_ROOT_URL=http://DOMAINSUBNAMEHERE/
+     - GF_SERVER_ROOT_URL=https://DOMAINSUBNAMEHERE/
      - GF_INSTALL_PLUGINS=grafana-clock-panel
+     - GF_SERVER_HTTP_PORT=PORT1
     ports:
      - 'PORT1:3000'
     volumes:
