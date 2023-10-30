@@ -89,6 +89,15 @@ installAdguard()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+        result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" $containers_dir$app_name/conf/AdGuardHome.yaml)
+        checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
+        DockerUpDown $app_name;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Editing local variables for DNS server to $app_name"
         echo ""
 
