@@ -272,15 +272,28 @@ installApp()
 setupComposeFile()
 {
     local app_name="$1"
-    local target_path="$containers_dir$app_name"
-    
-    if [[ $compose_setup == "default" ]]; then
-        local compose_file_name="docker-compose.yml";
-    elif [[ $compose_setup == "app" ]]; then
-        local compose_file_name="docker-compose.$app_name.yml";
+    local custom_file="$2"
+
+    # Source Filenames
+    if [[ $custom_file == "" ]]; then
+        local source_compose_file="docker-compose.yml";
+    elif [[ $custom_file != "" ]]; then
+        local source_compose_file="$custom_file";
     fi
 
-    local source_file="$install_containers_dir$app_name/$compose_file_name"
+    local source_path="$install_containers_dir$app_name"
+    local source_file="$source_path/$source_compose_file"
+
+    # Target Filenames
+    if [[ $compose_setup == "default" ]]; then
+        local target_compose_file="docker-compose.yml";
+    elif [[ $compose_setup == "app" ]]; then
+        local target_compose_file="docker-compose.$app_name.yml";
+    fi
+
+    local target_path="$containers_dir$app_name"
+    local target_file="$target_path/$target_compose_file"
+
 
     if [ "$app_name" == "" ]; then
         isError "The app_name is empty."
@@ -292,7 +305,7 @@ setupComposeFile()
         return 1
     fi
     
-    copyFile "loud" "$source_file" "$target_path/$compose_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "loud" "$source_file" "$target_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
