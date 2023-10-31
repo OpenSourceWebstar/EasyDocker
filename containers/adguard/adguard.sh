@@ -107,7 +107,7 @@ installAdguard()
             echo ""
             isQuestion "Have you followed the instructions above? (y/n): "
             read -p "" adguard_instructions
-            if [[ "$adguard_instructions" != [yY] ]]; then
+            if [[ "$adguard_instructions" != 'y' && "$adguard_instructions" != 'Y' ]]; then
                 break
             fi
             isNotice "Please confirm the setup or provide a valid input."
