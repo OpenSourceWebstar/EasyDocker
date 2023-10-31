@@ -80,6 +80,7 @@ startScan()
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
 	dashyUpdateConf;
+    updateDNS;
 	if [[ $CFG_REQUIREMENT_WHITELIST_PORT_UPDATER == "true" ]]; then
 		whitelistScan;
     fi

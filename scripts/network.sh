@@ -95,6 +95,34 @@ setupIPsAndHostnames()
     fi
 }
 
+# All network variables setup
+setupDNSIP()
+{
+    local app_name="$1"
+
+    if [[ "$app_name" == "" ]]; then
+        isError "Something went wrong...No app name provided..."
+        resetToMenu;
+    fi
+
+    # Build variable names based on app_name
+    dns_host_name_var="CFG_${app_name^^}_HOST_NAME"
+
+    # Access the variables using variable indirection
+    dns_host_name_var="${!dns_host_name_var}"
+
+    # Check if no network needed
+    if [ "$dns_host_name" != "" ]; then
+        while read -r line; do
+            local dns_hostname=$(echo "$line" | awk '{print $1}')
+            local dns_ip=$(echo "$line" | awk '{print $2}')
+            if [ "$dns_hostname" = "$dns_host_name" ]; then
+                dns_ip_setup=$ip
+            fi
+        done < "$configs_dir$ip_file"
+    fi 
+}
+
 clearAllPortData()
 {
     # Open Ports
@@ -536,28 +564,28 @@ updateDNS()
         # Check if AdGuard is installed
         status=$(checkAppInstalled "adguard" "docker")
         if [ "$status" == "installed" ]; then
-            setupInstallVariables adguard;
-            adguard_host_name="$host_name"
+            setupDNSIP adguard;
+            local adguard_ip="$dns_ip_setup"
         else
-            adguard_host_name="$CFG_DNS_SERVER_1"
+            local adguard_ip="$CFG_DNS_SERVER_1"
         fi
 
         # Check if Pi-hole is installed
         status=$(checkAppInstalled "pihole" "docker")
         if [ "$status" == "installed" ]; then
-            setupInstallVariables pihole;
-            pihole_host_name="$host_name"
+            setupDNSIP pihole;
+            local pihole_ip="$dns_ip_setup"
         else
-            pihole_host_name="$CFG_DNS_SERVER_2"
+            local pihole_ip="$CFG_DNS_SERVER_2"
         fi
 
         # Add the custom DNS servers to /etc/resolv.conf
-        if [ "$adguard_host_name" == *"10.8.1"* ]; then
-            echo "nameserver $adguard_host_name" | sudo tee -a /etc/resolv.conf
-            echo "nameserver $pihole_host_name" | sudo tee -a /etc/resolv.conf
+        if [ "$adguard_ip" == *"10.8.1"* ]; then
+            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
         else
-            echo "nameserver $pihole_host_name" | sudo tee -a /etc/resolv.conf
-            echo "nameserver $adguard_host_name" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
         fi
         isSuccessful "Resolv.conf has been updated with the latest DNS settings."
     fi
