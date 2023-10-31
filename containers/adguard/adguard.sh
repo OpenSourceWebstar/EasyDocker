@@ -112,10 +112,10 @@ installAdguard()
             fi
             isNotice "Please confirm the setup or provide a valid input."
         done
-        if [[ "$adguard_instructions" == [yY] ]]; then
-            result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" $containers_dir$app_name/conf/AdGuardHome.yaml)
+        if [[ "$adguard_instructions" == 'y' || "$adguard_instructions" == 'Y' ]]; then
+            result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
             checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
-            DockerUpDown $app_name;
+            DockerUpDown "$app_name"
         fi
 
 		((menu_number++))
