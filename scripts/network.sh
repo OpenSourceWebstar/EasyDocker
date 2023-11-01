@@ -95,34 +95,6 @@ setupIPsAndHostnames()
     fi
 }
 
-# All network variables setup
-setupDNSIP()
-{
-    local app_name="$1"
-
-    if [[ "$app_name" == "" ]]; then
-        isError "Something went wrong...No app name provided..."
-        resetToMenu;
-    fi
-
-    # Build variable names based on app_name
-    dns_host_name_var="CFG_${app_name^^}_HOST_NAME"
-
-    # Access the variables using variable indirection
-    dns_host_name_var="${!dns_host_name_var}"
-
-    # Check if no network needed
-    if [ "$dns_host_name" != "" ]; then
-        while read -r line; do
-            local dns_hostname=$(echo "$line" | awk '{print $1}')
-            local dns_ip=$(echo "$line" | awk '{print $2}')
-            if [ "$dns_hostname" = "$dns_host_name" ]; then
-                dns_ip_setup=$dns_ip
-            fi
-        done < "$configs_dir$ip_file"
-    fi 
-}
-
 clearAllPortData()
 {
     # Open Ports
@@ -555,6 +527,36 @@ removePortsFromDatabase()
     done
 }
 
+########################
+#          DNS         #
+########################
+setupDNSIP()
+{
+    local app_name="$1"
+
+    if [[ "$app_name" == "" ]]; then
+        isError "Something went wrong...No app name provided..."
+        resetToMenu;
+    fi
+
+    # Build variable names based on app_name
+    dns_host_name_var="CFG_${app_name^^}_HOST_NAME"
+
+    # Access the variables using variable indirection
+    dns_host_name="${!dns_host_name_var}"
+
+    # Check if no network needed
+    if [ "$dns_host_name" != "" ]; then
+        while read -r line; do
+            local dns_hostname=$(echo "$line" | awk '{print $1}')
+            local dns_ip=$(echo "$line" | awk '{print $2}')
+            if [ "$dns_hostname" = "$dns_host_name" ]; then
+                dns_ip_setup=$dns_ip
+            fi
+        done < "$configs_dir$ip_file"
+    fi 
+}
+
 updateDNS() 
 {
 	if [[ "$OS" == [1234567] ]]; then
@@ -563,6 +565,7 @@ updateDNS()
 
         # Check if AdGuard is installed
         status=$(checkAppInstalled "adguard" "docker")
+        echo "adguard status = $status"
         if [ "$status" == "installed" ]; then
             setupDNSIP adguard;
             local adguard_ip="$dns_ip_setup"
@@ -572,6 +575,7 @@ updateDNS()
 
         # Check if Pi-hole is installed
         status=$(checkAppInstalled "pihole" "docker")
+        echo "pihole status = $status"
         if [ "$status" == "installed" ]; then
             setupDNSIP pihole;
             local pihole_ip="$dns_ip_setup"
@@ -580,7 +584,7 @@ updateDNS()
         fi
 
         # Add the custom DNS servers to /etc/resolv.conf
-        if [ "$adguard_ip" == *"10.8.1"* ]; then
+        if [[ "$adguard_ip" == *10.8.1* ]]; then
             echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
             echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
         else
