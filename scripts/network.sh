@@ -641,6 +641,9 @@ setupHeadscale()
 
     setupHeadscaleVariables $app_name;
 
+    # Convert CFG_INSTALL_NAME to lowercase
+    local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
+
     status=$(checkAppInstalled "headscale" "docker")
     if [ "$status" == "installed" ]; then
         # We don't setup headscale for headscale :)
