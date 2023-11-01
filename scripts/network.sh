@@ -117,7 +117,7 @@ setupDNSIP()
             local dns_hostname=$(echo "$line" | awk '{print $1}')
             local dns_ip=$(echo "$line" | awk '{print $2}')
             if [ "$dns_hostname" = "$dns_host_name" ]; then
-                dns_ip_setup=$ip
+                dns_ip_setup=$dns_ip
             fi
         done < "$configs_dir$ip_file"
     fi 
