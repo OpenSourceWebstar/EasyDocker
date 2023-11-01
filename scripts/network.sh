@@ -645,12 +645,18 @@ setupHeadscale()
     if [ "$status" == "installed" ]; then
         # We don't setup headscale for headscale :)
         if [[ "$app_name" == "headscale" ]]; then
-            runCommandForDockerInstallUser "docker-compose exec headscale headscale users create $CFG_INSTALL_NAME"
+            runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
+            checkSuccess "Creating Headscale user $CFG_INSTALL_NAME"
         else
             if [[ "$headscale_setup" == "true" ]]; then
-                runCommandForDockerInstallUser "docker-compose exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
-                local preauthkey=$(runCommandForDockerInstallUser "docker-compose exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
-                runCommandForDockerInstallUser "headscale up --login-server https://$host_setup --authkey $preauthkey"
+                runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
+                checkSuccess "Setting up Headscale for $app_name"
+
+                local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
+                checkSuccess "Generating Auth Key in Headscale for $app_name"
+
+                runCommandForDockerInstallUser "docker exec $app_name headscale up --login-server https://$host_setup --authkey $preauthkey"
+                checkSuccess "Connecting $app_name to Headscale"
             fi
         fi
     else
