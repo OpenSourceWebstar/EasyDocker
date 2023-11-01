@@ -70,6 +70,9 @@ installHeadscale()
 
         setupComposeFile $app_name;
 
+        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config)
+        checkSuccess "Create config folder"
+
 		local result=$(copyResource "$app_name" "config.yaml" "config/config.yaml" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying config.yaml to config folder."
 
