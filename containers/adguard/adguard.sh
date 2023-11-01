@@ -107,16 +107,17 @@ installAdguard()
             echo ""
             isQuestion "Have you followed the instructions above? (y/n): "
             read -p "" adguard_instructions
-            if [[ "$adguard_instructions" != 'y' && "$adguard_instructions" != 'Y' ]]; then
+            if [[ "$adguard_instructions" == 'y' || "$adguard_instructions" == 'Y' ]]; then
                 break
+            else
+                isNotice "Please confirm the setup or provide a valid input."
             fi
-            isNotice "Please confirm the setup or provide a valid input."
         done
-        if [[ "$adguard_instructions" == 'y' || "$adguard_instructions" == 'Y' ]]; then
-            result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-            checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
-            DockerUpDown "$app_name"
-        fi
+
+        result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
+        DockerDownUp "$app_name";
+
 
 		((menu_number++))
         echo ""
