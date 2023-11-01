@@ -683,7 +683,7 @@ setupHeadscaleUser()
     
     # For localhost server installs
     if [[ "$app_name" == "local" ]]; then
-        sudo cd /root/ && sudo curl -fsSL https://headscale.com/install.sh | sh
+        cd ~ && sudo curl -fsSL https://headscale.com/install.sh | sh
         checkSuccess "Setting up Headscale for $app_name"
 
         sudo headscale up --login-server https://$host_setup --authkey $preauthkey
