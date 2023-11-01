@@ -650,22 +650,62 @@ setupHeadscale()
         if [[ "$app_name" == "headscale" ]]; then
             runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
             checkSuccess "Creating Headscale user $CFG_INSTALL_NAME"
-        else
-            if [[ "$headscale_setup" == "true" ]]; then
-                runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
-                checkSuccess "Setting up Headscale for $app_name"
-
+            # We will setup Localhost
+			while true; do
+				echo ""
+				isQuestion "Would you like to connect your localhost server the Headscale server? (y/n) "
+				read -p "" local_headscale
+				if [[ -n "$local_headscale" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$local_headscale" == [yY] ]]; then
                 local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
                 checkSuccess "Generating Auth Key in Headscale for $app_name"
-
-                runCommandForDockerInstallUser "docker exec $app_name headscale up --login-server https://$host_setup --authkey $preauthkey"
-                checkSuccess "Connecting $app_name to Headscale"
+                setupHeadscaleUser local $preauthkey;
+			fi
+        else
+            if [[ "$headscale_setup" != "disabled" ]]; then
+                setupHeadscaleUser $app_name;
             fi
         fi
     else
         isSuccessful "Headscale is not installed, continuing with installation..."
     fi
 
+}
+
+setupHeadscaleUser()
+{
+    local app_name="$1"
+    local preauthkey="$2"
+    
+    # For localhost server installs
+    if [[ "$app_name" == "local" ]]; then
+        cd /root/ && sudo curl -fsSL https://headscale.com/install.sh | sh
+        checkSuccess "Setting up Headscale for $app_name"
+
+        sudo headscale up --login-server https://$host_setup --authkey $preauthkey
+        checkSuccess "Connecting Localhost to Headscale server"
+    else
+        if [[ "$headscale_setup" == "local" ]]; then
+            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
+            checkSuccess "Setting up Headscale for $app_name"
+
+            local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
+            checkSuccess "Generating Auth Key in Headscale for $app_name"
+
+            runCommandForDockerInstallUser "docker exec $app_name headscale up --login-server https://$host_setup --authkey $preauthkey"
+            checkSuccess "Connecting $app_name to Headscale"
+        elif [[ "$headscale_setup" == "remote" ]]; then
+            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
+            checkSuccess "Setting up Headscale for $app_name"
+
+            runCommandForDockerInstallUser "docker exec $app_name headscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
+            checkSuccess "Connecting $app_name to Headscale"
+        fi
+    fi
 }
 
 sshRemote() 
