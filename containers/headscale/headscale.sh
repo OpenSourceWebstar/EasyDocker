@@ -76,7 +76,7 @@ installHeadscale()
 		local result=$(copyResource "$app_name" "config.yaml" "config/config.yaml" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying config.yaml to config folder."
 
-        setupComposeFile $app_name "config.yaml" "config";
+        setupFileWithConfigData $app_name "config.yaml" "config";
 
 		((menu_number++))
         echo ""

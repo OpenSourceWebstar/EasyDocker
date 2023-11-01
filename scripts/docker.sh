@@ -418,16 +418,25 @@ setupFileWithConfigData()
 {
     local app_name="$1"
     local custom_file="$2"
+    local custom_path="$3"
+
     if [[ $compose_setup == "default" ]]; then
         local file_name="docker-compose.yml";
     elif [[ $compose_setup == "app" ]]; then
         local file_name="docker-compose.$app_name.yml";
     fi
+
     if [[ $custom_file != "" ]]; then
         local file_name="$custom_file"
     fi
 
-    local full_file_path="$containers_dir$app_name/$file_name"
+    if [[ $custom_path == "" ]]; then
+        local file_path="$containers_dir$app_name"
+    elif [[ $custom_path != "" ]]; then
+        local file_path="$containers_dir$app_name/$custom_path/"
+    fi
+
+    local full_file_path="$file_path/$file_name"
 
     local result=$(sudo sed -i \
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
