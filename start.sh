@@ -113,6 +113,7 @@ startInstall()
     installDuplicati;
     installFail2ban;
     installGrafana;
+    installHeadscale;
     installPihole;
     installPortainer;
     installPrometheus;
