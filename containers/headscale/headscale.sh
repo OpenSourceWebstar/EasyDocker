@@ -86,6 +86,13 @@ installHeadscale()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		setupHeadscale $app_name;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Setting up database records"
         echo ""
 

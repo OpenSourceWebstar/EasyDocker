@@ -17,6 +17,7 @@ setupInstallVariables()
     public_var="CFG_${app_name^^}_PUBLIC"
     whitelist_var="CFG_${app_name^^}_WHITELIST"
     authelia_var="CFG_${app_name^^}_AUTHELIA"
+    headscale_var="CFG_${app_name^^}_headscale"
 
     # Access the variables using variable indirection
     host_name="${!host_name_var}"
@@ -25,10 +26,14 @@ setupInstallVariables()
     public="${!public_var}"
     whitelist="${!whitelist_var}"
     authelia_setup="${!authelia_var}"
+    headscale_setup="${!authelia_var}"
 
     # Default Empty config options
     if [ "$authelia_setup" == "" ]; then
         authelia_setup=false
+    fi
+    if [ "$headscale_setup" == "" ]; then
+        headscale_setup=false
     fi
     if [ "$whitelist" == "" ]; then
         whitelist=false
@@ -565,7 +570,6 @@ updateDNS()
 
         # Check if AdGuard is installed
         status=$(checkAppInstalled "adguard" "docker")
-        echo "adguard status = $status"
         if [ "$status" == "installed" ]; then
             setupDNSIP adguard;
             local adguard_ip="$dns_ip_setup"
@@ -593,6 +597,66 @@ updateDNS()
         fi
         isSuccessful "Resolv.conf has been updated with the latest DNS settings."
     fi
+}
+
+########################
+#      Headscale       #
+########################
+setupHeadscaleVariables()
+{
+    local app_name="headscale"
+
+    if [[ "$app_name" == "" ]]; then
+        isError "Something went wrong...No app name provided..."
+        resetToMenu;
+    fi
+
+    # Build variable names based on app_name
+    headscale_host_name_var="CFG_${app_name^^}_HOST_NAME"
+    headscale_domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
+
+    # Access the variables using variable indirection
+    headscale_host_name="${!headscale_host_name_var}"
+    headscale_domain_number="${!headscale_domain_number_var}"
+
+    # Check if no network needed
+    if [ "$headscale_host_name" != "" ]; then
+        while read -r line; do
+            local headscale_hostname=$(echo "$line" | awk '{print $1}')
+            local headscale_ip=$(echo "$line" | awk '{print $2}')
+            if [ "$headscale_hostname" = "$headscale_host_name" ]; then
+                headscale_domain_prefix=$headscale_hostname
+                headscale_domain_var_name="CFG_DOMAIN_${headscale_domain_number}"
+                headscale_domain_full=$(sudo grep  "^$headscale_domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
+                headscale_host_setup=${headscale_domain_prefix}.${headscale_domain_full}
+                headscale_ip_setup=$headscale_ip
+            fi
+        done < "$configs_dir$ip_file"
+    fi 
+}
+
+setupHeadscale()
+{
+    local app_name="$1"
+
+    setupHeadscaleVariables $app_name;
+
+    status=$(checkAppInstalled "headscale" "docker")
+    if [ "$status" == "installed" ]; then
+        # We don't setup headscale for headscale :)
+        if [[ "$app_name" == "headscale" ]]; then
+            runCommandForDockerInstallUser "docker-compose exec headscale headscale users create $CFG_INSTALL_NAME"
+        else
+            if [[ "$headscale_setup" == "true" ]]; then
+                runCommandForDockerInstallUser "docker-compose exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
+                local preauthkey=$(runCommandForDockerInstallUser "docker-compose exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
+                runCommandForDockerInstallUser "headscale up --login-server https://$host_setup --authkey $preauthkey"
+            fi
+        fi
+    else
+        isSuccessful "Headscale is not installed, continuing with installation..."
+    fi
+
 }
 
 sshRemote() 

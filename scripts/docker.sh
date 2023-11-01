@@ -456,6 +456,10 @@ setupFileWithConfigData()
                 local result=$(sudo sed -i 's/labels:/#labels:/g' "$full_file_path")
                 checkSuccess "Disable Traefik options for private setup"
             fi
+            local result=$(sudo sed -i \
+                -e "s|0.0.0.0:|127.0.0.1:|g" \
+            "$full_file_path")
+            checkSuccess "Updating $file_name for $app_name"
         fi
     fi
 

@@ -6,14 +6,26 @@ networks:
 
 services:
   headscale:
+    container_name: headscale
     image: headscale/headscale:latest
     volumes:
       - ./config:/etc/headscale/
       - ./data:/var/lib/headscale
     ports:
-      - PORT1:8080
+      - 0.0.0.0:PORT1:8080
     command: headscale serve
     restart: unless-stopped
+    #labels:
+      #caddy: DOMAINSUBNAMEHERE
+      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
+      #traefik.enable: true
+      #traefik.http.routers.headscale.entrypoints: web,websecure
+      #traefik.http.routers.headscale.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.headscale.tls: true
+      #traefik.http.routers.headscale.tls.certresolver: production
+      #traefik.http.services.headscale.loadbalancer.server.port: PORT1
+      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
+      #traefik.http.routers.headscale.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
@@ -43,13 +55,9 @@ services:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORT2
       #traefik.enable: true
-      #traefik.http.routers.headscale.entrypoints: web,websecure
-      #traefik.http.routers.headscale.rule: Host(`DOMAINSUBNAMEHERE`)
-      #traefik.http.routers.headscale.tls: true
-      #traefik.http.routers.headscale.tls.certresolver: production
-      #traefik.http.services.headscale.loadbalancer.server.port: PORT2
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.headscale.middlewares:
+      #traefik.http.routers.headscale-webui.rule: Host(`DOMAINSUBNAMEHERE`) && (PathPrefix(`/admin`)"
+      #traefik.http.services.headscale-webui.loadbalancer.server.port: PORT2
+      #traefik.http.routers.headscale-webui.middlewares:
     ports:
       - PORT2:5000
     volumes:
