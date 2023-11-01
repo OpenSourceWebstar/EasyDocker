@@ -116,7 +116,7 @@ installAdguard()
 
         result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
-        DockerDownUp "$app_name";
+        dockerDownUp "$app_name";
 
 
 		((menu_number++))
