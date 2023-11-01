@@ -290,6 +290,7 @@ setupComposeFile()
 {
     local app_name="$1"
     local custom_file="$2"
+    local custom_path="$3"
 
     # Source Filenames
     if [[ $custom_file == "" ]]; then
@@ -298,7 +299,12 @@ setupComposeFile()
         local source_compose_file="$custom_file";
     fi
 
-    local source_path="$install_containers_dir$app_name"
+    if [[ $custom_path == "" ]]; then
+        local source_path="$install_containers_dir$app_name"
+    elif [[ $custom_path != "" ]]; then
+        local source_path="$install_containers_dir$app_name/$custom_path/"
+    fi
+
     local source_file="$source_path/$source_compose_file"
 
     # Target Filenames
