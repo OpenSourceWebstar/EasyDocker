@@ -65,4 +65,4 @@ services:
       - ./config/:/etc/headscale/:ro           # Headscale's config storage location.  Used to read your Headscale config.
     networks:
       vpn:
-        ipv4_address: 10.8.1.121
+        ipv4_address: 10.8.1.122
