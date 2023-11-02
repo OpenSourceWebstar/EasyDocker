@@ -82,9 +82,13 @@ installTraefik()
         local result=$(copyResource "$app_name" "traefik.yml" "/etc/traefik.yml")
         checkSuccess "Copy Traefik configuration file for $app_name"
 
-        # Replace the placeholder email with the actual email for Let's Encrypt SSL certificates
-        local result=$(sudo sed -i "s/your-email@example.com/$CFG_EMAIL/g" "$containers_dir$app_name/etc/traefik.yml")
-        checkSuccess "Configured Traefik with email: $CFG_EMAIL for $app_name"
+        setupFileWithConfigData $app_name "traefik.yml" "etc";
+
+        # Setup Error 404 Website
+        local result=$(sudo sed -i "s/ERRORWEBSITE/$CFG_TRAEFIK_404_SITE/g" "$containers_dir$app_name/etc/config.yml")
+        checkSuccess "Configured Traefik error website wih URL: $CFG_TRAEFIK_404_SITE for $app_name"
+
+        setupFileWithConfigData $app_name "config.yml" "etc";
 
 		((menu_number++))
         echo ""

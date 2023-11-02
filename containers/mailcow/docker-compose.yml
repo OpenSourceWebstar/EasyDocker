@@ -17,7 +17,7 @@ services:
         #traefik.http.routers.moo.tls.certresolver: production
         #traefik.http.services.moo.loadbalancer.server.port: PORT1
         #traefik.http.routers.moo.entrypoints: websecure
-        #traefik.docker.network: vpn
+        #traefik.docker.network: DOCKERNETWORK
         #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
         #traefik.http.routers.moo.middlewares:
 

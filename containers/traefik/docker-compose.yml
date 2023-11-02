@@ -10,23 +10,27 @@ services:
     image: traefik:v2.10.5
     container_name: traefik
     ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
+      - PORT1:80
+      - PORT2:443
+      - PORT3:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc:/etc/traefik
     #labels:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORT1
-      #traefik.enable: true
+      #traefik.docker.network: DOCKERNETWORK
+      #traefik.enable: "true"
       #traefik.http.routers.traefik.entrypoints: web,websecure
-      #traefik.http.routers.traefik.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.traefik.middlewares:
+      #traefik.http.routers.dashboard.rule: Host(`DOMAINSUBNAMEHERE`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      #traefik.http.routers.traefik.service: api@internal
       #traefik.http.routers.traefik.tls: true
       #traefik.http.routers.traefik.tls.certresolver: production
+      #traefik.http.routers.traefik.tls.options: modern@file
       #traefik.http.services.traefik.loadbalancer.server.port: PORT3
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
-      #traefik.http.routers.traefik.middlewares:
+      #traefik.http.services.traefik.loadbalancer.sticky.cookie.httpOnly: true
+      #traefik.http.services.traefik.loadbalancer.sticky.cookie.secure: true
     restart: unless-stopped
     networks:
       vpn:

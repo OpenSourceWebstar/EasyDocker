@@ -449,6 +449,8 @@ setupFileWithConfigData()
         -e "s|PORT3|$usedport3|g" \
         -e "s|PORT4|$usedport4|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
+        -e "s|EMAILHERE|$CFG_EMAIL|g" \
+        -e "s|DOCKERNETWORK|$CFG_NETWORK_NAME|g" \
     "$full_file_path")
     checkSuccess "Updating $file_name for $app_name"
     
@@ -493,6 +495,7 @@ setupTraefikLabelsSetupMiddlewares()
     local middleware_entries=()
 
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
+        middleware_entries+=("default@file")
         middleware_entries+=("my-whitelist-in-docker")
         if [[ $(checkAppInstalled "authelia" "docker") == "installed" ]]; then
             middleware_entries+=("authelia@docker")

@@ -118,7 +118,7 @@ services:
             #traefik.http.services.jitismeet.loadbalancer.server.port: PORT2
             #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
             #traefik.http.routers.jitismeet.middlewares:
-            #traefik.docker.network: vpn
+            #traefik.docker.network: DOCKERNETWORK
 
     # XMPP server
     prosody:
@@ -275,7 +275,7 @@ services:
             #traefik.udp.routers.jvb.entrypoints: video
             #traefik.udp.routers.jvb.service: jvb
             #traefik.udp.services.jvb.loadbalancer.server.port: PORT3
-            #traefik.docker.network: vpn
+            #traefik.docker.network: DOCKERNETWORK
 
 # Custom network so all services can communicate using a FQDN
 networks:
