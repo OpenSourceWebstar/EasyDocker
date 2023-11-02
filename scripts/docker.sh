@@ -494,8 +494,10 @@ setupTraefikLabelsSetupMiddlewares()
 
     local middleware_entries=()
 
+    # Default Values non app specific
+    middleware_entries+=("default@file")
+
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
-        middleware_entries+=("default@file")
         middleware_entries+=("my-whitelist-in-docker")
         if [[ $(checkAppInstalled "authelia" "docker") == "installed" ]]; then
             middleware_entries+=("authelia@docker")

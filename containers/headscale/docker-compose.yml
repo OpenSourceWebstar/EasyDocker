@@ -56,7 +56,7 @@ services:
       #caddy: DOMAINSUBNAMEHERE
       #caddy.reverse_proxy: IPADDRESSHERE:PORT2
       #traefik.enable: true
-      #traefik.http.routers.headscale-webui.rule: Host(`DOMAINSUBNAMEHERE`) && (PathPrefix(`/admin`)"
+      #traefik.http.routers.headscale-webui.rule: Host(`admin.DOMAINSUBNAMEHERE`)"
       #traefik.http.services.headscale-webui.loadbalancer.server.port: PORT2
       #traefik.http.routers.headscale-webui.middlewares:
     ports:
