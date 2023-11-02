@@ -137,6 +137,13 @@ installFail2ban()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Running Headscale setup (if required)"
+        echo ""
+
+		setupHeadscale $app_name;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    Your $app_name service is now online!"

@@ -141,6 +141,13 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Running Headscale setup (if required)"
+    echo ""
+
+    setupHeadscale $app_name;
+
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Cleaning files used to restore"
     echo ""
 

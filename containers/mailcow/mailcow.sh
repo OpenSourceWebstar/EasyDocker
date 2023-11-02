@@ -9,7 +9,6 @@ installMailcow()
     	setupConfigToContainer mailcow;
 		local app_name=$CFG_MAILCOW_APP_NAME
 		easy_setup=$CFG_MAILCOW_EASY_SETUP
-		using_caddy=$CFG_MAILCOW_USING_CADDY
 		setupInstallVariables $app_name;
 	fi
 
@@ -147,25 +146,7 @@ installMailcow()
         echo ""
 
         setupComposeFile $app_name;
-		
-		if [[ "$using_caddy" == "true" ]]; then
-			# Setup SSL Transfer scripts
-			local result=$(copyFile "loud" $script_dir/resources/caddy/caddy-to-mailcow-ssl.sh $containers_dir$app_name/caddy-to-mailcow-ssl.sh $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying SSL caddy-to-mailcow-ssl.sh script to docker folder."
-			
-			local result=$(sudo sed -i "s/DOMAINNAMEHERE/mail.$domain_full/g" $containers_dir$app_name/caddy-to-mailcow-ssl.sh)
-			checkSuccess "Setting Domain Name in caddy-to-mailcow-ssl.sh"
-			
-			# Setup crontab
-			job="0 * * * * /bin/bash $containers_dir$app_name/caddy-to-mailcow-ssl.sh"
-			if ( sudo -u $sudo_user_name crontab -l | grep -q -F "$job" ); then
-				isNotice "Cron job already exists, ignoring..."
-			else
-			( sudo -u $sudo_user_name crontab -l ; echo "$job" ) | sudo -u $sudo_user_name crontab -
-				isSuccessful "Cron job added successfully!"
-			fi
-		fi
-		
+
 		# Script to setup Mailcow
 		local result=$(cd $containers_dir$app_name && sudo ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
@@ -227,6 +208,13 @@ installMailcow()
         echo ""
 
 		databaseInstallApp $app_name;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Headscale setup (if required)"
+        echo ""
+
+		setupHeadscale $app_name;
 
 		((menu_number++))
         echo ""

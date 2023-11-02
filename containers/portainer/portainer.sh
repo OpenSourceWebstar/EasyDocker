@@ -94,6 +94,13 @@ installPortainer()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Running Headscale setup (if required)"
+        echo ""
+
+		setupHeadscale $app_name;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "

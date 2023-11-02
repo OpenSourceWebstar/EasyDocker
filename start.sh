@@ -108,10 +108,9 @@ startInstall()
     ###                Install System Apps              ###
     #######################################################
 
-    installAdguard
-    installAuthelia
-    installCaddy
-    installDashy
+    installAdguard;
+    installAuthelia;
+    installDashy;
     installDuplicati;
     installFail2ban;
     installGrafana;
