@@ -84,6 +84,10 @@ installTraefik()
 
         setupFileWithConfigData $app_name "traefik.yml" "etc";
 
+        # Copy the Traefik configuration file and customize it
+        local result=$(copyResource "$app_name" "config.yml" "/etc/config.yml")
+        checkSuccess "Copy Traefik configuration file for $app_name"
+
         # Setup Error 404 Website
         local result=$(sudo sed -i "s/ERRORWEBSITE/$CFG_TRAEFIK_404_SITE/g" "$containers_dir$app_name/etc/config.yml")
         checkSuccess "Configured Traefik error website wih URL: $CFG_TRAEFIK_404_SITE for $app_name"
