@@ -663,6 +663,7 @@ setupHeadscale()
 			if [[ "$local_headscale" == [yY] ]]; then
                 local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
                 checkSuccess "Generating Auth Key in Headscale for $app_name"
+                echo "preauthkey $preauthkey"
                 setupHeadscaleUser local $preauthkey;
 			fi
         else
@@ -683,27 +684,27 @@ setupHeadscaleUser()
     
     # For localhost server installs
     if [[ "$app_name" == "local" ]]; then
-        cd ~ && sudo curl -fsSL https://headscale.com/install.sh | sh
+        cd ~ && sudo curl -fsSL https://tailscale.com/install.sh | sh
         checkSuccess "Setting up Headscale for $app_name"
 
-        sudo headscale up --login-server https://$host_setup --authkey $preauthkey
+        sudo tailscale up --login-server https://$host_setup --authkey $preauthkey
         checkSuccess "Connecting Localhost to Headscale server"
     else
         if [[ "$headscale_setup" == "local" ]]; then
-            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
+            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
             checkSuccess "Setting up Headscale for $app_name"
 
             local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
             checkSuccess "Generating Auth Key in Headscale for $app_name"
 
-            runCommandForDockerInstallUser "docker exec $app_name headscale up --login-server https://$host_setup --authkey $preauthkey"
-            checkSuccess "Connecting $app_name to Headscale"
+            runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$host_setup --authkey $preauthkey"
+            checkSuccess "Connecting $app_name to HeadscaleServer "
         elif [[ "$headscale_setup" == "remote" ]]; then
-            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://headscale.com/install.sh | sh"
+            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
             checkSuccess "Setting up Headscale for $app_name"
 
-            runCommandForDockerInstallUser "docker exec $app_name headscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
-            checkSuccess "Connecting $app_name to Headscale"
+            runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
+            checkSuccess "Connecting $app_name to Headscale Server"
         fi
     fi
 }
