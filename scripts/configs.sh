@@ -464,7 +464,7 @@ editAppConfig()
                     # Run to see if edits have removed any variables
                     checkConfigFilesMissingVariables;
                     # Convert the first letter of app_name to uppercase
-                    installApp $config_app_name;
+                    installApp $app_name;
                 fi
             else
                 isNotice "No changes were made to the $app_name configuration."
