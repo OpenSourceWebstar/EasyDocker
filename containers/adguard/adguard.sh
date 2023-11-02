@@ -99,6 +99,7 @@ installAdguard()
         echo "    External : http://$public_ip:$usedport1/"
         echo "    Local : http://$ip_setup:$usedport1/"
         echo ""
+        echo "    NOTICE : Skip this setup if you have already installed Adguard"
         echo ""
 
         while true; do
@@ -132,6 +133,13 @@ installAdguard()
         echo ""
 
 		databaseInstallApp $app_name;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Headscale setup (if required)"
+        echo ""
+
+		setupHeadscale $app_name;
 
 		((menu_number++))
         echo ""

@@ -101,7 +101,7 @@ installHeadscale()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Running $app_name specific updates"
+        echo "---- $menu_number. Running Headscale setup (if required)"
         echo ""
 
 		setupHeadscale $app_name;

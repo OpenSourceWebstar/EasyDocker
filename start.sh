@@ -132,7 +132,6 @@ startInstall()
     installSpeedtest;
 	installInvidious;
 	installIpinfo;
-	installCozy;
 	installTrilium;
     installMailcow;
 	installVaultwarden;
