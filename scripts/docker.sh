@@ -463,7 +463,7 @@ setupFileWithConfigData()
         checkSuccess "Updating docker socket for $app_name"
     fi
 
-    if [[ $file_name == *".yml"* ]]; then
+    if [[ $file_name == *"docker-compose"* ]]; then
         if [[ "$public" == "true" ]]; then    
             setupTraefikLabels $app_name $full_file_path;
         fi
