@@ -279,8 +279,10 @@ installApp()
     local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"
     local installFuncName="install${app_name_ucfirst}"
 
-    # Use eval to create a variable with the name of $app_name and set its value to "i"
-    eval "${app_name}=i"
+    # Create an indexed array to store values and their variable names
+    app_data=()
+    app_data+=("$app_name")
+    app_data+=("i")
 
     # Call the installation function
     ${installFuncName}
