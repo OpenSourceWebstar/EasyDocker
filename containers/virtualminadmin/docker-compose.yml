@@ -1,0 +1,23 @@
+version: "3.8"
+
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+  virtualminadmin:
+    container_name: "virtualminadmin"
+    image: qoomon/docker-host
+    restart: always
+    cap_add: ["NET_ADMIN", "NET_RAW"]
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.virtualminadmin.entrypoints: web,websecure
+      #traefik.http.routers.virtualminadmin.rule: Host(`virtualmin.DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.virtualminadmin.tls: true
+      #traefik.http.routers.virtualminadmin.tls.certresolver: production
+      #traefik.http.services.virtualminadmin.loadbalancer.server.port: PORT1
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

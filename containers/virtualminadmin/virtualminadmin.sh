@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # Category : system
-# Description : Virtualmin Proxy - *Requires Virtualmin* (c/u/s/r/i):
+# Description : Virtualmin Admin Proxy - *Requires Virtualmin* (c/u/s/r/i):
 
-installVirtualmin()
+installVirtualminadmin()
 {
-    if [[ "$virtualmin" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent virtualmin;
-        local app_name=$CFG_VIRTUALMIN_APP_NAME
+    if [[ "$virtualminadmin" == *[cCtTuUsSrRiI]* ]]; then
+        setupConfigToContainer silent virtualminadmin;
+        local app_name=$CFG_VIRTUALMINADMIN_APP_NAME
         setupInstallVariables $app_name;
     fi
     
-    if [[ "$virtualmin" == *[cC]* ]]; then
+    if [[ "$virtualminadmin" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-    if [[ "$virtualmin" == *[uU]* ]]; then
+    if [[ "$virtualminadmin" == *[uU]* ]]; then
         uninstallApp $app_name;
     fi
 
-    if [[ "$virtualmin" == *[sS]* ]]; then
+    if [[ "$virtualminadmin" == *[sS]* ]]; then
         shutdownApp $app_name;
     fi
 
-    if [[ "$virtualmin" == *[rR]* ]]; then
+    if [[ "$virtualminadmin" == *[rR]* ]]; then
         dockerDownUp $app_name;
     fi
     
-    if [[ "$virtualmin" == *[iI]* ]]; then
+    if [[ "$virtualminadmin" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###          Install $app_name"
@@ -101,7 +101,7 @@ installVirtualmin()
 
         ((menu_number++))
         echo ""
-        echo "---- $menu_number. Making edits to the Virtualmin system files."
+        echo "---- $menu_number. Making edits to the Virtualminadmin system files."
         echo ""
         
         local miniserv_conf="/etc/webmin/miniserv.conf"
@@ -110,12 +110,8 @@ installVirtualmin()
         if [[ -f "$miniserv_conf" ]]; then
             sudo sed -i '/port=/d' "$miniserv_conf"
             sudo sed -i '/ssl=/d' "$miniserv_conf"
-            sudo sed -i '/redirect_host=/d' "$miniserv_conf"
-            sudo sed -i '/redirect_port=/d' "$miniserv_conf"
-            echo "port=$usedport2" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
+            echo "port=$usedport1" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
             echo "ssl=0" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
-            echo "redirect_host=$host_setup" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
-            echo "redirect_port=$usedport1" | sudo tee -a "$miniserv_conf" > /dev/null 2>&1
         else
             isError "Unable to find miniserv.conf, cancelling install..."
         fi
@@ -129,14 +125,14 @@ installVirtualmin()
 
         while true; do
             echo ""
-            isQuestion "Would you like to change the Virtualmin root password? (y/n): "
-            read -p "" virtualmin_pass_choice
-            if [[ -n "$virtualmin_pass_choice" ]]; then
+            isQuestion "Would you like to change the Virtualminadmin root password? (y/n): "
+            read -p "" virtualminadmin_pass_choice
+            if [[ -n "$virtualminadmin_pass_choice" ]]; then
                 break
             fi
             isNotice "Please provide a valid input."
         done
-        if [[ "$virtualmin_pass_choice" == [yY] ]]; then
+        if [[ "$virtualminadmin_pass_choice" == [yY] ]]; then
             while true; do
                 isQuestion "Enter the new password for the 'root' Webmin user: "
                 read -s -p "" webmin_password
@@ -151,7 +147,7 @@ installVirtualmin()
         fi
 
         local result=$(sudo systemctl restart webmin)
-        checkSuccess "Restarting Virtualmin (Webmin)"
+        checkSuccess "Restarting Virtualminadmin (Webmin)"
 
         ((menu_number++))
         echo ""
@@ -195,5 +191,5 @@ installVirtualmin()
         sleep 3s
         cd
     fi
-    virtualmin=n
+    virtualminadmin=n
 }
