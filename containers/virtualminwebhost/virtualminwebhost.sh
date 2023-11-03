@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # Category : system
-# Description : Virualmin Webhost Proxy - *Requires Virualmin* (c/u/s/r/i):
+# Description : Virtualmin Webhost Proxy - *Requires Virtualmin* (c/u/s/r/i):
 
-installVirualminwebhost()
+installVirtualminwebhost()
 {
-    if [[ "$virualminwebhost" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent virualminwebhost;
+    if [[ "$virtualminwebhost" == *[cCtTuUsSrRiI]* ]]; then
+        setupConfigToContainer silent virtualminwebhost;
         local app_name=$CFG_VIRTUALMINWEBHOST_APP_NAME
         setupInstallVariables $app_name;
     fi
     
-    if [[ "$virualminwebhost" == *[cC]* ]]; then
+    if [[ "$virtualminwebhost" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-    if [[ "$virualminwebhost" == *[uU]* ]]; then
+    if [[ "$virtualminwebhost" == *[uU]* ]]; then
         uninstallApp $app_name;
     fi
 
-    if [[ "$virualminwebhost" == *[sS]* ]]; then
+    if [[ "$virtualminwebhost" == *[sS]* ]]; then
         shutdownApp $app_name;
     fi
 
-    if [[ "$virualminwebhost" == *[rR]* ]]; then
+    if [[ "$virtualminwebhost" == *[rR]* ]]; then
         dockerDownUp $app_name;
     fi
     
-    if [[ "$virualminwebhost" == *[iI]* ]]; then
+    if [[ "$virtualminwebhost" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###          Install $app_name"
@@ -101,7 +101,7 @@ installVirualminwebhost()
 
         ((menu_number++))
         echo ""
-        echo "---- $menu_number. Making edits to the Virualminwebhost system files."
+        echo "---- $menu_number. Making edits to the Virtualminwebhost system files."
         echo ""
         
         local miniserv_conf="/etc/webmin/miniserv.conf"
@@ -125,14 +125,14 @@ installVirualminwebhost()
 
         while true; do
             echo ""
-            isQuestion "Would you like to change the Virualminwebhost root password? (y/n): "
-            read -p "" virualminwebhost_pass_choice
-            if [[ -n "$virualminwebhost_pass_choice" ]]; then
+            isQuestion "Would you like to change the Virtualminwebhost root password? (y/n): "
+            read -p "" virtualminwebhost_pass_choice
+            if [[ -n "$virtualminwebhost_pass_choice" ]]; then
                 break
             fi
             isNotice "Please provide a valid input."
         done
-        if [[ "$virualminwebhost_pass_choice" == [yY] ]]; then
+        if [[ "$virtualminwebhost_pass_choice" == [yY] ]]; then
             while true; do
                 isQuestion "Enter the new password for the 'root' Webmin user: "
                 read -s -p "" webmin_password
@@ -147,7 +147,7 @@ installVirualminwebhost()
         fi
 
         local result=$(sudo systemctl restart webmin)
-        checkSuccess "Restarting Virualminwebhost (Webmin)"
+        checkSuccess "Restarting Virtualminwebhost (Webmin)"
 
         ((menu_number++))
         echo ""
@@ -191,5 +191,5 @@ installVirualminwebhost()
         sleep 3s
         cd
     fi
-    virualminwebhost=n
+    virtualminwebhost=n
 }
