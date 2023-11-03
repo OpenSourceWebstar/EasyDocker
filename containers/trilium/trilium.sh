@@ -89,13 +89,24 @@ installTrilium()
         echo "---- $menu_number. Updating defaul port and restarting $app_name"
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
-        
-        result=$(sleep 10s)
-        checkSuccess "Waiting 10 seconds for config to appear"
+        local trilium_timeout=10
+        local trilium_counter=0
+        # Loop to check for the existence of the file every second
+        while [ ! -f "$containers_dir$app_name/trilium-data/config.ini" ]; do
+            if [ "$trilium_counter" -ge "$trilium_timeout" ]; then
+                isNotice "File not found after 10 seconds. Exiting..."
+                break
+            fi
 
-        result=$(cd /docker/containers/trilium/trilium-data/ && sudo sed -i "s|port=8080|port=$usedport1|g" "config.ini")
-        checkSuccess "Configured $app_name from default 8080 to $desired_port"
+            isNotice "Waiting for the file to appear..."
+            read -t 1 # Wait for 1 second
+
+            # Increment the counter
+            local trilium_counter=$((trilium_counter + 1))
+        done
+
+        result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/trilium-data/config.ini")
+        checkSuccess "Configured $app_name from default 8080 to $usedport1"
 
         dockerDownUp $app_name;
 

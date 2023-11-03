@@ -84,8 +84,8 @@ installSearxng()
 
 		whitelistAndStartApp $app_name install;
 
-        searxng_timeout=10
-        searxng_counter=0
+        local searxng_timeout=10
+        local searxng_counter=0
         # Loop to check for the existence of the file every second
         while [ ! -f "$containers_dir$app_name/searxng-data/settings.yml" ]; do
             if [ "$searxng_counter" -ge "$searxng_timeout" ]; then
@@ -97,7 +97,7 @@ installSearxng()
             read -t 1 # Wait for 1 second
 
             # Increment the counter
-            searxng_counter=$((searxng_counter + 1))
+            local searxng_counter=$((searxng_counter + 1))
         done
 
         # Check if the file was found or if we timed out
