@@ -84,7 +84,11 @@ installTraefik()
 
         # Setup Error 404 Website
         local result=$(sudo sed -i "s|ERRORWEBSITE|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/traefik.yml")
-        checkSuccess "Configured Traefik error website wih URL: $CFG_TRAEFIK_404_SITE for $app_name"
+        checkSuccess "Configured Traefik error website with URL: $CFG_TRAEFIK_404_SITE for $app_name"
+
+        # Setup Debug Level
+        local result=$(sudo sed -i "s|DEBUGLEVEL|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/traefik.yml")
+        checkSuccess "Configured Traefik debug level with: $CFG_TRAEFIK_LOGGING for $app_name"
 
         setupFileWithConfigData $app_name "traefik.yml" "etc";
 

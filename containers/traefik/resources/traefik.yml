@@ -92,7 +92,7 @@ certificatesResolvers:
          entryPoint: web
 
 log:
-  level: DEBUG
+  level: DEBUGLEVEL
   filePath: log/traefik.log
   format: common
 
