@@ -71,7 +71,7 @@ installTrilium()
         setupComposeFile $app_name;
 
         # Change port from default port 8080
-        local result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/etc/traefik.yml")
+        local result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/trilium-data/config.ini")
         checkSuccess "Configured $app_name from default 8080 to $usedport1"
 
 		((menu_number++))
