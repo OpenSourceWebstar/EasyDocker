@@ -70,10 +70,6 @@ installTrilium()
 
         setupComposeFile $app_name;
 
-        # Change port from default port 8080
-        local result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/trilium-data/config.ini")
-        checkSuccess "Configured $app_name from default 8080 to $usedport1"
-
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
@@ -87,6 +83,17 @@ installTrilium()
         echo ""
 
 		whitelistAndStartApp $app_name install;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Updating defaul port and restarting $app_name"
+        echo ""
+
+        # Change port from default port 8080
+        local result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/trilium-data/config.ini")
+        checkSuccess "Configured $app_name from default 8080 to $usedport1"
+
+        dockerDownUp $app_name;
 
 		((menu_number++))
 		echo ""
