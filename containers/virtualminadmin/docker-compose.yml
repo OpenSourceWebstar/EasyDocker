@@ -14,7 +14,7 @@ services:
     #labels:
       #traefik.enable: true
       #traefik.http.routers.virtualminadmin.entrypoints: web,websecure
-      #traefik.http.routers.virtualminadmin.rule: Host(`virtualmin.DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.virtualminadmin.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.virtualminadmin.tls: true
       #traefik.http.routers.virtualminadmin.tls.certresolver: production
       #traefik.http.services.virtualminadmin.loadbalancer.server.port: PORT1
