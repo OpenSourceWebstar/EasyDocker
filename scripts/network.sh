@@ -237,7 +237,7 @@ closePort()
                         local result=$(sudo ufw delete allow "$port/$type")
                         checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
                     else
-                        local result=$(sudo ufw delete from $ip_setup to any port "$port")
+                        local result=$(sudo ufw delete allow from $ip_setup to any port "$port")
                         checkSuccess "Closing port $port from $ip_setup for $app_name in the UFW Firewall"
                     fi
                 elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
