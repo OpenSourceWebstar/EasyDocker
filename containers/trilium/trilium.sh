@@ -89,26 +89,8 @@ installTrilium()
         echo "---- $menu_number. Updating defaul port and restarting $app_name"
         echo ""
 
-        local timeout=30
-        local start_time=$(date +%s)
-        while true; do
-            if [ -f "$config_file" ]; then
-                # File exists, perform the configuration change
-                result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/trilium-data/config.ini")
-                checkSuccess "Configured $app_name from default 8080 to $desired_port"
-                break  # Exit the loop once the configuration is done
-            fi
-
-            local current_time=$(date +%s)
-            # Check if the timeout has been reached
-            if [ $((current_time - start_time)) -ge $timeout ]; then
-                echo "Timeout reached. File not found after $timeout seconds."
-                break  # Exit the loop due to the timeout
-            fi
-            
-            isNotice "Checking for config.ini every 1 second"
-            sleep 1  # Wait for 1 second before checking again
-        done
+        result=$(cd /docker/containers/trilium/trilium-data/ && sudo sed -i "s|port=8080|port=$usedport1|g" "config.ini")
+        checkSuccess "Configured $app_name from default 8080 to $desired_port"
 
         dockerDownUp $app_name;
 
