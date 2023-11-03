@@ -89,6 +89,11 @@ installTrilium()
         echo "---- $menu_number. Updating defaul port and restarting $app_name"
         echo ""
 
+        setupConfigToContainer "loud" "$app_name" "install";
+        
+        result=$(sleep 10s)
+        checkSuccess "Waiting 10 seconds for config to appear"
+
         result=$(cd /docker/containers/trilium/trilium-data/ && sudo sed -i "s|port=8080|port=$usedport1|g" "config.ini")
         checkSuccess "Configured $app_name from default 8080 to $desired_port"
 
