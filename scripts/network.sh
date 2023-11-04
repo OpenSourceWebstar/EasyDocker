@@ -585,7 +585,7 @@ updateDNS()
         checkSuccess "Removing all instances of Nameserver from Resolv.conf"
 
         # Check if AdGuard is installed
-        status=$(checkAppInstalled "adguard" "docker")
+        local status=$(checkAppInstalled "adguard" "docker")
         if [ "$status" == "installed" ]; then
             setupDNSIP adguard;
             local adguard_ip="$dns_ip_setup"
@@ -621,7 +621,7 @@ updateDNS()
         fi
 
         # Check if Pi-hole is installed
-        status=$(checkAppInstalled "pihole" "docker")
+        local status=$(checkAppInstalled "pihole" "docker")
         if [ "$status" == "installed" ]; then
             setupDNSIP pihole;
             local pihole_ip="$dns_ip_setup"

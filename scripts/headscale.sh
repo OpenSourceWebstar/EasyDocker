@@ -36,13 +36,14 @@ setupHeadscaleVariables()
 setupHeadscale()
 {
     local app_name="$1"
+    local local_type="$2"
 
     setupHeadscaleVariables $app_name;
 
     # Convert CFG_INSTALL_NAME to lowercase
     local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
 
-    status=$(checkAppInstalled "headscale" "docker")
+    local status=$(checkAppInstalled "headscale" "docker")
     if [ "$status" == "installed" ]; then
         # We don't setup headscale for headscale :)
         if [[ "$app_name" == "headscale" ]]; then
@@ -51,7 +52,7 @@ setupHeadscale()
             # We will setup Localhost
 			while true; do
 				echo ""
-				isQuestion "Would you like to connect your localhost server the Headscale server? (y/n) "
+				isQuestion "Would you like to connect your localhost client the Headscale server? (y/n) "
 				read -p "" local_headscale
 				if [[ -n "$local_headscale" ]]; then
 					break
@@ -59,7 +60,23 @@ setupHeadscale()
 				isNotice "Please provide a valid input."
 			done
 			if [[ "$local_headscale" == [yY] ]]; then
-                setupHeadscaleUser localhost;
+                setupHeadscaleUser localhost local;
+			fi
+        if [[ "$app_name" == "localhost" ]]; then
+			while true; do
+				echo ""
+				isQuestion "Would you like to setup your localhost Headscale client to Localhost or Remote? (l/r) "
+				read -p "" localhost_type_headscale
+				if [[ -n "$localhost_type_headscale" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$localhost_type_headscale" == [lL] ]]; then
+                setupHeadscaleUser localhost local;
+			fi
+			if [[ "$localhost_type_headscale" == [rR] ]]; then
+                setupHeadscaleUser localhost remote;
 			fi
         else
             if [[ "$headscale_setup" != "disabled" ]]; then
@@ -69,7 +86,7 @@ setupHeadscale()
             fi
         fi
     else
-        isSuccessful "Headscale is not installed, continuing with installation..."
+        isSuccessful "Headscale is not installed."
     fi
 
 }
@@ -77,11 +94,44 @@ setupHeadscale()
 setupHeadscaleUser()
 {
     local app_name="$1"
+    local local_type="$2"
     
     if [[ "$headscale_setup" == "local" ]]; then
-        setupHeadscaleLocal $app_name;
+        if [[ "$app_name" == "localhost" ]]; then
+            setupHeadscaleLocalhost $local_type;
+        else
+            setupHeadscaleLocal $app_name;
+        fi
     elif [[ "$headscale_setup" == "remote" ]]; then
         setupHeadscaleRemote $app_name;
+    fi
+}
+
+setupHeadscaleLocalhost()
+{
+    local local_type="$1"
+    if [[ "$local_type" == "local" ]]; then
+        local status=$(checkAppInstalled "headscale" "docker")
+        if [ "$status" == "installed" ]; then
+            setupHeadscaleGetHostname;
+            result=$(cd ~ && curl -fsSL https://tailscale.com/install.sh | sh)
+            checkSuccess "Setting up Headscale for localhost"
+
+            local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
+            local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
+            checkSuccess "Generating Auth Key in Headscale for $app_name"
+
+            result=$(sudo tailscale up --login-server https://$headscale_live_hostname --authkey $preauthkey)
+            checkSuccess "Connecting $app_name to Headscale Server"
+        else
+            isSuccessful "Headscale is not installed, Unable to install."
+        fi
+    elif [[ "$local_type" == "remote" ]]; then
+        result=$(cd ~ && curl -fsSL https://tailscale.com/install.sh | sh)
+        checkSuccess "Setting up Headscale for localhost"
+
+        result=$(sudo tailscale up --login-server https://$headscale_host_setup --authkey $preauthkey)
+        checkSuccess "Connecting $app_name to Headscale Server"
     fi
 }
 
@@ -96,7 +146,7 @@ setupHeadscaleLocal()
     local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
     checkSuccess "Generating Auth Key in Headscale for $app_name"
 
-    runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$host_setup --authkey $preauthkey"
+    runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$headscale_host_setup --authkey $preauthkey"
     checkSuccess "Connecting $app_name to Headscale Server"
 }
 
@@ -109,6 +159,24 @@ setupHeadscaleRemote()
 
     runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
     checkSuccess "Connecting $app_name to Headscale Server"
+}
+
+setupHeadscaleGetHostname()
+{
+    local config_file="${containers_dir}headscale/config/config.yaml"
+    if [ -f "$file" ]; then
+        # Read the line with "server_url" and extract the hostname
+        headscale_live_hostname=$(grep "server_url:" "$config_file" | awk -F'server_url: ' '{print $2}')
+
+        # Check if the hostname was found
+        if [ -n "$headscale_live_hostname" ]; then
+            isSuccessful "Hostname for Headscale found: $headscale_live_hostname"
+        else
+            isError "Hostname not found in $config_file."
+        fi
+    else
+        isError "Headscale config File $config_file not found."
+    fi
 }
 
 headscaleCommands()
