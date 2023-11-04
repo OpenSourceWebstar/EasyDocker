@@ -95,14 +95,16 @@ setupHeadscaleUser()
     local app_name="$1"
     local local_type="$2"
     
-    if [[ "$headscale_setup" == "local" ]]; then
-        if [[ "$app_name" == "localhost" ]]; then
-            setupHeadscaleLocalhost $local_type;
-        else
+    isNotice "Setting up Headscale for $app_name"
+    
+    if [[ "$app_name" == "localhost" ]]; then
+        setupHeadscaleLocalhost $local_type;
+    else
+        if [[ "$headscale_setup" == "local" ]]; then
             setupHeadscaleLocal $app_name;
+        elif [[ "$headscale_setup" == "remote" ]]; then
+            setupHeadscaleRemote $app_name;
         fi
-    elif [[ "$headscale_setup" == "remote" ]]; then
-        setupHeadscaleRemote $app_name;
     fi
 }
 
