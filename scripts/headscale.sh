@@ -42,7 +42,7 @@ setupHeadscale()
 
     local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
     local status=$(checkAppInstalled "headscale" "docker")
-    
+
     if [ "$status" == "installed" ]; then
         # We don't set up headscale for headscale :)
         if [[ "$app_name" == "headscale" ]]; then
@@ -52,7 +52,7 @@ setupHeadscale()
             while true; do
                 echo ""
                 isQuestion "Would you like to connect your localhost client to the Headscale server? (y/n) "
-                read -p local_headscale
+                read -p "" local_headscale
                 if [[ -n "$local_headscale" ]]; then
                     break
                 fi
@@ -66,7 +66,7 @@ setupHeadscale()
             while true; do
                 echo ""
                 isQuestion "Would you like to set up your localhost Headscale client to Localhost or Remote? (l/r) "
-                read -p localhost_type_headscale
+                read -p "" localhost_type_headscale
                 if [[ -n "$localhost_type_headscale" ]]; then
                     break
                 fi
