@@ -103,7 +103,7 @@ setupHeadscaleUser()
         if [[ "$headscale_setup" == "local" ]]; then
             setupHeadscaleLocal $app_name;
         elif [[ "$headscale_setup" == "remote" ]]; then
-            if setupHeadscaleCheckRemote; then;
+            if setupHeadscaleCheckRemote; then
                 setupHeadscaleRemote $app_name;
             fi
         fi
