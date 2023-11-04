@@ -59,10 +59,7 @@ setupHeadscale()
 				isNotice "Please provide a valid input."
 			done
 			if [[ "$local_headscale" == [yY] ]]; then
-                local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
-                checkSuccess "Generating Auth Key in Headscale for $app_name"
-                echo "preauthkey $preauthkey"
-                setupHeadscaleUser local $preauthkey;
+                setupHeadscaleUser localhost;
 			fi
         else
             if [[ "$headscale_setup" != "disabled" ]]; then
@@ -78,46 +75,135 @@ setupHeadscale()
 setupHeadscaleUser()
 {
     local app_name="$1"
-    local preauthkey="$2"
     
-    # For localhost server installs
-    if [[ "$app_name" == "local" ]]; then
-        cd ~ && sudo curl -fsSL https://tailscale.com/install.sh | sh
-        checkSuccess "Setting up Headscale for $app_name"
-
-        sudo tailscale up --login-server https://$host_setup --authkey $preauthkey
-        checkSuccess "Connecting Localhost to Headscale server"
-    else
-        if [[ "$headscale_setup" == "local" ]]; then
-            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
-            checkSuccess "Setting up Headscale for $app_name"
-
-            local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-            local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
-            checkSuccess "Generating Auth Key in Headscale for $app_name"
-
-            runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$host_setup --authkey $preauthkey"
-            checkSuccess "Connecting $app_name to HeadscaleServer "
-        elif [[ "$headscale_setup" == "remote" ]]; then
-            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
-            checkSuccess "Setting up Headscale for $app_name"
-
-            runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
-            checkSuccess "Connecting $app_name to Headscale Server"
-        fi
+    if [[ "$headscale_setup" == "local" ]]; then
+        setupHeadscaleLocal $app_name;
+    elif [[ "$headscale_setup" == "remote" ]]; then
+        setupHeadscaleRemote $app_name;
     fi
+}
+
+setupHeadscaleLocal()
+{
+    local app_name="$1"
+
+    runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
+    checkSuccess "Setting up Headscale for $app_name"
+
+    local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
+    local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
+    checkSuccess "Generating Auth Key in Headscale for $app_name"
+
+    runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$host_setup --authkey $preauthkey"
+    checkSuccess "Connecting $app_name to HeadscaleServer"
+}
+
+setupHeadscaleRemote()
+{
+    local app_name="$1"
+
+    runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
+    checkSuccess "Setting up Headscale for $app_name"
+
+    runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
+    checkSuccess "Connecting $app_name to Headscale Server"
 }
 
 headscaleCommands()
 {
+    # Create a user
+    if [[ "$headscaleclientapp" == [yY] ]]; then
+        local app_names=()
+        local app_dir
+
+        echo ""
+        echo "#########################################"
+        echo "###    Install Headscale Apps List    ###"
+        echo "#########################################"
+        echo ""
+
+        # Find all subdirectories under the directory where your apps are installed
+        for app_dir in "$containers_dir"/*/; do
+            if [[ -d "$app_dir" ]]; then
+            # Extract the app name (folder name)
+            local app_name=$(basename "$app_dir")
+            local app_names+=("$app_name")
+            fi
+        done
+
+        # Check if any apps were found
+        if [ ${#app_names[@]} -eq 0 ]; then
+            isNotice "No apps found in the installation directory."
+            return
+        fi
+
+        # List numbered options for app names
+        isNotice "Select an app to set up Headscale for:"
+        echo ""
+        for i in "${!app_names[@]}"; do
+            isOption "$((i + 1)). ${app_names[i]}"
+        done
+
+        # Read user input for app selection
+        echo ""
+        isQuestion "Enter the number of the app (or 'x' to exit): "
+        read -p "" selected_option
+
+        case "$selected_option" in
+            [1-9]*)
+            # Check if the selected option is a valid number
+            if ((selected_option >= 1 && selected_option <= ${#app_names[@]})); then
+                local selected_app="${app_names[selected_option - 1]}"
+                
+                # Call the setupHeadscale function with the selected app name
+                setupHeadscale "$selected_app"
+            else
+                isNotice "Invalid app number. Please choose a valid option."
+            fi
+            ;;
+            x)
+            isNotice "Exiting..."
+            return
+            ;;
+            *)
+            isNotice "Invalid option. Please choose a valid option or 'x' to exit."
+            ;;
+        esac
+    fi
+
+    # Create a user
+    if [[ "$headscaleusercreate" == [yY] ]]; then
+        echo ""
+        echo "---- Creating user $CFG_INSTALL_NAME for Headscale :"
+        echo ""
+        local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
+        runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
+        echo ""
+        isNotice "Press Enter to continue..."
+        read
+    fi
+
+    # Create a user
+    if [[ "$headscaleusercreate" == [yY] ]]; then
+        echo ""
+        echo "---- Creating user $CFG_INSTALL_NAME for Headscale :"
+        echo ""
+        local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
+        runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
+        echo ""
+        isNotice "Press Enter to continue..."
+        read
+    fi
+
     # Create a key
     if [[ "$headscaleapikeyscreate" == [yY] ]]; then
         echo ""
-        isNotice "Headscale Key below :"
+        echo "---- Generating Auth Key in Headscale for user $CFG_INSTALL_NAME :"
         echo ""
         local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
         runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME"
-        checkSuccess "Generating Auth Key in Headscale for user $CFG_INSTALL_NAME"
+        checkSuccess ""
+        echo ""
         isNotice "Press Enter to continue..."
         read
     fi
@@ -125,10 +211,10 @@ headscaleCommands()
     # Show list of keys
     if [[ "$headscaleapikeyslist" == [yY] ]]; then
         echo ""
-        isNotice "Headscale API Key list below :"
+        echo "---- Showing all Headscale API Keys :"
         echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale apikeys list"
-        checkSuccess "Showing all Headscale API Keys."
+        echo ""
         isNotice "Press Enter to continue..."
         read
     fi
@@ -136,10 +222,10 @@ headscaleCommands()
     # Show list of nodes
     if [[ "$headscalenodeslist" == [yY] ]]; then
         echo ""
-        isNotice "Headscale Node list below :"
+        echo "---- Showing all Headscale Nodes :"
         echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale nodes list"
-        checkSuccess "Showing all Headscale Nodes."
+        echo ""
         isNotice "Press Enter to continue..."
         read
     fi
@@ -147,10 +233,10 @@ headscaleCommands()
     # Show list of users
     if [[ "$headscaleuserlist" == [yY] ]]; then
         echo ""
-        isNotice "Headscale User list below :"
+        echo "---- Showing all Headscale Users :"
         echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale user list"
-        checkSuccess "Showing all Headscale Users."
+        echo ""
         isNotice "Press Enter to continue..."
         read
     fi 
@@ -158,10 +244,10 @@ headscaleCommands()
     # Show version
     if [[ "$headscaleversion" == [yY] ]]; then
         echo ""
-        isNotice "Headscale Version below :"
+        checkSuccess "Showing the Headscale Version :"
         echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale version"
-        checkSuccess "Showing the Headscale Version."
+        echo ""
         isNotice "Press Enter to continue..."
         read
     fi

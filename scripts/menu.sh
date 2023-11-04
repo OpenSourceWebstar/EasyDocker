@@ -181,6 +181,12 @@ mainMenu()
 				echo "#####################################"
 				echo ""
 
+				isOptionMenu "Setup Headscale Client for Localhost? (y/n): "
+				read -rp "" headscaleclientlocal
+				isOptionMenu "Setup Headscale Client for a Specific App? (y/n): "
+				read -rp "" headscaleclientapp
+				isOptionMenu "Create User $CFG_INSTALL_NAME? (y/n): "
+				read -rp "" headscaleusercreate
 				isOptionMenu "Create API Key for $CFG_INSTALL_NAME? (y/n): "
 				read -rp "" headscaleapikeyscreate
 				isOptionMenu "List all API Keys? (y/n): "
