@@ -581,146 +581,91 @@ updateDNS()
 {
 	if [[ "$OS" == [1234567] ]]; then
         # Remove all existing nameserver lines
-        sudo sed -i '/^nameserver/d' /etc/resolv.conf
+        result=$(sudo sed -i '/^nameserver/d' /etc/resolv.conf)
+        checkSuccess "Removing all instances of Nameserver from Resolv.conf"
 
         # Check if AdGuard is installed
         status=$(checkAppInstalled "adguard" "docker")
         if [ "$status" == "installed" ]; then
             setupDNSIP adguard;
             local adguard_ip="$dns_ip_setup"
+            # Testing Docker IP Address
+            ping -c 3 $adguard_ip
+            if [ $? -eq 0 ]; then
+                isSuccessful "Ping to $adguard_ip was successful."
+            else
+                isNotice "Ping to $adguard_ip failed."
+                isNotice "Defaulting to DNS 1 Server $CFG_DNS_SERVER_1."
+                local adguard_ip="$CFG_DNS_SERVER_1"
+                # Fallback to Quad9 if DNS has issues
+                ping -c 3 $adguard_ip
+                if [ $? -eq 0 ]; then
+                    isSuccessful "Ping to $adguard_ip was successful."
+                else
+                    isNotice "Ping to $adguard_ip failed."
+                    isNotice "Defaulting to Quad 9 - 9.9.9.9"
+                    local adguard_ip="9.9.9.9"
+                fi
+            fi
         else
             local adguard_ip="$CFG_DNS_SERVER_1"
+            # Fallback to Quad9 if DNS has issues
+            ping -c 3 $adguard_ip
+            if [ $? -eq 0 ]; then
+                isSuccessful "Ping to $adguard_ip was successful."
+            else
+                isNotice "Ping to $adguard_ip failed."
+                isNotice "Defaulting to Quad 9 - 9.9.9.9"
+                local adguard_ip="9.9.9.9"
+            fi
         fi
 
         # Check if Pi-hole is installed
         status=$(checkAppInstalled "pihole" "docker")
-        echo "pihole status = $status"
         if [ "$status" == "installed" ]; then
             setupDNSIP pihole;
             local pihole_ip="$dns_ip_setup"
+            # Testing Docker IP Address
+            ping -c 3 $pihole_ip
+            if [ $? -eq 0 ]; then
+                isSuccessful "Ping to $pihole_ip was successful."
+            else
+                isNotice "Ping to $pihole_ip failed."
+                isNotice "Defaulting to DNS 2 Server $CFG_DNS_SERVER_2."
+                local pihole_ip="$CFG_DNS_SERVER_2"
+                # Fallback to Quad9 if DNS has issues
+                ping -c 3 $pihole_ip
+                if [ $? -eq 0 ]; then
+                    isSuccessful "Ping to $pihole_ip was successful."
+                else
+                    isNotice "Ping to $pihole_ip failed."
+                    isNotice "Defaulting to Quad 9 - 9.9.9.11"
+                    local pihole_ip="9.9.9.11"
+                fi
+            fi
         else
             local pihole_ip="$CFG_DNS_SERVER_2"
+            if [ $? -eq 0 ]; then
+                isSuccessful "Ping to $pihole_ip was successful."
+            else
+                isNotice "Ping to $pihole_ip failed."
+                isNotice "Defaulting to Quad 9 - 9.9.9.11"
+                local pihole_ip="9.9.9.11"
+            fi
         fi
 
         # Add the custom DNS servers to /etc/resolv.conf
         if [[ "$adguard_ip" == *10.8.1* ]]; then
             echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
             echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
-        else
+        elif [[ "$pihole_ip" == *10.8.1* ]]; then
             echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
             echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
+        else
+            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
         fi
         isSuccessful "Resolv.conf has been updated with the latest DNS settings."
-    fi
-}
-
-########################
-#      Headscale       #
-########################
-setupHeadscaleVariables()
-{
-    local app_name="headscale"
-
-    if [[ "$app_name" == "" ]]; then
-        isError "Something went wrong...No app name provided..."
-        resetToMenu;
-    fi
-
-    # Build variable names based on app_name
-    headscale_host_name_var="CFG_${app_name^^}_HOST_NAME"
-    headscale_domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
-
-    # Access the variables using variable indirection
-    headscale_host_name="${!headscale_host_name_var}"
-    headscale_domain_number="${!headscale_domain_number_var}"
-
-    # Check if no network needed
-    if [ "$headscale_host_name" != "" ]; then
-        while read -r line; do
-            local headscale_hostname=$(echo "$line" | awk '{print $1}')
-            local headscale_ip=$(echo "$line" | awk '{print $2}')
-            if [ "$headscale_hostname" = "$headscale_host_name" ]; then
-                headscale_domain_prefix=$headscale_hostname
-                headscale_domain_var_name="CFG_DOMAIN_${headscale_domain_number}"
-                headscale_domain_full=$(sudo grep  "^$headscale_domain_var_name=" $configs_dir/config_general | cut -d '=' -f 2-)
-                headscale_host_setup=${headscale_domain_prefix}.${headscale_domain_full}
-                headscale_ip_setup=$headscale_ip
-            fi
-        done < "$configs_dir$ip_file"
-    fi 
-}
-
-setupHeadscale()
-{
-    local app_name="$1"
-
-    setupHeadscaleVariables $app_name;
-
-    # Convert CFG_INSTALL_NAME to lowercase
-    local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-
-    status=$(checkAppInstalled "headscale" "docker")
-    if [ "$status" == "installed" ]; then
-        # We don't setup headscale for headscale :)
-        if [[ "$app_name" == "headscale" ]]; then
-            runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
-            checkSuccess "Creating Headscale user $CFG_INSTALL_NAME"
-            # We will setup Localhost
-			while true; do
-				echo ""
-				isQuestion "Would you like to connect your localhost server the Headscale server? (y/n) "
-				read -p "" local_headscale
-				if [[ -n "$local_headscale" ]]; then
-					break
-				fi
-				isNotice "Please provide a valid input."
-			done
-			if [[ "$local_headscale" == [yY] ]]; then
-                local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
-                checkSuccess "Generating Auth Key in Headscale for $app_name"
-                echo "preauthkey $preauthkey"
-                setupHeadscaleUser local $preauthkey;
-			fi
-        else
-            if [[ "$headscale_setup" != "disabled" ]]; then
-                setupHeadscaleUser $app_name;
-            fi
-        fi
-    else
-        isSuccessful "Headscale is not installed, continuing with installation..."
-    fi
-
-}
-
-setupHeadscaleUser()
-{
-    local app_name="$1"
-    local preauthkey="$2"
-    
-    # For localhost server installs
-    if [[ "$app_name" == "local" ]]; then
-        cd ~ && sudo curl -fsSL https://tailscale.com/install.sh | sh
-        checkSuccess "Setting up Headscale for $app_name"
-
-        sudo tailscale up --login-server https://$host_setup --authkey $preauthkey
-        checkSuccess "Connecting Localhost to Headscale server"
-    else
-        if [[ "$headscale_setup" == "local" ]]; then
-            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
-            checkSuccess "Setting up Headscale for $app_name"
-
-            local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
-            checkSuccess "Generating Auth Key in Headscale for $app_name"
-
-            runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$host_setup --authkey $preauthkey"
-            checkSuccess "Connecting $app_name to HeadscaleServer "
-        elif [[ "$headscale_setup" == "remote" ]]; then
-            runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
-            checkSuccess "Setting up Headscale for $app_name"
-
-            runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY"
-            checkSuccess "Connecting $app_name to Headscale Server"
-        fi
     fi
 }
 

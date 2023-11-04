@@ -28,11 +28,12 @@ mainMenu()
 		echo "###          Tools/Other          ###"
 		echo "#####################################"
 		echo ""
-		isOption "d. Database"
 		isOption "c. Configs"
-		isOption "y. YML Editor"
+		isOption "d. Database"
+		isOption "h. Headscale"
 		isOption "l. Logs"
 		isOption "t. Tools"
+		isOption "y. YML Editor"
 		echo ""
 		isOption "i. Initialize"
 		isOption "x. Exit"
@@ -144,6 +145,12 @@ mainMenu()
 				startOther;
 				
 				;;
+
+			c)
+
+				viewConfigs;
+
+				;;
 			d)
 				echo ""
 				echo "#####################################"
@@ -167,7 +174,33 @@ mainMenu()
 				startOther;
 
 				;;
+			h)
+				echo ""
+				echo "#####################################"
+				echo "###          Headscale            ###"
+				echo "#####################################"
+				echo ""
 
+				isOptionMenu "Create API Key for $CFG_INSTALL_NAME? (y/n): "
+				read -rp "" headscaleapikeyscreate
+				isOptionMenu "List all API Keys? (y/n): "
+				read -rp "" headscaleapikeyslist
+				isOptionMenu "List all Nodes? (y/n): "
+				read -rp "" headscalenodeslists
+				isOptionMenu "List all Users? (y/n): "	 
+				read -rp "" headscaleuserlist
+				isOptionMenu "View Headscale Version? (y/n): "
+				read -rp "" headscaleversion
+				isOptionMenu "View/Edit Headscale Config File? (y/n): " 
+				read -rp "" headscaleconfigfile
+
+				startOther;
+
+				;;
+			l)
+				viewLogs;
+
+				;;
 			t)
 				echo ""
 				echo "#####################################"
@@ -201,15 +234,6 @@ mainMenu()
 			y)
 
 				viewComposeFiles;
-
-				;;
-			c)
-
-				viewConfigs;
-
-				;;
-			l)
-				viewLogs;
 
 				;;
 			i)

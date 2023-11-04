@@ -118,7 +118,7 @@ derp:
   update_frequency: 24h
 
 # Disables the automatic check for headscale updates on startup
-disable_check_updates: false
+disable_check_updates: true
 
 # Time before an inactive ephemeral node is deleted?
 ephemeral_node_inactivity_timeout: 30m

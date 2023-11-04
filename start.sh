@@ -240,6 +240,16 @@ startOther()
 
 	databaseEmptyTable;
 
+    #######################################################
+    ###                     Headscale                   ###
+    #######################################################
+
+    headscaleCommands;
+
+    if [[ "$headscaleconfigfile" == [yY] ]]; then
+        headscaleEditConfig;
+    fi
+
 	endStart;
 }
 
