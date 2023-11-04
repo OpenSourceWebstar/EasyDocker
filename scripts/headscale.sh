@@ -33,62 +33,61 @@ setupHeadscaleVariables()
     fi 
 }
 
-setupHeadscale()
+setupHeadscale() 
 {
     local app_name="$1"
     local local_type="$2"
 
-    setupHeadscaleVariables $app_name;
+    setupHeadscaleVariables "$app_name"
 
-    # Convert CFG_INSTALL_NAME to lowercase
     local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-
     local status=$(checkAppInstalled "headscale" "docker")
+    
     if [ "$status" == "installed" ]; then
-        # We don't setup headscale for headscale :)
+        # We don't set up headscale for headscale :)
         if [[ "$app_name" == "headscale" ]]; then
             runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
             checkSuccess "Creating Headscale user $CFG_INSTALL_NAME"
-            # We will setup Localhost
-			while true; do
-				echo ""
-				isQuestion "Would you like to connect your localhost client the Headscale server? (y/n) "
-				read -p "" local_headscale
-				if [[ -n "$local_headscale" ]]; then
-					break
-				fi
-				isNotice "Please provide a valid input."
-			done
-			if [[ "$local_headscale" == [yY] ]]; then
-                setupHeadscaleUser localhost local;
-			fi
-        if [[ "$app_name" == "localhost" ]]; then
-			while true; do
-				echo ""
-				isQuestion "Would you like to setup your localhost Headscale client to Localhost or Remote? (l/r) "
-				read -p "" localhost_type_headscale
-				if [[ -n "$localhost_type_headscale" ]]; then
-					break
-				fi
-				isNotice "Please provide a valid input."
-			done
-			if [[ "$localhost_type_headscale" == [lL] ]]; then
-                setupHeadscaleUser localhost local;
-			fi
-			if [[ "$localhost_type_headscale" == [rR] ]]; then
-                setupHeadscaleUser localhost remote;
-			fi
+
+            while true; do
+                echo ""
+                isQuestion "Would you like to connect your localhost client to the Headscale server? (y/n) "
+                read -p local_headscale
+                if [[ -n "$local_headscale" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+
+            if [[ "$local_headscale" == [yY] ]]; then
+                setupHeadscaleUser localhost local
+            fi
+        elif [[ "$app_name" == "localhost" ]]; then
+            while true; do
+                echo ""
+                isQuestion "Would you like to set up your localhost Headscale client to Localhost or Remote? (l/r) "
+                read -p localhost_type_headscale
+                if [[ -n "$localhost_type_headscale" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+
+            if [[ "$localhost_type_headscale" == [lL] ]]; then
+                setupHeadscaleUser localhost local
+            elif [[ "$localhost_type_headscale" == [rR] ]]; then
+                setupHeadscaleUser localhost remote
+            fi
         else
             if [[ "$headscale_setup" != "disabled" ]]; then
-                setupHeadscaleUser $app_name;
+                setupHeadscaleUser "$app_name"
             elif [[ "$headscale_setup" == "disabled" || "$headscale_setup" == "" ]]; then
-				isNotice "Headscale is not enabled for $app_name, unable to install."
+                isNotice "Headscale is not enabled for $app_name, unable to install."
             fi
         fi
     else
         isSuccessful "Headscale is not installed."
     fi
-
 }
 
 setupHeadscaleUser()
