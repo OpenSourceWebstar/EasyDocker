@@ -92,6 +92,7 @@ setupHeadscaleUser()
             runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
             checkSuccess "Setting up Headscale for $app_name"
 
+            local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
             local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
             checkSuccess "Generating Auth Key in Headscale for $app_name"
 
@@ -114,6 +115,7 @@ headscaleCommands()
         echo ""
         isNotice "Headscale Key below :"
         echo ""
+        local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
         runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME"
         checkSuccess "Generating Auth Key in Headscale for user $CFG_INSTALL_NAME"
         isNotice "Press Enter to continue..."
