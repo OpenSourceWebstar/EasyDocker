@@ -111,7 +111,12 @@ setupHeadscaleRemote()
 
 headscaleCommands()
 {
-    # Create a user
+    # Setup Headscale for Localhost
+    if [[ "$headscaleclientlocal" == [yY] ]]; then
+        setupHeadscale localhost;
+    fi
+    
+    # Setup Headscale for app
     if [[ "$headscaleclientapp" == [yY] ]]; then
         local app_names=()
         local app_dir
