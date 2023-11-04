@@ -165,7 +165,7 @@ setupHeadscaleRemote()
 setupHeadscaleGetHostname()
 {
     local config_file="${containers_dir}headscale/config/config.yaml"
-    if [ -f "$file" ]; then
+    if [ -f "$config_file" ]; then
         # Read the line with "server_url" and extract the hostname
         headscale_live_hostname=$(grep "server_url:" "$config_file" | awk -F'server_url: ' '{print $2}')
 
