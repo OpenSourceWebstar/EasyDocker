@@ -129,10 +129,10 @@ setupHeadscaleLocalhost()
         fi
     elif [[ "$local_type" == "remote" ]]; then
         result=$(cd ~ && curl -fsSL https://tailscale.com/install.sh | sh)
-        checkSuccess "Setting up Headscale for localhost"
+        checkSuccess "Setting up Headscale for remote server : $CFG_HEADSCALE_HOST"
 
-        result=$(sudo tailscale up --login-server https://$headscale_host_setup --authkey $preauthkey)
-        checkSuccess "Connecting $app_name to Headscale Server"
+        result=$(sudo tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY)
+        checkSuccess "Connecting $app_name to $CFG_HEADSCALE_HOST Headscale Server"
     fi
 }
 
