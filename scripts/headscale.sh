@@ -111,6 +111,9 @@ headscaleCommands()
 {
     # Create a key
     if [[ "$headscaleapikeyscreate" == [yY] ]]; then
+        echo ""
+        isNotice "Headscale Key below :"
+        echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME"
         checkSuccess "Generating Auth Key in Headscale for user $CFG_INSTALL_NAME"
         isNotice "Press Enter to continue..."
@@ -119,6 +122,9 @@ headscaleCommands()
 
     # Show list of keys
     if [[ "$headscaleapikeyslist" == [yY] ]]; then
+        echo ""
+        isNotice "Headscale API Key list below :"
+        echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale apikeys list"
         checkSuccess "Showing all Headscale API Keys."
         isNotice "Press Enter to continue..."
@@ -127,6 +133,9 @@ headscaleCommands()
 
     # Show list of nodes
     if [[ "$headscalenodeslist" == [yY] ]]; then
+        echo ""
+        isNotice "Headscale Node list below :"
+        echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale nodes list"
         checkSuccess "Showing all Headscale Nodes."
         isNotice "Press Enter to continue..."
@@ -135,6 +144,9 @@ headscaleCommands()
 
     # Show list of users
     if [[ "$headscaleuserlist" == [yY] ]]; then
+        echo ""
+        isNotice "Headscale User list below :"
+        echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale user list"
         checkSuccess "Showing all Headscale Users."
         isNotice "Press Enter to continue..."
@@ -143,6 +155,9 @@ headscaleCommands()
 
     # Show version
     if [[ "$headscaleversion" == [yY] ]]; then
+        echo ""
+        isNotice "Headscale Version below :"
+        echo ""
         runCommandForDockerInstallUser "docker exec headscale headscale version"
         checkSuccess "Showing the Headscale Version."
         isNotice "Press Enter to continue..."
@@ -152,7 +167,7 @@ headscaleCommands()
 
 headscaleEditConfig() 
 {
-    local config_file="$containers_dir$app_name/config/config.yaml"
+    local config_file="${containers_dir}headscale/config/config.yaml"
     local previous_md5=$(md5sum "$config_file" | awk '{print $1}')
     nano "$config_file"
     local current_md5=$(md5sum "$config_file" | awk '{print $1}')
