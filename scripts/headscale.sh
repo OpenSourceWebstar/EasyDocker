@@ -103,10 +103,25 @@ setupHeadscaleUser()
         if [[ "$headscale_setup" == "local" ]]; then
             setupHeadscaleLocal $app_name;
         elif [[ "$headscale_setup" == "remote" ]]; then
-            setupHeadscaleRemote $app_name;
+            if setupHeadscaleCheckRemote; then;
+                setupHeadscaleRemote $app_name;
+            fi
         fi
     fi
 }
+
+setupHeadscaleCheckRemote()
+{
+    if [[ "$CFG_HEADSCALE_HOST" == "" ]]; then
+        isError "Please setup a Headscale host in the EasyDocker General config for CFG_HEADSCALE_HOST"
+        return
+    fi
+    if [[ "$CFG_HEADSCALE_KEY" == "" ]]; then
+        isError "Please setup a Headscale Key in the EasyDocker General config for CFG_HEADSCALE_KEY"
+        return
+    fi
+    isSuccessful "Remote Headscale config data has been provided...continuing..."
+}   
 
 setupHeadscaleLocalhost()
 {
@@ -118,9 +133,7 @@ setupHeadscaleLocalhost()
             result=$(cd ~ && curl -fsSL https://tailscale.com/install.sh | sh)
             checkSuccess "Setting up Headscale for localhost"
 
-            local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-            local preauthkey=$(runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME")
-            checkSuccess "Generating Auth Key in Headscale for $app_name"
+            setupHeadscaleGenerateAuthKey;
 
             result=$(sudo tailscale up --login-server https://$headscale_live_hostname --authkey $headscale_preauthkey)
             checkSuccess "Connecting $app_name to Headscale Server"
@@ -128,11 +141,13 @@ setupHeadscaleLocalhost()
             isSuccessful "Headscale is not installed, Unable to install."
         fi
     elif [[ "$local_type" == "remote" ]]; then
-        result=$(cd ~ && curl -fsSL https://tailscale.com/install.sh | sh)
-        checkSuccess "Setting up Headscale for remote server : $CFG_HEADSCALE_HOST"
+        if setupHeadscaleCheckRemote; then
+            result=$(cd ~ && curl -fsSL https://tailscale.com/install.sh | sh)
+            checkSuccess "Setting up Headscale for remote server : $CFG_HEADSCALE_HOST"
 
-        result=$(sudo tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY)
-        checkSuccess "Connecting $app_name to $CFG_HEADSCALE_HOST Headscale Server"
+            result=$(sudo tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY)
+            checkSuccess "Connecting $app_name to $CFG_HEADSCALE_HOST Headscale Server"
+        fi
     fi
 }
 
@@ -143,8 +158,7 @@ setupHeadscaleLocal()
     runCommandForDockerInstallUser "docker exec $app_name curl -fsSL https://tailscale.com/install.sh | sh"
     checkSuccess "Setting up Headscale for $app_name"
 
-
-
+    setupHeadscaleGenerateAuthKey;
 
     runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$headscale_host_setup --authkey $headscale_preauthkey"
     checkSuccess "Connecting $app_name to Headscale Server"
