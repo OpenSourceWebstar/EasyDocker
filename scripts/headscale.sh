@@ -64,6 +64,8 @@ setupHeadscale()
         else
             if [[ "$headscale_setup" != "disabled" ]]; then
                 setupHeadscaleUser $app_name;
+            elif [[ "$headscale_setup" == "disabled" || "$headscale_setup" == "" ]]; then
+				isNotice "Headscale is not enabled for $app_name, unable to install."
             fi
         fi
     else
@@ -95,7 +97,7 @@ setupHeadscaleLocal()
     checkSuccess "Generating Auth Key in Headscale for $app_name"
 
     runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$host_setup --authkey $preauthkey"
-    checkSuccess "Connecting $app_name to HeadscaleServer"
+    checkSuccess "Connecting $app_name to Headscale Server"
 }
 
 setupHeadscaleRemote()
