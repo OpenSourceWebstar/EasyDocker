@@ -182,7 +182,7 @@ setupHeadscaleLocal()
 
     setupHeadscaleGetHostname;
 
-    headscaleInstallToContainer;
+    tailscaleInstallToContainer $app_name;
 
     setupHeadscaleGenerateAuthKey;
 
@@ -203,7 +203,7 @@ setupHeadscaleRemote()
 {
     local app_name="$1"
 
-    headscaleInstallToContainer;
+    tailscaleInstallToContainer $app_name;
 
     runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY --force-reauth"
     checkSuccess "Connecting $app_name to Headscale Server"
@@ -414,15 +414,22 @@ headscaleEditConfig()
     fi
 }
 
-headscaleInstallToContainer()
+tailscaleInstallToContainer()
 {
     local app_name="$1"
+    local type="$2"
 
-    runCommandForDockerInstallUser "docker cp ${install_scripts_dir}tailscale.sh $app_name:/usr/local/bin/tailscale.sh"
-    checkSuccess "Installing Tailscale installer script into the $app_name container"
+    local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/tailscale)
+    checkSuccess "Creating Tailscale folder"
+
+    copyFile "loud" "${install_scripts_dir}tailscale.sh" "$containers_dir$app_name/tailscale/tailscale.sh" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+
+    if [[ "$type" != "install" ]]; then
+        dockerDownUp $app_name;
+    fi
+    #runCommandForDockerInstallUser "docker cp ${install_scripts_dir}tailscale.sh $app_name:/usr/local/bin/tailscale.sh"
+    #checkSuccess "Installing Tailscale installer script into the $app_name container"
 
     runCommandForDockerInstallUser "docker exec -it $app_name /usr/local/bin/tailscale.sh"
-    checkSuccess "Executing Tailscale installer script into the $app_name container"
-
-
+    checkSuccess "Executing Tailscale installer script in the $app_name container"
 }

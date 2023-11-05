@@ -12,6 +12,7 @@ services:
     hostname: "unbound"
     volumes:
       - "./etc:/opt/unbound/etc/unbound/"
+      - "./tailscale:/usr/local/bin/"
     networks:
       vpn:
         ipv4_address: 10.8.1.119
