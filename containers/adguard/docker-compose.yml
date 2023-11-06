@@ -12,7 +12,6 @@ services:
     hostname: "unbound"
     volumes:
       - "./etc:/opt/unbound/etc/unbound/"
-      - "./tailscale:/usr/local/bin/"
     networks:
       vpn:
         ipv4_address: 10.8.1.119
@@ -44,6 +43,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - "./work:/opt/adguardhome/work"
       - "./conf:/opt/adguardhome/conf"
+      - "./tailscale:/usr/local/bin/"
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
