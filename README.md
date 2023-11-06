@@ -33,33 +33,31 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 
 # Apps Available
 
-| Type           | Name                                             |  Status          | 
-| -------------- | ------------------------------------------------ | ---------------- | 
+| Type           | Name                                                                                                |  Status          | 
+| -------------- | --------------------------------------------------------------------------------------------------- | ---------------- | 
 | System         | <a href="https://github.com/fail2ban/fail2ban">Fail2Ban - Connection Security</a>                   | Tested & Working |
-| System         | <a href="https://github.com/traefik/traefik">Traefik - Reverse Proxy</a> *RECOMMENDED*            | Tested & Working |
-| System         | <a href="https://github.com/caddyserver/caddy">Caddy - Reverse Proxy</a> *NOT RECOMMENDED*          | Tested & Working |
-| System         | <a href="https://github.com/wg-easy/wg-easy">Wireguard Easy - VPN Server</a>                      | Tested & Working |
-| System         | <a href="https://github.com/AdguardTeam/AdGuardHome">Adguard & Unbound - DNS Server</a> *RECOMMENDED*     | Tested & Working |
-| System         | <a href="https://github.com/pi-hole/pi-hole">Pi-Hole & Unbound - DNS Server</a> *NOT RECOMMENDED* | Tested & Working |
-| System         | <a href="https://github.com/portainer/portainer">Portainer - Docker Management</a>                    | Tested & Working |
-| System         | <a href="https://github.com/containrrr/watchtower">Watchtower - Docker Updater</a>                      | Tested & Working |
-| System         | <a href="https://github.com/Lissy93/dashy">Dashy - Docker Dashboard</a>                         | Tested & Working |
-| Privacy        | <a href="https://github.com/searxng/searxng">Searxng - Search Engine</a>                          | Tested & Working |
-| Privacy        | <a href="https://github.com/librespeed/speedtest">LibreSpeed - Internet Speed Test</a>                     | Tested & Working |
-| Privacy        | <a href="https://github.com/PeterDaveHello/ipinfo.tw">IPInfo - Show IP Address</a>                         | Tested & Working |
-| Privacy        | <a href="https://github.com/zadam/trilium">Trilium - Note Manager</a>                           | Tested & Working |
-| Privacy        | <a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden - Password Manager</a>                   | Tested & Working |
-| Privacy        | <a href="https://github.com/actualbudget/actual">Actual - Money Budgetting</a>                        | Tested & Working |
-| Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*               | Needs Testing    |
-| User           | <a href="https://github.com/jitsi/docker-jitsi-meet">Jitsi Meet - Video Conferencing</a>                  | Tested & Working |
-| User           | <a href="https://github.com/owncloud-docker/server">OwnCloud - File & Document Cloud</a>                 | Tested & Working |
+| System         | <a href="https://github.com/traefik/traefik">Traefik - Reverse Proxy</a>                            | Tested & Working |
+| System         | <a href="https://github.com/wg-easy/wg-easy">Wireguard Easy - VPN Server</a>                        | Tested & Working |
+| System         | <a href="https://github.com/AdguardTeam/AdGuardHome">Adguard & Unbound - DNS Server</a>             | Tested & Working |
+| System         | <a href="https://github.com/pi-hole/pi-hole">Pi-Hole & Unbound - DNS Server</a>                     | Tested & Working |
+| System         | <a href="https://github.com/portainer/portainer">Portainer - Docker Management</a>                  | Tested & Working |
+| System         | <a href="https://github.com/containrrr/watchtower">Watchtower - Docker Updater</a>                  | Tested & Working |
+| System         | <a href="https://github.com/Lissy93/dashy">Dashy - Docker Dashboard</a>                             | Tested & Working |
+| Privacy        | <a href="https://github.com/searxng/searxng">Searxng - Search Engine</a>                            | Tested & Working |
+| Privacy        | <a href="https://github.com/librespeed/speedtest">LibreSpeed - Internet Speed Test</a>              | Tested & Working |
+| Privacy        | <a href="https://github.com/PeterDaveHello/ipinfo.tw">IPInfo - Show IP Address</a>                  | Tested & Working |
+| Privacy        | <a href="https://github.com/zadam/trilium">Trilium - Note Manager</a>                               | Tested & Working |
+| Privacy        | <a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden - Password Manager</a>             | Tested & Working |
+| Privacy        | <a href="https://github.com/actualbudget/actual">Actual - Money Budgetting</a>                      | Tested & Working |
+| Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*      | Needs Testing    |
+| User           | <a href="https://github.com/jitsi/docker-jitsi-meet">Jitsi Meet - Video Conferencing</a>            | Tested & Working |
+| User           | <a href="https://github.com/owncloud-docker/server">OwnCloud - File & Document Cloud</a>            | Tested & Working |
 | User           | <a href="https://github.com/killbill/killbill">Killbill - Payment Processing</a>                    | Tested & Working |
-| User           | <a href="https://github.com/mattermost/mattermost">Mattermost - Collaboration Platform</a>              | Tested & Working |
-| User           | <a href="https://github.com/kimai/kimai">Kimai - Online-Timetracker</a>                       | Tested & Working |
+| User           | <a href="https://github.com/mattermost/mattermost">Mattermost - Collaboration Platform</a>          | Tested & Working |
+| User           | <a href="https://github.com/kimai/kimai">Kimai - Online-Timetracker</a>                             | Tested & Working |
 | User           | <a href="https://github.com/Tiledesk/tiledesk">Tiledesk - Live Chat Platform</a> *UNFINISHED*       | Needs Finishing  |
 | User           | <a href="https://gitlab.com/gitlab-org/gitlab">GitLab - DevOps Platform</a> *UNFINISHED*            | Needs Testing    |
-| Old            | <a href="https://github.com/duplicati/duplicati">Duplicati - Backups</a>                     | Tested & Working |
-| Old            | <a href="https://github.com/vsellier/easy-cozy">Cozy - Cloud Platfrom</a> *BROKEN             | Needs Fixing     |
+| Old            | <a href="https://github.com/duplicati/duplicati">Duplicati - Backups</a>                            | Tested & Working |
 
 
 ## Instructions
