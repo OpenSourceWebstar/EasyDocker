@@ -590,7 +590,7 @@ updateDNS()
             setupDNSIP adguard;
             local adguard_ip="$dns_ip_setup"
             # Testing Docker IP Address
-            ping -c 3 $adguard_ip
+            result=$(sudo ping -c 3 $adguard_ip)
             if [ $? -eq 0 ]; then
                 isSuccessful "Ping to $adguard_ip was successful."
             else
@@ -598,7 +598,7 @@ updateDNS()
                 isNotice "Defaulting to DNS 1 Server $CFG_DNS_SERVER_1."
                 local adguard_ip="$CFG_DNS_SERVER_1"
                 # Fallback to Quad9 if DNS has issues
-                ping -c 3 $adguard_ip
+                result=$(sudo ping -c 3 $adguard_ip)
                 if [ $? -eq 0 ]; then
                     isSuccessful "Ping to $adguard_ip was successful."
                 else
@@ -610,7 +610,7 @@ updateDNS()
         else
             local adguard_ip="$CFG_DNS_SERVER_1"
             # Fallback to Quad9 if DNS has issues
-            ping -c 3 $adguard_ip
+            result=$(sudo ping -c 3 $adguard_ip)
             if [ $? -eq 0 ]; then
                 isSuccessful "Ping to $adguard_ip was successful."
             else
@@ -626,7 +626,7 @@ updateDNS()
             setupDNSIP pihole;
             local pihole_ip="$dns_ip_setup"
             # Testing Docker IP Address
-            ping -c 3 $pihole_ip
+            result=$(sudo ping -c 3 $pihole_ip)
             if [ $? -eq 0 ]; then
                 isSuccessful "Ping to $pihole_ip was successful."
             else
@@ -634,7 +634,7 @@ updateDNS()
                 isNotice "Defaulting to DNS 2 Server $CFG_DNS_SERVER_2."
                 local pihole_ip="$CFG_DNS_SERVER_2"
                 # Fallback to Quad9 if DNS has issues
-                ping -c 3 $pihole_ip
+                result=$(sudo ping -c 3 $pihole_ip)
                 if [ $? -eq 0 ]; then
                     isSuccessful "Ping to $pihole_ip was successful."
                 else
