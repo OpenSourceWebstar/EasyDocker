@@ -35,9 +35,6 @@ services:
       - ./pihole-unbound:/etc/dnsmasq:rw
     restart: unless-stopped
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.rewrite: / /admin{uri}
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.pihole.entrypoints: web,websecure
       #traefik.http.routers.pihole.rule: Host(`DOMAINSUBNAMEHERE`)

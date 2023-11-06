@@ -20,8 +20,6 @@ services:
       - ./prom_data:/prometheus
       - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.prometheus.entrypoints: web,websecure
       #traefik.http.routers.prometheus.rule: Host(`DOMAINSUBNAMEHERE`)

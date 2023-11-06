@@ -22,8 +22,6 @@ services:
       - 8200:8200
     restart: unless-stopped
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #caddy.tls: "internal"
       #traefik.enable: true
       #traefik.http.routers.cozy.entrypoints: web,websecure

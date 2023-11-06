@@ -16,8 +16,6 @@ services:
     command: headscale serve
     restart: unless-stopped
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.headscale.entrypoints: web,websecure
       #traefik.http.routers.headscale.rule: Host(`DOMAINSUBNAMEHERE`)
@@ -53,8 +51,6 @@ services:
       #- OIDC_CLIENT_ID=your-auth-server-client-id-info-here         # Your OIDC Issuer's Client ID for Headscale-WebUI
       #- OIDC_CLIENT_SECRET=your-oidc-auth-server-client-secret-key-will-go-here-and-be-very-long-indeed      # Your OIDC Issuer's Secret Key for Headscale-WebUI
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT2
       #traefik.enable: true
       #traefik.http.routers.headscale-webui.rule: Host(`admin.DOMAINSUBNAMEHERE`)"
       #traefik.http.services.headscale-webui.loadbalancer.server.port: PORT2

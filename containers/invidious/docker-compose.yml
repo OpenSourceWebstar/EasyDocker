@@ -40,8 +40,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.invidious.entrypoints: web,websecure
       #traefik.http.routers.invidious.rule: Host(`DOMAINSUBNAMEHERE`)

@@ -108,8 +108,6 @@ services:
                 aliases:
                     - ${XMPP_DOMAIN}
         #labels:
-            #caddy: DOMAINSUBNAMEHERE
-            #caddy.reverse_proxy: "IPADDRESSHERE:PORT2"
             #traefik.enable: true
             #traefik.http.routers.jitismeet.entrypoints: web,websecure
             #traefik.http.routers.jitismeet.rule: Host(`DOMAINSUBNAMEHERE`)

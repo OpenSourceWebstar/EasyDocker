@@ -38,8 +38,6 @@ services:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.wireguard.entrypoints: web,websecure
       #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`)

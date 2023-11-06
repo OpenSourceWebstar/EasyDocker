@@ -19,8 +19,6 @@ services:
      - ./grafana_storage:/var/lib/grafana
      - /var/run/docker.sock:/var/run/docker.sock:ro
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.grafana.entrypoints: web,websecure
       #traefik.http.routers.grafana.rule: Host(`DOMAINSUBNAMEHERE`)

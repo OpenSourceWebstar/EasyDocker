@@ -41,8 +41,6 @@ services:
       - WEB_VAULT_ENABLED=true
       #- ROCKET_TLS={certs="ssl/cert.pem",key="ssl/key.pem"}
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.vaultwarden.entrypoints: web,websecure
       #traefik.http.routers.vaultwarden.rule: Host(`DOMAINSUBNAMEHERE`)

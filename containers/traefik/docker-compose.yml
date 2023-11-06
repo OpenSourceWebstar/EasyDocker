@@ -17,8 +17,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc:/etc/traefik
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.docker.network: DOCKERNETWORK
       #traefik.enable: "true"
       #traefik.http.routers.traefik.entrypoints: web,websecure

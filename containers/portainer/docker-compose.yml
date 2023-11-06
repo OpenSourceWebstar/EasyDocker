@@ -16,8 +16,6 @@ services:
       - ./portainer-data/:/data
     image: portainer/portainer-ce
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.portainer.entrypoints: web,websecure
       #traefik.http.routers.portainer.rule: Host(`DOMAINSUBNAMEHERE`)

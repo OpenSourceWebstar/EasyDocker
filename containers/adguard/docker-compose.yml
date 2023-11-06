@@ -32,8 +32,6 @@ services:
       - PORT2:80/tcp # Admin
       #- 3443:443/tcp
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.adguard-admin.entrypoints: web,websecure
       #traefik.http.routers.adguard-admin.rule: Host(`DOMAINSUBNAMEHERE`)

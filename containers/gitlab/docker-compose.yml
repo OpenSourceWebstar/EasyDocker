@@ -16,8 +16,6 @@ services:
         nginx['listen_https'] = false
         nginx['listen_port'] = PORT1
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.gitlab.rule: Host(DOMAINSUBNAMEHERE)
       #traefik.http.routers.gitlab.entrypoints: web,websecure

@@ -17,8 +17,6 @@ services:
     ports:
       - 4001:80
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.speedtest.entrypoints: web,websecure
       #traefik.http.routers.speedtest.rule: Host(`DOMAINSUBNAMEHERE`)

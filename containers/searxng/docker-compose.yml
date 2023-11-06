@@ -28,8 +28,6 @@ services:
         max-size: "1m"
         max-file: "1"
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.searxng.entrypoints: web,websecure
       #traefik.http.routers.searxng.rule: Host(`DOMAINSUBNAMEHERE`)

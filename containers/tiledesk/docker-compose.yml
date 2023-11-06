@@ -16,8 +16,6 @@ services:
     ports:
       - "PORT1:80" # specify port forewarding
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: IPADDRESSHERE:PORT1
       #traefik.enable: true
       #traefik.http.routers.tiledesk.entrypoints: web,websecure
       #traefik.http.routers.tiledesk.rule: Host(`DOMAINSUBNAMEHERE`)

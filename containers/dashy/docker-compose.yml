@@ -33,8 +33,6 @@ services:
       retries: 3
       start_period: 40s
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.dashy.entrypoints: web,websecure
       #traefik.http.routers.dashy.rule: Host(`DOMAINSUBNAMEHERE`)

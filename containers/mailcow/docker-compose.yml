@@ -9,8 +9,6 @@ services:
         vpn:
           ipv4_address: IPADDRESSHERE
       #labels:
-        #caddy: DOMAINSUBNAMEHERE
-        #caddy.reverse_proxy: IPADDRESSHERE:PORT1
         #traefik.enable: true
         #traefik.http.routers.moo.rule: Host(`${MAILCOW_HOSTNAME}`)
         #traefik.http.routers.moo.tls: true

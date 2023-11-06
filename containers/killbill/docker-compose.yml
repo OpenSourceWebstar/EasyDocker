@@ -27,8 +27,6 @@ services:
       - KAUI_CONFIG_DAO_PASSWORD=killbill
       - KAUI_KILLBILL_URL=http://killbill:8080
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.killbill.entrypoints: web,websecure
       #traefik.http.routers.killbill.rule: Host(`DOMAINSUBNAMEHERE`)

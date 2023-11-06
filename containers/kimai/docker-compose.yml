@@ -93,8 +93,6 @@ services:
       timeout: 10s
       retries: 3
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "10.8.1.104:PORT1"
       #traefik.enable: true
       #traefik.http.routers.kimai-nginx.entrypoints: web,websecure
       #traefik.http.routers.kimai-nginx.rule: Host(`DOMAINSUBNAMEHERE`)

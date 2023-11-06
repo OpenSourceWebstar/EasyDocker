@@ -22,8 +22,6 @@ services:
       # '/data' is the path Actual will look for its files in by default, so leave that as-is.
       - ./actual-data:/data
     #labels:
-      #caddy: DOMAINSUBNAMEHERE
-      #caddy.reverse_proxy: "IPADDRESSHERE:PORT1"
       #traefik.enable: true
       #traefik.http.routers.actual.entrypoints: web,websecure
       #traefik.http.routers.actual.rule: Host(`DOMAINSUBNAMEHERE`)
