@@ -145,6 +145,7 @@ startInstall()
 	installOwncloud;
 	installJitsimeet;
 	installKillbill;
+    installRustdesk;
 	installActual;
     installKimai;
 	installMattermost;
