@@ -38,4 +38,4 @@ config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$conf
 # Menu
 menu_number=0
 
-#Secondary IP available : 10.8.1.123
+#Secondary IP available : 10.8.1.124
