@@ -110,9 +110,9 @@ installRustdesk()
         # Extract the public key from the specified file
         local public_key=$(cat "$public_key_file")
         if [[ $compose_setup == "default" ]]; then
-            local compose_file="docker-compose.yml"
+            local compose_file="$containers_dir$app_name/docker-compose.yml"
         elif [[ $compose_setup == "app" ]]; then
-            local compose_file="docker-compose.$app_name.yml"
+            local compose_file="$containers_dir$app_name/docker-compose.$app_name.yml"
         fi
 
 
