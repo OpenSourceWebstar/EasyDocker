@@ -91,7 +91,7 @@ installRustdesk()
 
         local rustdesk_timeout=10
         local rustdesk_counter=0
-        local public_key_file="$containers_dir/$app_name/hbbs/id_ed25519.pub"
+        local public_key_file="$containers_dir$app_name/hbbs/id_ed25519.pub"
 
         # Loop to check for the existence of the file every second
         while [ ! -f "$public_key_file" ]; do
@@ -116,7 +116,7 @@ installRustdesk()
         else
             # Update the Docker Compose file using `sed`
             sed -i "s/command: hbbs -r \${host_setup}:21117/command: hbbs -r \${host_setup}:21117 -k $public_key/" "$docker_compose_file"
-            echo "Updated Docker Compose file with the public key: $public_key"
+            echo "Updated Docker Compose file with the public key."
         fi
 
         dockerDownUp $app_name;
@@ -144,6 +144,8 @@ installRustdesk()
         echo "    Public : https://$host_setup/"
         echo "    External : http://$public_ip:$usedport1/"
         echo "    Local : http://$ip_setup:$usedport1/"
+        echo ""
+        echo "    Your Rustdesk Key is : $public_key"
         echo ""
 
 		menu_number=0
