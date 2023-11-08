@@ -115,14 +115,13 @@ installRustdesk()
             local compose_file="$containers_dir$app_name/docker-compose.$app_name.yml"
         fi
 
-
         # Check if the desired public key is already set in the Docker Compose file
         if grep -q "$public_key" "$compose_file"; then
-            echo "Docker Compose file is already set up with the public key."
+            isNotice "Docker Compose file is already set up with the public key."
         else
             # Update the Docker Compose file using `sed`
-            sed -i "s/command: hbbs -r \${host_setup}:21117/command: hbbs -r \${host_setup}:21117 -k $public_key/" "$compose_file"
-            echo "Updated Docker Compose file with the public key."
+            result=$(sudo sed -i "s/command: hbbs -r \${host_setup}:21117/command: hbbs -r \${host_setup}:21117 -k $public_key/" "$compose_file")
+            checkSuccess "Update Docker Compose file with the public key."
         fi
 
         dockerDownUp $app_name;
