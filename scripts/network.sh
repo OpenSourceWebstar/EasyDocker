@@ -128,6 +128,8 @@ checkAppPorts()
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
         if [[ $used_port_value != "" ]]; then
+            # Convert to lowercase to avoid bad port issues
+            local used_port_value=$(tr '[:upper:]' '[:lower:]' <<< "$used_port_value")
             usePort "$app_name" "$used_port_value" "$flag"
         fi
     done
@@ -136,6 +138,8 @@ checkAppPorts()
         local open_variable_name="openport$((i+1))"
         local open_port_value="${!open_variable_name}"
         if [[ $open_port_value != "" ]]; then
+            # Convert to lowercase to avoid bad port issues
+            local open_port_value=$(tr '[:upper:]' '[:lower:]' <<< "$open_port_value")
             openPort "$app_name" "$open_port_value" "$flag"
         fi
     done
@@ -201,6 +205,8 @@ removeAppPorts()
         local open_variable_name="openport$((i+1))"
         local open_port_value="${!open_variable_name}"
         if [[ $open_port_value != "" ]]; then
+            # Convert to lowercase to avoid bad port issues
+            local open_port_value=$(tr '[:upper:]' '[:lower:]' <<< "$open_port_value")
             closePort "$app_name" "$open_port_value" remove
         fi
     done
@@ -210,6 +216,8 @@ removeAppPorts()
         local used_variable_name="usedport$((i+1))"
         local used_port_value="${!used_variable_name}"
         if [[ $used_port_value != "" ]]; then
+            # Convert to lowercase to avoid bad port issues
+            local used_port_value=$(tr '[:upper:]' '[:lower:]' <<< "$used_port_value")
             unusePort "$app_name" "$used_port_value" remove
         fi
     done
