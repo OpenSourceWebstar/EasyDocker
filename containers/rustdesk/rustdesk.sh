@@ -79,10 +79,47 @@ installRustdesk()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $$app_name"
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
 		whitelistAndStartApp $app_name install;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Updating $app_name with an encryption key."
+        echo ""
+
+        local rustdesk_timeout=10
+        local rustdesk_counter=0
+        local public_key_file="$containers_dir/$app_name/hbbs/id_ed25519.pub"
+
+        # Loop to check for the existence of the file every second
+        while [ ! -f "$public_key_file" ]; do
+            if [ "$rustdesk_counter" -ge "$rustdesk_timeout" ]; then
+                isNotice "File not found after 10 seconds. Exiting..."
+                break
+            fi
+
+            isNotice "Waiting for the file to appear..."
+            read -t 1 # Wait for 1 second
+
+            # Increment the counter
+            local rustdesk_counter=$((rustdesk_counter + 1))
+        done
+
+        # Extract the public key from the specified file
+        local public_key=$(cat "$public_key_file")
+
+        # Check if the desired public key is already set in the Docker Compose file
+        if grep -q "$public_key" "$docker_compose_file"; then
+            echo "Docker Compose file is already set up with the public key."
+        else
+            # Update the Docker Compose file using `sed`
+            sed -i "s/command: hbbs -r \${host_setup}:21117/command: hbbs -r \${host_setup}:21117 -k $public_key/" "$docker_compose_file"
+            echo "Updated Docker Compose file with the public key: $public_key"
+        fi
+
+        dockerDownUp $app_name;
 
 		((menu_number++))
 		echo ""

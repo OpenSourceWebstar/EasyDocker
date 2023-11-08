@@ -79,7 +79,7 @@ installDuplicati()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $$app_name"
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
 		whitelistAndStartApp $app_name install;

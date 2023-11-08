@@ -6,7 +6,7 @@ networks:
 
 services:
   hbbs:
-    container_name: hbbs
+    container_name: rustdesk
     ports:
       - 21115:21115
       - 21116:21116

@@ -196,7 +196,8 @@ dashyUpdateConf()
         local changes_made=false
 
         # Function to uncomment lines using sed based on line numbers under the pattern
-        uncomment_lines() {
+        uncomment_lines() 
+        {
             local app_name="$1"
             local pattern="#### app $app_name"
             local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
