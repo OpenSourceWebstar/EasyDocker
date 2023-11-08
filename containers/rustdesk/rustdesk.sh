@@ -120,7 +120,7 @@ installRustdesk()
             isNotice "Docker Compose file is already set up with the public key."
         else
             # Update the Docker Compose file using `sed`
-            result=$(sudo sed -i "s|${host_setup}:${usedport3}/${host_setup}:${usedport3} -k $public_key|" "$compose_file")
+            result=$(sudo sed -i "s|${host_setup}:${usedport3}|${host_setup}:${usedport3} -k $public_key|" "$compose_file")
             checkSuccess "Update Docker Compose file with the public key."
         fi
 
