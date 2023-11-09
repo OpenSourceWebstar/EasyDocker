@@ -36,6 +36,14 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Setting up install folder and config file for $app_name."
+    echo ""
+
+    setupConfigToContainer "loud" "$stored_app_name" "install";
+    isSuccessful "Install folders and Config files have been setup for $stored_app_name."
+
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Shutting Down container(s) for restoration"
     echo ""
 
@@ -465,7 +473,8 @@ restoreRemoteMenu()
     # Call the Install Name selection menu function
     selectInstallName
 
-    select_app() {
+    select_app() 
+    {
         while true; do
             echo ""
             echo "##########################################"
