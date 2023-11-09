@@ -632,8 +632,23 @@ restoreExtractFile()
         local passphrase="$1"
         local unzip_path="$2"
         isNotice "Attempting to decrypt and unzip $chosen_backup_file backup file...this may take a while..."
-        local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d $unzip_path)
-        return $?
+
+        local result=""
+        while true; do
+            result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path" 2>&1)
+
+            if [[ $result == *"incorrect password"* ]]; then
+                isNotice "Decryption failed with the provided passphrase. Cancelling unzip."
+                return 1  # Error: Incorrect password
+            elif [[ $result == *"error"* ]]; then
+                isNotice "An error occurred during unzip: $result"
+                return 1  # Other unzip error
+            elif [[ $result == *"inflating"* ]]; then
+                break  # Successful unzip
+            fi
+        done
+
+        return 0  # Success
     }
 
     # Local Full
