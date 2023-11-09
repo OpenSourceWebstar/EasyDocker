@@ -50,7 +50,7 @@ restoreStart()
     echo "---- $menu_number. Getting backup file to restore"
     echo ""
 
-    restorecopyFile "$remote_path_clean";
+    restoreCopyFile "$remote_path_clean";
 
     ((menu_number++))
     echo ""
