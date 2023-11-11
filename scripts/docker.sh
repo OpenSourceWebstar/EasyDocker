@@ -494,6 +494,11 @@ setupTraefikLabelsSetupMiddlewares()
 
     local middleware_entries=()
 
+    # App Specific middlewears
+    if [[ "$app_name" == "traefik" ]]; then
+        middleware_entries+=("traefikAuth@file")
+    fi
+
     # Default Values non app specific
     middleware_entries+=("default@file")
 

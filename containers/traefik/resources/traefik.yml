@@ -6,7 +6,7 @@ http:
     traefikAuth:
       basicAuth:
         users:
-          - "admin:PASSWORD_HASHED"
+          - "TRAEFIKUSER:TRAEFIKPASS"
 
     # Add automatically some security headers
     # Use with traefik.http.routers.myRouter.middlewares: "default-security-headers@file"

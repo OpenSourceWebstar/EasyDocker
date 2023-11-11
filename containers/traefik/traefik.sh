@@ -90,6 +90,13 @@ installTraefik()
         local result=$(sudo sed -i "s|DEBUGLEVEL|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik debug level with: $CFG_TRAEFIK_LOGGING for $app_name"
 
+        # Setup BasicAuth credentials
+        local password_hash=$(sudo htpasswd -nb "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS")
+        local result=$(sudo awk -v user="$CFG_TRAEFIK_DASHBOARD_USER" -v password_hash="$password_hash" '/^\s*traefikAuth:/ {n=NR} n && NR==n+3 {$0="  - \"" user ":" password_hash "\""} 1' "$containers_dir/$app_name/etc/traefik.yml" | sudo tee "$containers_dir/$app_name/etc/temp_traefik.yml" > /dev/null)
+        checkSuccess "Configured traefik.yml with BasicAuth credentials for user : $CFG_TRAEFIK_DASHBOARD_USER"
+        local result=$(sudo mv "$containers_dir/$app_name/etc/temp_traefik.yml" "$containers_dir/$app_name/etc/traefik.yml")
+        checkSuccess "Using temp traefik.yml as the new live file after changes."
+
         setupFileWithConfigData $app_name "traefik.yml" "etc";
 
 		((menu_number++))
@@ -132,6 +139,9 @@ installTraefik()
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
+        echo ""
+        echo "    Your username is : $CFG_TRAEFIK_DASHBOARD_USER"
+        echo "    Your password is : $CFG_TRAEFIK_DASHBOARD_PASS"
         echo ""
         echo "    Public : https://$host_setup/"
         echo "    External : http://$public_ip:$usedport1/"

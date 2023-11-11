@@ -20,15 +20,13 @@ services:
       #traefik.docker.network: DOCKERNETWORK
       #traefik.enable: "true"
       #traefik.http.routers.traefik.entrypoints: web,websecure
-      #traefik.http.routers.traefik.middlewares:
-      #traefik.http.routers.dashboard.rule: Host(`DOMAINSUBNAMEHERE`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      #traefik.http.routers.traefik.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.traefik.service: api@internal
       #traefik.http.routers.traefik.tls: true
       #traefik.http.routers.traefik.tls.certresolver: production
       #traefik.http.routers.traefik.tls.options: modern@file
       #traefik.http.services.traefik.loadbalancer.server.port: PORT3
-      #traefik.http.services.traefik.loadbalancer.sticky.cookie.httpOnly: true
-      #traefik.http.services.traefik.loadbalancer.sticky.cookie.secure: true
+      #traefik.http.routers.traefik.middlewares:
     restart: unless-stopped
     networks:
       vpn:
