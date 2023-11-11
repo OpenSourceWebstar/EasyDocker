@@ -91,7 +91,7 @@ installTraefik()
         checkSuccess "Configured Traefik debug level with: $CFG_TRAEFIK_LOGGING for $app_name"
 
         # Setup BasicAuth credentials
-        local password_hash=$(sudo htpasswd -nb "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS")
+        local password_hash=$(printf "%s:%s" "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS" | openssl passwd -apr1 -stdin)
         local result=$(sudo awk -v user="$CFG_TRAEFIK_DASHBOARD_USER" -v password_hash="$password_hash" '/^\s*traefikAuth:/ {n=NR} n && NR==n+3 {$0="  - \"" user ":" password_hash "\""} 1' "$containers_dir/$app_name/etc/traefik.yml" | sudo tee "$containers_dir/$app_name/etc/temp_traefik.yml" > /dev/null)
         checkSuccess "Configured traefik.yml with BasicAuth credentials for user : $CFG_TRAEFIK_DASHBOARD_USER"
         local result=$(sudo mv "$containers_dir/$app_name/etc/temp_traefik.yml" "$containers_dir/$app_name/etc/traefik.yml")
