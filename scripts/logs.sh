@@ -4,7 +4,6 @@ viewLogsAppMenu()
 {
     local app_name="$1"
 
-    check app_name
     echo ""
     isNotice "Viewing logs for $app_name:"
     echo ""
