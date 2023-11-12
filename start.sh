@@ -105,23 +105,50 @@ startInstall()
     clearAllPortData;
 
     #######################################################
-    ###                    Install Apps                 ###
+    ###                Install System Apps              ###
     #######################################################
 
-    # Iterate over subdirectories in the specified directory
-    for install_app_name in "$containers_dir"/*/; do
-        # Extract the app_name from the path
-        local install_app_name=$(basename "$install_app_name")
+    installAdguard;
+    installAuthelia;
+    installDashy;
+    installDuplicati;
+    installFail2ban;
+    installGrafana;
+    installHeadscale;
+    installPihole;
+    installPortainer;
+    installPrometheus;
+    installTraefik;
+    installVirtualminadmin;
+    installVirtualminwebhost;
+    installWatchtower;
+    installWireguard;
 
-        # Convert the first letter to uppercase
-        local function_name_capitalized="$(tr '[:lower:]' '[:upper:]' <<< "${install_app_name:0:1}")${install_app_name:1}"
+    #######################################################
+    ###                Install Privacy Apps             ###
+    #######################################################
 
-        # Check if the function exists
-        if [ "$(type -t "install${function_name_capitalized}")" = "function" ]; then
-            # Call the function
-            "install${function_name_capitalized}"
-        fi
-    done
+	installSearxng;
+    installSpeedtest;
+	installInvidious;
+	installIpinfo;
+	installTrilium;
+    installMailcow;
+	installVaultwarden;
+
+    #######################################################
+    ###                 Install User Apps               ###
+    #######################################################
+
+	installTiledesk;
+	installGitlab;
+	installOwncloud;
+	installJitsimeet;
+	installKillbill;
+    installRustdesk;
+	installActual;
+    installKimai;
+	installMattermost;
 
 	endStart;
 
