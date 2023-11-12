@@ -62,9 +62,9 @@ whitelistUpdateYML()
     for yaml_file in "$containers_dir/$app_name"/$compose_file; do
         if [ -f "$yaml_file" ]; then
             # Check if the YAML file contains ipwhitelist.sourcerange
-            if grep -q "ipwhitelist.sourcerange:" "$yaml_file"; then
+            if sudo grep -q "ipwhitelist.sourcerange:" "$yaml_file"; then
                 # Whitelist not setup yet
-                if grep -q "ipwhitelist.sourcerange: IPWHITELIST" "$yaml_file"; then
+                if sudo grep -q "ipwhitelist.sourcerange: IPWHITELIST" "$yaml_file"; then
                     local result=$(sudo sed -i "s/ipwhitelist.sourcerange: IPWHITELIST/ipwhitelist.sourcerange: $CFG_IPS_WHITELIST/" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local whitelistupdates=true
@@ -81,8 +81,8 @@ whitelistUpdateYML()
             fi
 
             # This is for updating Timzeones
-            if grep -q " TZ=" "$yaml_file"; then
-                if grep -q " TZ=TIMZEONEHERE" "$yaml_file"; then
+            if sudo grep -q " TZ=" "$yaml_file"; then
+                if sudo grep -q " TZ=TIMZEONEHERE" "$yaml_file"; then
                     local result=$(sudo sed -i "s| TZ=TIMZEONEHERE| TZ=$CFG_TIMEZONE|" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local timezoneupdates=true
@@ -105,10 +105,10 @@ whitelistUpdateYML()
         local jail_local_file="$containers_dir/$app_name/config/$app_name/jail.local"
         
         if [ -f "$jail_local_file" ]; then
-            if grep -q "ignoreip = ips_whitelist" "$jail_local_file"; then
+            if sudo grep -q "ignoreip = ips_whitelist" "$jail_local_file"; then
 
                 # Whitelist not set up yet
-                if grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
+                if sudo grep -q "ignoreip = ips_whitelist" "$yaml_file"; then
                     local result=$(sudo sed -i "s/ips_whitelist/$CFG_IPS_WHITELIST/" "$jail_local_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local whitelistupdates=true

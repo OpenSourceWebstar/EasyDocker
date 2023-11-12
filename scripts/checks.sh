@@ -23,7 +23,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_COMMAND == "true" ]]; then
 		# Custom command check
-		if grep -q "easydocker" ~/.bashrc; then
+		if sudo grep -q "easydocker" ~/.bashrc; then
 			isSuccessful "Custom command 'easydocker' installed."
 		else
 			checkSuccess "No custom command installed, did you run the init.sh first?"
@@ -119,7 +119,7 @@ checkRequirements()
 	
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
 		### Docker Rootless
-		if grep -q "ROOTLESS" $sysctl; then
+		if sudo grep -q "ROOTLESS" $sysctl; then
 			isSuccessful "Docker Rootless appears to be installed."
 		else
 			isNotice "Docker Rootless does not appear to be installed. Setup will start soon."

@@ -112,7 +112,7 @@ gitCheckEasyDockerConfigFilesExist()
 
 gitCheckConfigs() 
 {
-    if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
+    if sudo grep -q "Change-Me" "$configs_dir/$config_file_general"; then
         #echo "Local configuration file contains 'Change-Me'."
         # Flag to track if any valid configs were found
         local valid_configs_found=false

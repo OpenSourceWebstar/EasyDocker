@@ -90,7 +90,7 @@ installDockerUser()
             checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
 
             # Check if PermitRootLogin is set to "yes" before disabling it
-            if grep -q 'PermitRootLogin yes' "$sshd_config"; then
+            if sudo grep -q 'PermitRootLogin yes' "$sshd_config"; then
                 while true; do
                     isQuestion "Do you want to disable login for the root user? (y/n): "
                     read -p "" rootdisableconfirm
@@ -176,7 +176,7 @@ installDockerCheck()
 installDockerRootless()
 {
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-		if grep -q "ROOTLESS" $sysctl; then
+		if sudo grep -q "ROOTLESS" $sysctl; then
 			isSuccessful "Docker Rootless appears to be installed."
         else
             echo ""
@@ -230,7 +230,7 @@ installDockerRootless()
                 echo ""
                 echo "---- $menu_number. Updating the sysctl file for Updating Debian 10."
                 echo ""
-                if grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
+                if sudo grep -q "kernel.unprivileged_userns_clone=1" $sysctl; then
                     isNotice "kernel.unprivileged_userns_clone=1 already exists in $sysctl"
                 else
                     local result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)

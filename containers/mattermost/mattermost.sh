@@ -166,7 +166,7 @@ EOF
 
 		if [[ "$MATN" == [yY] ]]; then
 			if [[ "$OS" == [1234567] ]]; then
-				if grep -q "vpn:" $containers_dir$app_name/$DCWN; then
+				if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
 					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
 				else			
 					removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";

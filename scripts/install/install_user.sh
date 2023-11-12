@@ -40,7 +40,7 @@ installDockerManagerUser()
                 fi
 
                 # Add the ServerAliveInterval option to the config file
-                if grep -q "ServerAliveInterval" "$config_file"; then
+                if sudo grep -q "ServerAliveInterval" "$config_file"; then
                     isNotice "ServerAliveInterval is already configured in the config file."
                 else
                     local result=$(echo -e "Host *\n  ServerAliveInterval 60" | sudo tee -a "$config_file" >/dev/null)

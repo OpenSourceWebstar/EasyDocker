@@ -116,7 +116,7 @@ installRustdesk()
         fi
 
         # Check if the desired public key is already set in the Docker Compose file
-        if grep -q "$public_key" "$compose_file"; then
+        if sudo grep -q "$public_key" "$compose_file"; then
             isNotice "Docker Compose file is already set up with the public key."
         else
             # Update the Docker Compose file using `sed`

@@ -126,7 +126,7 @@ checkApplicationsConfigFilesMissingVariables()
         local config_app_name="${container_config_filename%.config}"
 
         # Extract config variables from the local file
-        local local_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sed 's/=$//'))
+        local local_variables=($(sudo grep -o 'CFG_[A-Za-z0-9_]*=' "$container_config_file" | sudo sed 's/=$//'))
 
         #echo "Debug: Found local config file: $container_config_filename"
         #echo "Debug: Local config variables: ${local_variables[@]}"
@@ -138,20 +138,20 @@ checkApplicationsConfigFilesMissingVariables()
             #echo "Debug: Found remote config file: $remote_config_file"
 
             # Extract config variables from the remote file
-            local remote_variables=($(grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sed 's/=$//'))
+            local remote_variables=($(sudo grep -o 'CFG_[A-Za-z0-9_]*=' "$remote_config_file" | sudo sed 's/=$//'))
 
             #echo "Debug: Remote config variables: ${remote_variables[@]}"
 
             # Filter out empty variable names from the remote variables
             local remote_variables=("${remote_variables[@]//[[:space:]]/}")  # Remove whitespace
-            local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' '))
+            local remote_variables=($(echo "${remote_variables[@]}" | tr ' ' '\n' | sudo grep -v '^$' | tr '\n' ' '))
 
             #echo "Debug: Remote variables after filtering: ${remote_variables[@]}"
 
             # Compare local and remote variables
             for remote_var in "${remote_variables[@]}"; do
                 if ! [[ " ${local_variables[@]} " =~ " $remote_var " ]]; then
-                    local var_line=$(grep "${remote_var}=" "$remote_config_file")
+                    local var_line=$(sudo grep "${remote_var}=" "$remote_config_file")
 
                     echo ""
                     echo "####################################################"
@@ -331,7 +331,7 @@ checkIpsHostnameFilesMissingEntries()
 
         if [ -f "$remote_ips_file" ]; then
             # Compare the local and remote files and find missing lines
-            local missing_lines=$(diff --new-line-format="%L" --old-line-format="" --unchanged-line-format="" "$ips_file" "$remote_ips_file")
+            local missing_lines=$(sudo diff --new-line-format="%L" --old-line-format="" --unchanged-line-format="" "$ips_file" "$remote_ips_file")
 
             local IFS=$'\n' # Set the internal field separator to newline
             for ips_line in $missing_lines; do
@@ -383,7 +383,7 @@ checkConfigFilesEdited()
     
     while ! "$config_check_done"; do
         # Check if configs have not been changed
-        if grep -q "Change-Me" "$configs_dir/$config_file_general"; then
+        if sudo grep -q "Change-Me" "$configs_dir/$config_file_general"; then
             echo ""
             isNotice "Default config values have been found, have you edited the config files?"
             echo ""
