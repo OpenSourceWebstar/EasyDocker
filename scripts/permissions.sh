@@ -45,8 +45,8 @@ fixFolderPermissions()
         checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
 
         # Install user
-        local result=$(sudo find "$containers_dir" -mindepth 1 -maxdepth 1 -type d -exec chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER {} + > /dev/null 2>&1)
-        checkSuccess "Updating subfolders in $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
+        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
+        checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
         # Update permissions after
         #local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
