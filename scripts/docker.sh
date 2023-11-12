@@ -170,6 +170,12 @@ setupConfigToContainer()
         fi
     fi
 
+    # Fix permissions for dockerinstall
+    sudo chmod o+r $target_path/$config_file
+    if [ "$silent_flag" == "loud" ]; then
+        isNotice "Updating config read permissions for EasyDocker"
+    fi
+
     scanFileForRandomPassword "$target_path/$config_file";
     loadFiles "app_configs";
 }
