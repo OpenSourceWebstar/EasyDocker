@@ -7,7 +7,7 @@ installWireguard()
 {
     if [[ "$wireguard" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent wireguard;
-        local app_name=$CFG_WIREGUARD_APP_NAME
+        app_name=$CFG_WIREGUARD_APP_NAME
 		setupInstallVariables $app_name;
     fi
     

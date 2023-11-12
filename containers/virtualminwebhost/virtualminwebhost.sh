@@ -7,7 +7,7 @@ installVirtualminwebhost()
 {
     if [[ "$virtualminwebhost" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent virtualminwebhost;
-        local app_name=$CFG_VIRTUALMINWEBHOST_APP_NAME
+        app_name=$CFG_VIRTUALMINWEBHOST_APP_NAME
         setupInstallVariables $app_name;
     fi
     

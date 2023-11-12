@@ -7,7 +7,7 @@ installGitlab()
 {
     if [[ "$gitlab" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent gitlab;
-        local app_name=$CFG_GITLAB_APP_NAME
+        app_name=$CFG_GITLAB_APP_NAME
 		setupInstallVariables $app_name;
     fi
     

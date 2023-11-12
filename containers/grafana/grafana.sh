@@ -7,7 +7,7 @@ installGrafana()
 {
     if [[ "$grafana" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent grafana;
-        local app_name=$CFG_GRAFANA_APP_NAME
+        app_name=$CFG_GRAFANA_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

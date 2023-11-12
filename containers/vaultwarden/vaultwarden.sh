@@ -7,7 +7,7 @@ installVaultwarden()
 {
     if [[ "$vaultwarden" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent vaultwarden;
-        local app_name=$CFG_VAULTWARDEN_APP_NAME
+        app_name=$CFG_VAULTWARDEN_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

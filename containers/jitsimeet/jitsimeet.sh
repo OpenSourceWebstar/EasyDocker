@@ -7,7 +7,7 @@ installJitsimeet()
 {
     if [[ "$jitsimeet" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer jitsimeet;
-		local app_name=$CFG_JITSIMEET_APP_NAME
+		app_name=$CFG_JITSIMEET_APP_NAME
 		git_url=$CFG_JITSIMEET_GIT
 		setupInstallVariables $app_name;
 	fi

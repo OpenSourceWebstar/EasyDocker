@@ -7,7 +7,7 @@ installMailcow()
 {
     if [[ "$mailcow" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer mailcow;
-		local app_name=$CFG_MAILCOW_APP_NAME
+		app_name=$CFG_MAILCOW_APP_NAME
 		easy_setup=$CFG_MAILCOW_EASY_SETUP
 		setupInstallVariables $app_name;
 	fi

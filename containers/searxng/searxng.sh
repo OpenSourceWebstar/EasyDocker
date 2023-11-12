@@ -7,7 +7,7 @@ installSearxng()
 {
     if [[ "$searxng" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent searxng;
-		local app_name=$CFG_SEARXNG_APP_NAME
+		app_name=$CFG_SEARXNG_APP_NAME
 		setupInstallVariables $app_name;
 	fi
 

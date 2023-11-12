@@ -7,7 +7,7 @@ installHeadscale()
 {
     if [[ "$headscale" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent headscale;
-        local app_name=$CFG_HEADSCALE_APP_NAME
+        app_name=$CFG_HEADSCALE_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

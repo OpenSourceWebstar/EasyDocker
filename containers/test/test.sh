@@ -7,7 +7,7 @@ installTest()
 {
     if [[ "$test" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent test;
-        local app_name=$CFG_TEST_APP_NAME
+        app_name=$CFG_TEST_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

@@ -7,7 +7,7 @@ installWatchtower()
 {
     if [[ "$watchtower" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent watchtower;
-        local app_name=$CFG_WATCHTOWER_APP_NAME
+        app_name=$CFG_WATCHTOWER_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

@@ -7,7 +7,7 @@ installPortainer()
 {
     if [[ "$portainer" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent portainer;
-        local app_name=$CFG_PORTAINER_APP_NAME
+        app_name=$CFG_PORTAINER_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

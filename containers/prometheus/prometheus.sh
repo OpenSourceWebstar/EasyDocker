@@ -7,7 +7,7 @@ installPrometheus()
 {
     if [[ "$prometheus" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent prometheus;
-        local app_name=$CFG_PROMETHEUS_APP_NAME
+        app_name=$CFG_PROMETHEUS_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

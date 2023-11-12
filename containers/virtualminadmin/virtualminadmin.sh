@@ -7,7 +7,7 @@ installVirtualminadmin()
 {
     if [[ "$virtualminadmin" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent virtualminadmin;
-        local app_name=$CFG_VIRTUALMINADMIN_APP_NAME
+        app_name=$CFG_VIRTUALMINADMIN_APP_NAME
         setupInstallVariables $app_name;
     fi
     

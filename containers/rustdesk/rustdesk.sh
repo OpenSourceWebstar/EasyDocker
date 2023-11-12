@@ -7,7 +7,7 @@ installRustdesk()
 {
     if [[ "$rustdesk" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent rustdesk;
-        local app_name=$CFG_RUSTDESK_APP_NAME
+        app_name=$CFG_RUSTDESK_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

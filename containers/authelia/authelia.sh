@@ -7,7 +7,7 @@ installAuthelia()
 {
     if [[ "$authelia" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent authelia;
-        local app_name=$CFG_AUTHELIA_APP_NAME
+        app_name=$CFG_AUTHELIA_APP_NAME
 		setupInstallVariables $app_name;
     fi
     

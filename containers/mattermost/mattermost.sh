@@ -7,7 +7,7 @@ installMattermost()
 {
     if [[ "$mattermost" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer silent mattermost;
-		local app_name=$CFG_MATTERMOST_APP_NAME
+		app_name=$CFG_MATTERMOST_APP_NAME
 		local easy_setup=$CFG_MATTERMOST_EASY_SETUP
 		setupInstallVariables $app_name;
 	fi

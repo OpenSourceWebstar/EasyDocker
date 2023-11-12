@@ -7,7 +7,7 @@ installPihole()
 {
     if [[ "$pihole" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent pihole;
-        local app_name=$CFG_PIHOLE_APP_NAME
+        app_name=$CFG_PIHOLE_APP_NAME
 		setupInstallVariables $app_name;
     fi
 

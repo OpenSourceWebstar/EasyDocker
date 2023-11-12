@@ -7,7 +7,7 @@ installTrilium()
 {
     if [[ "$trilium" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent trilium;
-        local app_name=$CFG_TRILIUM_APP_NAME
+        app_name=$CFG_TRILIUM_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
