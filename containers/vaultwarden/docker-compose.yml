@@ -10,7 +10,7 @@ services:
     container_name: vaultwarden
     image: vaultwarden/server:latest
     ports:
-      - PORT1:80
+      - PORT1:PORT1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./vaultwarden-ssl/:/ssl/
@@ -40,13 +40,14 @@ services:
       #- SENDS_ALLOWED=true
       - WEB_VAULT_ENABLED=true
       #- ROCKET_TLS={certs="ssl/cert.pem",key="ssl/key.pem"}
+      - ROCKET_PORT=PORT1
     #labels:
       #traefik.enable: true
       #traefik.http.routers.vaultwarden.entrypoints: web,websecure
       #traefik.http.routers.vaultwarden.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.vaultwarden.tls: true
       #traefik.http.routers.vaultwarden.tls.certresolver: production
-      #traefik.http.services.vaultwarden.loadbalancer.server.port: 80
+      #traefik.http.services.vaultwarden.loadbalancer.server.port: PORT1
       #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.vaultwarden.middlewares:
     networks:
