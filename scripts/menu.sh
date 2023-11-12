@@ -192,7 +192,7 @@ mainMenu()
 				isOptionMenu "List all API Keys? (y/n): "
 				read -rp "" headscaleapikeyslist
 				isOptionMenu "List all Nodes? (y/n): "
-				read -rp "" headscalenodeslists
+				read -rp "" headscalenodeslist
 				isOptionMenu "List all Users? (y/n): "	 
 				read -rp "" headscaleuserlist
 				isOptionMenu "View Headscale Version? (y/n): "
