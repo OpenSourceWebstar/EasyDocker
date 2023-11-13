@@ -70,7 +70,7 @@ setupConfigToContainer()
     if [[ "$flags" == "install" ]]; then
         if [ -f "$target_path/$config_file" ]; then
             # Same content check
-            if cmp -s "$source_file" "$target_path/$config_file"; then
+            if sudo cmp -s "$source_file" "$target_path/$config_file"; then
                 echo ""
                 isNotice "Config file for $app_name contains no edits."
                 echo ""
@@ -81,13 +81,13 @@ setupConfigToContainer()
                     case $editconfigaccept in
                         [yY])
                             # Calculate the checksum of the original file
-                            local original_checksum=$(md5sum "$target_path/$config_file")
+                            local original_checksum=$(sudo md5sum "$target_path/$config_file")
 
                             # Open the file with nano for editing
                             sudo nano "$target_path/$config_file"
 
                             # Calculate the checksum of the edited file
-                            local edited_checksum=$(md5sum "$target_path/$config_file")
+                            local edited_checksum=$(sudo md5sum "$target_path/$config_file")
 
                             # Compare the checksums to check if changes were made
                             if [[ "$original_checksum" != "$edited_checksum" ]]; then
@@ -143,13 +143,13 @@ setupConfigToContainer()
                 case $editconfigaccept in
                     [yY])
                         # Calculate the checksum of the original file
-                        local original_checksum=$(md5sum "$target_path/$config_file")
+                        local original_checksum=$(sudo md5sum "$target_path/$config_file")
 
                         # Open the file with nano for editing
                         sudo nano "$target_path/$config_file"
 
                         # Calculate the checksum of the edited file
-                        local edited_checksum=$(md5sum "$target_path/$config_file")
+                        local edited_checksum=$(sudo md5sum "$target_path/$config_file")
 
                         # Compare the checksums to check if changes were made
                         if [[ "$original_checksum" != "$edited_checksum" ]]; then
