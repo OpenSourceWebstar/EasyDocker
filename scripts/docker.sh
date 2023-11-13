@@ -67,6 +67,18 @@ setupConfigToContainer()
         fi
     fi
 
+    # Check if the user has read permission on source_file
+    if [ ! -r "$source_file" ]; then
+        isError "Insufficient permissions to read $source_file"
+        return
+    fi
+
+    # Check if the user has read permission on target_path/config_file
+    if [ ! -r "$target_path/$config_file" ]; then
+        isError "Insufficient permissions to read $target_path/$config_file"
+        return
+    fi
+
     if [[ "$flags" == "install" ]]; then
         if [ -f "$target_path/$config_file" ]; then
             # Same content check
