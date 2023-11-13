@@ -156,27 +156,30 @@ EOF
 		local DCN=docker-compose.nginx.yml
 		local DCWN=docker-compose.without-nginx.yml
 
-		isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
-		read -rp "" MATN
-    	if [[ "$MATN" == [nN] ]]; then
-            dockerDown "$app_name" "$DCWN";
-            dockerDown "$app_name" "$DCN";
-            dockerUp "$app_name" "$DCN";
-		fi
+        status=$(checkAppInstalled "traefik" "docker")
+        if [ "$status" == "not_installed" ]; then
+            isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
+            read -rp "" MATN
+            if [[ "$MATN" == [nN] ]]; then
+                dockerDown "$app_name" "$DCWN";
+                dockerDown "$app_name" "$DCN";
+                dockerUp "$app_name" "$DCN";
+            fi
 
-		if [[ "$MATN" == [yY] ]]; then
-			if [[ "$OS" == [1234567] ]]; then
-				if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
-					isError "The Compose file already contains custom edits. Please reinstalled $app_name"
-				else			
-					removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
-					mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
-					setupFileWithConfigData "$app_name" "$DCWN";
-                    dockerDown "$app_name" "$DCWN";
-                    dockerUp "$app_name" "$DCWN";
-				fi
-			fi
-		fi
+            if [[ "$MATN" == [yY] ]]; then
+                if [[ "$OS" == [1234567] ]]; then
+                    if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
+                        isError "The Compose file already contains custom edits. Please reinstalled $app_name"
+                    else			
+                        removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
+                        mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
+                        setupFileWithConfigData "$app_name" "$DCWN";
+                        dockerDown "$app_name" "$DCWN";
+                        dockerUp "$app_name" "$DCWN";
+                    fi
+                fi
+            fi
+        fi
 
 		((menu_number++))
 		echo ""
