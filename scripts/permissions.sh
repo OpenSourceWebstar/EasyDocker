@@ -45,31 +45,39 @@ fixConfigPermissions()
     fixAppFolderPermissions $app_name;
 }
 
-fixAppFolderPermissions()
+fixAppFolderPermissions() 
 {
-    local app_name="$1"
+    # Collect all app names in an array
+    local app_names=()
+    for app_dir in "$containers_dir"/*/; do
+        if [ -d "$app_dir" ]; then
+            local app_name=$(basename "$app_dir")
+            app_names+=("$app_name")
+        fi
+    done
 
-    if [[ $app_name != "" ]]; then
-        local result=$(sudo chmod +x "$containers_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $containers_dir with execute permissions."
+    for app_name in "${app_names[@]}"; do
+        if [[ $app_name != "" ]]; then
+            local result=$(sudo chmod +x "$containers_dir" > /dev/null 2>&1)
+            checkSuccess "Updating $containers_dir with execute permissions."
 
-        local result=$(sudo chmod +x "$containers_dir$app_name" > /dev/null 2>&1)
-        checkSuccess "Updating $containers_dir$app_name with execute permissions."
+            local result=$(sudo chmod +x "$containers_dir$app_name" > /dev/null 2>&1)
+            checkSuccess "Updating $containers_dir$app_name with execute permissions."
 
-        local result=$(sudo chmod o+r "$containers_dir$app_name")
-        checkSuccess "Updating $app_name with read permissions"
+            local result=$(sudo chmod o+r "$containers_dir$app_name")
+            checkSuccess "Updating $app_name with read permissions"
 
-        local result=$(sudo find $containers_dir$app_name -type f -name '*docker-compose*' -exec chmod o+r {} \;)
-        isNotice "Updating compose file(s) for EasyDocker access"
+            local result=$(sudo find "$containers_dir$app_name" -type f -name '*docker-compose*' -exec chmod o+r {} \;)
+            isNotice "Updating compose file(s) for EasyDocker access"
 
-        # Fix EasyDocker specific file permissions
-        local files=("migrate.txt" "$app_name.config" "docker-compose.yml" "docker-compose.$app_name.yml")
-        for file in "${files[@]}"; do
-            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file")
-            checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
-        done
-
-    fi
+            # Fix EasyDocker specific file permissions
+            local files=("migrate.txt" "$app_name.config" "docker-compose.yml" "docker-compose.$app_name.yml")
+            for file in "${files[@]}"; do
+                local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/$file")
+                checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
+            done
+        fi
+    done
 }
 
 fixFolderPermissions()
@@ -91,7 +99,7 @@ fixFolderPermissions()
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
         checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
-        fixAppFolderPermissions $app_name;
+        fixAppFolderPermissions;
 
         # Update permissions after
         #local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
