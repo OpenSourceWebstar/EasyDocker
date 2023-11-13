@@ -143,10 +143,6 @@ fixAppFolderPermissions()
                     if [ "$silent_flag" == "loud" ]; then
                         checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
                     fi
-                    local result=$(sudo chmod g+rw $file)
-                    if [ "$silent_flag" == "loud" ]; then
-                        isNotice "Updating $file read/write permissions for EasyDocker"
-                    fi
                 else
                     if [ "$silent_flag" == "loud" ]; then
                         isNotice "File $file does not exist in $app_name directory."
