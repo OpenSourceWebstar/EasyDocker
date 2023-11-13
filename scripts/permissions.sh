@@ -41,6 +41,27 @@ fixConfigPermissions()
     if [ "$silent_flag" == "loud" ]; then
         isNotice "Updating config read permissions for EasyDocker"
     fi
+
+    fixAppFolderPermissions $app_name;
+}
+
+fixAppFolderPermissions()
+{
+    local app_name="$1"
+
+    if [[ $app_name != "" ]]; then
+        local result=$(sudo chmod +x "$containers_dir" > /dev/null 2>&1)
+        checkSuccess "Updating $containers_dir with execute permissions."
+
+        local result=$(sudo chmod +x "$containers_dir$app_name" > /dev/null 2>&1)
+        checkSuccess "Updating $containers_dir$app_name with execute permissions."
+
+        local result=$(sudo chmod o+r "$containers_dir$app_name")
+        checkSuccess "Updating $app_name with read permissions"
+
+        local result=$(sudo find $containers_dir$app_name -type f -name '*docker-compose*' -exec chmod o+r {} \;)
+        isNotice "Updating compose file(s) for EasyDocker access"
+    fi
 }
 
 fixFolderPermissions()
@@ -62,14 +83,8 @@ fixFolderPermissions()
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
         checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
 
-        # App Specific permissions
-	    if [[ $app_name != "" ]]; then
-            local result=$(sudo chmod o+r "$containers_dir$app_name")
-            checkSuccess "Updating $app_name with read permissions"
-            local result=$(sudo find $containers_dir$app_name -type f -name '*docker-compose*' -exec chmod o+r {} \;)
-            isNotice "Updating compose file(s) for EasyDocker access"
-        fi
-        
+        fixAppFolderPermissions $app_name;
+
         # Update permissions after
         #local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
         #checkSuccess "Updating $containers_dir with $sudo_user_name read permissions" 
