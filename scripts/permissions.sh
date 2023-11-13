@@ -137,10 +137,9 @@ fixAppFolderPermissions()
             local files=("migrate.txt" "$app_name.config" "docker-compose.yml" "docker-compose.$app_name.yml")
             for file in "${files[@]}"; do
                 local file_path="$containers_dir$app_name/$file"
-
                 # Check if the file exists
                 if [ -e "$file_path" ]; then
-                    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file_path")
+                    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
                     if [ "$silent_flag" == "loud" ]; then
                         checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
                     fi
@@ -170,10 +169,9 @@ fixPermissionsBeforeStart()
         echo "###  Updating File/Folder Permissions  ###"
         echo "##########################################"
         echo ""
-        fixAppFolderPermissions loud;
-    else
-        fixAppFolderPermissions silent;
     fi
+
+    fixAppFolderPermissions;
 
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         # Mainly for "full"
