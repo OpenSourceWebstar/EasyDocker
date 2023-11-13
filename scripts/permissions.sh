@@ -1,6 +1,6 @@
 #!/bin/bash
 
-runStart() 
+runStart()
 {  
     local path="$3"
     cd $script_dir
@@ -11,7 +11,7 @@ runStart()
     checkSuccess "Running Start script"
 }
 
-runInit() 
+runInit()
 {
     cd $script_dir
     local result=$(sudo chmod 0755 init.sh)
@@ -21,7 +21,7 @@ runInit()
     checkSuccess "Running Init Script"
 }
 
-runUpdate() 
+runUpdate()
 {
     cd $script_dir
     local result=$(sudo chmod 0755 update.sh)
@@ -43,7 +43,7 @@ fixConfigPermissions()
     fi
 }
 
-fixFolderPermissions() 
+fixFolderPermissions()
 {
     local app_name="$1"
 
@@ -110,7 +110,7 @@ fixPermissionsBeforeStart()
     fi
 }
 
-changeRootOwnedFilesAndFolders() 
+changeRootOwnedFilesAndFolders()
 {
     local dir_to_change="$1"
     local user_name="$2"
@@ -166,7 +166,7 @@ changeRootOwnedFile()
     checkSuccess "Updating $file_name to be owned by $user_name"
 }
 
-mkdirFolders() 
+mkdirFolders()
 {
     local silent_flag="$1"
     local user_name="$2"
@@ -188,7 +188,7 @@ mkdirFolders()
 }
 
 
-backupContainerFilesToTemp() 
+backupContainerFilesToTemp()
 {
     local app_name="$1"
     local source_folder="$containers_dir$app_name"
@@ -216,7 +216,7 @@ backupContainerFilesToTemp()
     done
 }
 
-backupContainerFilesRestore() 
+backupContainerFilesRestore()
 {
     local app_name="$1"
     local source_folder="$containers_dir$app_name"
@@ -229,7 +229,7 @@ backupContainerFilesRestore()
     fi
 }
 
-copyFolder() 
+copyFolder()
 {
     local folder="$1"
     local folder_name=$(basename "$folder")
@@ -244,7 +244,7 @@ copyFolder()
     checkSuccess "Updating $folder_name with $user_name ownership"
 }
 
-copyFolders() 
+copyFolders()
 {
     local source="$1"
     local save_dir="$2"
@@ -270,7 +270,7 @@ copyFolders()
     done
 }
 
-copyResource() 
+copyResource()
 {
     local app_name="$1"
     local file_name="$2"
@@ -290,7 +290,7 @@ copyResource()
     checkSuccess "Updating $save_path with $CFG_DOCKER_INSTALL_USER ownership"
 }
 
-copyFile() 
+copyFile()
 {
     local silent_flag="$1"
     local file="$2"
@@ -320,7 +320,7 @@ copyFile()
     fi
 }
 
-copyFiles() 
+copyFiles()
 {
     local silent_flag="$1"
     local source="$2"
