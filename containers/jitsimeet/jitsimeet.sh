@@ -76,7 +76,7 @@ installJitsimeet()
 		checkSuccess "Creating $app_name container installation folder"
 		local result=$(cd $containers_dir$app_name && sudo rm -rf $containers_dir$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"
-		local result=$(createTouch $containers_dir$app_name/$latest_tag.txt && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
+		local result=$(createTouch $containers_dir$app_name/$latest_tag.txt $CFG_DOCKER_INSTALL_USER && echo 'Installed "$latest_tag" on "$backupDate"!' > $latest_tag.txt)
 		checkSuccess "Create logging txt file"
 		
 

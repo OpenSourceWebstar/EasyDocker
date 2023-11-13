@@ -61,6 +61,14 @@ fixAppFolderPermissions()
 
         local result=$(sudo find $containers_dir$app_name -type f -name '*docker-compose*' -exec chmod o+r {} \;)
         isNotice "Updating compose file(s) for EasyDocker access"
+
+        # Fix EasyDocker specific file permissions
+        local files=("migrate.txt" "$app_name.config" "docker-compose.yml" "docker-compose.$app_name.yml")
+        for file in "${files[@]}"; do
+            local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file")
+            checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
+        done
+
     fi
 }
 
@@ -306,8 +314,8 @@ copyResource()
     local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir/$app_name/$save_path")
     checkSuccess "Copying $file_name to $containers_dir/$app_name/$save_path"
 
-    local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path")
-    checkSuccess "Updating $save_path with $CFG_DOCKER_INSTALL_USER ownership"
+    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file_name")
+    checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
 }
 
 copyFile()

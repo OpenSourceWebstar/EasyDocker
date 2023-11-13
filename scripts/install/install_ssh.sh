@@ -165,7 +165,7 @@ addSSHKeyToAuthorizedKeysAndDatabase()
     if [ -f "$key_file" ]; then
         # Ensure the authorized_keys file is empty or create it if it doesn't exist
         if [ ! -f "$auth_key_file" ]; then
-            createTouch "$auth_key_file"
+            createTouch "$auth_key_file" $CFG_DOCKER_INSTALL_USER
         fi
 
         # Check if the key already exists in the file

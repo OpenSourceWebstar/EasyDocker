@@ -75,7 +75,7 @@ installTraefik()
         checkSuccess "Create /etc/ and /etc/certs Directories"
 
         # Create and secure the acme.json file
-        local result=$(createTouch "$containers_dir$app_name/etc/certs/acme.json")
+        local result=$(createTouch "$containers_dir$app_name/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER)
         checkSuccess "Created acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it

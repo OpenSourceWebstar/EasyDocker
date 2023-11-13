@@ -563,7 +563,7 @@ viewEasyDockerConfigs()
                 sudo nano "$selected_file"
                 
                 # Update the last modified timestamp of the edited file
-                createTouch "$selected_file"
+                createTouch "$selected_file" $sudo_user_name
                 
                 # Store the updated last modified timestamp in the associative array
                 local config_name=$(basename "${selected_file}" | sed 's/config_//')

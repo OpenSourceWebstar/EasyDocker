@@ -33,7 +33,7 @@ installDockerManagerUser()
                 if [ -f "$config_file" ]; then
                     isNotice "The config file already exists. Updating the existing file..."
                 else
-                    local result=$(createTouch "$config_file")
+                    local result=$(createTouch "$config_file" $CFG_DOCKER_INSTALL_USER)
                     checkSuccess "Creating config file"
                     local result=$(sudo chmod 600 "$config_file")
                     checkSuccess "Changing permissions to config file"

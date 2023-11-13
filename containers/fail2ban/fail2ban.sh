@@ -95,7 +95,7 @@ installFail2ban()
             local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/logs)
             checkSuccess "Creating logs folder"
 
-            local result=$(cd $containers_dir$app_name && createTouch $containers_dir$app_name/logs/auth.log)
+            local result=$(cd $containers_dir$app_name && createTouch $containers_dir$app_name/logs/auth.log $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Creating Auth.log file"
 
             local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name $containers_dir$app_name/config/$app_name/action.d)

@@ -517,7 +517,7 @@ migrateBuildTXT()
     # Check if the migrate.txt file exists
     if [ ! -f "$migrate_file_path" ]; then
         # Create a migrate.txt file with IP and InstallName
-        createTouch "$migrate_file_path"
+        createTouch "$migrate_file_path" $CFG_DOCKER_INSTALL_USER
 
         # Add MIGRATE_IP options to $migrate_file for $app_name
         echo "MIGRATE_IP=$public_ip" | sudo tee -a "$migrate_file_path" >/dev/null
@@ -644,11 +644,17 @@ migrateCheckAndUpdateInstallName()
 migrateUpdateFiles()
 {            
     local app_name="$1"
+
     if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir$app_name")
         checkSuccess "Updating ownership on migrated folder $app_name to $CFG_DOCKER_INSTALL_USER"
-        local compose_file="$containers_dir$app_name/docker-compose.yml"
+
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        if [[ $compose_setup == "default" ]]; then
+            local compose_file="docker-compose.yml";
+        elif [[ $compose_setup == "app" ]]; then
+            local compose_file="docker-compose.$app_name.yml";
+        fi
 
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \

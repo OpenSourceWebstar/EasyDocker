@@ -44,6 +44,13 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Setting up install variables for $app_name."
+    echo ""
+
+    setupInstallVariables $stored_app_name;
+
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Shutting Down container(s) for restoration"
     echo ""
 
@@ -83,7 +90,6 @@ restoreStart()
         migrateGenerateTXTAll;
         migrateScanFoldersForUpdates;
         migrateUpdateFiles $stored_app_name;
-        local app_name=$stored_app_name
     fi
 
     ((menu_number++))
@@ -91,7 +97,6 @@ restoreStart()
     echo "---- $menu_number. Checking & Opening ports if required"
     echo ""
 
-    setupInstallVariables $app_name;
     checkAppPorts $app_name install;
     if [[ $disallow_used_port == "true" ]]; then
         isError "A used port conflict has occured, setup is cancelling..."
