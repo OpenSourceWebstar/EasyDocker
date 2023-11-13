@@ -138,12 +138,14 @@ loadFiles()
         return
     fi
 
-    while IFS= read -r -d '' file; do
-        if [ -f "$file" ]; then
-            source "$(echo "$file" | sed 's|/docker/install//||')"
-            #echo "$load_type FILE $(echo "$file" | sed 's|/docker/install//||')"
-        fi
-    done < <(sudo find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
+    sudo bash -c '
+        while IFS= read -r -d '' file; do
+            if [ -f "$file" ]; then
+                source "$(echo "$file" | sed "s|/docker/install/||")"
+                # echo "$load_type FILE $(echo "$file" | sed 's|/docker/install//||')"
+            fi
+        done < <(find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
+    '
 }
 
 sourceScripts "start";
