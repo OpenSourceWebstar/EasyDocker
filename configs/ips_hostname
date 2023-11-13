@@ -3,7 +3,7 @@ adguard 10.8.1.3
 portainer 10.8.1.4
 traefik 10.8.1.5
 backup 10.8.1.6
-vaultwarden 10.8.1.7
+vault 10.8.1.7
 search 10.8.1.8
 client 10.8.1.9
 project 10.8.1.10
