@@ -187,7 +187,7 @@ dashyUpdateConf()
         echo ""
 
         # Copy the default dashy conf.yml configuration file
-        local result=$(copyResource "dashy" "conf.yml" "conf.yml")
+        local result=$(copyResource "dashy" "conf.yml" "")
         checkSuccess "Copy default dashy conf.yml configuration file"
 
         local original_md5=$(md5sum "$conf_file")

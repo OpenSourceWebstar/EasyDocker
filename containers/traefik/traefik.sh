@@ -79,7 +79,7 @@ installTraefik()
         checkSuccess "Created acme.json file for $app_name"
 
         # Copy the Traefik configuration file and customize it
-        local result=$(copyResource "$app_name" "traefik.yml" "/etc/traefik.yml")
+        local result=$(copyResource "$app_name" "traefik.yml" "etc")
         checkSuccess "Copy Traefik configuration file for $app_name"
 
         # Setup Error 404 Website
