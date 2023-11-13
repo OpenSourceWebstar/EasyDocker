@@ -138,14 +138,14 @@ loadFiles()
         return
     fi
 
-    sudo bash -c '
-        while IFS= read -r -d '' file; do
-            if [ -f "$file" ]; then
-                source "$(echo "$file" | sed "s|/docker/install/||")"
-                # echo "$load_type FILE $(echo "$file" | sed 's|/docker/install//||')"
-            fi
-        done < <(find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
-    '
+    while IFS= read -r -d '' file; do
+        if [ -f "$file" ]; then
+            sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file"
+            sudo chmod u+r "$file"
+            source "$file"
+            # echo "$load_type FILE $file"
+        fi
+    done < <(sudo find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
 }
 
 sourceScripts "start";
