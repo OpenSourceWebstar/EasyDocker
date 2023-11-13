@@ -139,7 +139,7 @@ fixAppFolderPermissions()
                 local file_path="$containers_dir$app_name/$file"
                 # Check if the file exists
                 if [ -e "$file_path" ]; then
-                    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file")
+                    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file_path")
                     if [ "$silent_flag" == "loud" ]; then
                         checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
                     fi
