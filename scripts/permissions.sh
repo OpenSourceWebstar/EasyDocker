@@ -112,6 +112,11 @@ fixPermissionsBeforeStart()
         changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
     fi
 
+    # App Specific
+    if [[ $app_name != "" ]]; then
+        changeRootOwnedFilesAndFolders $containers_dir$app_name $CFG_DOCKER_INSTALL_USER
+    fi
+
     # Traefik
     if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
         updateFileOwnership "${containers_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER
