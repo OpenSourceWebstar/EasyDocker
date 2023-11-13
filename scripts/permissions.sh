@@ -37,7 +37,7 @@ fixConfigPermissions()
     local app_name="$2"
     local config_file="$containers_dir$app_name/$app_name.config"
 
-    sudo chmod o+r $config_file
+    sudo chmod g+rw $config_file
     if [ "$silent_flag" == "loud" ]; then
         isNotice "Updating config read permissions for EasyDocker"
     fi
