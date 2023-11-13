@@ -67,6 +67,8 @@ setupConfigToContainer()
         fi
     fi
 
+    fixConfigPermissions $silent_flag $app_name;
+
     # Check if the user has read permission on source_file
     if [ ! -r "$source_file" ]; then
         isError "Insufficient permissions to read $source_file"
@@ -181,8 +183,6 @@ setupConfigToContainer()
             done
         fi
     fi
-
-    fixConfigPermissions $silent_flag $app_name;
 
     scanFileForRandomPassword "$target_path/$config_file";
     loadFiles "app_configs";
