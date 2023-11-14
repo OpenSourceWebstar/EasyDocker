@@ -688,9 +688,10 @@ restoreExtractFile()
                 ;;
         esac
 
+        decryption_success=""
         local success_message_posted=false
 
-        while true; do
+        while [[ "$decryption_success" != "false" ]]; do
             local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path")
 
             if [[ $result == *"incorrect password"* ]]; then
@@ -704,7 +705,7 @@ restoreExtractFile()
             
             if [[ $result == *"inflating"* ]]; then
                 if [[ $success_message_posted == "false" ]]; then
-                    isNotice "Decryption and unzip successful."
+                    isNotice "Decryption method is successful."
                     local success_message_posted=true
                 fi
                 decryption_success=true
@@ -727,8 +728,6 @@ restoreExtractFile()
     }
 
     while true; do
-        decryption_success=false
-
         # Full (Local or Remote)
         if [[ "$restorefull" == [lLrR] ]]; then
 
@@ -744,11 +743,11 @@ restoreExtractFile()
                 attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_BACKUP_PASSPHRASE"
             fi
 
-            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success == "false" ]]; then
+            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success != "true" ]]; then
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
             fi
 
-            if [[ $decryption_success == "false" ]]; then
+            if [[ $decryption_success != "true" ]]; then
                 prompt_for_passphrase
                 attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
             fi
@@ -765,7 +764,7 @@ restoreExtractFile()
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
             fi
 
-            if [[ $decryption_success == "false" ]]; then
+            if [[ $decryption_success != "true" ]]; then
                 prompt_for_passphrase
                 attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
             fi
@@ -786,11 +785,11 @@ restoreExtractFile()
                 attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_BACKUP_PASSPHRASE"
             fi
 
-            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success == "false" ]]; then
+            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success != "true" ]]; then
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
             fi
 
-            if [[ $decryption_success == "false" ]]; then
+            if [[ $decryption_success != "true" ]]; then
                 prompt_for_passphrase
                 attempt_decryption "$passphrase" "$containers_dir" "$restore_place" "$restore_type" "Custom Passphrase"
             fi
@@ -807,7 +806,7 @@ restoreExtractFile()
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
             fi
 
-            if [[ $decryption_success == "false" ]]; then
+            if [[ $decryption_success != "true" ]]; then
                 prompt_for_passphrase
                 attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
             fi
