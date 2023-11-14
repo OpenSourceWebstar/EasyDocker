@@ -57,6 +57,9 @@ ownCloudSetupConfig()
         echo "$line" | sudo tee -a "$owncloud_config_tmp"
     done < "$owncloud_config"
 
+    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
+    checkSuccess "Updating config permissions to associated permissions"
+
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
 
