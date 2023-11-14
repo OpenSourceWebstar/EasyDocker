@@ -118,14 +118,14 @@ restoreStart()
     echo "---- $menu_number. Updating docker-compose file(s)"
     echo ""
 
-    whitelistAndStartApp $app_name install;
+    whitelistAndStartApp $stored_app_name install;
 
     ((menu_number++))
     echo ""
     echo "---- $menu_number. Updating file permissions before starting."
     echo ""
 
-    fixPermissionsBeforeStart $app_name;
+    fixPermissionsBeforeStart $stored_app_name;
 
     ((menu_number++))
     echo ""
@@ -147,17 +147,17 @@ restoreStart()
 
     ((menu_number++))
     echo ""
-    echo "---- $menu_number. Adding $app_name to the Apps Database table."
+    echo "---- $menu_number. Adding $stored_app_name to the Apps Database table."
     echo ""
 
-    databaseInstallApp $app_name;
+    databaseInstallApp $stored_app_name;
 
     ((menu_number++))
     echo ""
     echo "---- $menu_number. Running Headscale setup (if required)"
     echo ""
 
-    setupHeadscale $app_name;
+    setupHeadscale $stored_app_name;
 
     ((menu_number++))
     echo ""
@@ -671,27 +671,11 @@ restoreExtractFile()
             if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/"
-        
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the provided passphrase."
-                    echo ""
-                fi
             fi
 
             if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/"
-        
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the remote passphrase."
-                    echo ""
-                fi
             fi
 
             # Prompt the user for a passphrase
@@ -705,14 +689,6 @@ restoreExtractFile()
 
             # Attempt to decrypt using the user-provided passphrase
             attempt_decryption "$passphrase" "/"
-            
-            if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
-                break
-            else
-                isNotice "Decryption failed with the provided passphrase."
-                echo ""
-            fi
         done
     fi
 
@@ -722,27 +698,11 @@ restoreExtractFile()
             if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/"
-        
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the provided passphrase."
-                    echo ""
-                fi
             fi
 
             if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/"
-        
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the remote passphrase."
-                    echo ""
-                fi
             fi
 
             # Prompt the user for a passphrase
@@ -756,14 +716,6 @@ restoreExtractFile()
 
             # Attempt to decrypt using the user-provided passphrase
             attempt_decryption "$passphrase" "/"
-            
-            if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
-                break
-            else
-                isNotice "Decryption failed with the provided passphrase."
-                echo ""
-            fi
         done
     fi
 
@@ -795,25 +747,11 @@ restoreExtractFile()
             if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir"
-
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Local) with Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the provided passphrase."
-                fi
             fi
 
             if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir"
-
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the remote passphrase."
-                fi
             fi
 
             # Prompt the user for a passphrase
@@ -827,13 +765,6 @@ restoreExtractFile()
 
             # Attempt to decrypt using the user-provided passphrase
             attempt_decryption "$passphrase" "$containers_dir"
-
-            if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
-                break
-            else
-                isNotice "Decryption failed with the provided passphrase."
-            fi
         done
     fi
 
@@ -844,25 +775,11 @@ restoreExtractFile()
             if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir"
-
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the provided passphrase."
-                fi
             fi
 
             if [ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]; then
                 # Attempt to decrypt using CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE
                 attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir"
-
-                if [ $? -eq 0 ]; then
-                    checkSuccess "Decrypting $chosen_backup_file (Remote) with Restore Remote Backup Passphrase"
-                    break
-                else
-                    isNotice "Decryption failed with the remote passphrase."
-                fi
             fi
 
             # Prompt the user for a passphrase
@@ -876,13 +793,6 @@ restoreExtractFile()
 
             # Attempt to decrypt using the user-provided passphrase
             attempt_decryption "$passphrase" "$containers_dir"
-
-            if [ $? -eq 0 ]; then
-                checkSuccess "Decrypting $chosen_backup_file with the provided passphrase"
-                break
-            else
-                isNotice "Decryption failed with the provided passphrase."
-            fi
         done
     fi
 
