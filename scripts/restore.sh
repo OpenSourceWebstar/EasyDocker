@@ -691,16 +691,9 @@ restoreExtractFile()
         while true; do
             local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path" 2>&1)
 
-            if [[ $result == *"incorrect password"* ]]; then
-                isNotice "Decryption failed with the provided passphrase. Cancelling unzip."
-                return 1  # Error: Incorrect password
-            elif [[ $result == *"error"* ]]; then
-                isNotice "An error occurred during unzip: $result"
-                return 1  # Other unzip error
-            elif [[ $result == *"inflating"* ]]; then
+            if [[ $result == *"inflating"* ]]; then
                 isNotice "Decryption and unzip successful."
                 decryption_success=true
-                return 0  # Success
             fi
         done
     }
