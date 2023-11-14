@@ -692,7 +692,7 @@ restoreExtractFile()
         local success_message_posted=false
 
         while [[ "$decryption_success" != "false" ]]; do
-            local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path")
+            local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path" 2>&1)
 
             if [[ $result == *"incorrect password"* ]]; then
                 if [[ $success_message_posted == "false" ]]; then
