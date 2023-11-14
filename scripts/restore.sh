@@ -698,6 +698,18 @@ restoreExtractFile()
         done
     }
 
+    # Function to prompt for passphrase
+    prompt_for_passphrase() 
+    {
+        isQuestion "Enter the passphrase for $chosen_backup_file or 'x' to exit: "
+        read -s -r passphrase
+
+        if [ "$passphrase" = "x" ]; then
+            isNotice "Exiting..."
+            exit 1
+        fi
+    }
+
     while true; do
         decryption_success=false
 
