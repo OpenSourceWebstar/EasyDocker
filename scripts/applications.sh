@@ -26,9 +26,9 @@ ownCloudSetupConfig()
 {
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
-    local owncloud_config_tmp="$containers_dir$app_name/files/config/config_temp.php"
+    local owncloud_config_tmp="$containers_dir$app_name/files/config/config.php.tmp"
 
-    result=$(sudo cp "$owncloud_config" "$owncloud_config_tmp")
+    result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
     checkSuccess "Copy the original config.php to the temporary file"
 
     local found_trusted_domains=false
