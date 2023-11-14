@@ -688,14 +688,30 @@ restoreExtractFile()
                 ;;
         esac
 
-        while true; do
-            local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path" 2>&1)
+        local success_message_posted=false
 
+        while true; do
+            local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path")
+
+            if [[ $result == *"incorrect password"* ]]; then
+                if [[ $success_message_posted == "false" ]]; then
+                    isNotice "Decryption and unzip failed due to incorrect password."
+                    local success_message_posted=true
+                fi
+                decryption_success=false
+                break  # Successful unzip
+            fi
+            
             if [[ $result == *"inflating"* ]]; then
-                isNotice "Decryption and unzip successful."
+                if [[ $success_message_posted == "false" ]]; then
+                    isNotice "Decryption and unzip successful."
+                    local success_message_posted=true
+                fi
                 decryption_success=true
+                break  # Successful unzip
             fi
         done
+
     }
 
     # Function to prompt for passphrase
