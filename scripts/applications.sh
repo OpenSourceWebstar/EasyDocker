@@ -27,38 +27,39 @@ ownCloudSetupConfig()
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
     local owncloud_config_tmp="/tmp/owncloud_config.tmp"
-    touch "$owncloud_config_tmp"
 
-    local original_md5=$(md5sum "$owncloud_config")
+    result=$(sudo cp "$owncloud_config" "$owncloud_config_tmp")
+    checkSuccess "Copy the original config.php to the temporary file"
+
     local found_trusted_domains=false
 
     # Read the original config.php file
     while IFS= read -r line; do
-    # Check if the line contains 'trusted_domains'
-    if [[ $line == *"trusted_domains"* ]]; then
-        local found_trusted_domains=true
-    fi
+        # Check if the line contains 'trusted_domains'
+        if [[ $line == *"trusted_domains"* ]]; then
+            local found_trusted_domains=true
+        fi
 
-    # If 'trusted_domains' is found, add the new data
-    if [ "$found_trusted_domains" == true ]; then
-        echo "  'trusted_domains' => " | sudo tee -a "$owncloud_config_tmp"
-        echo "  array (" | sudo tee -a "$owncloud_config_tmp"
+        # If 'trusted_domains' is found, add the new data
+        if [ "$found_trusted_domains" == true ]; then
+            echo "  'trusted_domains' => " | sudo tee -a "$owncloud_config_tmp"
+            echo "  array (" | sudo tee -a "$owncloud_config_tmp"
 
-        # Loop through the domains array and add to the trusted_domains section
-        for ((i=0; i<${#domains[@]}; i++)); do
-        echo "    $i => '${domains[$i]}'," | sudo tee -a "$owncloud_config_tmp"
-        done
+            # Loop through the domains array and add to the trusted_domains section
+            for ((i=0; i<${#domains[@]}; i++)); do
+                echo "    $i => '${domains[$i]}'," | sudo tee -a "$owncloud_config_tmp"
+            done
 
-        # Add the closing bracket and semicolon
-        echo "  )," | sudo tee -a "$owncloud_config_tmp"
-        echo ");" | sudo tee -a "$owncloud_config_tmp"
+            # Add the closing bracket and semicolon
+            echo "  )," | sudo tee -a "$owncloud_config_tmp"
+            echo ");" | sudo tee -a "$owncloud_config_tmp"
 
-        # Reset the flag
-        local found_trusted_domains=false
-    fi
+            # Reset the flag
+            local found_trusted_domains=false
+        fi
 
-    # Add the current line to the temporary file
-    echo "$line" | sudo tee -a "$owncloud_config_tmp"
+        # Add the current line to the temporary file
+        echo "$line" | sudo tee -a "$owncloud_config_tmp"
     done < "$owncloud_config"
 
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
