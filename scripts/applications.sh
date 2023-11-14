@@ -44,13 +44,8 @@ ownCloudSetupConfig()
         if [ "$found_trusted_domains" == true ]; then
             echo "  'trusted_domains' => " | sudo tee -a "$owncloud_config_tmp"
             echo "  array (" | sudo tee -a "$owncloud_config_tmp"
-
-            # Loop through the domains array and add to the trusted_domains section
-            for ((i=0; i<${#domains[@]}; i++)); do
-                echo "    $i => '${domains[$i]}'," | sudo tee -a "$owncloud_config_tmp"
-            done
-
-            # Add the closing bracket and semicolon
+            echo "    0 => '$ip_address'," | sudo tee -a "$owncloud_config_tmp"
+            echo "    1 => '$host'," | sudo tee -a "$owncloud_config_tmp"
             echo "  )," | sudo tee -a "$owncloud_config_tmp"
             echo ");" | sudo tee -a "$owncloud_config_tmp"
 
@@ -68,6 +63,10 @@ ownCloudSetupConfig()
     # Use sed to replace the line
     result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config")
     checkSuccess "Updated the internal CLI config IP & Port"
+
+    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
+    checkSuccess "Updating config permissions to associated permissions"
+
 }
 
 dashyUpdateConf() 
