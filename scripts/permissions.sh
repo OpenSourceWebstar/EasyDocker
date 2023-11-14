@@ -85,7 +85,7 @@ fixAppFolderPermissions()
 
     for app_name in "${app_names[@]}"; do
         if [[ $app_name != "" ]]; then
-
+    
             # Updating $containers_dir with execute permissions
             if [ -d "$containers_dir" ]; then
                 local result=$(sudo chmod +x "$containers_dir" > /dev/null 2>&1)
