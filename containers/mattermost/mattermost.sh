@@ -25,24 +25,36 @@ installMattermost()
 	fi
 
 	if [[ "$mattermost" == *[rR]* ]]; then
-        while true; do
-            isQuestion "Do you have a Reverse Proxy setup for $app_name? (y/n): "
-            read -rp "" acceptproxymattermost
-            if [[ "$acceptproxymattermost" =~ ^[yYnN]$ ]]; then
-                break
-            fi
-            isNotice "Please provide a valid input (y/n)."
-        done
-    	if [[ "$MATN" == [nN] ]]; then
-            dockerDown "$app_name" "$DCWN";
-            dockerDown "$app_name" "$DCN";
-            dockerUp "$app_name" "$DCN";
-		fi
-		if [[ "$MATN" == [yY] ]]; then
+        status=$(checkAppInstalled "traefik" "docker")
+        if [ "$status" == "installed" ]; then
             dockerDown "$app_name" "$DCN";		
             dockerDown "$app_name" "$DCWN";
             dockerUp "$app_name" "$DCWN";
-		fi
+        fi
+
+        if [ "$status" == "not_installed" ]; then
+            while true; do
+                isNotice "No Reverse Proxy has been found"
+                isNotice "Traefik is RECOMMENDED to use before installing Mattermost"
+                echo ""
+                isQuestion "Are you using the Reverse Proxy that comes with Mattermost? (y/n): "
+                read -rp "" acceptproxymattermost
+                if [[ "$acceptproxymattermost" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
+            if [[ "$MATN" == [nN] ]]; then
+                dockerDown "$app_name" "$DCWN";
+                dockerDown "$app_name" "$DCN";
+                dockerUp "$app_name" "$DCN";
+            fi
+            if [[ "$MATN" == [yY] ]]; then
+                dockerDown "$app_name" "$DCN";		
+                dockerDown "$app_name" "$DCWN";
+                dockerUp "$app_name" "$DCWN";
+            fi
+        fi
 	fi
 
     if [[ "$mattermost" == *[iI]* ]]; then
@@ -157,9 +169,27 @@ EOF
 		local DCWN=docker-compose.without-nginx.yml
 
         status=$(checkAppInstalled "traefik" "docker")
+        if [ "$status" == "installed" ]; then
+            if [[ "$OS" == [1234567] ]]; then
+                if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
+                    isError "The Compose file already contains custom edits. Please reinstalled $app_name"
+                else			
+                    removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
+                    mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
+                    setupFileWithConfigData "$app_name" "$DCWN";
+                    dockerDown "$app_name" "$DCWN";
+                    dockerUp "$app_name" "$DCWN";
+                fi
+            fi
+        fi
+
         if [ "$status" == "not_installed" ]; then
-            isQuestion "Do you already have a Reverse Proxy installed? (y/n): "
+            isNotice "No Reverse Proxy has been found"
+            isNotice "Traefik is RECOMMENDED to use before installing Mattermost"
+            echo ""
+            isQuestion "Do you want to install the Reverse Proxy that comes with Mattermost? (y/n): "
             read -rp "" MATN
+
             if [[ "$MATN" == [nN] ]]; then
                 dockerDown "$app_name" "$DCWN";
                 dockerDown "$app_name" "$DCN";
