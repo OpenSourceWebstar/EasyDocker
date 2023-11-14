@@ -25,7 +25,7 @@ updateApplicationSpecifics()
 ownCloudSetupConfig()
 {
     local domains=("$ip_setup" "$host_setup")
-    local owncloud_config="$containers_dir$app_name/"
+    local owncloud_config="$containers_dir$app_name/files/config/config.php"
     local owncloud_config_tmp="/tmp/owncloud_config.tmp"
     touch "$owncloud_config_tmp"
 

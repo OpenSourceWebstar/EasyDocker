@@ -93,13 +93,6 @@ installPihole()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Editing local variables for DNS server to $app_name"
-        echo ""
-
-        updateDNS;
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Running Headscale setup (if required)"
         echo ""
 
