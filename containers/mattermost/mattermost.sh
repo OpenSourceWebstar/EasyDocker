@@ -142,6 +142,7 @@ mattermostAddToYMLFile()
 {
   local file_path="$1"
   sudo tee -a "$file_path" <<EOF
+    container_name: mattermost
     #labels:
       #traefik.enable: true
       #traefik.http.routers.mattermost.entrypoints: web,websecure
