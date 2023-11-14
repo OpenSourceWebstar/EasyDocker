@@ -7,7 +7,7 @@ installPihole()
 {
     if [[ "$pihole" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent pihole;
-        app_name=$CFG_PIHOLE_APP_NAME
+        local app_name=$CFG_PIHOLE_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -84,6 +84,13 @@ installPihole()
 
 		whitelistAndStartApp $app_name install;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
+        echo ""
+
+        updateApplicationSpecifics $app_name;
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Editing local variables for DNS server to $app_name"
@@ -93,17 +100,17 @@ installPihole()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Setting up database records"
-        echo ""
-
-		databaseInstallApp $app_name;
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Running Headscale setup (if required)"
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setting up database records"
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

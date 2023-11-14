@@ -7,7 +7,7 @@ installDashy()
 {
     if [[ "$dashy" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent dashy;
-        app_name=$CFG_DASHY_APP_NAME
+        local app_name=$CFG_DASHY_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -76,13 +76,6 @@ installDashy()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Setting up conf.yml file."
-        echo ""
-
-        dashyUpdateConf;
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Updating file permissions before starting."
         echo ""
 
@@ -95,12 +88,12 @@ installDashy()
 
 		whitelistAndStartApp $app_name install;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -108,6 +101,13 @@ installDashy()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

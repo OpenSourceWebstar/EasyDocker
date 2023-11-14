@@ -161,6 +161,13 @@ restoreStart()
 
     ((menu_number++))
     echo ""
+    echo "---- $menu_number. Running Application specific updates (if required)"
+    echo ""
+
+    updateApplicationSpecifics $stored_app_name;
+
+    ((menu_number++))
+    echo ""
     echo "---- $menu_number. Cleaning files used to restore"
     echo ""
 
@@ -698,6 +705,7 @@ restoreExtractFile()
                 if [[ $success_message_posted == "false" ]]; then
                     isNotice "Decryption and unzip failed due to incorrect password."
                     isNotice "Trying another password (if any available)"
+                    echo ""
                     local success_message_posted=true
                 fi
                 decryption_success=false

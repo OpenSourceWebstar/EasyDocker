@@ -7,7 +7,7 @@ installGrafana()
 {
     if [[ "$grafana" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent grafana;
-        app_name=$CFG_GRAFANA_APP_NAME
+        local app_name=$CFG_GRAFANA_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -90,12 +90,12 @@ installGrafana()
             checkSuccess "Set permissions to grafana_storage folder."
         fi
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -103,6 +103,14 @@ installGrafana()
         echo ""
 
 		setupHeadscale $app_name;
+        
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
+
 
 		((menu_number++))
         echo ""

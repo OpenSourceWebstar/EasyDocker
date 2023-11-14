@@ -7,7 +7,7 @@ installVaultwarden()
 {
     if [[ "$vaultwarden" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent vaultwarden;
-        app_name=$CFG_VAULTWARDEN_APP_NAME
+        local app_name=$CFG_VAULTWARDEN_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -84,12 +84,12 @@ installVaultwarden()
 
 		whitelistAndStartApp $app_name install;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -97,6 +97,13 @@ installVaultwarden()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

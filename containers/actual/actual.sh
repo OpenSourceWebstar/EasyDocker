@@ -7,7 +7,7 @@ installActual()
 {
     if [[ "$actual" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent actual;
-        app_name=$CFG_ACTUAL_APP_NAME
+        local app_name=$CFG_ACTUAL_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
@@ -100,17 +100,24 @@ installActual()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
+
+		fixPermissionsBeforeStart $app_name;
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
 		whitelistAndStartApp $app_name install;
 
-		((menu_number++))
+        ((menu_number++))
         echo ""
-        echo "---- $menu_number. Updating file permissions before starting."
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		fixPermissionsBeforeStart $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
 		echo ""

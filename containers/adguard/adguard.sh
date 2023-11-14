@@ -7,7 +7,7 @@ installAdguard()
 {
     if [[ "$adguard" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent adguard;
-        app_name=$CFG_ADGUARD_APP_NAME
+        local app_name=$CFG_ADGUARD_APP_NAME
     	setupInstallVariables $app_name;
     fi
 
@@ -87,6 +87,13 @@ installAdguard()
 
 		whitelistAndStartApp $app_name install;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
+        echo ""
+
+        updateApplicationSpecifics $app_name;
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Initial install started for $app_name"
@@ -128,18 +135,18 @@ installAdguard()
         updateDNS;
 
 		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
-        echo ""
-
-		databaseInstallApp $app_name;
-
-		((menu_number++))
         echo ""
         echo "---- $menu_number. Running Headscale setup (if required)"
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

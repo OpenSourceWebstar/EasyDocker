@@ -7,7 +7,7 @@ installGitlab()
 {
     if [[ "$gitlab" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent gitlab;
-        app_name=$CFG_GITLAB_APP_NAME
+        local app_name=$CFG_GITLAB_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
@@ -69,14 +69,7 @@ installGitlab()
         echo ""
 
         setupComposeFile $app_name;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
-        echo ""
-
-		whitelistAndStartApp $app_name install;
-
+        
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
@@ -85,11 +78,18 @@ installGitlab()
 		fixPermissionsBeforeStart $app_name;
 
 		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		databaseInstallApp $app_name;
+		whitelistAndStartApp $app_name install;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
+        echo ""
+
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -97,6 +97,13 @@ installGitlab()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

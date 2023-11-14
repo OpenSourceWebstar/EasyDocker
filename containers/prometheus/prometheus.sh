@@ -7,7 +7,7 @@ installPrometheus()
 {
     if [[ "$prometheus" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent prometheus;
-        app_name=$CFG_PROMETHEUS_APP_NAME
+        local app_name=$CFG_PROMETHEUS_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -106,12 +106,12 @@ installPrometheus()
             checkSuccess "Set permissions to prom_data folder."
         fi
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -119,6 +119,13 @@ installPrometheus()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

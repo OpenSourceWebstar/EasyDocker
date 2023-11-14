@@ -7,7 +7,7 @@ installMattermost()
 {
     if [[ "$mattermost" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer silent mattermost;
-		app_name=$CFG_MATTERMOST_APP_NAME
+		local app_name=$CFG_MATTERMOST_APP_NAME
 		local easy_setup=$CFG_MATTERMOST_EASY_SETUP
 		setupInstallVariables $app_name;
 	fi
@@ -212,12 +212,12 @@ EOF
             fi
         fi
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -225,6 +225,13 @@ EOF
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

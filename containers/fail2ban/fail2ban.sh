@@ -7,7 +7,7 @@ installFail2ban()
 {
     if [[ "$fail2ban" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent fail2ban;
-        app_name=$CFG_FAIL2BAN_APP_NAME
+        local app_name=$CFG_FAIL2BAN_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -79,13 +79,6 @@ installFail2ban()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Updating file permissions before starting."
-        echo ""
-
-		fixPermissionsBeforeStart $app_name;
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Setting up AbuseIPDB for fail2ban if api key is provided"
         echo ""
 
@@ -123,11 +116,25 @@ installFail2ban()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Updating file permissions before starting."
+        echo ""
+
+		fixPermissionsBeforeStart $app_name;
+        
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
 		whitelistAndStartApp $app_name install;
 
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
+        echo ""
+
+        updateApplicationSpecifics $app_name;
+        
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."

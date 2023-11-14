@@ -154,7 +154,6 @@ fixAppFolderPermissions()
     done
 }
 
-
 fixPermissionsBeforeStart()
 {
     local app_name="$1"

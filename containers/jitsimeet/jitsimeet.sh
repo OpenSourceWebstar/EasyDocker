@@ -7,7 +7,7 @@ installJitsimeet()
 {
     if [[ "$jitsimeet" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer jitsimeet;
-		app_name=$CFG_JITSIMEET_APP_NAME
+		local app_name=$CFG_JITSIMEET_APP_NAME
 		git_url=$CFG_JITSIMEET_GIT
 		setupInstallVariables $app_name;
 	fi
@@ -176,12 +176,12 @@ installJitsimeet()
         #runCommandForDockerInstallUser "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
 		dockerDownUp $app_name;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -189,6 +189,13 @@ installJitsimeet()
         echo ""
 
 		setupHeadscale $app_name;
+		
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

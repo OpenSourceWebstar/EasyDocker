@@ -22,6 +22,7 @@ files_to_source=(
     "scripts/network.sh"
     "scripts/shutdown.sh"
     "scripts/headscale.sh"
+    "scripts/applications.sh"
 
     "scripts/backup.sh"
     "scripts/restore.sh"

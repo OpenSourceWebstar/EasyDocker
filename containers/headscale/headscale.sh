@@ -7,7 +7,7 @@ installHeadscale()
 {
     if [[ "$headscale" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent headscale;
-        app_name=$CFG_HEADSCALE_APP_NAME
+        local app_name=$CFG_HEADSCALE_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -92,12 +92,12 @@ installHeadscale()
 
 		whitelistAndStartApp $app_name install;
 
-		((menu_number++))
+        ((menu_number++))
         echo ""
-        echo "---- $menu_number. Setting up database records"
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -105,6 +105,13 @@ installHeadscale()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setting up database records"
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

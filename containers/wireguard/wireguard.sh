@@ -7,7 +7,7 @@ installWireguard()
 {
     if [[ "$wireguard" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent wireguard;
-        app_name=$CFG_WIREGUARD_APP_NAME
+        local app_name=$CFG_WIREGUARD_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
@@ -121,12 +121,12 @@ installWireguard()
 
         dockerDownUp $app_name;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -134,6 +134,13 @@ installWireguard()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

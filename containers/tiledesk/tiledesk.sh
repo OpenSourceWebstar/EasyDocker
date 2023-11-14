@@ -7,7 +7,7 @@ installTiledesk()
 {
     if [[ "$tiledesk" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent tiledesk;
-		app_name=$CFG_TILEDESK_APP_NAME
+		local app_name=$CFG_TILEDESK_APP_NAME
 		setupInstallVariables $app_name;
 	fi
 
@@ -72,15 +72,20 @@ installTiledesk()
 
 		local result=$(cd $containers_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
-
-		whitelistAndStartApp $app_name install;
-
-		((menu_number++))
+		
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
         echo ""
 
 		fixPermissionsBeforeStart $app_name;
+		((menu_number++))
+        
+        echo ""
+        echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
+        echo ""
+
+		whitelistAndStartApp $app_name install;
 
 		((menu_number++))
         echo ""
@@ -111,12 +116,12 @@ installTiledesk()
 			fi
 		fi
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -124,6 +129,13 @@ installTiledesk()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

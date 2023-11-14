@@ -7,7 +7,7 @@ installSearxng()
 {
     if [[ "$searxng" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent searxng;
-		app_name=$CFG_SEARXNG_APP_NAME
+		local app_name=$CFG_SEARXNG_APP_NAME
 		setupInstallVariables $app_name;
 	fi
 
@@ -109,12 +109,12 @@ installSearxng()
             dockerDownUp $app_name;
         fi
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -122,6 +122,13 @@ installSearxng()
         echo ""
 
 		setupHeadscale $app_name;
+        
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

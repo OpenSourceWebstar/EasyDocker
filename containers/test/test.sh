@@ -7,7 +7,7 @@ installTest()
 {
     if [[ "$test" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent test;
-        app_name=$CFG_TEST_APP_NAME
+        local app_name=$CFG_TEST_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -84,12 +84,12 @@ installTest()
 
 		whitelistAndStartApp $app_name install;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -97,6 +97,13 @@ installTest()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

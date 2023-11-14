@@ -7,7 +7,7 @@ installVirtualminadmin()
 {
     if [[ "$virtualminadmin" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent virtualminadmin;
-        app_name=$CFG_VIRTUALMINADMIN_APP_NAME
+        local app_name=$CFG_VIRTUALMINADMIN_APP_NAME
         setupInstallVariables $app_name;
     fi
     
@@ -165,10 +165,10 @@ installVirtualminadmin()
 
         ((menu_number++))
         echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -176,6 +176,13 @@ installVirtualminadmin()
         echo ""
 
 		setupHeadscale $app_name;
+
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+        databaseInstallApp $app_name;
 
         ((menu_number++))
         echo ""

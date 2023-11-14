@@ -7,7 +7,7 @@ installMailcow()
 {
     if [[ "$mailcow" == *[cCtTuUsSrRiI]* ]]; then
     	setupConfigToContainer mailcow;
-		app_name=$CFG_MAILCOW_APP_NAME
+		local app_name=$CFG_MAILCOW_APP_NAME
 		easy_setup=$CFG_MAILCOW_EASY_SETUP
 		setupInstallVariables $app_name;
 	fi
@@ -202,12 +202,12 @@ installMailcow()
 
 		dockerDownUp $app_name;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -215,6 +215,13 @@ installMailcow()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""

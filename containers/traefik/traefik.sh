@@ -7,7 +7,7 @@ installTraefik()
 {
     if [[ "$traefik" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent traefik;
-        app_name=$CFG_TRAEFIK_APP_NAME
+        local app_name=$CFG_TRAEFIK_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
@@ -120,12 +120,12 @@ installTraefik()
 
         dockerDownUp $app_name;
 
-		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-		databaseInstallApp $app_name;
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""
@@ -133,6 +133,13 @@ installTraefik()
         echo ""
 
 		setupHeadscale $app_name;
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+
+		databaseInstallApp $app_name;
 
 		((menu_number++))
         echo ""
