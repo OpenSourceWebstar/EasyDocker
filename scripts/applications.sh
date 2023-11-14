@@ -4,6 +4,9 @@ updateApplicationSpecifics()
 {
     local app_name="$1"
 
+    # Initialize setup.
+    setupInstallVariables $app_name;
+
     if [[ $app_name == "adguard" ]] || [[ $app_name == "pihole" ]]; then
         updateDNS;
     fi
@@ -33,29 +36,19 @@ ownCloudSetupConfig()
 
     local found_trusted_domains=false
 
-    # Read the original config.php file
-    while IFS= read -r line; do
-        # Check if the line contains 'trusted_domains'
-        if [[ $line == *"trusted_domains"* ]]; then
-            local found_trusted_domains=true
-        fi
+    # Use awk to delete lines between 'trusted_domains' and '),'
+    sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config" > "$owncloud_config_tmp"
 
-        # If 'trusted_domains' is found, add the new data
-        if [ "$found_trusted_domains" == true ]; then
-            echo "  'trusted_domains' => " | sudo tee -a "$owncloud_config_tmp"
-            echo "  array (" | sudo tee -a "$owncloud_config_tmp"
-            echo "    0 => '$ip_address'," | sudo tee -a "$owncloud_config_tmp"
-            echo "    1 => '$host'," | sudo tee -a "$owncloud_config_tmp"
-            echo "  )," | sudo tee -a "$owncloud_config_tmp"
-            echo ");" | sudo tee -a "$owncloud_config_tmp"
+    # Use awk to get the line number containing ");"
+    line_number=$(sudo awk '/);/{print NR}' "$owncloud_config")
 
-            # Reset the flag
-            local found_trusted_domains=false
-        fi
-
-        # Add the current line to the temporary file
-        echo "$line" | sudo tee -a "$owncloud_config_tmp"
-    done < "$owncloud_config"
+    # Insert the new lines above the line with ");"
+    sudo sed -i "${line_number}i\\
+        'trusted_domains' => array(\\
+            0 => '$ip_address',\\
+            1 => '$host',\\
+        ),\\
+    );" "$owncloud_config"
 
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
