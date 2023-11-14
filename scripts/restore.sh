@@ -697,6 +697,7 @@ restoreExtractFile()
             if [[ $result == *"incorrect password"* ]]; then
                 if [[ $success_message_posted == "false" ]]; then
                     isNotice "Decryption and unzip failed due to incorrect password."
+                    isNotice "Trying another password (if any available)"
                     local success_message_posted=true
                 fi
                 decryption_success=false
@@ -727,91 +728,89 @@ restoreExtractFile()
         fi
     }
 
-    while true; do
-        # Full (Local or Remote)
-        if [[ "$restorefull" == [lLrR] ]]; then
+    # Full (Local or Remote)
+    if [[ "$restorefull" == [lLrR] ]]; then
 
-            # Full Specific
-            local restore_type="full"
-            if [[ "$restorefull" == [lL] ]]; then
-                local restore_place="local"
-            elif [[ "$restorefull" == [rR] ]]; then
-                local restore_place="remote"
-            fi
-        
-            if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
-                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_BACKUP_PASSPHRASE"
-            fi
-
-            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success != "true" ]]; then
-                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
-            fi
-
-            if [[ $decryption_success != "true" ]]; then
-                prompt_for_passphrase
-                attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
-            fi
+        # Full Specific
+        local restore_type="full"
+        if [[ "$restorefull" == [lL] ]]; then
+            local restore_place="local"
+        elif [[ "$restorefull" == [rR] ]]; then
+            local restore_place="remote"
+        fi
+    
+        if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
+            attempt_decryption "$CFG_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_BACKUP_PASSPHRASE"
         fi
 
-        # Full (Migrate only)
-        if [[ "$restorefull" == [mM] ]]; then
-
-            # Full Specific
-            local restore_type="full"
-            local restore_place="migrate"
-
-            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]]; then
-                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
-            fi
-
-            if [[ $decryption_success != "true" ]]; then
-                prompt_for_passphrase
-                attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
-            fi
+        if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success != "true" ]]; then
+            attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
         fi
 
-        # Local Restore or Remote Restore
-        if [[ "$restoresingle" == [lLrR] ]]; then
+        if [[ $decryption_success != "true" ]]; then
+            prompt_for_passphrase
+            attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
+        fi
+    fi
 
-            # Single Specific
-            local restore_type="single"
-            if [[ "$restoresingle" == [lL] ]]; then
-                local restore_place="local"
-            elif [[ "$restoresingle" == [rR] ]]; then
-                local restore_place="remote"
-            fi
+    # Full (Migrate only)
+    if [[ "$restorefull" == [mM] ]]; then
 
-            if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
-                attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_BACKUP_PASSPHRASE"
-            fi
+        # Full Specific
+        local restore_type="full"
+        local restore_place="migrate"
 
-            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success != "true" ]]; then
-                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
-            fi
-
-            if [[ $decryption_success != "true" ]]; then
-                prompt_for_passphrase
-                attempt_decryption "$passphrase" "$containers_dir" "$restore_place" "$restore_type" "Custom Passphrase"
-            fi
+        if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]]; then
+            attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "/" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
         fi
 
-        # Remote Migrate for Single Restore
-        if [[ "$restoresingle" == [mM] ]]; then
-
-            # Single Specific
-            local restore_type="single"
-            local restore_place="migrate"
-
-            if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]]; then
-                attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
-            fi
-
-            if [[ $decryption_success != "true" ]]; then
-                prompt_for_passphrase
-                attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
-            fi
+        if [[ $decryption_success != "true" ]]; then
+            prompt_for_passphrase
+            attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
         fi
-    done
+    fi
+
+    # Local Restore or Remote Restore
+    if [[ "$restoresingle" == [lLrR] ]]; then
+
+        # Single Specific
+        local restore_type="single"
+        if [[ "$restoresingle" == [lL] ]]; then
+            local restore_place="local"
+        elif [[ "$restoresingle" == [rR] ]]; then
+            local restore_place="remote"
+        fi
+
+        if [ -n "$CFG_BACKUP_PASSPHRASE" ]; then
+            attempt_decryption "$CFG_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_BACKUP_PASSPHRASE"
+        fi
+
+        if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]] && [[ $decryption_success != "true" ]]; then
+            attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
+        fi
+
+        if [[ $decryption_success != "true" ]]; then
+            prompt_for_passphrase
+            attempt_decryption "$passphrase" "$containers_dir" "$restore_place" "$restore_type" "Custom Passphrase"
+        fi
+    fi
+
+    # Remote Migrate for Single Restore
+    if [[ "$restoresingle" == [mM] ]]; then
+
+        # Single Specific
+        local restore_type="single"
+        local restore_place="migrate"
+
+        if [[ -n "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" ]]; then
+            attempt_decryption "$CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE" "$containers_dir" "$restore_place" "$restore_type" "CFG_RESTORE_REMOTE_BACKUP_PASSPHRASE"
+        fi
+
+        if [[ $decryption_success != "true" ]]; then
+            prompt_for_passphrase
+            attempt_decryption "$passphrase" "/" "$restore_place" "$restore_type" "Custom Passphrase"
+        fi
+    fi
 }
 
 restoreCleanFiles()
