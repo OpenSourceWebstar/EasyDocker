@@ -40,7 +40,7 @@ ownCloudSetupConfig()
     sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config" > "$owncloud_config_tmp"
 
     # Use awk to get the line number containing ");"
-    line_number=$(sudo awk '/);/{print NR}' "$owncloud_config")
+    local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config")
 
     # Insert the new lines above the line with ");"
     sudo sed -i "${line_number}i\\
