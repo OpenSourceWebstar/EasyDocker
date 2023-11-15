@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # Category : old
-# Description : Test - It just works! (c/u/s/r/i):
+# Description : Template - It just works! (c/u/s/r/i):
 
-installTest()
+installTemplate()
 {
-    if [[ "$test" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent test;
-        local app_name=$CFG_TEST_APP_NAME
+    if [[ "$template" == *[cCtTuUsSrRiI]* ]]; then
+        setupConfigToContainer silent template;
+        local app_name=$CFG_TEMPLATE_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
-    if [[ "$test" == *[cC]* ]]; then
+    if [[ "$template" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-    if [[ "$test" == *[uU]* ]]; then
+    if [[ "$template" == *[uU]* ]]; then
         uninstallApp $app_name;
     fi
 
-    if [[ "$test" == *[sS]* ]]; then
+    if [[ "$template" == *[sS]* ]]; then
         shutdownApp $app_name;
     fi
 
-    if [[ "$test" == *[rR]* ]]; then
+    if [[ "$template" == *[rR]* ]]; then
         dockerDownUp $app_name;
     fi
 
-    if [[ "$test" == *[iI]* ]]; then
+    if [[ "$template" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###          Install $app_name"
@@ -120,5 +120,5 @@ installTest()
         sleep 3s
         cd
     fi
-    test=n
+    template=n
 }
