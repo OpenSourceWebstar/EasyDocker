@@ -127,7 +127,7 @@ installMailcow()
         setupComposeFile $app_name;
 
 		# Script to setup Mailcow
-		local result=$(cd $containers_dir$app_name && sudo ./generate_config.sh)
+		local result=$(cd $containers_dir$app_name && sudo -u $CFG_DOCKER_INSTALL_USER ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
 
 		((menu_number++))
