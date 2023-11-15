@@ -699,9 +699,6 @@ firewallCommands()
             fi
             isNotice "Please provide a valid port number between 1 and 65535 or enter 'x' to exit."
         done
-        echo ""
-        isNotice "Press Enter to continue..."
-        read
     fi
 
     # Block specific port through the firewall
@@ -723,9 +720,6 @@ firewallCommands()
             fi
             isNotice "Please provide a valid port number between 1 and 65535 or enter 'x' to exit."
         done
-        echo ""
-        isNotice "Press Enter to continue..."
-        read
     fi
 
     # Block port 22 (SSH)
@@ -737,9 +731,6 @@ firewallCommands()
         checkSuccess "Disabling Port 22 through the firewall"
         local result=$(sudo ufw deny ssh)
         checkSuccess "Disabling SSH through the firewall"
-        echo ""
-        isNotice "Press Enter to continue..."
-        read
     fi
 
     # Allow port 22 (SSH)
@@ -751,9 +742,6 @@ firewallCommands()
         checkSuccess "Allowing Port 22 through the firewall"
         local result=$(sudo ufw allow ssh)
         checkSuccess "Allowing SSH through the firewall"
-        echo ""
-        isNotice "Press Enter to continue..."
-        read
     fi
 
     # Update logging type for UFW based on Config
@@ -773,9 +761,6 @@ firewallCommands()
                 isError "Invalid UFW logging type. Please set CFG_UFW_LOGGING to on, off, low, medium, high, or full."
                 ;;
         esac
-        echo ""
-        isNotice "Press Enter to continue..."
-        read
     fi 
 }
 
