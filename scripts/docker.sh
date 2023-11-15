@@ -670,6 +670,6 @@ dockerAppUp()
 
 dockerPruneNetworks()
 {
-    local result=$(runCommandForDockerInstallUser "docker network prune")
+    local result=$(runCommandForDockerInstallUser "docker network prune -f")
     checkSuccess "Pruning any unused Docker networks"
 }
