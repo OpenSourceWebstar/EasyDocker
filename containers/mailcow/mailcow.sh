@@ -135,36 +135,44 @@ installMailcow()
         echo "---- $menu_number. Running configuration edits to mailserver.conf"
         echo ""
 
-		local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/mailcow.conf)
-		checkSuccess "Updating the mailserver.conf to custom http port"
+		if [ -e "$containers_dir$app_name/mailcow.conf" ]; then
+			local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/mailcow.conf)
+			checkSuccess "Updated HTTP_PORT in mailcow.conf"
 
-		local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/mailcow.conf)
-		checkSuccess "Updating the mailserver.conf to custom https port"
+			local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/mailcow.conf)
+			checkSuccess "Updating the mailserver.conf to custom http port"
 
-		while true; do
-			isQuestion "Would you like to disable Lets Encrypt? *RECOMMENDED* (y/n): "
-			read -p "" lets_encrypt_choice
-			if [[ -n "$lets_encrypt_choice" ]]; then
-				break
+			local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/mailcow.conf)
+			checkSuccess "Updating the mailserver.conf to custom https port"
+
+			while true; do
+				isQuestion "Would you like to disable Lets Encrypt? *RECOMMENDED* (y/n): "
+				read -p "" lets_encrypt_choice
+				if [[ -n "$lets_encrypt_choice" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$lets_encrypt_choice" == [yY] ]]; then
+				local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $containers_dir$app_name/mailcow.conf)
+				checkSuccess "Updating the mailserver.conf to disable SSL install"
 			fi
-			isNotice "Please provide a valid input."
-		done
-		if [[ "$lets_encrypt_choice" == [yY] ]]; then
-			local result=$(sudo sed -i 's/SKIP_LETS_ENCRYPT=n/SKIP_LETS_ENCRYPT=y/' $containers_dir$app_name/mailcow.conf)
-			checkSuccess "Updating the mailserver.conf to disable SSL install"
-		fi
 
-		while true; do
-			isQuestion "Would you like to disable ClamD Antivirus? *Resource Reduction* (y/n): "
-			read -p "" clamd_antivirus_choice
-			if [[ -n "$clamd_antivirus_choice" ]]; then
-				break
+			while true; do
+				isQuestion "Would you like to disable ClamD Antivirus? *Resource Reduction* (y/n): "
+				read -p "" clamd_antivirus_choice
+				if [[ -n "$clamd_antivirus_choice" ]]; then
+					break
+				fi
+				isNotice "Please provide a valid input."
+			done
+			if [[ "$clamd_antivirus_choice" == [yY] ]]; then
+				local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $containers_dir$app_name/mailcow.conf)
+				checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
 			fi
-			isNotice "Please provide a valid input."
-		done
-		if [[ "$clamd_antivirus_choice" == [yY] ]]; then
-			local result=$(sudo sed -i 's/SKIP_CLAMD=n/SKIP_CLAMD=y/' $containers_dir$app_name/mailcow.conf)
-			checkSuccess "Updating the mailserver.conf to disable ClamD Antivirus"
+		else
+			isError "The file $mailcow_conf_file does not exist. Config generation has failed, please reinstall mailcow and try again."
+            return
 		fi
 
 		((menu_number++))
