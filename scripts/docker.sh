@@ -667,3 +667,9 @@ dockerAppUp()
         checkSuccess "Starting up $app_name container"
     fi
 }
+
+dockerPruneNetworks()
+{
+    local result=$(runCommandForDockerInstallUser "docker network prune")
+    checkSuccess "Pruning any unused Docker networks"
+}

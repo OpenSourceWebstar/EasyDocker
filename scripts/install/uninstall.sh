@@ -39,6 +39,13 @@ uninstallApp()
 
         ((menu_number++))
         echo ""
+        echo "---- $menu_number. Removing unused Docker networks."
+        echo ""
+
+        dockerPruneNetworks;
+
+        ((menu_number++))
+        echo ""
         echo "---- $menu_number. Marking app as uninstalled in the database"
         echo ""
 
