@@ -137,9 +137,6 @@ installMailcow()
 
 		if [ -e "$containers_dir$app_name/mailcow.conf" ]; then
 			local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/mailcow.conf)
-			checkSuccess "Updated HTTP_PORT in mailcow.conf"
-
-			local result=$(sudo sed -i 's/HTTP_PORT=80/HTTP_PORT='$usedport1'/' $containers_dir$app_name/mailcow.conf)
 			checkSuccess "Updating the mailserver.conf to custom http port"
 
 			local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/mailcow.conf)
