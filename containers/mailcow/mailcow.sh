@@ -70,27 +70,6 @@ installMailcow()
         else
             isSuccessful "No open port conflicts found, setup is continuing..."
         fi
-		
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Checking & Opening ports if required"
-        echo ""
-
-        checkAppPorts $app_name install;
-        if [[ $disallow_used_port == "true" ]]; then
-            isError "A used port conflict has occured, setup is cancelling..."
-            disallow_used_port=""
-            return
-        else
-            isSuccessful "No used port conflicts found, setup is continuing..."
-        fi
-        if [[ $disallow_open_port == "true" ]]; then
-            isError "An open port conflict has occured, setup is cancelling..."
-            disallow_open_port=""
-            return
-        else
-            isSuccessful "No open port conflicts found, setup is continuing..."
-        fi
         
 		((menu_number++))
 	    echo ""
@@ -110,7 +89,7 @@ installMailcow()
 			# Clone the Git repository
 			local result=$(sudo rm -rf "$mailcow_source_dir")
 			checkSuccess "Deleting mailcow directory git."
-			local result=$(sudo -u $CFG_DOCKER_INSTALL_USER git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $sudo_user_name git config --global --add safe.directory $containers_dir$app_name)
+			local result=$(sudo -u $CFG_DOCKER_INSTALL_USER git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $CFG_DOCKER_INSTALL_USER git config --global --add safe.directory $containers_dir$app_name)
 			checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 			# Restore the backup content
 			if [ -d "$mailcow_backup_dir" ]; then
