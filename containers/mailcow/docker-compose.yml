@@ -1,7 +1,9 @@
 version: '3'
+
 networks:
   vpn:
     external: true
+
 services:
     nginx-mailcow:
       container_name: mailcow
