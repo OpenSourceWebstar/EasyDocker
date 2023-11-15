@@ -214,8 +214,8 @@ installMailcow()
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""
         echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$usedport1/ OR https://$public_ip:$COWP443/"
-        echo "    Local : http://$ip_setup:$usedport1/ OR htts://$ip_setup:$COWP443/"
+        echo "    External : http://$public_ip:$usedport1/ OR https://$public_ip:$usedport2/"
+        echo "    Local : http://$ip_setup:$usedport1/ OR htts://$ip_setup:$usedport2/"
         echo ""
       
 		menu_number=0

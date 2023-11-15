@@ -216,7 +216,8 @@ changeRootOwnedFilesAndFolders()
         local elapsed_time=$((current_time - start_time))
         if [ "$elapsed_time" -ge "$time_threshold" ]; then
             # Display the message
-            isNotice "Updating ownership of $dir_to_change...this may take a while depending on the size/amount of files..."
+            isNotice "Updating ownership of $dir_to_change"
+            isNotice "This may take a while depending on the size/amount of files..."
             break
         fi
         sleep 1
