@@ -27,7 +27,7 @@ services:
         #network_mode: none
       volumes:
           - /var/run/docker.sock:/var/run/docker.sock:ro
-          - /docker/traefik/etc/certs:/traefik:ro
+          - /docker/containers/traefik/etc/certs:/traefik:ro
           - ./data/assets/ssl/:/output:rw
       restart: always
       environment:
