@@ -39,9 +39,9 @@ installUFW()
 
             if [[ "$UFWSSH" == [nN] ]]; then
                 local result=$(sudo ufw deny 22)
-                checkSuccess "Enabling Port 22 through the firewall"
+                checkSuccess "Blocking Port 22 through the firewall"
                 local result=$(sudo ufw deny ssh)
-                checkSuccess "Enabling SSH through the firewall"
+                checkSuccess "Blocking SSH through the firewall"
             fi
 
             echo ""
@@ -53,24 +53,8 @@ installUFW()
             echo "---- $menu_number. Changing logging options"
             echo ""
 
-            local result=$(yes | sudo ufw logging off)
+            local result=$(yes | sudo ufw logging $CFG_UFW_LOGGING)
             checkSuccess "Disabling UFW Firewall Logging"
-            
-            # UFW Logging rules : https://linuxhandbook.com/ufw-logs/
-            while true; do
-                isQuestion "Do you want to enable logging (Potential privacy issue)? (y/n): "
-                read -rp "" UFWP
-                if [[ "$UFWP" =~ ^[yYnN]$ ]]; then
-                    break
-                fi
-                isNotice "Please provide a valid input (y/n)."
-            done            
-            
-            if [[ "$UFWP" == [yY] ]]; then
-                echo ""
-                local result=$(yes | sudo ufw logging medium)
-                checkSuccess "Enabling UFW Firewall Logging"	
-            fi
 
             echo ""
             isSuccessful "UFW Firewall has been installed, you can use ufw status to see the status"

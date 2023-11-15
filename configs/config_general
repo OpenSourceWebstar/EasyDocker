@@ -32,6 +32,7 @@ CFG_HEADSCALE_KEY=
 CFG_UPDATER_CHECK=60
 CFG_SWAPFILE_SIZE=2G
 CFG_GENERATED_PASS_LENGTH=26
+CFG_UFW_LOGGING=off
 
 # Docker Manager (Used for remote access)
 # Not recommended to change the dockermanager username as it may cause issues with ssh transfer

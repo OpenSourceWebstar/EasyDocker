@@ -251,6 +251,12 @@ startOther()
         headscaleEditConfig;
     fi
 
+    #######################################################
+    ###                     Firewall                    ###
+    #######################################################
+
+    firewallCommands;
+
 	endStart;
 }
 

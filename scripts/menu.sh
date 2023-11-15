@@ -30,6 +30,10 @@ mainMenu()
 		echo ""
 		isOption "c. Configs"
 		isOption "d. Database"
+		status=$(checkAppInstalled "ufw" "linux")
+        if [ "$status" == "installed" ]; then
+			isOption "f. Firewall"
+        fi
 		isOption "h. Headscale"
 		isOption "l. Logs"
 		isOption "t. Tools"
@@ -199,6 +203,28 @@ mainMenu()
 				read -rp "" headscaleversion
 				isOptionMenu "View/Edit Headscale Config File? (y/n): " 
 				read -rp "" headscaleconfigfile
+
+				startOther;
+
+				;;
+
+			f)
+				echo ""
+				echo "#####################################"
+				echo "###           Firewall            ###"
+				echo "#####################################"
+				echo ""
+
+				isOptionMenu "Allow specific port through the firewall? (y/n): "
+				read -rp "" firewallallowport
+				isOptionMenu "Block specific port through the firewall? (y/n): "
+				read -rp "" firewallblockport
+				isOptionMenu "Block port 22 (SSH)? (y/n): "
+				read -rp "" firewallblock22
+				isOptionMenu "Allow port 22 (SSH)? (y/n): "
+				read -rp "" firewallallow22
+				isOptionMenu "Update logging type for UFW based on Config? (y/n): "
+				read -rp "" firewallchangelogging
 
 				startOther;
 
