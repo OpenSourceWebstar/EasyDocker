@@ -112,9 +112,13 @@ installMattermost()
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
+
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-            local result=$(sudo chown -R $docker_install_user_id:$docker_install_user_id $containers_dir$app_name/volumes/app/mattermost)
+            #local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+            #local result=$(sudo chown -R $docker_install_user_id:$docker_install_user_id $containers_dir$app_name/volumes/app/mattermost)
+            #checkSuccess "Setting folder permissions for $app_name folders"
+            # Issue with Rootless - https://github.com/mattermost/docker/issues/106
+            local result=$(sudo chmod -R 777 /docker/containers/mattermost/volumes/app/mattermost/
             checkSuccess "Setting folder permissions for $app_name folders"
         else
             local result=$(sudo chown -R 2000:2000 $containers_dir$app_name/volumes/app/mattermost)
