@@ -180,6 +180,12 @@ fixPermissionsBeforeStart()
         changeRootOwnedFilesAndFolders $containers_dir$app_name $CFG_DOCKER_INSTALL_USER
     fi
 
+    # Mattermost
+    if [[ $app_name == "mattermost" ]]; then
+        local result=$(sudo chown -R 2000:2000 $containers_dir$app_name/volumes/app/mattermost)
+        checkSuccess "Setting folder permissions for $app_name folders"
+    fi
+
     # Traefik
     if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
         updateFileOwnership "${containers_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER

@@ -112,10 +112,8 @@ installMattermost()
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
-		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-            local result=$(sudo chown -R 2000:2000 $containers_dir$app_name/volumes/app/mattermost)
-            checkSuccess "Setting folder permissions for $app_name folders"
-        fi
+        local result=$(sudo chown -R 2000:2000 $containers_dir$app_name/volumes/app/mattermost)
+        checkSuccess "Setting folder permissions for $app_name folders"
 
         local result=$(sudo sed -i "s/DOMAIN=mm.example.com/DOMAIN=$host_setup/g" $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file with Domain $host_setup"	
