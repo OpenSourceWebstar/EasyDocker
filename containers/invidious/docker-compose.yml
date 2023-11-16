@@ -45,7 +45,6 @@ services:
       #traefik.http.routers.invidious.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.invidious.tls: true
       #traefik.http.routers.invidious.tls.certresolver: production
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.invidious.middlewares:
     depends_on:
       - invidious-db

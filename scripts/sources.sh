@@ -15,7 +15,6 @@ files_to_source=(
     "scripts/update.sh"
     "scripts/docker.sh"
     "scripts/configs.sh"
-    "scripts/whitelist.sh"
     "scripts/logs.sh"
     "scripts/permissions.sh"
     "scripts/database.sh"

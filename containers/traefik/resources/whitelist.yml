@@ -1,0 +1,6 @@
+http:
+  middlewares:
+    global-ipwhitelist:
+      ipWhiteList:
+        sourceRange:
+          - "IPADDRESS/32"

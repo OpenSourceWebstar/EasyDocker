@@ -114,7 +114,6 @@ services:
             #traefik.http.routers.jitismeet.tls: true
             #traefik.http.routers.jitismeet.tls.certresolver: production
             #traefik.http.services.jitismeet.loadbalancer.server.port: PORT2
-            #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
             #traefik.http.routers.jitismeet.middlewares:
             #traefik.docker.network: DOCKERNETWORK
 

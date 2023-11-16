@@ -26,7 +26,6 @@ services:
       #traefik.http.routers.traefik.tls.certresolver: production
       #traefik.http.routers.traefik.tls.options: modern@file
       #traefik.http.services.traefik.loadbalancer.server.port: PORT3
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.traefik.middlewares:
     restart: unless-stopped
     networks:

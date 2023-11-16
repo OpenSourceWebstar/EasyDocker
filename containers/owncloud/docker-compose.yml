@@ -37,7 +37,6 @@ services:
       #traefik.http.routers.owncloud.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.owncloud.tls: true
       #traefik.http.routers.owncloud.tls.certresolver: production
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.owncloud.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

@@ -26,7 +26,6 @@ services:
       #traefik.http.routers.prometheus.tls: true
       #traefik.http.routers.prometheus.tls.certresolver: production
       #traefik.http.services.prometheus.loadbalancer.server.port: PORT1
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.prometheus.middlewares:
     networks:
       vpn:

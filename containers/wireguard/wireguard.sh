@@ -112,7 +112,7 @@ installWireguard()
         echo "---- $menu_number. Running the docker-compose.yml to Install $app_name"
         echo ""
 
-		whitelistAndStartApp $app_name install;
+		dockerUpdateAndStartApp $app_name install;
 
 		((menu_number++))
 		echo ""

@@ -37,7 +37,6 @@ services:
       #traefik.http.routers.adguard-admin.tls: true
       #traefik.http.routers.adguard-admin.tls.certresolver: production
       #traefik.http.services.adguard-admin.loadbalancer.server.port: PORT2
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.adguard-admin.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

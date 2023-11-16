@@ -196,7 +196,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistAndStartApp $config_app_name restart;
+                                                dockerUpdateAndStartApp $config_app_name restart;
                                                 echo ""
                                                 break
                                                 ;;
@@ -267,7 +267,7 @@ checkApplicationsConfigFilesMissingVariables()
                                         case $whitelistaccept in
                                             [yY])
                                                 isNotice "Updating ${config_app_name}'s whitelist settings..."
-                                                whitelistAndStartApp $config_app_name restart;
+                                                dockerUpdateAndStartApp $config_app_name restart;
                                                 break  # Exit the loop
                                                 ;;
                                             [nN])
@@ -700,7 +700,7 @@ viewComposeFiles()
                 for i in "${!selected_compose_files[@]}"; do
                   if [ "${original_checksums[i]}" != "${edited_checksums[i]}" ]; then
                     isNotice "File ${selected_compose_files[i]} has been modified."
-                    whitelistAndStartApp "$selected_app" restart;
+                    dockerUpdateAndStartApp "$selected_app" restart;
                     break  # Stop processing files if any have been modified
                   fi
                 done

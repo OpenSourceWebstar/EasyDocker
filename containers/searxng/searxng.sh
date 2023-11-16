@@ -82,7 +82,7 @@ installSearxng()
 		echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
 		echo ""
 
-		whitelistAndStartApp $app_name install;
+		dockerUpdateAndStartApp $app_name install;
 
         local searxng_timeout=10
         local searxng_counter=0

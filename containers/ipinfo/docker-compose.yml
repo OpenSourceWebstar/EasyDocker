@@ -17,7 +17,6 @@ services:
       #traefik.http.routers.ipinfo.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.ipinfo.tls: true
       #traefik.http.routers.ipinfo.tls.certresolver: production
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.ipinfo.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

@@ -23,7 +23,6 @@ services:
       #traefik.http.routers.headscale.tls.certresolver: production
       #traefik.http.routers.headscale.tls.options: intermediate@file
       #traefik.http.services.headscale.loadbalancer.server.port: PORT1
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.headscale.middlewares:
     networks:
       vpn:

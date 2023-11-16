@@ -114,8 +114,8 @@ installMattermost()
 
 
 		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            #local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-            #local result=$(sudo chown -R $docker_install_user_id:$docker_install_user_id $containers_dir$app_name/volumes/app/mattermost)
+            #local docker_rootless_user_id=$(id -u "$sudo_user_name")
+            #local result=$(sudo chown -R $docker_rootless_user_id:$docker_rootless_user_id $containers_dir$app_name/volumes/app/mattermost)
             #checkSuccess "Setting folder permissions for $app_name folders"
             # Issue with Rootless - https://github.com/mattermost/docker/issues/106
             local result=$(sudo chmod -R 777 /docker/containers/mattermost/volumes/app/mattermost/)
@@ -159,7 +159,6 @@ mattermostAddToYMLFile()
       #traefik.http.routers.mattermost.rule: Host(\`DOMAINSUBNAMEHERE\`)
       #traefik.http.routers.mattermost.tls: true
       #traefik.http.routers.mattermost.tls.certresolver: production
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.mattermost.middlewares:
     networks:
       vpn:

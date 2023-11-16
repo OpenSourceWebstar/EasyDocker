@@ -82,7 +82,7 @@ installGrafana()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		whitelistAndStartApp $app_name install;
+		dockerUpdateAndStartApp $app_name install;
 
         # Grafana
         if [ -d "${containers_dir}grafana/grafana_storage" ]; then

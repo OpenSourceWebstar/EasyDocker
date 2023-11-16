@@ -87,7 +87,7 @@ startScan()
         dockerPruneNetworks;
     fi
 	if [[ $CFG_REQUIREMENT_WHITELIST_PORT_UPDATER == "true" ]]; then
-		whitelistScan;
+		dockerScan;
     fi
     databaseAppScan;
     databaseListInstalledApps;

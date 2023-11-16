@@ -25,7 +25,6 @@ services:
       #traefik.http.routers.grafana.tls: true
       #traefik.http.routers.grafana.tls.certresolver: production
       #traefik.http.services.grafana.loadbalancer.server.port: PORT1
-      #traefik.http.middlewares.my-whitelist-in-docker.ipwhitelist.sourcerange: IPWHITELIST
       #traefik.http.routers.grafana.middlewares:
     networks:
       vpn:
