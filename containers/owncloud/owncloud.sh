@@ -143,6 +143,22 @@ fi
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
+        local owncloud_timeout=20
+        local owncloud_counter=0
+        # Loop to check for the existence of the file every second
+        while [ ! -f "$containers_dir$app_name/files/config/config.php" ]; do
+            if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
+                isNotice "File not found after 10 seconds. Exiting..."
+                break
+            fi
+
+            isNotice "Waiting for the file to appear..."
+            read -t 1 # Wait for 1 second
+
+            # Increment the counter
+            local owncloud_counter=$((owncloud_counter + 1))
+        done
+
         updateApplicationSpecifics $app_name;
 
 		((menu_number++))
