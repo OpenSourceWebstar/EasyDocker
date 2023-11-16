@@ -60,6 +60,21 @@ ownCloudSetupConfig()
     result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config")
     checkSuccess "Updated the internal CLI config IP & Port"
 
+    local owncloud_timeout=20
+    local owncloud_counter=0
+    # Loop to check for the existence of the file every second
+    while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
+        if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
+            isNotice "File not found after 10 seconds. Exiting..."
+            break
+        fi
+
+        isNotice "Waiting for the file to appear..."
+        read -t 1 # Wait for 1 second
+
+        # Increment the counter
+        local owncloud_counter=$((owncloud_counter + 1))
+    done
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
 
