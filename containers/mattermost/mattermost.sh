@@ -118,7 +118,7 @@ installMattermost()
             #local result=$(sudo chown -R $docker_install_user_id:$docker_install_user_id $containers_dir$app_name/volumes/app/mattermost)
             #checkSuccess "Setting folder permissions for $app_name folders"
             # Issue with Rootless - https://github.com/mattermost/docker/issues/106
-            local result=$(sudo chmod -R 777 /docker/containers/mattermost/volumes/app/mattermost/
+            local result=$(sudo chmod -R 777 /docker/containers/mattermost/volumes/app/mattermost/)
             checkSuccess "Setting folder permissions for $app_name folders"
         else
             local result=$(sudo chown -R 2000:2000 $containers_dir$app_name/volumes/app/mattermost)
