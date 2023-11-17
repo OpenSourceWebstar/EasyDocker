@@ -472,7 +472,7 @@ dockerScan()
 
 dockerUpdateTraefikWhitelist()
 {
-    local whitelist_file="${containers_dir}traefik/etc/whitelist.yml"
+    local whitelist_file="${containers_dir}traefik/etc/dynamic/whitelist.yml"
     if [ -f "$whitelist_file" ]; then
         # Split the CFG_IPS_WHITELIST into an array
         IFS=',' read -ra IP_ARRAY <<< "$CFG_IPS_WHITELIST"
