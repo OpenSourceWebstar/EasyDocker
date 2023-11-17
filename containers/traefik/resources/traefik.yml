@@ -1,67 +1,6 @@
-# Helpful video https://www.youtube.com/watch?v=liV3c9m_OX8
-http:
-  middlewares:
-    # A basic authentification middleware, to protect the Traefik dashboard to anyone except myself
-    # Use with traefik.http.routers.myRouter.middlewares: "traefikAuth@file"
-    traefikAuth:
-      basicAuth:
-        users:
-          - "TRAEFIKUSER:TRAEFIKPASS"
-
-    # Add automatically some security headers
-    # Use with traefik.http.routers.myRouter.middlewares: "default-security-headers@file"
-    default-security-headers:
-      headers:
-        browserXssFilter: true                            # X-XSS-Protection=1; mode=block
-        contentTypeNosniff: true                          # X-Content-Type-Options=nosniff
-        forceSTSHeader: true                              # Add the Strict-Transport-Security header even when the connection is HTTP
-        frameDeny: true                                   # X-Frame-Options=deny
-        referrerPolicy: "strict-origin-when-cross-origin"
-        sslRedirect: true                                 # Allow only https requests
-        stsIncludeSubdomains: true                        # Add includeSubdomains to the Strict-Transport-Security header
-        stsPreload: true                                  # Add preload flag appended to the Strict-Transport-Security header
-        stsSeconds: 63072000                              # Set the max-age of the Strict-Transport-Security header (63072000 = 2 years)
-
-    # Serve the error pages when the status is included inside the following ranges
-    # Use with traefik.http.routers.myRouter.middlewares: "error-pages@file"
-    error-pages:
-      errors:
-        query: "erreur{status}/"
-        service: traefik-error-pages
-        status:
-          - "403-404"
-          - "500"
-          - "503"
-
-    # Enables the GZIP compression (https://docs.traefik.io/middlewares/compress/)
-    #   if the response body is larger than 1400 bytes
-    #   if the Accept-Encoding request header contains gzip
-    #   if the response is not already compressed (Content-Encoding is not set)
-    # Use with traefik.http.routers.myRouter.middlewares: "gzip@file"
-    gzip:
-      compress: {}
-
-    # Recommended default middleware for most of the services
-    # Use with traefik.http.routers.myRouter.middlewares: "default@file"
-    # Equivalent of traefik.http.routers.myRouter.middlewares: "default-security-headers@file,error-pages@file,gzip@file"
-    default:
-      chain:
-        middlewares:
-          - default-security-headers
-          - error-pages
-          - gzip
-
-  services:
-    # Error pages
-    traefik-error-pages:
-      loadBalancer:
-        servers:
-          - url: "ERRORWEBSITE"
-
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
-
 entryPoints:
   web:
     address: :80
@@ -70,10 +9,8 @@ entryPoints:
         entryPoint:
           to: websecure
           scheme: https
-
   websecure:
     address: :443
-
 certificatesResolvers:
    staging:
      acme:
@@ -82,7 +19,6 @@ certificatesResolvers:
        caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
        httpChallenge:
          entryPoint: web
-
    production:
      acme:
        email: EMAILHERE
@@ -90,16 +26,13 @@ certificatesResolvers:
        caServer: "https://acme-v02.api.letsencrypt.org/directory"
        httpChallenge:
          entryPoint: web
-
 log:
   level: DEBUGLEVEL
   filePath: log/traefik.log
   format: common
-
 api:
   insecure: true
   dashboard: true
-
 providers:
   docker:
     exposedByDefault: false  # Default is true
@@ -107,51 +40,3 @@ providers:
     # watch for dynamic configuration changes
     directory: /etc/traefik/
     watch: true
-
-# See https://doc.traefik.io/traefik/https/tls/
-tls:
-  options:
-    # To use with the label "traefik.http.routers.myrouter.tls.options=modern@file"
-    modern:
-      minVersion: "VersionTLS13"                          # Minimum TLS Version
-      sniStrict: true                                     # Strict SNI Checking
-    
-    # To use with the label "traefik.http.routers.myrouter.tls.options=intermediate@file"
-    intermediate:
-      cipherSuites:
-        - "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-        - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-        - "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-        - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-        - "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305"
-        - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
-      minVersion: "VersionTLS12"                          # Minimum TLS Version
-      sniStrict: true                                     # Strict SNI Checking
-    
-    # To use with the label "traefik.http.routers.myrouter.tls.options=old@file"
-    old:
-      cipherSuites:
-        - "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-        - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-        - "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-        - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-        - "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305"
-        - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
-        - "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
-        - "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-        - "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"
-        - "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
-        - "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
-        - "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
-        - "TLS_RSA_WITH_AES_128_GCM_SHA256"
-        - "TLS_RSA_WITH_AES_256_GCM_SHA384"
-        - "TLS_RSA_WITH_AES_128_CBC_SHA256"
-        - "TLS_RSA_WITH_AES_128_CBC_SHA"
-        - "TLS_RSA_WITH_AES_256_CBC_SHA"
-        - "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
-      minVersion: "TLSv1"                                 # Minimum TLS Version
-      sniStrict: true                                     # Strict SNI Checking
-
-# Generated 2021-08-12, Mozilla Guideline v5.6, Traefik 2.4.8
-#   https://ssl-config.mozilla.org/#server=traefik&version=2.4.8&config=old&guideline=5.6
-#   https://ssl-config.mozilla.org/#server=traefik&version=2.4.8&config=intermediate&guideline=5.6

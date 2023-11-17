@@ -71,33 +71,49 @@ installTraefik()
         setupComposeFile $app_name;
 		
         # Create necessary directories and set permissions
-        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs")
-        checkSuccess "Create /etc/ and /etc/certs Directories"
+        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic")
+        checkSuccess "Created etc and certs & dynamic Directories"
 
         # Create and secure the acme.json file
         local result=$(createTouch "$containers_dir$app_name/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER)
         checkSuccess "Created acme.json file for $app_name"
 
+        # Static traefik.yml File
         # Copy the Traefik configuration file and customize it
         local result=$(copyResource "$app_name" "traefik.yml" "etc")
         checkSuccess "Copy Traefik configuration file for $app_name"
-
-        # Setup Error 404 Website
-        local result=$(sudo sed -i "s|ERRORWEBSITE|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/traefik.yml")
-        checkSuccess "Configured Traefik error website with URL: $CFG_TRAEFIK_404_SITE for $app_name"
 
         # Setup Debug Level
         local result=$(sudo sed -i "s|DEBUGLEVEL|$CFG_TRAEFIK_LOGGING|g" "$containers_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik debug level with: $CFG_TRAEFIK_LOGGING for $app_name"
 
+        setupFileWithConfigData $app_name "traefik.yml" "etc";
+
+        # Dynamic config.yml File
+        # Copy the Traefik configuration file and customize it
+        local result=$(copyResource "$app_name" "config.yml" "etc/dynamic/")
+        checkSuccess "Copy Traefik Dynamic config.yml configuration file for $app_name"
+
         # Setup BasicAuth credentials
         local password_hash=$(htpasswd -Bbn "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS")
-        local result=$(sudo awk -v user="$CFG_TRAEFIK_DASHBOARD_USER" -v password_hash="$password_hash" '/^\s*traefikAuth:/ {n=NR} n && NR==n+3 {$0="          - \"" password_hash "\""} 1' "$containers_dir/$app_name/etc/traefik.yml" | sudo tee "$containers_dir/$app_name/etc/temp_traefik.yml" > /dev/null)
-        checkSuccess "Configured traefik.yml with BasicAuth credentials for user : $CFG_TRAEFIK_DASHBOARD_USER"
-        local result=$(sudo mv "$containers_dir/$app_name/etc/temp_traefik.yml" "$containers_dir/$app_name/etc/traefik.yml")
-        checkSuccess "Using temp traefik.yml as the new live file after changes."
+        local result=$(sudo awk -v user="$CFG_TRAEFIK_DASHBOARD_USER" -v password_hash="$password_hash" '/^\s*traefikAuth:/ {n=NR} n && NR==n+3 {$0="          - \"" password_hash "\""} 1' "$containers_dir/$app_name/etc/dynamic/config.yml" | sudo tee "$containers_dir/$app_name/etc/dynamic/temp_config.yml" > /dev/null)
+        checkSuccess "Configured config.yml with BasicAuth credentials for user : $CFG_TRAEFIK_DASHBOARD_USER"
+        local result=$(sudo mv "$containers_dir/$app_name/etc/dynamic/temp_config.yml" "$containers_dir/$app_name/etc/dynamic/config.yml")
+        checkSuccess "Using temp config.yml as the new live file after changes."
 
-        setupFileWithConfigData $app_name "traefik.yml" "etc";
+        # Setup Error 404 Website
+        local result=$(sudo sed -i "s|ERRORWEBSITE|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/dynamic/config.yml")
+        checkSuccess "Configured Traefik error website with URL: $CFG_TRAEFIK_404_SITE for $app_name"
+
+        setupFileWithConfigData $app_name "config.yml" "etc/dynamic";
+
+        # Dynamic whitelist.yml File
+        local result=$(copyResource "$app_name" "whitelist.yml" "etc/dynamic/")
+        checkSuccess "Copy Traefik Dynamic whitelist.yml configuration file for $app_name"
+
+        # Dynamic tls.yml File
+        local result=$(copyResource "$app_name" "tls.yml" "etc/dynamic/")
+        checkSuccess "Copy Traefik Dynamic tls.yml configuration file for $app_name"
 
 		((menu_number++))
         echo ""

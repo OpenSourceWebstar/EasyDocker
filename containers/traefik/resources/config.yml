@@ -1,0 +1,54 @@
+# Helpful video https://www.youtube.com/watch?v=liV3c9m_OX8
+http:
+  middlewares:
+    # A basic authentification middleware, to protect the Traefik dashboard to anyone except myself
+    # Use with traefik.http.routers.myRouter.middlewares: "traefikAuth@file"
+    traefikAuth:
+      basicAuth:
+        users:
+          - "TRAEFIKUSER:TRAEFIKPASS"
+    # Add automatically some security headers
+    # Use with traefik.http.routers.myRouter.middlewares: "default-security-headers@file"
+    default-security-headers:
+      headers:
+        browserXssFilter: true                            # X-XSS-Protection=1; mode=block
+        contentTypeNosniff: true                          # X-Content-Type-Options=nosniff
+        forceSTSHeader: true                              # Add the Strict-Transport-Security header even when the connection is HTTP
+        frameDeny: true                                   # X-Frame-Options=deny
+        referrerPolicy: "strict-origin-when-cross-origin"
+        sslRedirect: true                                 # Allow only https requests
+        stsIncludeSubdomains: true                        # Add includeSubdomains to the Strict-Transport-Security header
+        stsPreload: true                                  # Add preload flag appended to the Strict-Transport-Security header
+        stsSeconds: 63072000                              # Set the max-age of the Strict-Transport-Security header (63072000 = 2 years)
+    # Serve the error pages when the status is included inside the following ranges
+    # Use with traefik.http.routers.myRouter.middlewares: "error-pages@file"
+    error-pages:
+      errors:
+        query: "erreur{status}/"
+        service: traefik-error-pages
+        status:
+          - "403-404"
+          - "500"
+          - "503"
+    # Enables the GZIP compression (https://docs.traefik.io/middlewares/compress/)
+    #   if the response body is larger than 1400 bytes
+    #   if the Accept-Encoding request header contains gzip
+    #   if the response is not already compressed (Content-Encoding is not set)
+    # Use with traefik.http.routers.myRouter.middlewares: "gzip@file"
+    gzip:
+      compress: {}
+    # Recommended default middleware for most of the services
+    # Use with traefik.http.routers.myRouter.middlewares: "default@file"
+    # Equivalent of traefik.http.routers.myRouter.middlewares: "default-security-headers@file,error-pages@file,gzip@file"
+    default:
+      chain:
+        middlewares:
+          - default-security-headers
+          - error-pages
+          - gzip
+  services:
+    # Error pages
+    traefik-error-pages:
+      loadBalancer:
+        servers:
+          - url: "ERRORWEBSITE"
