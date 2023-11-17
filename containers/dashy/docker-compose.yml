@@ -38,6 +38,7 @@ services:
       #traefik.http.routers.dashy.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.dashy.tls: true
       #traefik.http.routers.dashy.tls.certresolver: production
+      #traefik.http.routers.dashy.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

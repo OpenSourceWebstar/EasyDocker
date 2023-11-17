@@ -367,8 +367,13 @@ copyResource()
         echo "App folder '$app_name' not found in '$install_containers_dir'."
     fi
 
-    local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir/$app_name/$save_path")
-    checkSuccess "Copying $file_name to $containers_dir/$app_name/$save_path"
+    if [[ $save_path == "" ]]; then
+        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name")
+        checkSuccess "Copying $file_name to $containers_dir$app_name"
+    else
+        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$save_path")
+        checkSuccess "Copying $file_name to $containers_dir$app_name/$save_path"
+    fi
 
     local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file_name")
     checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
