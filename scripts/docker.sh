@@ -715,7 +715,7 @@ setupTraefikLabelsSetupMiddlewares()
     middleware_entries+=("default@file")
 
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
-        middleware_entries+=("global-ipwhitelist")
+        middleware_entries+=("global-ipwhitelist@file")
         if [[ $(checkAppInstalled "authelia" "docker") == "installed" ]]; then
             middleware_entries+=("authelia@docker")
         fi
@@ -724,7 +724,7 @@ setupTraefikLabelsSetupMiddlewares()
             middleware_entries+=("authelia@docker")
         fi
     elif [[ "$authelia_setup" == "false" && "$whitelist" == "true" ]]; then
-        middleware_entries+=("global-ipwhitelist")
+        middleware_entries+=("global-ipwhitelistt@file")
     fi
 
     local middlewares_string="$(IFS=,; echo "${middleware_entries[*]}")"
