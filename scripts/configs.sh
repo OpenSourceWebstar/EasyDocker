@@ -12,6 +12,7 @@ checkConfigFilesMissingVariables()
         echo ""
     fi
     checkEasyDockerConfigFilesMissingVariables;
+    checkEasyDockerGeneralUpdateHostIPToWhitelist;
     checkIpsHostnameFilesMissingEntries;
     checkApplicationsConfigFilesMissingVariables;
 }
@@ -949,6 +950,14 @@ scanConfigsForRandomPassword()
             fi
         done
         isSuccessful "Random password generation and update completed successfully."
+    fi
+}
+
+checkEasyDockerGeneralUpdateHostIPToWhitelist()
+{
+    if grep -q "HOSTIPHERE" "$configs_dir$config_file_general"; then
+        result=$(sed -i "s/HOSTIPHERE/$public_ip/" "$configs_dir$config_file_general")
+        checkSuccess "Updated EasyDocker Default whitelist IP to $public_ip"
     fi
 }
 
