@@ -439,7 +439,7 @@ dockerUpdateAndStartApp()
     setupInstallVariables $app_name;
 
     # Always keep YML updated
-    dockerUpdateRestart $app_name $flags $norestart;
+    dockerUpdateCompose $app_name $flags $norestart;
 }
 
 dockerScan()
@@ -458,7 +458,7 @@ dockerScan()
             setupInstallVariables $app_name;
     
             # Always keep YML updated
-            dockerUpdateRestart $app_name scan;
+            dockerUpdateCompose $app_name scan;
 
             # Update ports for the app
             checkAppPorts $app_name scan;
@@ -494,7 +494,7 @@ YAML_CONTENT="http:
     fi
 }
 
-dockerUpdateRestart()
+dockerUpdateCompose()
 {
     local app_name="$1"
     local flags="$2"
