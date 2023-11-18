@@ -62,10 +62,55 @@ startPreInstall()
 
     installSSLCertificate;
     installSwapfile;
-    
+
+    #######################################################
+    ###                    Recommended                  ###
+    #######################################################
+
+    installRecommendedApps;
 
     startScan;
 	resetToMenu;
+}
+
+installRecommendedApps()
+{
+    echo ""
+    isNotice "It's recommended to install both Traefik & Wiregard upon first install."
+    echo ""
+    isNotice "Traefik secures your Network traffic and automatically installs SSL Certificates"
+    isNotice "Wireguard allows remote VPN access into your docker network"
+    echo ""
+    while true; do
+        isQuestion "Would you like to follow the recommendations? (y/n): "
+        read -p "" recommendation_choice
+        if [[ -n "$recommendation_choice" ]]; then
+            break
+        fi
+        isNotice "Please provide a valid input."
+    done
+    if [[ "$recommendation_choice" == [yY] ]]; then
+        # Traefik
+        local traefik_status=$(checkAppInstalled "traefik" "docker")
+        if [[ "$traefik_status" != "installed" ]]; then
+            traefik=i
+            installTraefik;
+        fi
+
+        # Wireguard
+        local wireguard_status=$(checkAppInstalled "wireguard" "docker")
+        if [[ "$wireguard_status" != "installed" ]]; then
+            wireguard=i
+            installWireguard;
+        fi
+
+        isSuccessful "All recommended apps have successfully been set up."
+    elif [[ "$recommendation_choice" == [nN] ]]; then
+        result=$(sudo sed -i "s|CFG_REQUIREMENT_SUGGEST_INSTALLS=true|CFG_REQUIREMENT_SUGGEST_INSTALLS=false|" "$general_config_file")
+        checkSuccess "Disabling install recommendations in the requirements config."
+        isNotice "You can re-enable this in the requirements config file"
+        loadFiles "easydocker_configs";
+    fi
 }
 
 startScan()

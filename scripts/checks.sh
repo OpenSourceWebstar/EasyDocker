@@ -250,6 +250,17 @@ checkRequirements()
 		fi
 	fi
 
+	if [[ $CFG_REQUIREMENT_SUGGEST_INSTALLS == "true" ]]; then
+		local traefik_status=$(checkAppInstalled "traefik" "docker")
+		local wireguard_status=$(checkAppInstalled "wireguard" "docker")
+		if [[ "$traefik_status" == "installed" && "$wireguard_status" == "installed" ]]; then
+			isSuccessful "Traefik and Wireguard are successfully set up."
+		else
+			isNotice "Traefik or Wireguard not installed. Setup will start soon."
+			((preinstallneeded++))
+		fi
+	fi
+
 	if [[ "$preinstallneeded" -ne 0 ]]; then
 		startPreInstall;
 	fi
