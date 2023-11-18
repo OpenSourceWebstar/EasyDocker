@@ -218,22 +218,15 @@ passwordValidation()
 
 emailValidation()
 {
-    # Initialize email variable to empty string
-    local email=""
-    
-    # Loop until a valid email is entered
-    while [[ ! $email =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; do
-        
-        # Prompt user to submit email
-        isQuestion "Please enter your email address: "
-        read -p "" email
-        
-        # Check email format using regex
-        if [[ ! $email =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-            isError "Invalid email format. Please try again."
-        fi
-        
-    done
+    local input_email=$1
+
+    # Check email format using regex
+    if [[ ! $input_email =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        isError "Invalid email format. Please try again."
+        return 1  # Return 1 to indicate validation failure
+    fi
+
+    return 0  # Return 0 to indicate validation success
 }
 
 removeEmptyLineAtFileEnd()
