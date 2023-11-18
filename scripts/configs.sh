@@ -451,13 +451,13 @@ checkConfigFilesEdited()
                             local common_timezones=("America/New_York" "America/Chicago" "America/Los_Angeles" "Europe/London" "Europe/Paris" "Asia/Tokyo" "Australia/Sydney")
 
                             # Get a list of all available timezones
-                            local all_timezones=$(timedatectl list-timezones)
+                            local all_timezones=$(sudo timedatectl list-timezones)
 
                             # Merge the common timezones with all timezones and remove duplicates
                             local timezones=($(echo "${common_timezones[@]}" "${all_timezones[@]}" | tr ' ' '\n' | sort -u))
 
                             # Create a temporary file to store the menu choices
-                            local tempfile=$(mktemp /tmp/timezone_menu.XXXXXX) || exit 1
+                            local tempfile=$(sudo mktemp /tmp/timezone_menu.XXXXXX) || exit 1
 
                             # Populate the tempfile with timezone options
                             for tz in "${timezones[@]}"; do
@@ -465,20 +465,20 @@ checkConfigFilesEdited()
                             done
 
                             # Show the menu using dialog
-                            LC_COLLATE=C dialog --menu "Select a timezone:" 20 60 15 $(cat "$tempfile") 2> "$tempfile"
+                            LC_COLLATE=C sudodialog --menu "Select a timezone:" 20 60 15 $(cat "$tempfile") 2> "$tempfile"
 
                             # Get the selected timezone from the tempfile
                             local setup_timezone=$(cat "$tempfile")
 
                             # Cleanup the temporary file
-                            rm -f "$tempfile"
+                            sudo rm -f "$tempfile"
 
                             # Break the loop if a timezone is selected
                             if [ -n "$setup_timezone" ]; then
-                                echo "You selected: $setup_timezone"
+                                isSuccessful "You selected: $setup_timezone"
                                 break
                             else
-                                echo "No timezone selected. Please try again."
+                                isNotice "No timezone selected. Please try again."
                             fi
                         done
 
@@ -486,7 +486,7 @@ checkConfigFilesEdited()
                         checkSuccess "Updating CFG_TIMZEZONE to $setup_timezone in the $config_file_general config."
                         
                         loadFiles "easydocker_configs";
-                        
+
                         config_check_done=true  # Set the flag to exit the loop
                         break  # Exit the loop
                     ;;
