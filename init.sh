@@ -230,7 +230,7 @@ initializeScript()
 	for folder in "${folders[@]}"; do
 		if [ ! -d "$folder" ]; then
 			sudo mkdir "$folder"
-			sudo chown $sudo_user_name:$sudo_user_name "$folder"
+			#sudo chown $sudo_user_name:$sudo_user_name "$folder"
 			sudo chmod 750 "$folder"
 			echo "SUCCESS: Folder '$folder' created."
 		#else
