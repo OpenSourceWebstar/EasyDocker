@@ -130,8 +130,8 @@ installAdguard()
         # Check if "tls:" was found
         if [ -n "$tls_line_number" ]; then
             # Replace the next two lines
-            sed -i "$((tls_line_number + 1))s/.*/  enabled: true/" "$containers_dir$app_name/conf/AdGuardHome.yaml"
-            sed -i "$((tls_line_number + 2))s/.*/  server_name: \"$host_setup\"/" "$containers_dir$app_name/conf/AdGuardHome.yaml"
+            sudo sed -i "$((tls_line_number + 1))s/.*/  enabled: true/" "$containers_dir$app_name/conf/AdGuardHome.yaml"
+            sudo sed -i "$((tls_line_number + 2))s/.*/  server_name: \"$host_setup\"/" "$containers_dir$app_name/conf/AdGuardHome.yaml"
         fi
         checkSuccess "Enabling tls config options for encrypted DNS"
 
