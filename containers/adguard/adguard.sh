@@ -124,8 +124,23 @@ installAdguard()
 
         result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
-        dockerDownUp "$app_name";
 
+        result=$(sudo awk -v domain="$host_setup" '
+            /^tls:$/,/^[[:space:]]*$/ {
+                sub(/^[[:space:]]*enabled:.*$/, "  enabled: true")
+                sub(/^[[:space:]]*server_name:.*$/, "  server_name: \"" domain "\"")
+            }
+            { print }
+        ' "$containers_dir$app_name/conf/AdGuardHome.yaml" > temp_file && sudo mv temp_file "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Enabling tls config options for encrypted DNS"
+
+        result=$(sudo sed -i "s|allow_unencrypted_doh: false|allow_unencrypted_doh: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Setting allow_unencrypted_doh to false for Traefik"
+
+        result=$(sudo sed -i "s|anonymize_client_ip: false: false|anonymize_client_ip: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Setting anonymize_client_ip to true for privacy reasons"
+
+        dockerDownUp "$app_name";
 
 		((menu_number++))
         echo ""

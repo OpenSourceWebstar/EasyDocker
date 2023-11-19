@@ -254,7 +254,7 @@ checkRequirements()
 		local traefik_status=$(checkAppInstalled "traefik" "docker")
 		local wireguard_status=$(checkAppInstalled "wireguard" "docker")
 		if [[ "$traefik_status" == "installed" && "$wireguard_status" == "installed" ]]; then
-			isSuccessful "Traefik and Wireguard are successfully set up."
+			isSuccessful "All suggested applications are successfully set up."
 		else
 			isNotice "Traefik or Wireguard not installed. Setup will start soon."
 			((preinstallneeded++))
