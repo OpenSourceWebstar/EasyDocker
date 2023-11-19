@@ -127,8 +127,14 @@ installAdguard()
 
         result=$(sudo awk -v domain="$host_setup" '
             /^tls:$/,/^[[:space:]]*$/ {
-                sub(/^[[:space:]]*enabled:.*$/, "  enabled: true")
-                sub(/^[[:space:]]*server_name:.*$/, "  server_name: \"" domain "\"")
+                if (!found_enabled) {
+                    sub(/^[[:space:]]*enabled:.*$/, "  enabled: true")
+                    found_enabled = 1
+                }
+                if (!found_server_name) {
+                    sub(/^[[:space:]]*server_name:.*$/, "  server_name: \"" domain "\"")
+                    found_server_name = 1
+                }
             }
             { print }
         ' "$containers_dir$app_name/conf/AdGuardHome.yaml" > temp_file && sudo mv temp_file "$containers_dir$app_name/conf/AdGuardHome.yaml")
