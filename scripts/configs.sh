@@ -461,7 +461,7 @@ checkConfigFilesEdited()
 
                             # Populate the tempfile with timezone options
                             for tz in "${timezones[@]}"; do
-                                echo "$tz" >> "$tempfile"
+                                echo "$tz" | sudo tee -a "$tempfile" > /dev/null
                             done
 
                             # Show the menu using dialog
