@@ -126,7 +126,7 @@ installAdguard()
         checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
 
         # Find the line number containing "tls:"
-        local tls_line_number=$(awk '/tls:/ {print NR}' "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        local tls_line_number=$(awk '/tls:/ {print NR; exit}' "$containers_dir$app_name/conf/AdGuardHome.yaml")
         # Check if "tls:" was found
         if [ -n "$tls_line_number" ]; then
             # Replace the next two lines
