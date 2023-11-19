@@ -156,6 +156,7 @@ initializeScript()
 	echo "###          Updating Operating System           ###"
 	echo "####################################################"
 	echo ""
+	apt-get install sudo -y
 	sudo apt-get update
 	sudo apt-get dist-upgrade -y
 
@@ -201,7 +202,7 @@ initializeScript()
 	echo "###         Installing Prerequired Apps          ###"
 	echo "####################################################"
 	echo ""
-	sudo apt-get install sudo git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
+	sudo apt-get install git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "SUCCESS: Prerequisite apps installed."
 
 	echo ""
