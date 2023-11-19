@@ -124,14 +124,14 @@ installAdguard()
 
         result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
-
+        
         result=$(sudo awk -v domain="$host_setup" '
             /^tls:$/,/^[[:space:]]*$/ {
-                if (!found_enabled) {
+                if (!found_enabled && /^[[:space:]]*enabled:/) {
                     sub(/^[[:space:]]*enabled:.*$/, "  enabled: true")
                     found_enabled = 1
                 }
-                if (!found_server_name) {
+                if (!found_server_name && /^[[:space:]]*server_name:/) {
                     sub(/^[[:space:]]*server_name:.*$/, "  server_name: \"" domain "\"")
                     found_server_name = 1
                 }
@@ -139,6 +139,7 @@ installAdguard()
             { print }
         ' "$containers_dir$app_name/conf/AdGuardHome.yaml" > temp_file && sudo mv temp_file "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Enabling tls config options for encrypted DNS"
+
 
         result=$(sudo sed -i "s|allow_unencrypted_doh: false|allow_unencrypted_doh: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Setting allow_unencrypted_doh to false for Traefik"
