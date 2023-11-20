@@ -252,7 +252,7 @@ initializeScript()
 	else
 		echo "NOTICE: No Git repository found. Cloning Git Repository."
 		# Clone the Git repository into the specified directory
-		runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
+		sudo runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
 		echo "SUCCESS: Git repository cloned into '$script_dir'."
 	fi
 
