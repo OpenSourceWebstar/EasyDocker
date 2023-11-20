@@ -140,8 +140,6 @@ loadFiles()
 
     while IFS= read -r -d '' file; do
         if [ -f "$file" ]; then
-            sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file"
-            sudo chmod u+r "$file"
             source "$file"
             # echo "$load_type FILE $file"
         fi
