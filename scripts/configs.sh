@@ -471,7 +471,7 @@ checkConfigFilesEdited()
                             LC_COLLATE=C sudo dialog --menu "Select a timezone:" 20 60 15 $(cat "$tempfile") 2> "$tempfile"
 
                             # Get the selected timezone from the tempfile
-                            local setup_timezone=$(cat "$tempfile")
+                            local setup_timezone=$(sudo cat "$tempfile")
 
                             # Cleanup the temporary file
                             sudo rm -f "$tempfile"
