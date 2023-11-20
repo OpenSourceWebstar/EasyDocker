@@ -76,6 +76,10 @@ startPreInstall()
 installRecommendedApps()
 {
     echo ""
+    echo "####################################################"
+    echo "###           Recommended Applications           ###"
+    echo "####################################################"
+    echo ""
     isNotice "It's recommended to install both Traefik & Wiregard upon first install."
     echo ""
     isNotice "Traefik secures your Network traffic and automatically installs SSL Certificates"
