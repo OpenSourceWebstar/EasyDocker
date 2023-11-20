@@ -199,7 +199,7 @@ checkAllowedInstall()
 
     case "$app_name" in
         "mailcow")
-            status=$(checkAppInstalled "webmin" "linux" "check_active")
+            local status=$(checkAppInstalled "webmin" "linux" "check_active")
             if [ "$status" == "installed" ]; then
                 isError "Virtualmin is installed, this will conflict with $app_name."
                 isError "Installation is now aborting..."
@@ -213,7 +213,7 @@ checkAllowedInstall()
             fi
             ;;
         "virtualmin")
-            status=$(checkAppInstalled "webmin" "linux" "check_active")
+            local status=$(checkAppInstalled "webmin" "linux" "check_active")
             if [ "$status" == "not_installed" ]; then
               isError "Virtualmin is not installed or running, it is required."
               uninstallApp "$app_name"
@@ -223,7 +223,7 @@ checkAllowedInstall()
               uninstallApp "$app_name"
               return 1
             fi
-            status=$(checkAppInstalled "traefik" "docker")
+            local status=$(checkAppInstalled "traefik" "docker")
             if [ "$status" == "not_installed" ]; then
                 while true; do
                     echo ""
@@ -274,7 +274,9 @@ checkAppInstalled()
             package_status="not_installed"
         fi
     elif [ "$flag" = "docker" ]; then
-        results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
+        if [ -f "$docker_dir/$db_file" ]; then
+            results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
+        fi 
         if [ -n "$results" ]; then
             package_status="installed"
         else
