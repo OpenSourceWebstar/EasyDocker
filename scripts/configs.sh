@@ -386,6 +386,10 @@ checkConfigFilesEdited()
         # Check if configs have not been changed (Install name, email, domain)
         if sudo grep -q "Change-Me" "$configs_dir/$config_file_general" && sudo grep -q "change@me.com" "$configs_dir/$config_file_general" && sudo grep -q "changeme.co.uk" "$configs_dir/$config_file_general"; then
             echo ""
+            echo "####################################################"
+            echo "###            First Time Installation           ###"
+            echo "####################################################"
+            echo ""
             isNotice "In order for the installation to proceed, you need to setup the following"
             isNotice "---- Install Name, Email & Domain (Timezone is optional but suggested!)"
             echo ""

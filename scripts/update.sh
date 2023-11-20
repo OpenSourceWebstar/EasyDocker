@@ -123,7 +123,10 @@ gitCheckConfigs()
         # Check if any backup files were found
         if [ ${#backup_files[@]} -eq 0 ]; then
             echo ""
-            isNotice "Welcome :)"
+            echo "#####################################"
+            echo "###    Welcome to EasyDocker :)   ###"
+            echo "#####################################"
+            echo ""
             isNotice "It looks like this is first time installing EasyDocker on this system."
             echo ""
             isNotice "If this is a fresh install, continue on..."
@@ -192,7 +195,10 @@ gitCheckConfigs()
         if [ "$valid_configs_found" = false ]; then
             if [[ $acceptupdates != [nN] ]]; then
                 echo ""
-                isNotice "Welcome :)"
+                echo "#####################################"
+                echo "###    Welcome to EasyDocker :)   ###"
+                echo "#####################################"
+                echo ""
                 isNotice "It looks like this is first time installing EasyDocker on this system."
                 echo ""
                 isNotice "If this is a fresh install, continue on..."
