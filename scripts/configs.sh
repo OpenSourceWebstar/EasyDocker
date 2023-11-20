@@ -386,11 +386,10 @@ checkConfigFilesEdited()
         # Check if configs have not been changed (Install name, email, domain)
         if sudo grep -q "Change-Me" "$configs_dir/$config_file_general" && sudo grep -q "change@me.com" "$configs_dir/$config_file_general" && sudo grep -q "changeme.co.uk" "$configs_dir/$config_file_general"; then
             echo ""
-            isNotice "It looks like this is first time installing EasyDocker on this system."
-            echo ""
-            isNotice "In order for the installation to proceed, you need to update the following"
+            isNotice "In order for the installation to proceed, you need to setup the following"
             isNotice "---- Install Name, Email & Domain (Timezone is optional but suggested!)"
-            isNotice "The simple setup will guide you through the above, and advanced gives you will control"
+            echo ""
+            isNotice "The simple setup will guide you through the above, and advanced gives you will full control of all"
             echo ""
             isOption "Type the option (s) - For the simple, quick setup."
             isOption "Type the option (a) - For the advanced manual config setup."

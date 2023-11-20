@@ -122,9 +122,15 @@ gitCheckConfigs()
         
         # Check if any backup files were found
         if [ ${#backup_files[@]} -eq 0 ]; then
-            isNotice "No valid configs found in any backup file OR they all contain default values."
+            echo ""
+            isNotice "Welcome :)"
+            isNotice "It looks like this is first time installing EasyDocker on this system."
+            echo ""
+            isNotice "If this is a fresh install, continue on..."
+            isNotice "If you were trying to restore any config backups, they were not found."
+            echo ""
             while true; do
-                isQuestion "Do you want to continue without a config backup? (y/n): "
+                isQuestion "Do you want to continue? (y/n): "
                 read -rp " " acceptnoconfigs
                 if [[ "$acceptnoconfigs" =~ ^[yY]$ ]]; then
                     break
@@ -185,9 +191,15 @@ gitCheckConfigs()
         # If no valid configs were found in any backup file, display a message
         if [ "$valid_configs_found" = false ]; then
             if [[ $acceptupdates != [nN] ]]; then
-                isNotice "No valid configs found in any backup file OR they all contain default values."
+                echo ""
+                isNotice "Welcome :)"
+                isNotice "It looks like this is first time installing EasyDocker on this system."
+                echo ""
+                isNotice "If this is a fresh install, continue on..."
+                isNotice "If you were trying to restore any config backups, they were not found."
+                echo ""
                 while true; do
-                    isQuestion "Do you want to continue without a config backup? (y/n): "
+                    isQuestion "Do you want to continue with the install? (y/n): "
                     read -rp "" acceptnoconfigs
                     if [[ "$acceptnoconfigs" =~ ^[yYnN]$ ]]; then
                         break
