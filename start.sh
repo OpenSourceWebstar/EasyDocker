@@ -128,6 +128,7 @@ startScan()
 	fi
     #databaseSSHScanForKeys;
     scanConfigsForRandomPassword;
+    updateDockerInstallPassword;
 	dashyUpdateConf;
 	if [[ $CFG_REQUIREMENT_DNS_UPDATER == "true" ]]; then
         updateDNS;

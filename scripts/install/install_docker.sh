@@ -86,8 +86,7 @@ installDockerUser()
             # If the user doesn't exist, create the user
             local result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
             checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
-            local result=$(echo "$CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_PASS" | sudo chpasswd)
-            checkSuccess "Setting password for $CFG_DOCKER_INSTALL_USER User."
+            updateDockerInstallPassword;
 
             # Check if PermitRootLogin is set to "yes" before disabling it
             if sudo grep -q 'PermitRootLogin yes' "$sshd_config"; then

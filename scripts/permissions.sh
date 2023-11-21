@@ -45,15 +45,17 @@ fixConfigPermissions()
     fixFolderPermissions $app_name;
 }
 
+updateDockerInstallPassword()
+{
+    local result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
+    checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
+}
+
 fixFolderPermissions()
 {
     local app_name="$1"
 
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-        # EasyDocker
-        local result=$(echo -e "$CFG_DOCKER_INSTALL_PASS\n$CFG_DOCKER_INSTALL_PASS" | sudo passwd "$CFG_DOCKER_INSTALL_USER" > /dev/null 2>&1)
-        checkSuccess "Updating the password for the $CFG_DOCKER_INSTALL_USER user"
-
         local result=$(sudo chmod +x "$docker_dir" > /dev/null 2>&1)
         checkSuccess "Updating $docker_dir with execute permissions."
 
@@ -63,10 +65,6 @@ fixFolderPermissions()
         # Install user related
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
         checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
-
-        # Update permissions after
-        #local result=$(sudo find "$containers_dir" -maxdepth 2 -type d -exec sudo setfacl -R -m u:$sudo_user_name:rwX {} \; > /dev/null 2>&1)
-        #checkSuccess "Updating $containers_dir with $sudo_user_name read permissions" 
     fi
 }
 
