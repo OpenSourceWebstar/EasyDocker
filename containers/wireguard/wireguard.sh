@@ -147,7 +147,6 @@ installWireguard()
         echo "---- $menu_number. Opening port $usedport2 to the public for setup reasons."
         echo ""
 
-        usePort $app_name $usedport2 install;
 		openPort $app_name $usedport2 install;
 
 		((menu_number++))
@@ -179,8 +178,7 @@ installWireguard()
         echo "---- $menu_number. Closing port $usedport2 to the public as initial setup completed."
         echo ""
 
-        usePort $app_name $usedport2 install;
-		openPort $app_name $usedport2 install;
+		closePort $app_name $usedport2 install;
 
 		((menu_number++))
         echo ""

@@ -28,8 +28,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./wireguard-data:/etc/wireguard
     ports:
-      - "51820:51820/udp"
-      - "PORT1:51821/tcp"
+      - "PORT1:51820/udp"
+      - "PORT2:51821/tcp"
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
