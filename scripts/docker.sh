@@ -70,7 +70,7 @@ setupConfigToContainer()
     fixConfigPermissions $silent_flag $app_name;
 
     # Check if the user has read permission on source_file
-    if [ ! -r "$source_file" ]; then
+    if [ ! -r "$target_path/$source_file" ]; then
         isError "Insufficient permissions to read $source_file"
         return
     fi
