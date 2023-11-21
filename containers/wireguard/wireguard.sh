@@ -143,14 +143,54 @@ installWireguard()
 		databaseInstallApp $app_name;
 
 		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Opening port $usedport2 to the public for setup reasons."
+        echo ""
+
+        usePort $app_name $usedport2 install;
+		openPort $app_name $usedport2 install;
+
+		((menu_number++))
+        echo ""
+        echo "    A WireGuard user must now be created to allow access into the system"
+        echo "    Port $usedport2 has been opened publically to allow you to create a user : "
+        echo "    The URL below is only valid for this part of the setup"
+        echo ""
+        echo "    Please create a WireGuard account and save it to access the system after setup"
+        echo ""
+        echo "    URL : http://$public_ip:$usedport2/"
+        echo ""
+
+        while true; do
+            echo ""
+            isNotice "Setup is now available, please follow the instructions above."
+            echo ""
+            isQuestion "Have you followed the instructions above? (y/n): "
+            read -p "" wireguard_instructions
+            if [[ "$wireguard_instructions" == 'y' || "$wireguard_instructions" == 'Y' ]]; then
+                break
+            else
+                isNotice "Please confirm the setup or provide a valid input."
+            fi
+        done
+
+		((menu_number++))
+		echo ""
+        echo "---- $menu_number. Closing port $usedport2 to the public as initial setup completed."
+        echo ""
+
+        usePort $app_name $usedport2 install;
+		openPort $app_name $usedport2 install;
+
+		((menu_number++))
         echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""
         echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$usedport1/"
-        echo "    Local : http://$ip_setup:$usedport1/"
+        echo "    External : http://$public_ip:$usedport2/"
+        echo "    Local : http://$ip_setup:$usedport2/"
         echo ""    
 		menu_number=0
         sleep 3s
