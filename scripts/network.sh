@@ -587,6 +587,9 @@ setupDNSIP()
 
 updateDNS() 
 {
+    local app_name="$1"
+    local flag="$2"
+
 	if [[ "$OS" == [1234567] ]]; then
         # Remove all existing nameserver lines
         result=$(sudo sed -i '/^nameserver/d' /etc/resolv.conf)
@@ -673,7 +676,7 @@ updateDNS()
                 elif [[ $compose_setup == "app" ]]; then
                     local compose_file="docker-compose.$app_name.yml"
                 fi
-                result=$(sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
+                result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
                 checkSuccess "Updated Wireguard default DNS to $adguard_ip"
             fi
             echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
@@ -681,14 +684,14 @@ updateDNS()
         elif [[ "$pihole_ip" == *10.8.1* ]]; then
             # Wireguard update
             local status=$(checkAppInstalled "wireguard" "docker")
-                if [ "$status" == "installed" ]; then
+            if [ "$status" == "installed" ]; then
                 setupInstallVariables $app_name;
                 if [[ $compose_setup == "default" ]]; then
                     local compose_file="docker-compose.yml"
                 elif [[ $compose_setup == "app" ]]; then
                     local compose_file="docker-compose.$app_name.yml"
                 fi
-                result=$(sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$pihole_ip/" $containers_dir$app_name/$compose_file)
+                result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$pihole_ip/" $containers_dir$app_name/$compose_file)
                 checkSuccess "Updated Wireguard default DNS to $pihole_ip"
             fi
             echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
@@ -696,18 +699,21 @@ updateDNS()
         else
             # Wireguard update
             local status=$(checkAppInstalled "wireguard" "docker")
-                if [ "$status" == "installed" ]; then
+            if [ "$status" == "installed" ]; then
                 setupInstallVariables wireguard;
                 if [[ $compose_setup == "default" ]]; then
                     local compose_file="docker-compose.yml"
                 elif [[ $compose_setup == "app" ]]; then
                     local compose_file="docker-compose.$app_name.yml"
                 fi
-                result=$(sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
+                result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
                 checkSuccess "Updated Wireguard default DNS to $adguard_ip"
             fi
             echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
             echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
+        fi
+        if [ "$flag" == "install" ]; then
+            setupInstallVariables $app_name;
         fi
         isSuccessful "Resolv.conf has been updated with the latest DNS settings."
     fi

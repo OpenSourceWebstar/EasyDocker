@@ -8,7 +8,7 @@ updateApplicationSpecifics()
     setupInstallVariables $app_name;
 
     if [[ $app_name == "adguard" ]] || [[ $app_name == "pihole" ]]; then
-        updateDNS;
+        updateDNS $app_name install;
     fi
 
     if [[ $app_name == "owncloud" ]]; then

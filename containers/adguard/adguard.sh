@@ -87,13 +87,6 @@ installAdguard()
 
 		dockerUpdateAndStartApp $app_name install;
 
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Running Application specific updates (if required)"
-        echo ""
-
-        updateApplicationSpecifics $app_name;
-
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Initial install started for $app_name"
@@ -143,12 +136,12 @@ installAdguard()
 
         dockerDownUp "$app_name";
 
-		((menu_number++))
+        ((menu_number++))
         echo ""
-        echo "---- $menu_number. Editing local variables for DNS server to $app_name"
+        echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
-        
-        updateDNS;
+
+        updateApplicationSpecifics $app_name;
 
 		((menu_number++))
         echo ""

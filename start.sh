@@ -134,7 +134,7 @@ startScan()
     updateDockerInstallPassword;
 	dashyUpdateConf;
 	if [[ $CFG_REQUIREMENT_DNS_UPDATER == "true" ]]; then
-        updateDNS;
+        updateDNS "" scan;
     fi
 	if [[ $CFG_REQUIREMENT_DOCKER_NETWORK_PRUNE == "true" ]]; then
         dockerPruneNetworks;
