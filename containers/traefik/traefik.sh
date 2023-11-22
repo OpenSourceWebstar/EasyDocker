@@ -97,7 +97,7 @@ installTraefik()
         # Setup BasicAuth credentials
         local password_hash=$(htpasswd -Bbn "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS")
         # Update the YAML file in place
-        local result=$(sudo sed -E -i "0,/\s*users:/{n; s|^\s*- .*|          - \"$password_hash\"|}" "$containers_dir/$app_name/etc/dynamic/config.yml")
+        local result=$(sudo sed -E -i "0,/^\s*- /{s|^\s*- .*|          - \"$password_hash\"|}" "$containers_dir/$app_name/etc/dynamic/config.yml")
         checkSuccess "Configured config.yml with BasicAuth credentials for user: $CFG_TRAEFIK_DASHBOARD_USER"
 
         # Setup Error 404 Website
