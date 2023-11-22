@@ -96,10 +96,15 @@ installTraefik()
 
         # Setup BasicAuth credentials
         local password_hash=$(htpasswd -Bbn "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS")
-        local result=$(sudo awk -v user="$CFG_TRAEFIK_DASHBOARD_USER" -v password_hash="$password_hash" '/^\s*traefikAuth:/ {n=NR} n && NR==n+3 {$0="          - \"" password_hash "\""} 1' "$containers_dir/$app_name/etc/dynamic/config.yml" | sudo tee "$containers_dir/$app_name/etc/dynamic/temp_config.yml" > /dev/null)
-        checkSuccess "Configured config.yml with BasicAuth credentials for user : $CFG_TRAEFIK_DASHBOARD_USER"
-        local result=$(sudo mv "$containers_dir/$app_name/etc/dynamic/temp_config.yml" "$containers_dir/$app_name/etc/dynamic/config.yml")
-        checkSuccess "Using temp config.yml as the new live file after changes."
+        # Update the YAML file in place
+        sudo awk -i inplace -v user="$CFG_TRAEFIK_DASHBOARD_USER" -v password_hash="$password_hash" '
+        /^\s*traefikAuth:/ {traefikAuth=1}
+        traefikAuth && /^\s*users:/ {users=1; traefikAuth=0}
+        traefikAuth && users && /^\s*- / {$0="          - \"" password_hash "\""; users=0}
+        {print}
+        ' "$containers_dir/$app_name/etc/dynamic/config.yml"
+        checkSuccess "Configured config.yml with BasicAuth credentials for user: $CFG_TRAEFIK_DASHBOARD_USER"
+
 
         # Setup Error 404 Website
         local result=$(sudo sed -i "s|ERRORWEBSITE|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/dynamic/config.yml")
