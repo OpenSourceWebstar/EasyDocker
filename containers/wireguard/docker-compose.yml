@@ -43,7 +43,7 @@ services:
       #traefik.http.routers.wireguard.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.wireguard.tls: true
       #traefik.http.routers.wireguard.tls.certresolver: production
-      #traefik.http.services.wireguard.loadbalancer.server.port: PORT1
+      #traefik.http.services.wireguard.loadbalancer.server.port: PORT2
       #traefik.http.routers.wireguard.middlewares:
     networks:
       vpn:
