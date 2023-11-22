@@ -63,13 +63,14 @@ startPreInstall()
     installSSLCertificate;
     installSwapfile;
 
+    startScan;
+
     #######################################################
     ###                    Recommended                  ###
     #######################################################
 
     installRecommendedApps;
 
-    startScan;
 	resetToMenu;
 }
 
