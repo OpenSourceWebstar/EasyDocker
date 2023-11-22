@@ -12,7 +12,7 @@ services:
       - WG_HOST=PUBLICIPHERE
 
       # ⚠️ Change the Web UI Password:
-      - PASSWORD=pToPTF8Qi5MdtSyZIk
+      - PASSWORD=RANDOMIZEDPASSWORD
 
       # 💡 This is the Pi-Hole Container's IP Address
       - WG_DEFAULT_DNS=10.8.1.3
