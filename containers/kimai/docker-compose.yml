@@ -11,8 +11,8 @@ services:
     image: kimai/kimai2:fpm-dev
     container_name: kimai
     environment:
-      - ADMINMAIL=admin@kimai.local
-      - ADMINPASS=changemeplease
+      - ADMINMAIL=EMAILHERE
+      - ADMINPASS=RANDOMIZEDPASSWORD
       - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
       - TRUSTED_HOSTS=DOMAINSUBNAMEHERE
       - memory_limit=500
@@ -34,7 +34,7 @@ services:
       - MYSQL_DATABASE=kimai
       - MYSQL_USER=kimaiuser
       - MYSQL_PASSWORD=kimaipassword
-      - MYSQL_ROOT_PASSWORD=aSVAui5awsTASj55mva
+      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD
     ports:
       - 3336:3306
     volumes:
@@ -56,7 +56,7 @@ services:
     image: phpmyadmin
     restart: always
     ports:
-      - 8002:80
+      - PORT2:80
     environment:
       - PMA_ARBITRARY=1
     networks:
@@ -67,7 +67,7 @@ services:
     container_name: kimai-swagger
     image: swaggerapi/swagger-ui
     ports:
-      - 8003:8080
+      - PORT3:8080
     volumes:
       - ./swagger.json:/swagger.json
     environment:
@@ -80,7 +80,7 @@ services:
     container_name: kimai-nginx
     image: tobybatch/nginx-fpm-reverse-proxy
     ports:
-      - 8001:80
+      - PORT1:80
     volumes:
       - ./kimai-public:/opt/kimai/public:ro
     restart: unless-stopped
@@ -98,6 +98,8 @@ services:
       #traefik.http.routers.kimai-nginx.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.kimai-nginx.tls: true
       #traefik.http.routers.kimai-nginx.tls.certresolver: production
+      #traefik.http.services.kimai-nginx.loadbalancer.server.port: PORT1
+      #traefik.http.routers.kimai-nginx.middlewares:
     networks:
       vpn:
         ipv4_address: 10.8.1.104
