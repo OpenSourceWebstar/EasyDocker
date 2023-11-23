@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
     networks:
       vpn:
-        ipv4_address: IPADDRESSHERE
+        ipv4_address: 10.8.1.101
 
   sqldb:
     image: mysql:5.7
@@ -49,7 +49,7 @@ services:
       retries: 3
     networks:
       vpn:
-        ipv4_address: 10.8.1.101
+        ipv4_address: 10.8.1.102
 
   phpmyadmin:
     container_name: kimai-phpmyadmin
@@ -61,7 +61,7 @@ services:
       - PMA_ARBITRARY=1
     networks:
       vpn:
-        ipv4_address: 10.8.1.102
+        ipv4_address: 10.8.1.103
 
   swagger:
     container_name: kimai-swagger
@@ -74,7 +74,7 @@ services:
       - SWAGGER_JSON=/swagger.json
     networks:
       vpn:
-        ipv4_address: 10.8.1.103
+        ipv4_address: 10.8.1.104
 
   kimai-nginx:
     container_name: kimai-nginx
@@ -102,4 +102,4 @@ services:
       #traefik.http.routers.kimai-nginx.middlewares:
     networks:
       vpn:
-        ipv4_address: 10.8.1.104
+        ipv4_address: IPADDRESSHERE
