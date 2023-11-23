@@ -272,7 +272,6 @@ mkdirFolders()
     done
 }
 
-
 backupContainerFilesToTemp()
 {
     local app_name="$1"
@@ -366,6 +365,13 @@ copyResource()
     # Check if the app_name folder was found
     if [ -z "$app_dir" ]; then
         echo "App folder '$app_name' not found in '$install_containers_dir'."
+    fi
+
+    if [[ $save_path != "" ]]; then
+        if [ -z "$containers_dir$app_name/$save_path" ]; then
+            local result=$(mkdirFolders "loud" $sudo_user_name "$containers_dir$app_name/$save_path")
+            checkSuccess "Creating $save_path folder(s) for $app_name"
+        fi
     fi
 
     if [[ $save_path == "" ]]; then
