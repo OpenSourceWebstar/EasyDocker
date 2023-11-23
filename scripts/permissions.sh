@@ -372,7 +372,7 @@ copyResource()
         local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$file_name")
         checkSuccess "Copying $file_name to $containers_dir$app_name"
     else
-        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$save_path/")
+        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$save_path/$file_name")
         checkSuccess "Copying $file_name to $containers_dir$app_name/$save_path"
     fi
 
