@@ -16,10 +16,6 @@ updateApplicationSpecifics()
         local shouldrestart=true
     fi
 
-    if [[ $app_name == "dashy" ]]; then
-        dashyUpdateConf;
-    fi
-
     if [[ $shouldrestart == "true" ]]; then
         dockerDownUp $app_name;
     fi
