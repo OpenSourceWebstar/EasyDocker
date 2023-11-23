@@ -260,9 +260,15 @@ mkdirFolders()
         local folder_name=$(basename "$dir_path")
         local clean_dir=$(echo "$dir_path" | sed 's#//*#/#g')
 
-        local result=$(sudo mkdir -p "$dir_path")
-        if [ -z "$silent_flag" ]; then
-            checkSuccess "Creating $folder_name directory"
+        if [ ! -d "$dir_path" ]; then
+            local result=$(sudo mkdir -p "$dir_path")
+            if [ -z "$silent_flag" ]; then
+                checkSuccess "Creating $folder_name directory"
+            fi
+        else
+            if [ -z "$silent_flag" ]; then
+                isNotice "$folder_name directory already exists"
+            fi
         fi
 
         local result=$(sudo chown $user_name:$user_name "$dir_path")
@@ -365,30 +371,26 @@ copyResource()
     # Check if the app_name folder was found
     if [ -z "$app_dir" ]; then
         echo "App folder '$app_name' not found in '$install_containers_dir'."
+        return
     fi
 
-    if [[ $save_path != "" ]]; then
-        if [ -z "$containers_dir$app_name/$save_path" ]; then
-            local result=$(mkdirFolders "loud" $sudo_user_name "$containers_dir$app_name/$save_path")
+    local destination_dir="$containers_dir$app_name"
+
+    if [ -n "$save_path" ]; then
+        local destination_dir="$destination_dir/$save_path"
+        if [ ! -d "$destination_dir" ]; then
+            local result=$(mkdirFolders "loud" $sudo_user_name "$destination_dir")
             checkSuccess "Creating $save_path folder(s) for $app_name"
         fi
     fi
 
-    if [[ $save_path == "" ]]; then
-        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name")
-        checkSuccess "Copying $file_name to $containers_dir$app_name"
-    else
-        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$save_path")
-        checkSuccess "Copying $file_name to $containers_dir$app_name/$save_path"
-    fi
+    local result=$(sudo cp "$app_dir/resources/$file_name" "$destination_dir/")
+    checkSuccess "Copying $file_name to $destination_dir"
 
-    if [[ $save_path == "" ]]; then
-        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$file_name")
-        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
-    else
-        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file_name")
-        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
-    fi
+    local destination_path="$destination_dir/$file_name"
+
+    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$destination_path")
+    checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
 }
 
 copyFile()

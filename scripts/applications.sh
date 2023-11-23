@@ -94,7 +94,7 @@ dashyUpdateConf()
         echo "#####################################"
         echo ""
 
-        if [ -f "${containers_dir}dashy" ]; then
+        if [ -f "${containers_dir}dashy/etc/" ]; then
             local result=$(sudo rm -rf "$conf_file")
             checkSuccess "Removed old Dashy conf.yml for new generation"
         fi
