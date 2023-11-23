@@ -143,17 +143,22 @@ fi
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        local owncloud_timeout=20
+        isNotice "ownCloud is currently being setup, please wait..."
+        isNotice "This may take a few minutes..."
+        echo ""
+        local owncloud_timeout=60
         local owncloud_counter=0
+        local owncloud_wait_time=5 # seconds
         # Loop to check for the existence of the file every second
-        while [ ! -f "$containers_dir$app_name/files/config/config.php" ]; do
+        while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
             if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
-                isNotice "File not found after 10 seconds. Exiting..."
+                isNotice "File not found after $owncloud_timeout seconds. Exiting..."
                 break
             fi
 
-            isNotice "Waiting for the file to appear..."
-            read -t 1 # Wait for 1 second
+            isNotice "Waiting 5 seconds for the objectstore.config.php to appear..."
+
+            sleep $owncloud_wait_time
 
             # Increment the counter
             local owncloud_counter=$((owncloud_counter + 1))

@@ -23,6 +23,8 @@ updateApplicationSpecifics()
     if [[ $shouldrestart == "true" ]]; then
         dockerDownUp $app_name;
     fi
+
+    isSuccessful "All application specific updates have been completed."
 }
 
 ownCloudSetupConfig()
@@ -50,9 +52,6 @@ ownCloudSetupConfig()
         ),\\
     );" "$owncloud_config"
 
-    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
-    checkSuccess "Updating config permissions to associated permissions"
-
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
 
@@ -60,7 +59,7 @@ ownCloudSetupConfig()
     result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config")
     checkSuccess "Updated the internal CLI config IP & Port"
 
-    local owncloud_timeout=20
+    local owncloud_timeout=60
     local owncloud_counter=0
     # Loop to check for the existence of the file every second
     while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
@@ -69,15 +68,14 @@ ownCloudSetupConfig()
             break
         fi
 
-        isNotice "Waiting for the file to appear..."
-        read -t 1 # Wait for 1 second
+        isNotice "Waiting 5 seconds for the file to appear..."
+        read -t 5 # Wait for 5 second
 
         # Increment the counter
         local owncloud_counter=$((owncloud_counter + 1))
     done
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
-
 }
 
 dashyUpdateConf() 
