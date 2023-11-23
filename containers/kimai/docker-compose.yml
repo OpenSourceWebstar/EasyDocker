@@ -14,7 +14,7 @@ services:
       - ADMINMAIL=EMAILHERE
       - ADMINPASS=RANDOMIZEDPASSWORD
       - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
-      - TRUSTED_HOSTS=DOMAINSUBNAMEHERE
+      - TRUSTED_HOSTS=IPADDRESSHERE,DOMAINSUBNAMEHERE
       - memory_limit=500
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
