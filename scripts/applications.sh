@@ -83,21 +83,24 @@ ownCloudSetupConfig()
 dashyUpdateConf() 
 {
     # Hardcoded path to Dashy's conf.yml file
-    local conf_file="${containers_dir}dashy/conf.yml"
-
-    # Clean up for new generation
-    sudo rm -rf "${containers_dir}dashy/conf.yml"
+    local conf_file="${containers_dir}dashy/etc/conf.yml"
+    local status=$(checkAppInstalled "dashy" "docker")
 
     # Check if Dashy app is installed
-    if [ -d "${containers_dir}dashy" ]; then
+    if [ "$status" == "installed" ]; then
         echo ""
         echo "#####################################"
         echo "###    Dashy Config Generation    ###"
         echo "#####################################"
         echo ""
 
+        if [ -f "${containers_dir}dashy" ]; then
+            local result=$(sudo rm -rf "$conf_file")
+            checkSuccess "Removed old Dashy conf.yml for new generation"
+        fi
+
         # Copy the default dashy conf.yml configuration file
-        local result=$(copyResource "dashy" "conf.yml" "")
+        local result=$(copyResource "dashy" "conf.yml" "etc")
         checkSuccess "Copy default dashy conf.yml configuration file"
 
         local original_md5=$(md5sum "$conf_file")
