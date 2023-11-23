@@ -293,7 +293,7 @@ backupContainerFilesToTemp()
     # Iterate over the list and call moveFile for each source file
     for source_filename in "${source_filenames[@]}"; do
         source_file="$source_folder/$source_filename"
-        target_file="$source_file"
+        target_file="$temp_backup_folder/$source_filename"
         if [ -f "$source_file" ]; then
             moveFile "$source_file" "$target_file"
             checkSuccess "Moving $source_filename to $temp_backup_folder"
@@ -309,8 +309,8 @@ backupContainerFilesRestore()
     if [ -d "$temp_backup_folder" ]; then
         local result=$(copyFiles "loud" "$temp_backup_folder" "$source_folder" $CFG_DOCKER_INSTALL_USER)
         checkSuccess "Copying files from temp folder to $app_name folder."
-        #local result=$(rm -rf "$temp_backup_folder")
-        #checkSuccess "Removing temp folder as no longer needed."
+        local result=$(rm -rf "$temp_backup_folder")
+        checkSuccess "Removing temp folder as no longer needed."
     fi
 }
 
