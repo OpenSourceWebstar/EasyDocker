@@ -309,8 +309,8 @@ backupContainerFilesRestore()
     if [ -d "$temp_backup_folder" ]; then
         local result=$(copyFiles "loud" "$temp_backup_folder" "$source_folder" $CFG_DOCKER_INSTALL_USER)
         checkSuccess "Copying files from temp folder to $app_name folder."
-        local result=$(rm -rf "$temp_backup_folder")
-        checkSuccess "Removing temp folder as no longer needed."
+        #local result=$(rm -rf "$temp_backup_folder")
+        #checkSuccess "Removing temp folder as no longer needed."
     fi
 }
 
