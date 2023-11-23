@@ -369,15 +369,20 @@ copyResource()
     fi
 
     if [[ $save_path == "" ]]; then
-        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name")
+        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$file_name")
         checkSuccess "Copying $file_name to $containers_dir$app_name"
     else
-        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$save_path")
+        local result=$(sudo cp "$app_dir/resources/$file_name" "$containers_dir$app_name/$save_path/$file_name")
         checkSuccess "Copying $file_name to $containers_dir$app_name/$save_path"
     fi
 
-    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file_name")
-    checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+    if [[ $save_path == "" ]]; then
+        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$file_name")
+        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+    else
+        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir/$app_name/$save_path/$file_name")
+        checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+    fi
 }
 
 copyFile()

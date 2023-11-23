@@ -91,7 +91,7 @@ installTraefik()
 
         # Dynamic config.yml File
         # Copy the Traefik configuration file and customize it
-        local result=$(copyResource "$app_name" "config.yml" "etc/dynamic/")
+        local result=$(copyResource "$app_name" "config.yml" "etc/dynamic")
         checkSuccess "Copy Traefik Dynamic config.yml configuration file for $app_name"
 
         # Setup BasicAuth credentials
@@ -107,13 +107,13 @@ installTraefik()
         setupFileWithConfigData $app_name "config.yml" "etc/dynamic";
 
         # Dynamic whitelist.yml File
-        local result=$(copyResource "$app_name" "whitelist.yml" "etc/dynamic/")
+        local result=$(copyResource "$app_name" "whitelist.yml" "etc/dynamic")
         checkSuccess "Copy Traefik Dynamic whitelist.yml configuration file for $app_name"
 
         dockerUpdateTraefikWhitelist;
 
         # Dynamic tls.yml File
-        local result=$(copyResource "$app_name" "tls.yml" "etc/dynamic/")
+        local result=$(copyResource "$app_name" "tls.yml" "etc/dynamic")
         checkSuccess "Copy Traefik Dynamic tls.yml configuration file for $app_name"
 
 		((menu_number++))
