@@ -14,7 +14,7 @@ services:
     # Pass in your config file below, by specifying the path on your host machine
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./etc/conf.yml:/app/public/conf.yml
+      - ./etc:/app/public
     ports:
       - PORT1:80
     # Set any environmental variables
