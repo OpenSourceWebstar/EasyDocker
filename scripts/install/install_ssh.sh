@@ -252,11 +252,29 @@ updateSSHPermissions()
 
 setupSSHKeysForDownload()
 {
-    generateSSHSetupKeyPair "root"
-    generateSSHSetupKeyPair "$sudo_user_name"
-    generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"
-    installApp sshdownload;
-    disableSSHPasswords;
+    local ssh_setup="false"
+    # Check if SSH Keys are enabled
+    if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
+        generateSSHSetupKeyPair "root"
+        local ssh_setup="true"
+    fi
+    if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
+        generateSSHSetupKeyPair "$sudo_user_name"
+        local ssh_setup="true"
+    fi
+    if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
+        generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"
+        local ssh_setup="true"
+    fi
+
+    # Install if keys have been setup
+    if [[ "$ssh_setup" == "true" ]]; then
+        installApp sshdownload;
+    fi
+
+    if [[ "$CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS" == "true" ]]; then
+        disableSSHPasswords;
+    fi
 }
 
 generateSSHSetupKeyPair() 
@@ -314,7 +332,7 @@ generateSSHKeyPair()
     local public_key_full="$4"
     local flag="$5"
 
-    if [ "$flag" == "reinstall" ]; then
+    if [[ "$flag" == "reinstall" ]]; then
         result=$(sudo rm -$private_key_full)
         checkSuccess "Deleted old private SSH key $(basename, "$private_key_full")"
         result=$(sudo rm -$public_key_full)
@@ -339,7 +357,7 @@ disableSSHPasswords()
     isNotice "You will still be able to log in with SSH passwords via physical/console access, just not remotely!"
     echo ""
     while true; do
-        isQuestion "Are you sure you want to disable SSH password logins? (y/n): "
+        isQuestion "Do you want to disable SSH password logins? (y/n): "
         read -p "" disable_ssh_passwords
         case "$disable_ssh_passwords" in
             [Yy]*)
@@ -358,6 +376,20 @@ disableSSHPasswords()
                 break
                 ;;
             [Nn]*)
+                while true; do
+                    isQuestion "Do you want to stop being asked to disable SSH Password logins? (y/n): "
+                    read -rp "" sshdisablepasswordask
+                    if [[ "$sshdisablepasswordask" =~ ^[yYnN]$ ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input (y/n)."
+                done
+                if [[ "$sshdisablepasswordask" == [yY] ]]; then
+                    local config_file="$configs_dir$config_file_requirements"
+                    result=$(sudo sed -i 's/CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS=true/CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS=false/' $config_file)
+                    checkSuccess "Disabled CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS in the $config_file_requirements config."
+                    source $config_file
+                fi
                 break
                 ;;
             *)
