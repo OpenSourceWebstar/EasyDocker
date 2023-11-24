@@ -168,9 +168,9 @@ checkBackupCrontabApp()
 
     # Determine the configuration variable based on the name
     if [[ "$name" == "full" ]]; then
-        config_variable="CFG_BACKUP_FULL"
+        local config_variable="CFG_BACKUP_FULL"
     else
-        config_variable="CFG_${name^^}_BACKUP"
+        local config_variable="CFG_${name^^}_BACKUP"
     fi
 
     # Check if the configuration variable is set to true

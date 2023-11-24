@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Category : system
+# Category : old
 # Description : Virtualmin Webhost Proxy - *Requires Virtualmin* (c/u/s/r/i):
 
 installVirtualminwebhost()

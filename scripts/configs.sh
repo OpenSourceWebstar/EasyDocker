@@ -653,7 +653,7 @@ viewEasyDockerConfigs()
             done
             
             if [ -z "$selected_file" ]; then
-                isNotie "No config found with the selected letter. Please try again."
+                isNotice "No config found with the selected letter. Please try again."
                 read -p "Press Enter to continue."
             else
                 sudo nano "$selected_file"

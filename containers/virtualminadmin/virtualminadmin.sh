@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Category : system
+# Category : old
 # Description : Virtualmin Admin Proxy - *Requires Virtualmin* (c/u/s/r/i):
 
 installVirtualminadmin()
