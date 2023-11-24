@@ -868,6 +868,18 @@ dockerAppUp()
     fi
 }
 
+dockerScanForShouldRestart()
+{
+    for i in "${appstorestart[@]}"; do
+        if [ "$i" -eq 3 ]; then
+            unset appstorestart[$i]
+            appstorestart=("${appstorestart[@]}") # Re-index the array
+            i=$((i-1)) # Decrement the loop counter
+        fi
+        installApp "$i"
+    done
+}
+
 dockerPruneNetworks()
 {
     local result=$(runCommandForDockerInstallUser "docker network prune -f")

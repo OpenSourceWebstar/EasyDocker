@@ -1,5 +1,6 @@
 #!/bin/bash
 trap exitScript SIGINT
+appstorestart=()
 # Directories are contained in init.sh
 
 # Define text colors
