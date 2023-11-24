@@ -249,3 +249,120 @@ updateSSHPermissions()
     local result=$(sudo find $ssh_dir$CFG_DOCKER_MANAGER_USER -type f -name "*.pub" -exec sudo chmod 600 {} \;)
     #checkSuccess "Updating all permissions of keys to 600"
 }
+
+setupSSHKeysForDownload()
+{
+    generateSSHSetupKeyPair "root"
+    generateSSHSetupKeyPair "$sudo_user_name"
+    generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"
+    installApp sshdownload;
+    disableSSHPasswords;
+}
+
+generateSSHSetupKeyPair() 
+{
+    local username="$1"
+
+    local private_key_file="id_ed25519_$username"
+    local private_key_path="$ssh_dir/private"
+    local private_key_full="$private_key_path/$private_key_file"
+
+    local public_key_file="$private_key_file.pub"
+    local public_key_path="$ssh_dir/public"
+    local public_key_full="$public_key_path/$public_key_file"
+
+    # Check if the directory exists; if not, create it
+    if [ ! -d "$private_key_path" ]; then
+        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $private_key_path)
+        checkSuccess "Creating $(basename, "$private_key_path") folder"
+    fi
+    if [ ! -d "$public_key_path" ]; then
+        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $public_key_path)
+        checkSuccess "Creating $(basename, "$public_key_path") folder"
+    fi
+
+    # Check if the private/public keys exist
+    if [ -f "$private_key_path" ]; then
+        isNotice "ED25519 private key for $username already exists: $private_key_path"
+        while true; do
+            isQuestion "Do you want to generate a new SSH Key the $username user? (y/n): "
+            read -p "" key_regenerate_accept
+            case "$key_regenerate_accept" in
+                [Yy]*)
+                    generateSSHKeyPair $username $private_key_path $private_key_full $public_key_full reinstall;
+                    break
+                    ;;
+                [Nn]*)
+                    #echo "No changes were made to PermitRootLogin."
+                    break
+                    ;;
+                *)
+                    echo "Please enter 'y' or 'n'."
+                    ;;
+            esac
+        done
+    else
+        generateSSHKeyPair $username $private_key_path $private_key_full $public_key_full install;
+    fi
+}
+
+generateSSHKeyPair()
+{
+    local username="$1"
+    local private_key_path="$2"
+    local private_key_full="$3"
+    local public_key_full="$4"
+    local flag="$5"
+
+    if [ "$flag" == "reinstall" ]; then
+        result=$(sudo rm -$private_key_full)
+        checkSuccess "Deleted old private SSH key $(basename, "$private_key_full")"
+        result=$(sudo rm -$public_key_full)
+        checkSuccess "Deleted old public SSH key $(basename, "$public_key_full")"
+    fi
+
+    result=$(sudo ssh-keygen -t ed25519 -f "$private_key_path" -C "$CFG_EMAIL")
+    checkSuccess "New ED25519 key pair generated for $username"
+
+    result=$(sudo mv "$private_key_full.pub" "$public_key_full")
+    checkSuccess "Public key moved to $public_key_full"
+}
+
+disableSSHPasswords()
+{
+    isNotice "!!!!!!!!!!!!!!!! ***PROCEED WITH CAUTION*** !!!!!!!!!!!!!!!"
+    echo ""
+    isNotice "You are about to disable SSH Passwords Potentially blocking you out of your system!!!!"
+    isNotice "Make sure you have downloaded and tested your SSH keys before disabling password login!!!"
+    echo ""
+    isNotice "The reason we disable ssh passwords is to improve security, allowing only SSH Key logins"
+    isNotice "You will still be able to log in with SSH passwords via physical/console access, just not remotely!"
+    echo ""
+    while true; do
+        isQuestion "Are you sure you want to disable SSH password logins? (y/n): "
+        read -p "" disable_ssh_passwords
+        case "$disable_ssh_passwords" in
+            [Yy]*)
+                local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"
+                result=$(cp /etc/ssh/sshd_config "$backup_file")
+                checkSuccess "Backup sshd_config file"
+
+                result=$(sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config)
+                checkSuccess "Removing existing PasswordAuthentication lines"
+
+                result=$(echo "PasswordAuthentication no" >> /etc/ssh/sshd_config)
+                checkSuccess "Add new PasswordAuthentication line at the end of sshd_config"
+
+                result=$(systemctl restart sshd)
+                checkSuccess "Restart SSH service"
+                break
+                ;;
+            [Nn]*)
+                break
+                ;;
+            *)
+                echo "Please enter 'y' or 'n'."
+                ;;
+        esac
+    done
+}

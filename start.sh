@@ -175,8 +175,8 @@ startInstall()
     installPortainer;
     installPrometheus;
     installTraefik;
-    installVirtualminadmin;
-    installVirtualminwebhost;
+    #installVirtualminadmin;
+    #installVirtualminwebhost;
     installWatchtower;
     installWireguard;
 
@@ -239,16 +239,16 @@ startOther()
     ###                     Tools                       ###
     #######################################################
 
+	if [[ "$toolsetupsshkeys" == [yY] ]]; then
+		setupSSHKeysForDownload;
+	fi
+
 	if [[ "$toolsresetgit" == [yY] ]]; then
 		gitFolderResetAndBackup;
 	fi
 
 	if [[ "$toolstartpreinstallation" == [yY] ]]; then
 		startPreInstall;
-	fi
-
-	if [[ "$toolsstartcrontabsetup" == [yY] ]]; then
-		databaseCycleThroughListAppsCrontab
 	fi
 
 	if [[ "$toolrestartcontainers" == [yY] ]]; then
@@ -259,21 +259,25 @@ startOther()
 		dockerStopAllApps;
 	fi
 
-    if [[ "$toolsremovedockermanageruser" == [yY] ]]; then
-		uninstallDockerManagerUser;
+	if [[ "$toolsstartcrontabsetup" == [yY] ]]; then
+		databaseCycleThroughListAppsCrontab
 	fi
-
-    if [[ "$toolsinstalldockermanageruser" == [yY] ]]; then
-		installDockerManagerUser;
-	fi
-
-    if [[ "$toolinstallremotesshlist" == [yY] ]]; then
-        installSSHRemoteList;
-    fi
 
     if [[ "$toolinstallcrontab" == [yY] ]]; then
         installCrontab
     fi
+
+    #if [[ "$toolsremovedockermanageruser" == [yY] ]]; then
+		#uninstallDockerManagerUser;
+	#fi
+
+    #if [[ "$toolsinstalldockermanageruser" == [yY] ]]; then
+		#installDockerManagerUser;
+	#fi
+
+    #if [[ "$toolinstallremotesshlist" == [yY] ]]; then
+        #installSSHRemoteList;
+    #fi
 
     #if [[ "$toolinstallcrontabssh" == [yY] ]]; then
         #installCrontabSSHScan;

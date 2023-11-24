@@ -87,30 +87,6 @@ installDockerUser()
             local result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
             checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
             updateDockerInstallPassword;
-
-            # Check if PermitRootLogin is set to "yes" before disabling it
-            if sudo grep -q 'PermitRootLogin yes' "$sshd_config"; then
-                while true; do
-                    isQuestion "Do you want to disable login for the root user? (y/n): "
-                    read -p "" rootdisableconfirm
-                    case "$rootdisableconfirm" in
-                        [Yy]*)
-                            local result=$(sudo sed 's/PermitRootLogin yes/PermitRootLogin no/g' "$sshd_config")
-                            checkSuccess "Disabling Root Login"
-                            break
-                            ;;
-                        [Nn]*)
-                            #echo "No changes were made to PermitRootLogin."
-                            break
-                            ;;
-                        *)
-                            echo "Please enter 'y' or 'n'."
-                            ;;
-                    esac
-                done
-            else
-                echo "PermitRootLogin is already set to 'no' or not found in $sshd_config"
-            fi
         fi
     fi
 }

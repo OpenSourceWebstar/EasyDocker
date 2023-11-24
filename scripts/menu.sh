@@ -185,9 +185,9 @@ mainMenu()
 				echo "#####################################"
 				echo ""
 
-				isOptionMenu "Setup Headscale Client for Localhost? (y/n): "
+				isOptionMenu "Setup Tailscale Client for Localhost? (y/n): "
 				read -rp "" headscaleclientlocal
-				isOptionMenu "Setup Headscale Client for a Specific App? (y/n): "
+				isOptionMenu "Setup Tailscale Client for a Specific App? (y/n): "
 				read -rp "" headscaleclientapp
 				isOptionMenu "Create User $CFG_INSTALL_NAME? (y/n): "
 				read -rp "" headscaleusercreate
@@ -239,24 +239,27 @@ mainMenu()
 				echo "###             Tools             ###"
 				echo "#####################################"
 				echo ""
+
+				isOptionMenu "Setup SSH Keys for Download (y/n): "
+				read -rp "" toolsetupsshkeys
 				isOptionMenu "Reset EasyDocker Git Folder (y/n): "
 				read -rp "" toolsresetgit
 				isOptionMenu "Start Pre-Installation (y/n): "
 				read -rp "" toolstartpreinstallation
-				isOptionMenu "Start Crontab Installation? (y/n): "
-				read -rp "" toolsstartcrontabsetup
 				isOptionMenu "Start/Restart all docker containers? (y/n): "
 				read -rp "" toolrestartcontainers
 				isOptionMenu "Stop all docker containers? (y/n): "
 				read -rp "" toolstopcontainers
-				isOptionMenu "Remove Docker Manager User from this PC? (y/n): "
-				read -rp "" toolsremovedockermanageruser
-				isOptionMenu "Install Docker Manager User on this PC? (y/n): "
-				read -rp "" toolsinstalldockermanageruser
-				isOptionMenu "Install Remote SSH Keys? (y/n): "
-				read -rp "" toolinstallremotesshlist
+				isOptionMenu "Scan apps for Crontab Backup? (y/n): "
+				read -rp "" toolsstartcrontabsetup
 				isOptionMenu "Install Crontab? (y/n): "
 				read -rp "" toolinstallcrontab
+				#isOptionMenu "Remove Docker Manager User from this PC? (y/n): "
+				#read -rp "" toolsremovedockermanageruser
+				#isOptionMenu "Install Docker Manager User on this PC? (y/n): "
+				#read -rp "" toolsinstalldockermanageruser
+				#isOptionMenu "Install Remote SSH Keys? (y/n): "
+				#read -rp "" toolinstallremotesshlist
 				#isOptionMenu "Install SSH Scanning into Crontab? (y/n): "
 				#read -rp "" toolinstallcrontabssh
 
