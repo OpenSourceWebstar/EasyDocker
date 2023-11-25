@@ -348,13 +348,27 @@ generateSSHKeyPair()
 
     if [[ "$flag" == "reinstall" ]]; then
         result=$(sudo rm -$private_key_full)
-        checkSuccess "Deleted old private SSH key $(basename, "$private_key_full")"
+        checkSuccess "Deleted old private SSH key $(basename "$private_key_full")"
         result=$(sudo rm -$public_key_full)
-        checkSuccess "Deleted old public SSH key $(basename, "$public_key_full")"
+        checkSuccess "Deleted old public SSH key $(basename "$public_key_full")"
     fi
 
-    result=$(sudo ssh-keygen -t ed25519 -f "$private_key_path" -C "$CFG_EMAIL")
+    if [[ "$username" == "root" ]]; then
+        local ssh_passphrase=$CFG_SSHKEY_PASSPHRASE_ROOT
+    elif [[ "$username" == "$sudo_user_name" ]]; then
+        local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_EASYDOCKER
+    elif [[ "$username" == "$CFG_DOCKER_INSTALL_USER" ]]; then
+        local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
+    fi
+
+    result=$(sudo -u $username ssh-keygen -t ed25519 -f "$private_key_path" -C "$CFG_EMAIL" -N "$ssh_passphrase")
     checkSuccess "New ED25519 key pair generated for $username"
+
+    result=$(createTouch "$migrate_file_path" $CFG_DOCKER_INSTALL_USER)
+    checkSuccess "Creating the passphrase txt to private folder."
+
+    result=$(echo "$ssh_passphrase" | sudo tee -a "$(basename "$private_key_full").txt" > /dev/null)
+    checkSuccess "Adding the ssh_passphrase to the $(basename "$private_key_full").txt file."
 
     result=$(sudo mv "$private_key_full.pub" "$public_key_full")
     checkSuccess "Public key moved to $public_key_full"
