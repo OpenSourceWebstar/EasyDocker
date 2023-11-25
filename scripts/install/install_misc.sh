@@ -120,6 +120,7 @@ installCrontab()
         export VISUAL=nano
         export EDITOR=nano
 
+        isSuccessful "Crontab has been setup on the system"
         #installCrontabSSHScan;
     fi
 }
