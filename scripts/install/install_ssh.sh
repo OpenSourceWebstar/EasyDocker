@@ -250,30 +250,44 @@ updateSSHPermissions()
     #checkSuccess "Updating all permissions of keys to 600"
 }
 
-setupSSHKeysForDownload()
+installSSHKeysForDownload()
 {
-    local ssh_setup="false"
+    ssh_new_key="false"
+
     # Check if SSH Keys are enabled
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
         generateSSHSetupKeyPair "root"
-        local ssh_setup="true"
     fi
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
         generateSSHSetupKeyPair "$sudo_user_name"
-        local ssh_setup="true"
     fi
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
         generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"
-        local ssh_setup="true"
     fi
 
     # Install if keys have been setup
-    if [[ "$ssh_setup" == "true" ]]; then
+    if [[ "$ssh_new_key" == "true" ]]; then
         installApp sshdownload;
     fi
 
     if [[ "$CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS" == "true" ]]; then
         disableSSHPasswords;
+    fi
+}
+
+checkSSHSetupKeyPair() 
+{
+    local username="$1"
+
+    local private_key_file="id_ed25519_$username"
+    local private_key_path="$ssh_dir/private"
+    local private_key_full="$private_key_path/$private_key_file"
+
+    # Check if the private key file exists
+    if [ -f "$private_key_full" ]; then
+        return 0  # Key pair exists
+    else
+        return 1  # Key pair does not exist
     fi
 }
 
@@ -299,7 +313,7 @@ generateSSHSetupKeyPair()
         checkSuccess "Creating $(basename, "$public_key_path") folder"
     fi
 
-    # Check if the private/public keys exist
+    # Check if the private keys exist
     if [ -f "$private_key_path" ]; then
         isNotice "ED25519 private key for $username already exists: $private_key_path"
         while true; do
@@ -344,6 +358,8 @@ generateSSHKeyPair()
 
     result=$(sudo mv "$private_key_full.pub" "$public_key_full")
     checkSuccess "Public key moved to $public_key_full"
+
+    ssh_new_key=true
 }
 
 disableSSHPasswords()

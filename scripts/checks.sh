@@ -159,6 +159,32 @@ checkRequirements()
 		fi
 	fi
 
+	if [[ $CFG_REQUIREMENT_SSHKEY_ROOT == "true" ]]; then
+		### For SSH Key Setup
+		if checkSSHSetupKeyPair "root"; then
+			isSuccessful "The SSH Key for root appears to be setup."
+		else
+			isNotice "An SSH Key for root is not setup."
+			((preinstallneeded++))
+		fi
+	elif [[ $CFG_REQUIREMENT_SSHKEY_SUDO_USER == "true" ]]; then
+		### For SSH Key Setup
+		if checkSSHSetupKeyPair "$sudo_user_name"; then
+			isSuccessful "The SSH Key for $sudo_user_name appears to be setup."
+		else
+			isNotice "An SSH Key for $sudo_user_name is not setup."
+			((preinstallneeded++))
+		fi
+	elif [[ $CFG_REQUIREMENT_SSHKEY_DOCKER_MANAGER == "true" ]]; then
+		### For SSH Key Setup
+		if checkSSHSetupKeyPair "$CFG_DOCKER_MANAGER_USER"; then
+			isSuccessful "The SSH Key for $CFG_DOCKER_MANAGER_USER appears to be setup."
+		else
+			isNotice "An SSH Key for $CFG_DOCKER_MANAGER_USER is not setup."
+			((preinstallneeded++))
+		fi
+	fi
+
 	if [[ $CFG_REQUIREMENT_MANAGER == "true" ]]; then
 		### Docker Manager User Creation
 		if userExists "$CFG_DOCKER_MANAGER_USER"; then
@@ -168,7 +194,6 @@ checkRequirements()
 			((preinstallneeded++)) 
 		fi
 	fi
-
 
 	if [[ $CFG_REQUIREMENT_SSLCERTS == "true" ]]; then
 		### SSL Certificates

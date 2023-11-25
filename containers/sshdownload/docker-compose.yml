@@ -5,9 +5,9 @@ networks:
     external: true
 
 services:
-  apache:
+  sshdownload:
     image: httpd:latest
-    container_name: my-apache-app
+    container_name: sshdownload
     ports:
     - 'PORT1:80'
     volumes:
