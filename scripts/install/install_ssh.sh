@@ -306,11 +306,11 @@ generateSSHSetupKeyPair()
     # Check if the directory exists; if not, create it
     if [ ! -d "$private_key_path" ]; then
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $private_key_path)
-        checkSuccess "Creating $(basename, "$private_key_path") folder"
+        checkSuccess "Creating $(basename "$private_key_path") folder"
     fi
     if [ ! -d "$public_key_path" ]; then
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $public_key_path)
-        checkSuccess "Creating $(basename, "$public_key_path") folder"
+        checkSuccess "Creating $(basename "$public_key_path") folder"
     fi
 
     # Check if the private keys exist
