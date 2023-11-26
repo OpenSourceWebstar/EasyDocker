@@ -252,6 +252,7 @@ updateSSHPermissions()
 
 installSSHKeysForDownload()
 {
+    local flag="$1"
     echo ""
     echo "############################################"
     echo "######        SSH Key Install         ######"
@@ -262,13 +263,13 @@ installSSHKeysForDownload()
 
     # Check if SSH Keys are enabled
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
-        generateSSHSetupKeyPair "root"
+        generateSSHSetupKeyPair "root" $flag
     fi
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
-        generateSSHSetupKeyPair "$sudo_user_name"
+        generateSSHSetupKeyPair "$sudo_user_name" $flag
     fi
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
-        generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"
+        generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER" $flag
     fi
 
     # Install if keys have been setup
@@ -304,6 +305,7 @@ checkSSHSetupKeyPair()
 generateSSHSetupKeyPair() 
 {
     local username="$1"
+    local flag="$2"
 
     local private_key_file="id_ed25519_$username"
     local private_key_path="$ssh_dir/private"
@@ -328,7 +330,7 @@ generateSSHSetupKeyPair()
     fi
 
     # Check if the private and public keys exist
-    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ]; then
+    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ] && [ $flag != "install" ]; then
         isNotice "SSH Key pair for $username already exists: $(basename "$private_key_full") / $(basename "$public_key_full")"
         echo ""
         while true; do
@@ -387,9 +389,9 @@ generateSSHKeyPair()
     local flag="$5"
 
     if [[ "$flag" == "reinstall" ]]; then
-        result=$(sudo rm -$private_key_full)
+        result=$(sudo rm $private_key_full)
         checkSuccess "Deleted old private SSH key $(basename "$private_key_full")"
-        result=$(sudo rm -$public_key_full)
+        result=$(sudo rm $public_key_full)
         checkSuccess "Deleted old public SSH key $(basename "$public_key_full")"
     fi
 

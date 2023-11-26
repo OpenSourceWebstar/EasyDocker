@@ -57,7 +57,7 @@ startPreInstall()
     installSQLiteDatabase;
     installCrontab;
 
-    installSSHKeysForDownload;
+    installSSHKeysForDownload install;
 	installDockerManagerUser;
     installSSHRemoteList;
 
@@ -241,7 +241,7 @@ startOther()
     #######################################################
 
 	if [[ "$toolsetupsshkeys" == [yY] ]]; then
-		installSSHKeysForDownload;
+		installSSHKeysForDownload tool;
 	fi
 
 	if [[ "$toolsresetgit" == [yY] ]]; then
