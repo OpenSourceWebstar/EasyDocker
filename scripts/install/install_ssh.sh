@@ -367,17 +367,27 @@ generateSSHKeyPair()
         local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
     fi
 
-    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$private_key_full" -C "$CFG_EMAIL" -N "")
+    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "")
     checkSuccess "New ED25519 key pair generated for $username"
+
+    updateFileOwnership "$ssh_dir/$(basename "$private_key_full" $CFG_DOCKER_INSTALL_USER
+
+    updateFileOwnership "$ssh_dir/$(basename "$public_key_full" $CFG_DOCKER_INSTALL_USER
+
+    result=$(sudo mv "$ssh_dir/$(basename "$private_key_full")" "$private_key_full")
+    checkSuccess "Private key moved to $private_key_full"
+
+    result=$(sudo mv "$ssh_dir/$(basename "$public_key_full")" "$public_key_full")
+    checkSuccess "Public key moved to $public_key_full"
+
+    result=$(sudo mv "$private_key_full.pub" "$public_key_full")
+    checkSuccess "Public key moved to $public_key_full"
 
     result=$(createTouch "${private_key_full}.txt" $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Creating the passphrase txt to private folder."
 
     result=$(echo "$ssh_passphrase" | sudo tee -a "$(basename "$private_key_full").txt" > /dev/null)
     checkSuccess "Adding the ssh_passphrase to the $(basename "$private_key_full").txt file."
-
-    result=$(sudo mv "$private_key_full.pub" "$public_key_full")
-    checkSuccess "Public key moved to $public_key_full"
 
     ssh_new_key=true
 }

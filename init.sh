@@ -127,7 +127,7 @@ initializeScript()
 		echo 'easydocker() {' >> $sudo_bashrc
 		echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
 		echo '    local path="$PWD"' >> $sudo_bashrc
-		echo '    cd /docker/install/ && chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
+		echo '    cd /docker/install/ && sudo chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
 		echo '  else' >> $sudo_bashrc
 		echo '    sudo sh -c "rm -rf /docker/install && cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run"' >> $sudo_bashrc
 		echo '  fi' >> $sudo_bashrc
