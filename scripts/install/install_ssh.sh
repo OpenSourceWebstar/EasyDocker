@@ -309,6 +309,10 @@ generateSSHSetupKeyPair()
     local public_key_path="$ssh_dir/public"
     local public_key_full="$public_key_path/$public_key_file"
 
+    # Fix permissions for SSH Directory
+    local result=$(sudo chmod 0775 "$ssh_dir" > /dev/null 2>&1)
+    checkSuccess "Updating $ssh_dir with 0775 permissions."
+
     # Check if the directory exists; if not, create it
     if [ ! -d "$private_key_path" ]; then
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $private_key_path)
