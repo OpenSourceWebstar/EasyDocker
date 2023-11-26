@@ -335,6 +335,7 @@ generateSSHSetupKeyPair()
         echo ""
         while true; do
             isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
+            echo ""
             read -p "" key_regenerate_accept
             case "$key_regenerate_accept" in
                 [Yy]*)
@@ -403,7 +404,7 @@ generateSSHKeyPair()
         local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
     fi
 
-    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "")
+    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "" | sudo tee "$ssh_dir/$(basename "$private_key_full")" > /dev/null)
     checkSuccess "New ED25519 key pair generated for $username"
 
     updateFileOwnership $ssh_dir/$(basename $private_key_full) $CFG_DOCKER_INSTALL_USER
