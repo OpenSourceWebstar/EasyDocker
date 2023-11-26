@@ -390,10 +390,14 @@ generateSSHKeyPair()
     local flag="$5"
 
     if [[ "$flag" == "reinstall" ]]; then
-        result=$(sudo rm $private_key_full)
-        checkSuccess "Deleted old private SSH key $(basename "$private_key_full")"
-        result=$(sudo rm $public_key_full)
-        checkSuccess "Deleted old public SSH key $(basename "$public_key_full")"
+        if [ -f "$private_key_full" ]; then
+            result=$(sudo rm $private_key_full)
+            checkSuccess "Deleted old private SSH key $(basename "$private_key_full")"
+        fi
+        if [ -f "$public_key_full" ]; then
+            result=$(sudo rm $public_key_full)
+            checkSuccess "Deleted old public SSH key $(basename "$public_key_full")"
+        fi
     fi
 
     if [[ "$username" == "root" ]]; then
@@ -404,18 +408,20 @@ generateSSHKeyPair()
         local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
     fi
 
-    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "" | sudo tee "$ssh_dir/$(basename "$private_key_full")" > /dev/null)
+    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "" && sudo -u $username cat "$ssh_dir/$(basename "$private_key_full").pub" | sudo tee -a "$ssh_dir/$(basename "$private_key_full")" > /dev/null)
     checkSuccess "New ED25519 key pair generated for $username"
 
-    updateFileOwnership $ssh_dir/$(basename $private_key_full) $CFG_DOCKER_INSTALL_USER
+    if [ -f "$ssh_dir/$(basename $private_key_full)" ]; then
+        updateFileOwnership $ssh_dir/$(basename $private_key_full) $CFG_DOCKER_INSTALL_USER
+        result=$(sudo mv "$ssh_dir/$(basename "$private_key_full")" "$private_key_full")
+        checkSuccess "Private key moved to $private_key_full"
+    fi
 
-    updateFileOwnership $ssh_dir/$(basename $public_key_full) $CFG_DOCKER_INSTALL_USER
-
-    result=$(sudo mv "$ssh_dir/$(basename "$private_key_full")" "$private_key_full")
-    checkSuccess "Private key moved to $private_key_full"
-
-    result=$(sudo mv "$ssh_dir/$(basename "$public_key_full")" "$public_key_full")
-    checkSuccess "Public key moved to $public_key_full"
+    if [ -f "$ssh_dir/$(basename $public_key_full)" ]; then
+        updateFileOwnership $ssh_dir/$(basename $public_key_full) $CFG_DOCKER_INSTALL_USER
+        result=$(sudo mv "$ssh_dir/$(basename "$public_key_full")" "$public_key_full")
+        checkSuccess "Public key moved to $public_key_full"
+    fi
 
     result=$(createTouch "${private_key_full}.txt" $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Creating the passphrase txt to private folder."
