@@ -289,8 +289,12 @@ checkSSHSetupKeyPair()
     local private_key_path="$ssh_dir/private"
     local private_key_full="$private_key_path/$private_key_file"
 
-    # Check if the private key file exists
-    if [ -f "$private_key_full" ]; then
+    local public_key_file="$private_key_file.pub"
+    local public_key_path="$ssh_dir/public"
+    local public_key_full="$public_key_path/$public_key_file"
+
+    # Check if both private and public key files exist
+    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ]; then
         return 0  # Key pair exists
     else
         return 1  # Key pair does not exist
@@ -323,19 +327,20 @@ generateSSHSetupKeyPair()
         checkSuccess "Creating $(basename "$public_key_path") folder"
     fi
 
-    # Check if the private keys exist
-    if [ -f "$private_key_full" ]; then
-        isNotice "ED25519 private key for $username already exists: $(basename "$private_key_full")"
+    # Check if the private and public keys exist
+    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ]; then
+        isNotice "SSH Key pair for $username already exists: $(basename "$private_key_full") / $(basename "$public_key_full")"
+        echo ""
         while true; do
-            isQuestion "Do you want to generate a new SSH Key the $username user? (y/n): "
+            isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
             read -p "" key_regenerate_accept
             case "$key_regenerate_accept" in
                 [Yy]*)
-                    generateSSHKeyPair $username $private_key_path $private_key_full $public_key_full reinstall;
+                    generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
                     break
                     ;;
                 [Nn]*)
-                    #echo "No changes were made to PermitRootLogin."
+                    # No action needed
                     break
                     ;;
                 *)
@@ -344,8 +349,33 @@ generateSSHSetupKeyPair()
             esac
         done
     else
-        generateSSHKeyPair $username $private_key_path $private_key_full $public_key_full install;
+        if [ -f "$private_key_full" ]; then
+            # Only private key exists
+            isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
+            echo ""
+            while true; do
+                isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
+                read -p "" key_regenerate_accept
+                case "$key_regenerate_accept" in
+                    [Yy]*)
+                        generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
+                        break
+                        ;;
+                    [Nn]*)
+                        # No action needed
+                        break
+                        ;;
+                    *)
+                        echo "Please enter 'y' or 'n'."
+                        ;;
+                esac
+            done
+        else
+            # No keys exist
+            generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
+        fi
     fi
+
 }
 
 generateSSHKeyPair()
@@ -403,7 +433,31 @@ disableSSHPasswords()
     isNotice "The reason we disable ssh passwords is to improve security, allowing only SSH Key logins"
     isNotice "You will still be able to log in with SSH passwords via physical/console access, just not remotely!"
     echo ""
+	# SSH Keys
+	if [[ $CFG_REQUIREMENT_SSHKEY_ROOT == "true" ]]; then
+		if checkSSHSetupKeyPair "root"; then
+			isSuccessful "The SSH Key(s) for root appears to be setup."
+		else
+			isNotice "An SSH Key for root is not found, are you sure you want to disable SSH passwords?"
+		fi
+	fi
+	if [[ $CFG_REQUIREMENT_SSHKEY_EASYDOCKER == "true" ]]; then
+		if checkSSHSetupKeyPair "$sudo_user_name"; then
+			isSuccessful "The SSH Key(s) for $sudo_user_name appears to be setup."
+		else
+			isNotice "An SSH Key for $sudo_user_name is not found, are you sure you want to disable SSH passwords?"
+		fi
+	fi
+	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
+		### For SSH Key Setup
+		if checkSSHSetupKeyPair "$CFG_DOCKER_MANAGER_USER"; then
+			isSuccessful "The SSH Key(s) for $CFG_DOCKER_MANAGER_USER appears to be setup."
+		else
+			isNotice "An SSH Key for $CFG_DOCKER_MANAGER_USER is not found, are you sure you want to disable SSH passwords?"
+		fi
+	fi
     while true; do
+        echo ""
         isQuestion "Do you want to disable SSH password logins? (y/n): "
         read -p "" disable_ssh_passwords
         case "$disable_ssh_passwords" in

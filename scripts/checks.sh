@@ -159,26 +159,29 @@ checkRequirements()
 		fi
 	fi
 
+	# SSH Keys
 	if [[ $CFG_REQUIREMENT_SSHKEY_ROOT == "true" ]]; then
 		### For SSH Key Setup
 		if checkSSHSetupKeyPair "root"; then
-			isSuccessful "The SSH Key for root appears to be setup."
+			isSuccessful "The SSH Key(s) for root appears to be setup."
 		else
 			isNotice "An SSH Key for root is not setup."
 			((preinstallneeded++))
 		fi
-	elif [[ $CFG_REQUIREMENT_SSHKEY_SUDO_USER == "true" ]]; then
+	fi
+	if [[ $CFG_REQUIREMENT_SSHKEY_EASYDOCKER == "true" ]]; then
 		### For SSH Key Setup
 		if checkSSHSetupKeyPair "$sudo_user_name"; then
-			isSuccessful "The SSH Key for $sudo_user_name appears to be setup."
+			isSuccessful "The SSH Key(s) for $sudo_user_name appears to be setup."
 		else
 			isNotice "An SSH Key for $sudo_user_name is not setup."
 			((preinstallneeded++))
 		fi
-	elif [[ $CFG_REQUIREMENT_SSHKEY_DOCKER_MANAGER == "true" ]]; then
+	fi
+	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
 		### For SSH Key Setup
 		if checkSSHSetupKeyPair "$CFG_DOCKER_MANAGER_USER"; then
-			isSuccessful "The SSH Key for $CFG_DOCKER_MANAGER_USER appears to be setup."
+			isSuccessful "The SSH Key(s) for $CFG_DOCKER_MANAGER_USER appears to be setup."
 		else
 			isNotice "An SSH Key for $CFG_DOCKER_MANAGER_USER is not setup."
 			((preinstallneeded++))
