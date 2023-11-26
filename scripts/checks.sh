@@ -180,10 +180,10 @@ checkRequirements()
 	fi
 	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
 		### For SSH Key Setup
-		if checkSSHSetupKeyPair "$CFG_DOCKER_MANAGER_USER"; then
-			isSuccessful "The SSH Key(s) for $CFG_DOCKER_MANAGER_USER appears to be setup."
+		if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
+			isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be setup."
 		else
-			isNotice "An SSH Key for $CFG_DOCKER_MANAGER_USER is not setup."
+			isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not setup."
 			((preinstallneeded++))
 		fi
 	fi

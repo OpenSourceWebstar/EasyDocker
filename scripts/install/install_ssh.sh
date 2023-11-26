@@ -261,6 +261,10 @@ installSSHKeysForDownload()
 
     ssh_new_key="false"
 
+    # Fix permissions for SSH Directory
+    local result=$(sudo chmod 0775 "$ssh_dir" > /dev/null 2>&1)
+    checkSuccess "Updating $ssh_dir with 0775 permissions."
+    
     # Check if SSH Keys are enabled
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
         generateSSHSetupKeyPair "root" $flag
@@ -314,10 +318,6 @@ generateSSHSetupKeyPair()
     local public_key_file="$private_key_file.pub"
     local public_key_path="$ssh_dir/public"
     local public_key_full="$public_key_path/$public_key_file"
-
-    # Fix permissions for SSH Directory
-    local result=$(sudo chmod 0775 "$ssh_dir" > /dev/null 2>&1)
-    checkSuccess "Updating $ssh_dir with 0775 permissions."
 
     # Check if the directory exists; if not, create it
     if [ ! -d "$private_key_path" ]; then
@@ -403,9 +403,9 @@ generateSSHKeyPair()
     if [[ "$username" == "root" ]]; then
         local ssh_passphrase=$CFG_SSHKEY_PASSPHRASE_ROOT
     elif [[ "$username" == "$sudo_user_name" ]]; then
-        local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_EASYDOCKER
+        local ssh_passphrase=$CFG_SSHKEY_PASSPHRASE_ROOT
     elif [[ "$username" == "$CFG_DOCKER_INSTALL_USER" ]]; then
-        local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
+        local ssh_passphrase=$CFG_SSHKEY_PASSPHRASE_DOCKERINSTALL
     fi
 
     result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username sudo ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "" && sudo -u $username cat "$ssh_dir/$(basename "$private_key_full").pub" | sudo tee -a "$ssh_dir/$(basename "$private_key_full")" > /dev/null)
@@ -459,10 +459,10 @@ disableSSHPasswords()
 	fi
 	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
 		### For SSH Key Setup
-		if checkSSHSetupKeyPair "$CFG_DOCKER_MANAGER_USER"; then
-			isSuccessful "The SSH Key(s) for $CFG_DOCKER_MANAGER_USER appears to be setup."
+		if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
+			isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be setup."
 		else
-			isNotice "An SSH Key for $CFG_DOCKER_MANAGER_USER is not found, are you sure you want to disable SSH passwords?"
+			isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not found, are you sure you want to disable SSH passwords?"
 		fi
 	fi
     while true; do
