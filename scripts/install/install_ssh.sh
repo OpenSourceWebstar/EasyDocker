@@ -380,9 +380,6 @@ generateSSHKeyPair()
     result=$(sudo mv "$ssh_dir/$(basename "$public_key_full")" "$public_key_full")
     checkSuccess "Public key moved to $public_key_full"
 
-    result=$(sudo mv "$private_key_full.pub" "$public_key_full")
-    checkSuccess "Public key moved to $public_key_full"
-
     result=$(createTouch "${private_key_full}.txt" $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Creating the passphrase txt to private folder."
 
