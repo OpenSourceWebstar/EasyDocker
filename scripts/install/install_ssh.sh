@@ -252,6 +252,12 @@ updateSSHPermissions()
 
 installSSHKeysForDownload()
 {
+    echo ""
+    echo "############################################"
+    echo "######        SSH Key Install         ######"
+    echo "############################################"
+    echo ""
+
     ssh_new_key="false"
 
     # Check if SSH Keys are enabled
@@ -361,7 +367,7 @@ generateSSHKeyPair()
         local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
     fi
 
-    result=$(sudo -u $username ssh-keygen -t ed25519 -f "$private_key_path" -C "$CFG_EMAIL" -N "$ssh_passphrase")
+    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$private_key_path" -C "$CFG_EMAIL" -N "")
     checkSuccess "New ED25519 key pair generated for $username"
 
     result=$(createTouch "$migrate_file_path" $CFG_DOCKER_INSTALL_USER)
