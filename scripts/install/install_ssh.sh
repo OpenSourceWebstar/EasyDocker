@@ -320,8 +320,8 @@ generateSSHSetupKeyPair()
     fi
 
     # Check if the private keys exist
-    if [ -f "$private_key_path" ]; then
-        isNotice "ED25519 private key for $username already exists: $private_key_path"
+    if [ -f "$private_key_full" ]; then
+        isNotice "ED25519 private key for $username already exists: $(basename "$private_key_full")"
         while true; do
             isQuestion "Do you want to generate a new SSH Key the $username user? (y/n): "
             read -p "" key_regenerate_accept
@@ -367,10 +367,10 @@ generateSSHKeyPair()
         local ssh_passphrase=$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL
     fi
 
-    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$private_key_path" -C "$CFG_EMAIL" -N "")
+    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username ssh-keygen -t ed25519 -f "$private_key_full" -C "$CFG_EMAIL" -N "")
     checkSuccess "New ED25519 key pair generated for $username"
 
-    result=$(createTouch "$migrate_file_path" $CFG_DOCKER_INSTALL_USER)
+    result=$(createTouch "${private_key_full}.txt" $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Creating the passphrase txt to private folder."
 
     result=$(echo "$ssh_passphrase" | sudo tee -a "$(basename "$private_key_full").txt" > /dev/null)
