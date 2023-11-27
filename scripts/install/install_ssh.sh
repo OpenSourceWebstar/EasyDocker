@@ -408,7 +408,7 @@ generateSSHKeyPair()
         local ssh_passphrase=$CFG_SSHKEY_PASSPHRASE_DOCKERINSTALL
     fi
 
-    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username sudo ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "" && sudo -u $username cat "$ssh_dir/$(basename "$private_key_full").pub" | sudo tee -a "$ssh_dir/$(basename "$private_key_full")" > /dev/null)
+    result=$(echo -e "$ssh_passphrase\n$ssh_passphrase" | sudo -u $username sudo -n /usr/bin/ssh-keygen -t ed25519 -f "$ssh_dir/$(basename "$private_key_full")" -C "$CFG_EMAIL" -N "" && sudo -u $username cat "$ssh_dir/$(basename "$private_key_full").pub" | sudo tee -a "$ssh_dir/$(basename "$private_key_full")" > /dev/null)
     checkSuccess "New ED25519 key pair generated for $username"
 
     if [ -f "$ssh_dir/$(basename $private_key_full)" ]; then
