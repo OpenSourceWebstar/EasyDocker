@@ -352,7 +352,7 @@ generateSSHSetupKeyPair()
             esac
         done
     else
-        if [ -f "$private_key_full" ]; then
+        if [ -f "$public_key_full" ]; then
             # Only private key exists
             isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
             echo ""
