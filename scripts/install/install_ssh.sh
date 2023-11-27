@@ -264,7 +264,9 @@ installSSHKeysForDownload()
     # Fix permissions for SSH Directory
     local result=$(sudo chmod 0775 "$ssh_dir" > /dev/null 2>&1)
     checkSuccess "Updating $ssh_dir with 0775 permissions."
-    
+    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$ssh_dir" > /dev/null 2>&1)
+    checkSuccess "Updating $ssh_dir with $CFG_DOCKER_INSTALL_USER ownership."
+
     # Check if SSH Keys are enabled
     if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
         generateSSHSetupKeyPair "root" $flag
