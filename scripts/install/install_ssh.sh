@@ -293,11 +293,11 @@ checkSSHSetupKeyPair()
     local username="$1"
 
     local private_key_file="id_ed25519_$username"
-    local private_key_path="$ssh_dir/private"
+    local private_key_path="${ssh_dir}private"
     local private_key_full="$private_key_path/$private_key_file"
 
     local public_key_file="$private_key_file.pub"
-    local public_key_path="$ssh_dir/public"
+    local public_key_path="${ssh_dir}public"
     local public_key_full="$public_key_path/$public_key_file"
 
     # Check if both private and public key files exist
@@ -314,12 +314,14 @@ generateSSHSetupKeyPair()
     local flag="$2"
 
     local private_key_file="id_ed25519_$username"
-    local private_key_path="$ssh_dir/private"
+    local private_key_path="${ssh_dir}private"
     local private_key_full="$private_key_path/$private_key_file"
 
     local public_key_file="$private_key_file.pub"
-    local public_key_path="$ssh_dir/public"
+    local public_key_path="${ssh_dir}public"
     local public_key_full="$public_key_path/$public_key_file"
+
+    local ssh_should_setup=false
 
     # Check if the directory exists; if not, create it
     if [ ! -d "$private_key_path" ]; then
@@ -332,7 +334,8 @@ generateSSHSetupKeyPair()
     fi
 
     # Check if the private and public keys exist
-    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ] && [ "$flag" != "install" ]; then
+    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ] && [[ "$flag" != "install" ]]; then
+        local ssh_should_setup=true
         echo ""
         isNotice "SSH Key pair for $username already exists: $(basename "$private_key_full") / $(basename "$public_key_full")"
         echo ""
@@ -354,33 +357,35 @@ generateSSHSetupKeyPair()
                     ;;
             esac
         done
-    else
-        if [ -f "$public_key_full" ] && [ -s "$public_key_full" ]; then
-            # Only private key exists
-            echo ""
-            isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
-            echo ""
-            while true; do
-                isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
-                read -p "" key_regenerate_accept
-                case "$key_regenerate_accept" in
-                    [Yy]*)
-                        generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
-                        break
-                        ;;
-                    [Nn]*)
-                        # No action needed
-                        break
-                        ;;
-                    *)
-                        echo "Please enter 'y' or 'n'."
-                        ;;
-                esac
-            done
-        else
-            # No keys exist
-            generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
-        fi
+    fi
+
+    # If public key does not exist
+    if [ -f "$public_key_full" ] && [[ "$ssh_should_setup" == "false" ]]; then
+        local ssh_should_setup=true
+        echo ""
+        isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
+        echo ""
+        while true; do
+            isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
+            read -p "" key_regenerate_accept
+            case "$key_regenerate_accept" in
+                [Yy]*)
+                    generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
+                    break
+                    ;;
+                [Nn]*)
+                    # No action needed
+                    break
+                    ;;
+                *)
+                    echo "Please enter 'y' or 'n'."
+                    ;;
+            esac
+        done
+    fi
+
+    if [[ "$ssh_should_setup" == "false" ]]; then
+        generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
     fi
 }
 
