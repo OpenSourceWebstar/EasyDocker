@@ -448,6 +448,7 @@ generateSSHKeyPair()
 
 disableSSHPasswords()
 {
+    echo ""
     isNotice "!!!!!!!!!!!!!!!! ***PROCEED WITH CAUTION*** !!!!!!!!!!!!!!!"
     echo ""
     isNotice "You are about to disable SSH Passwords Potentially blocking you out of your system!!!!"
@@ -514,6 +515,8 @@ disableSSHPasswords()
                     ;;
             esac
         done
+    else
+        disableSSHPasswordFunction;
     fi
 }
 
