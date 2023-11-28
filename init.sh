@@ -42,7 +42,9 @@ initializeScript()
 		exit 1
 	fi
 
-	#virtualminQuestions;
+	if [[ "$param1" == "virtualmin" ]]; then
+		virtualminQuestions;
+	fi
 
 	echo ""
 	echo "####################################################"
@@ -53,7 +55,9 @@ initializeScript()
 	sudo apt-get update
 	sudo apt-get dist-upgrade -y
 
-	#virtualminEdits;
+	if [[ "$param1" == "virtualmin" ]]; then
+		virtualminEdits;
+	fi
 
 	echo "SUCCESS: OS Updated"
 
@@ -136,7 +140,10 @@ initializeScript()
 	else
 		echo "SUCCESS: easydocker command already installed."
 	fi
-	#virtualminReinstall;
+
+	if [[ "$param1" == "virtualmin" ]]; then
+		virtualminReinstall;
+	fi
 
 	completeInitMessage $sudo_user_name;
 }
@@ -337,6 +344,6 @@ completeInitMessage()
 	exit
 }
 
-if [ "$param1" == "run" ]; then
+if [ "$param1" == "run" ] || [ "$param1" == "virtualmin" ]; then
 	initializeScript;
 fi
