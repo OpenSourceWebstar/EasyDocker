@@ -360,7 +360,7 @@ generateSSHSetupKeyPair()
     fi
 
     # If public key does not exist
-    if [ -f "$public_key_full" ] && [[ "$ssh_should_setup" == "false" ]]; then
+    if [ ! -f "$public_key_full" ] && [[ "$ssh_should_setup" == "false" ]]; then
         local ssh_should_setup=true
         echo ""
         isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
