@@ -161,7 +161,6 @@ checkRequirements()
 
 	# SSH Keys
 	if [[ $CFG_REQUIREMENT_SSHKEY_ROOT == "true" ]]; then
-		### For SSH Key Setup
 		if checkSSHSetupKeyPair "root"; then
 			isSuccessful "The SSH Key(s) for root appears to be setup."
 		else
@@ -170,7 +169,6 @@ checkRequirements()
 		fi
 	fi
 	if [[ $CFG_REQUIREMENT_SSHKEY_EASYDOCKER == "true" ]]; then
-		### For SSH Key Setup
 		if checkSSHSetupKeyPair "$sudo_user_name"; then
 			isSuccessful "The SSH Key(s) for $sudo_user_name appears to be setup."
 		else
@@ -179,11 +177,18 @@ checkRequirements()
 		fi
 	fi
 	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
-		### For SSH Key Setup
 		if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
 			isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be setup."
 		else
 			isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not setup."
+			((preinstallneeded++))
+		fi
+	fi
+	if [[ $CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS == "true" ]]; then
+		if grep -q "PasswordAuthentication no" /etc/ssh/sshd_config; then
+			isSuccessful "SSH Password appears to be disabled."
+		else
+			isNotice "Password Authentication has not been disabled."
 			((preinstallneeded++))
 		fi
 	fi

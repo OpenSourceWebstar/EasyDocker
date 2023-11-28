@@ -452,69 +452,116 @@ disableSSHPasswords()
     isNotice "The reason we disable ssh passwords is to improve security, allowing only SSH Key logins"
     isNotice "You will still be able to log in with SSH passwords via physical/console access, just not remotely!"
     echo ""
-	# SSH Keys
-	if [[ $CFG_REQUIREMENT_SSHKEY_ROOT == "true" ]]; then
-		if checkSSHSetupKeyPair "root"; then
-			isSuccessful "The SSH Key(s) for root appears to be setup."
-		else
-			isNotice "An SSH Key for root is not found, are you sure you want to disable SSH passwords?"
-		fi
-	fi
-	if [[ $CFG_REQUIREMENT_SSHKEY_EASYDOCKER == "true" ]]; then
-		if checkSSHSetupKeyPair "$sudo_user_name"; then
-			isSuccessful "The SSH Key(s) for $sudo_user_name appears to be setup."
-		else
-			isNotice "An SSH Key for $sudo_user_name is not found, are you sure you want to disable SSH passwords?"
-		fi
-	fi
-	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
-		### For SSH Key Setup
-		if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
-			isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be setup."
-		else
-			isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not found, are you sure you want to disable SSH passwords?"
-		fi
-	fi
-    while true; do
+    # Define an array to store users without SSH keys
+    users_without_keys=()
+
+    # SSH Keys
+    if [[ $CFG_REQUIREMENT_SSHKEY_ROOT == "true" ]]; then
+        if checkSSHSetupKeyPair "root"; then
+            isSuccessful "The SSH Key(s) for root appears to be set up."
+        else
+            isNotice "An SSH Key for root is not found, are you sure you want to disable SSH passwords?"
+            users_without_keys+=("root")
+        fi
+    fi
+
+    if [[ $CFG_REQUIREMENT_SSHKEY_EASYDOCKER == "true" ]]; then
+        if checkSSHSetupKeyPair "$sudo_user_name"; then
+            isSuccessful "The SSH Key(s) for $sudo_user_name appears to be set up."
+        else
+            isNotice "An SSH Key for $sudo_user_name is not found, are you sure you want to disable SSH passwords?"
+            users_without_keys+=("$sudo_user_name")
+        fi
+    fi
+
+    if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
+        ### For SSH Key Setup
+        if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
+            isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be set up."
+        else
+            isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not found, are you sure you want to disable SSH passwords?"
+            users_without_keys+=("$CFG_DOCKER_INSTALL_USER")
+        fi
+    fi
+
+    # Display the list of users without SSH keys
+    if [ ${#users_without_keys[@]} -gt 0 ]; then
         echo ""
-        isQuestion "Do you want to disable SSH password logins? (y/n): "
-        read -p "" disable_ssh_passwords
-        case "$disable_ssh_passwords" in
-            [Yy]*)
-                local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"
-                result=$(cp /etc/ssh/sshd_config "$backup_file")
-                checkSuccess "Backup sshd_config file"
+        isNotice "SSH Key(s) were missing for the following users:"
+        isNotice "Missing Users: ${users_without_keys[@]}"
+        echo ""
+        while true; do
+            isQuestion "Do you want to install (i) the missing SSH keys or (c) continue or (x) to exit? (i/c/x): "
+            read -p "" disable_ssh_passwords
+            case "$disable_ssh_passwords" in
+                [iI]*)
+                    installSSHKeysForDownload install;
+                    break
+                    ;;
+                [cC]*)
+                    disableSSHPasswordFunction;
+                    break
+                    ;;
+                [xX]*)
+                    break
+                    ;;
+                *)
+                    echo "Please enter 'y' or 'n'."
+                    ;;
+            esac
+        done
+    fi
+}
 
-                result=$(sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config)
-                checkSuccess "Removing existing PasswordAuthentication lines"
+disableSSHPasswordFunction()
+{
+    if [[ $CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS == "true" ]]; then
+        # Check if already disabled
+        if grep -q "PasswordAuthentication no" /etc/ssh/sshd_config; then
+            isSuccessful "Password Authentication is already disabled."
+        else
+            while true; do
+                echo ""
+                isQuestion "Do you want to disable SSH password logins? (y/n): "
+                read -p "" disable_ssh_passwords
+                case "$disable_ssh_passwords" in
+                    [Yy]*)
+                        local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"
+                        result=$(cp /etc/ssh/sshd_config "$backup_file")
+                        checkSuccess "Backup sshd_config file"
 
-                result=$(echo "PasswordAuthentication no" >> /etc/ssh/sshd_config)
-                checkSuccess "Add new PasswordAuthentication line at the end of sshd_config"
+                        result=$(sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config)
+                        checkSuccess "Removing existing PasswordAuthentication lines"
 
-                result=$(systemctl restart sshd)
-                checkSuccess "Restart SSH service"
-                break
-                ;;
-            [Nn]*)
-                while true; do
-                    isQuestion "Do you want to stop being asked to disable SSH Password logins? (y/n): "
-                    read -rp "" sshdisablepasswordask
-                    if [[ "$sshdisablepasswordask" =~ ^[yYnN]$ ]]; then
+                        result=$(echo "PasswordAuthentication no" >> /etc/ssh/sshd_config)
+                        checkSuccess "Add new PasswordAuthentication line at the end of sshd_config"
+
+                        result=$(systemctl restart sshd)
+                        checkSuccess "Restart SSH service"
                         break
-                    fi
-                    isNotice "Please provide a valid input (y/n)."
-                done
-                if [[ "$sshdisablepasswordask" == [yY] ]]; then
-                    local config_file="$configs_dir$config_file_requirements"
-                    result=$(sudo sed -i 's/CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS=true/CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS=false/' $config_file)
-                    checkSuccess "Disabled CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS in the $config_file_requirements config."
-                    source $config_file
-                fi
-                break
-                ;;
-            *)
-                echo "Please enter 'y' or 'n'."
-                ;;
-        esac
-    done
+                        ;;
+                    [Nn]*)
+                        while true; do
+                            isQuestion "Do you want to stop being asked to disable SSH Password logins? (y/n): "
+                            read -rp "" sshdisablepasswordask
+                            if [[ "$sshdisablepasswordask" =~ ^[yYnN]$ ]]; then
+                                break
+                            fi
+                            isNotice "Please provide a valid input (y/n)."
+                        done
+                        if [[ "$sshdisablepasswordask" == [yY] ]]; then
+                            local config_file="$configs_dir$config_file_requirements"
+                            result=$(sudo sed -i 's/CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS=true/CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS=false/' $config_file)
+                            checkSuccess "Disabled CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS in the $config_file_requirements config."
+                            source $config_file
+                        fi
+                        break
+                        ;;
+                    *)
+                        echo "Please enter 'y' or 'n'."
+                        ;;
+                esac
+            done
+        fi
+    fi
 }
