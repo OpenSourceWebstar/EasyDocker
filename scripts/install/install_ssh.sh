@@ -384,7 +384,7 @@ generateSSHSetupKeyPair()
         done
     fi
 
-    if [[ "$ssh_should_setup" == "false" ]]; then
+    if [ ! -f "$private_key_full" ] && [ -f "$public_key_full" ] && [[ "$ssh_should_setup" == "false" ]]; then
         generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
     fi
 }
