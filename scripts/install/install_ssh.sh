@@ -332,7 +332,7 @@ generateSSHSetupKeyPair()
     fi
 
     # Check if the private and public keys exist
-    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ] && [ $flag != "install" ]; then
+    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ] && [ "$flag" != "install" ]; then
         echo ""
         isNotice "SSH Key pair for $username already exists: $(basename "$private_key_full") / $(basename "$public_key_full")"
         echo ""
@@ -355,7 +355,7 @@ generateSSHSetupKeyPair()
             esac
         done
     else
-        if [ -f "$public_key_full" ]; then
+        if [ -f "$public_key_full" ] && [ -s "$public_key_full" ]; then
             # Only private key exists
             echo ""
             isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
@@ -382,7 +382,6 @@ generateSSHSetupKeyPair()
             generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
         fi
     fi
-
 }
 
 generateSSHKeyPair()
