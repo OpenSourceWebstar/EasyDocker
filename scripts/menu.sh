@@ -286,6 +286,54 @@ mainMenu()
 	done
 }
 
+menuShowFinalMessages()
+{
+	menuLoginRequired;
+	menuPublic;
+	menuContinue;
+}
+
+menuLoginRequired()
+{
+	if [[ "$login_required" == "true" ]]; then
+		echo ""
+		echo "    Authentication is setup for $app_name."
+		echo ""
+		echo "    Your login username is : $CFG_LOGIN_USER"
+		echo "    Your password is : $CFG_LOGIN_PASS"
+		echo ""
+		echo "    (you always find them in the EasyDocker general config under CFG_LOGIN_USER/PASS)"
+	fi
+	echo ""
+}
+
+menuPublic()
+{
+	if [[ "$public" == "true" ]]; then
+		echo "    Public : https://$host_setup/"
+	fi
+	echo "    External : http://$public_ip:$usedport1/"
+	echo "    Local : http://$ip_setup:$usedport1/"
+	echo ""
+}
+
+menuContinue()
+{
+	if [[ "$public" == "CFG_REQUIREMENT_CONTINUE_PROMPT" ]]; then
+		while true; do
+			isQuestion "Press Enter to continue or press (d) to disable being asked to continue after an app installs."
+			read -p "" app_installed_continue
+			if [[ -n "$app_installed_continue" ]]; then
+				break
+			fi
+			isNotice "Please provide a valid input."
+		done
+		if [[ "$app_installed_continue" == [dD] ]]; then
+			disableApplicationContinuePrompt;
+		fi
+	fi
+}
+
 scanCategory() 
 {
     local category="$1"

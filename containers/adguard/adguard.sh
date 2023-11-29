@@ -165,10 +165,8 @@ installAdguard()
         echo ""
         echo "    NOTICE : Below are the URLs for the admin panel to use after you have setup Adguard"
         echo ""
-        echo "    Public : https://$host_setup/"
-        echo "    External : http://$public_ip:$usedport2/"
-        echo "    Local : http://$ip_setup:$usedport2/"
-        echo ""
+        
+        menuShowFinalMessages;
 
 		menu_number=0
         sleep 3s
