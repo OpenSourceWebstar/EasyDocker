@@ -25,6 +25,10 @@ startUp()
     if [[ "$sshdownload_status" == "installed" ]]; then
         while true; do
             echo ""
+            echo "##########################################"
+            echo "###        SSH SECURITY WARNING        ###"
+            echo "##########################################"
+            echo ""
             isNotice "The SSH Download download service is currently online."
             isNotice "This is potentially DANGEROUS as it's accessable via anyone on the VPN"
             isNotice "We highly recommend uninstalling this service after downloading the SSH keys"
