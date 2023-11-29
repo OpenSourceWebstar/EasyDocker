@@ -329,7 +329,10 @@ menuContinue()
 			isNotice "Please provide a valid input."
 		done
 		if [[ "$app_installed_continue" == [dD] ]]; then
-			disableApplicationContinuePrompt;
+			local config_file="$configs_dir$config_file_requirements"
+			result=$(sudo sed -i 's/CFG_REQUIREMENT_CONTINUE_PROMPT=true/CFG_REQUIREMENT_CONTINUE_PROMPT=false/' $config_file)
+			checkSuccess "Disabled CFG_REQUIREMENT_CONTINUE_PROMPT in the $config_file_requirements config."
+			source $config_file
 		fi
 	fi
 }
