@@ -437,10 +437,10 @@ generateSSHKeyPair()
         checkSuccess "Public key moved to $public_key_full"
     fi
 
-    result=$(createTouch "${private_key_full}.txt" $CFG_DOCKER_INSTALL_USER)
+    result=$(createTouch "$ssh_dir/private/$(basename $private_key_full)" $CFG_DOCKER_INSTALL_USER)
     checkSuccess "Creating the passphrase txt to private folder."
 
-    result=$(echo "$ssh_passphrase" | sudo tee -a "$(basename "$private_key_full").txt" > /dev/null)
+    result=$(echo "$ssh_passphrase" | sudo tee -a "$ssh_dir/private/$(basename $private_key_full)" > /dev/null)
     checkSuccess "Adding the ssh_passphrase to the $(basename "$private_key_full").txt file."
 
     ssh_new_key=true

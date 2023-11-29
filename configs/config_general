@@ -13,7 +13,7 @@ CFG_DOCKER_INSTALL_USER=dockerinstall
 CFG_DOCKER_INSTALL_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 
 # User/Pass for Logging into an application if LOGIN_REQUIRED=true
-CFG_LOGIN_USER=RANDOMIZEDPASSWORD # This will be generated, no need to edit
+CFG_LOGIN_USER=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 CFG_LOGIN_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 
 # Network

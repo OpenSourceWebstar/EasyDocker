@@ -109,11 +109,12 @@ installSshdownload()
         echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
-        echo "    Your SSH Key(s) are available to download using the link below."
+        isNotice "Your SSH Key(s) are available to download using the link below."
         echo ""
         echo "    URL : http://$ip_setup/"
         echo ""
-
+        isNotice "TIP - Public SSH Keys are stored at /docker/ssh/public/"
+        echo ""
         while true; do
             isQuestion "Have you followed the instructions above? (y/n): "
             read -p "" sshdownload_instructions
@@ -131,11 +132,12 @@ installSshdownload()
 
         uninstallApp $app_name;
 
+		((menu_number++))
         echo ""
         echo "---- $menu_number. Outro Message."
         echo ""
-        echo "    The service has been destroyed for safety reasons"
-        echo "    You can reinstall this service at anytime in the System install menu under the sshinstall option."
+        isNotice "The service has been destroyed for safety reasons"
+        isNotice "You can reinstall this service at anytime in the System install menu under the sshinstall option."
         echo ""
 
         if [[ "$CFG_REQUIREMENT_CONTINUE_PROMPT" == "true" ]]; then
