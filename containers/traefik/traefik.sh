@@ -71,7 +71,7 @@ installTraefik()
         setupComposeFile $app_name;
 		
         # Create necessary directories and set permissions
-        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic")
+        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic" "$containers_dir$app_name/etc/dynamic/middlewears")
         checkSuccess "Created etc and certs & dynamic Directories"
 
         # Create and secure the acme.json file
@@ -94,12 +94,6 @@ installTraefik()
         local result=$(copyResource "$app_name" "config.yml" "etc/dynamic")
         checkSuccess "Copy Traefik Dynamic config.yml configuration file for $app_name"
 
-        # Setup BasicAuth credentials
-        local password_hash=$(htpasswd -Bbn "$CFG_TRAEFIK_DASHBOARD_USER" "$CFG_TRAEFIK_DASHBOARD_PASS")
-        # Update the YAML file in place
-        local result=$(sudo sed -E -i "0,/^\s*- /{s|^\s*- .*|          - \"$password_hash\"|}" "$containers_dir/$app_name/etc/dynamic/config.yml")
-        checkSuccess "Configured config.yml with BasicAuth credentials for user: $CFG_TRAEFIK_DASHBOARD_USER"
-
         # Setup Error 404 Website
         local result=$(sudo sed -i "s|ERRORWEBSITE|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/dynamic/config.yml")
         checkSuccess "Configured Traefik error website with URL: $CFG_TRAEFIK_404_SITE for $app_name"
@@ -109,6 +103,11 @@ installTraefik()
         # Dynamic whitelist.yml File
         local result=$(copyResource "$app_name" "whitelist.yml" "etc/dynamic")
         checkSuccess "Copy Traefik Dynamic whitelist.yml configuration file for $app_name"
+
+        # Middlewears
+        # Dynamic protectionauth.yml File
+        local result=$(copyResource "$app_name" "protectionauth.yml" "etc/dynamic/middlewears")
+        checkSuccess "Copy Traefik Dynamic protectionauth.yml configuration file for $app_name"
 
         dockerUpdateTraefikWhitelist;
 

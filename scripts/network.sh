@@ -16,6 +16,7 @@ setupInstallVariables()
     domain_number_var="CFG_${app_name^^}_DOMAIN_NUMBER"
     public_var="CFG_${app_name^^}_PUBLIC"
     whitelist_var="CFG_${app_name^^}_WHITELIST"
+    login_required_var="CFG_${app_name^^}_LOGIN_REQUIRED"
     authelia_var="CFG_${app_name^^}_AUTHELIA"
     headscale_var="CFG_${app_name^^}_headscale"
 
@@ -25,6 +26,7 @@ setupInstallVariables()
     domain_number="${!domain_number_var}"
     public="${!public_var}"
     whitelist="${!whitelist_var}"
+    login_required="${!login_required_var}"
     authelia_setup="${!authelia_var}"
     headscale_setup="${!authelia_var}"
 
@@ -37,6 +39,9 @@ setupInstallVariables()
     fi
     if [ "$whitelist" == "" ]; then
         whitelist=false
+    fi
+    if [ "$login_required" == "" ]; then
+        login_required=false
     fi
     if [ "$public" == "" ]; then
         public=false

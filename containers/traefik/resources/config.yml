@@ -1,12 +1,6 @@
 # Helpful video https://www.youtube.com/watch?v=liV3c9m_OX8
 http:
   middlewares:
-    # A basic authentification middleware, to protect the Traefik dashboard to anyone except myself
-    # Use with traefik.http.routers.myRouter.middlewares: "traefikAuth@file"
-    traefikAuth:
-      basicAuth:
-        users:
-          - "TRAEFIKUSER:TRAEFIKPASS"
     # Add automatically some security headers
     # Use with traefik.http.routers.myRouter.middlewares: "default-security-headers@file"
     default-security-headers:

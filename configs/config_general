@@ -12,6 +12,10 @@ CFG_DOMAIN_3=
 CFG_DOCKER_INSTALL_USER=dockerinstall
 CFG_DOCKER_INSTALL_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 
+# User/Pass for Logging into an application if LOGIN_REQUIRED=true
+CFG_LOGIN_USER=RANDOMIZEDPASSWORD # This will be generated, no need to edit
+CFG_LOGIN_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+
 # Network
 CFG_NETWORK_NAME=vpn
 CFG_NETWORK_SUBNET=10.8.1.0/24
@@ -19,17 +23,12 @@ CFG_DNS_SERVER_1=9.9.9.9
 CFG_DNS_SERVER_2=9.9.9.11
 # Examples for below :
 # 1.2.3.4,2.3.4.5
-#
 CFG_IPS_WHITELIST=HOSTIPHERE
-CFG_IPS_SSH_SETUP=
-# SSH Keys
-CFG_SSHKEY_PASSPHRASE_ROOT=RANDOMIZEDPASSWORD
-CFG_SSHKEY_PASSPHRASE_EASYDOCKER=RANDOMIZEDPASSWORD
-CFG_SSHKEY_PASSPHRASE_DOCKERINSTALL=RANDOMIZEDPASSWORD
-# Headscale
-CFG_HEADSCALE_HOST=
-CFG_HEADSCALE_KEY=
 
+# SSH Keys
+CFG_SSHKEY_PASSPHRASE_ROOT=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_SSHKEY_PASSPHRASE_EASYDOCKER=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_SSHKEY_PASSPHRASE_DOCKERINSTALL=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 
 
 # Only edit below if you know what you are doing
@@ -38,7 +37,14 @@ CFG_SWAPFILE_SIZE=2G
 CFG_GENERATED_PASS_LENGTH=26
 CFG_UFW_LOGGING=off
 
+# Unused/Unfinished
 # Docker Manager (Used for remote access)
 # Not recommended to change the dockermanager username as it may cause issues with ssh transfer
 CFG_DOCKER_MANAGER_USER=dockermanager
 CFG_DOCKER_MANAGER_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+
+CFG_IPS_SSH_SETUP=
+
+# Headscale
+CFG_HEADSCALE_HOST=
+CFG_HEADSCALE_KEY=

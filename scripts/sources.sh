@@ -14,6 +14,7 @@ files_to_source=(
     "scripts/functions.sh"
     "scripts/update.sh"
     "scripts/docker.sh"
+    "scripts/traefik.sh"
     "scripts/configs.sh"
     "scripts/logs.sh"
     "scripts/permissions.sh"

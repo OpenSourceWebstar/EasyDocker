@@ -12,6 +12,18 @@ ____ ____ ____ _   _    ___  ____ ____ _  _ ____ ____
 |___ |  | ___]   |      |__/ |__| |___ | \_ |___ |  \ "
 }
 
+# Used to load any functions after update
+startUp()
+{
+    installDockerUser;
+    scanConfigsForRandomPassword;
+	local traefik_status=$(checkAppInstalled "traefik" "docker")
+    if [[ "$traefik_status" == "installed" ]] then;
+        traefikSetupLoginCredentials;
+    fi
+    checkRequirements;
+}
+
 startPreInstall()
 {
 	# Disable Input

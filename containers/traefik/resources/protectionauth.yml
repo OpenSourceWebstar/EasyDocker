@@ -1,0 +1,8 @@
+http:
+  middlewares:
+    # A basic authentification middleware, to protect the e.g Traefik dashboard to anyone except myself
+    # Use with traefik.http.routers.myRouter.middlewares: "protectionAuth@file"
+    protectionAuth:
+      basicAuth:
+        users:
+          - "PROTECTUSER:PROTECTPASS"
