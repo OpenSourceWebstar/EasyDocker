@@ -111,7 +111,7 @@ installSshdownload()
         echo ""
         echo "    Your SSH Key(s) are available to download using the link below."
         echo ""
-        echo "    URL : http://$ip_setup:$usedport1/"
+        echo "    URL : http://$ip_setup/"
         echo ""
 
         while true; do
