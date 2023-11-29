@@ -82,10 +82,13 @@ setupTraefikLabels()
 
 traefikSetupLoginCredentials()
 {
-    # Setup BasicAuth credentials
-    local password_hash=$(htpasswd -Bbn "$CFG_LOGIN_USER" "$CFG_LOGIN_PASS")
+	local protectionauth_file="$containers_dir/traefik/etc/dynamic/middlewears/protectionauth.yml"
+    if [ -f "$protectionauth_file" ]; then
+		# Setup BasicAuth credentials
+		local password_hash=$(htpasswd -Bbn "$CFG_LOGIN_USER" "$CFG_LOGIN_PASS")
 
-    # Update the YAML file in place
-    local result=$(sudo sed -E -i "0,/^\s*- /{s|^\s*- .*|          - \"$password_hash\"|}" "$containers_dir/traefik/etc/dynamic/middlewears/protectionauth.yml")
-    checkSuccess "Configured Traefik config with Login user/pass data for login protection."
+		# Update the YAML file in place
+		local result=$(sudo sed -E -i "0,/^\s*- /{s|^\s*- .*|          - \"$password_hash\"|}" $protectionauth_file)
+		checkSuccess "Configured Traefik config with Login user/pass data for login protection."
+	fi
 }
