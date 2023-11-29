@@ -18,7 +18,7 @@ startUp()
     installDockerUser;
     scanConfigsForRandomPassword;
 	local traefik_status=$(checkAppInstalled "traefik" "docker")
-    if [[ "$traefik_status" == "installed" ]] then;
+    if [[ "$traefik_status" == "installed" ]]; then
         traefikSetupLoginCredentials;
     fi
     checkRequirements;
