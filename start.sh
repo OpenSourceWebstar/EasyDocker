@@ -198,50 +198,17 @@ startInstall()
     clearAllPortData;
 
     #######################################################
-    ###                Install System Apps              ###
+    ###                    Install Apps                 ###
     #######################################################
 
-    installAdguard;
-    installAuthelia;
-    installDashy;
-    installDuplicati;
-    installFail2ban;
-    installGrafana;
-    installHeadscale;
-    installPihole;
-    installPortainer;
-    installPrometheus;
-    installTraefik;
-    #installVirtualminadmin;
-    #installVirtualminwebhost;
-    installWatchtower;
-    installWireguard;
+    for install_app_name in "$install_containers_dir"/*/; do
+        install_app_name=$(basename "$install_app_name")
+        function_name_capitalized="$(tr '[:lower:]' '[:upper:]' <<< "${install_app_name:0:1}")${install_app_name:1}"
 
-    #######################################################
-    ###                Install Privacy Apps             ###
-    #######################################################
-
-	installSearxng;
-    installSpeedtest;
-	installInvidious;
-	installIpinfo;
-	installTrilium;
-    installMailcow;
-	installVaultwarden;
-
-    #######################################################
-    ###                 Install User Apps               ###
-    #######################################################
-
-	installTiledesk;
-	installGitlab;
-	installOwncloud;
-	installJitsimeet;
-	installKillbill;
-    installRustdesk;
-	installActual;
-    installKimai;
-	installMattermost;
+        if [ "$(type -t "install${function_name_capitalized}")" = "function" ]; then
+            "install${function_name_capitalized}"
+        fi
+    done
 
 	endStart;
 
