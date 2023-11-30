@@ -11,7 +11,7 @@ services:
     ports:
     - 'PORT1:80'
     volumes:
-    - /docker/ssh/public:/usr/local/apache2/htdocs
+    - /docker/ssh/private:/usr/local/apache2/htdocs
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE
