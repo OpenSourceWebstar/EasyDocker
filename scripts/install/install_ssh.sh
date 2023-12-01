@@ -470,16 +470,19 @@ setupSSHAuthorizedKeys()
         checkSuccess "Updating permissions for $ssh_path"
     fi
 
-    if [ ! -f "$ssh_path/authorized_keys" ]; then
-        result=$(createTouch "$ssh_path/authorized_keys" $username)
-        checkSuccess "Creating the authorized_keys file for $username."
+    if [ -f "${ssh_path}/authorized_keys" ]; then
+        result=$(sudo rm ${ssh_path}/authorized_keys)
+        checkSuccess "Deleted old authorized_keys file for user $username"
     fi
+
+    result=$(sudo cp "$public_key_full" "${ssh_path}/authorized_keys")
+    checkSuccess "Adding $(basename $public_key_full) to the Authorized_keys file for user $username"
 
     result=$(sudo chmod 600 ${ssh_path}/authorized_keys)
     checkSuccess "Updating permissions for ${username}'s authorized_keys file."
 
-    result=$(sudo cat ${ssh_path}/$(basename $public_key_full) >> ${ssh_path}/authorized_keys)
-    checkSuccess "Adding $(basename $public_key_full) to the Authorized_keys file for user $username"
+    result=$(sudo systemctl reload ssh)
+    checkSuccess "Reloading SSH service"
 }
 
 disableSSHPasswords()
@@ -570,16 +573,16 @@ disableSSHPasswordFunction()
                 case "$disable_ssh_passwords" in
                     [Yy]*)
                         local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"
-                        result=$(cp /etc/ssh/sshd_config "$backup_file")
+                        result=$(sudo cp /etc/ssh/sshd_config "$backup_file")
                         checkSuccess "Backup sshd_config file"
 
-                        result=$(sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config)
+                        result=$(sudo sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config)
                         checkSuccess "Removing existing PasswordAuthentication lines"
 
-                        result=$(echo "PasswordAuthentication no" >> /etc/ssh/sshd_config)
+                        result=$(echo "PasswordAuthentication no" | sudo tee -a /etc/ssh/sshd_config)
                         checkSuccess "Add new PasswordAuthentication line at the end of sshd_config"
 
-                        result=$(systemctl restart sshd)
+                        result=$(sudo systemctl restart sshd)
                         checkSuccess "Restart SSH service"
                         break
                         ;;
