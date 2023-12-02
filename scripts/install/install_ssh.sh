@@ -79,7 +79,8 @@ installSSHRemoteList()
     fi
 }
 
-installSSHKeyToHost() {
+installSSHKeyToHost() 
+{
     local host=$1
     local ssh_key_file="$ssh_dir$CFG_DOCKER_MANAGER_USER/ssh_key_${CFG_INSTALL_NAME}_${CFG_DOCKER_MANAGER_USER}.pub"
 
@@ -145,7 +146,8 @@ updateAuthorizedKeysAndDatabase()
 
 
 # Function to compute the SHA-256 hash of a string
-computeSHA256Hash() {
+computeSHA256Hash() 
+{
     echo -n "$1" | sha256sum | cut -d " " -f 1
 }
 
@@ -445,6 +447,8 @@ generateSSHKeyPair()
 
     setupSSHAuthorizedKeys $username $public_key_full;
 
+    updateSSHHTMLSSHKeyLinks;
+
     ssh_new_key=true
 }
 
@@ -609,5 +613,34 @@ disableSSHPasswordFunction()
                 esac
             done
         fi
+    fi
+}
+
+updateSSHHTMLSSHKeyLinks() 
+{
+    # Reset all links to placeholders
+    result=$(sudo sed -i "s|<a href=\"id_ed25519_root.html\">User - Root's SSH Key</a>|<!--LINK1-->|" index.html)
+    checkSuccess "Resetting Root URL to empty."
+
+    result=$(sudo sed -i "s|<a href=\"id_ed25519_easydocker.html\">User - Easydocker's SSH Key</a>|<!--LINK2-->|" index.html)
+    checkSuccess "Resetting Easydocker URL to empty."
+
+    result=$(sudo sed -i "s|<a href=\"id_ed25519_dockerinstall.html\">User - Dockerinstall's SSH Key</a>|<!--LINK3-->|" index.html)
+    checkSuccess "Resetting Dockerinstall URL to empty."
+
+    # Check and update links based on the presence of key files
+    if [ -f "${ssh_dir}private/id_ed25519_root" ]; then
+        result=$(sudo sed -i "s|<!--LINK1-->|<a href=\"id_ed25519_root.html\">User - Root's SSH Key</a>|" index.html)
+        checkSuccess "Root SSH Key found, updating the index.html for download link."
+    fi
+
+    if [ -f "${ssh_dir}private/id_ed25519_easydocker" ]; then
+        result=$(sudo sed -i "s|<!--LINK2-->|<a href=\"id_ed25519_easydocker.html\">User - Easydocker's SSH Key</a>|" index.html)
+        checkSuccess "Easydocker SSH Key found, updating the index.html for download link."
+    fi
+
+    if [ -f "${ssh_dir}private/id_ed25519_dockerinstall" ]; then
+        result=$(sudo sed -i "s|<!--LINK3-->|<a href=\"id_ed25519_dockerinstall.html\">User - Dockerinstall's SSH Key</a>|" index.html)
+        checkSuccess "Dockerinstall SSH Key found, updating the index.html for download link."
     fi
 }

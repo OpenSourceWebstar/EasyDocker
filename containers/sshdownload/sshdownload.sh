@@ -70,6 +70,9 @@ installSshdownload()
 
         setupComposeFile $app_name;
 
+        result=$(sudo cp -r $install_containers_dir$app_name/resources/index.html "${ssh_dir}private/index.html")
+        checkSuccess "Copying over index.html file for SSH Downloader."
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
