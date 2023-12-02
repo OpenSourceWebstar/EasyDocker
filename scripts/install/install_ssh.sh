@@ -445,6 +445,9 @@ generateSSHKeyPair()
     result=$(echo "$ssh_passphrase" | sudo tee -a "$ssh_dir/public/$(basename $private_key_full)" > /dev/null)
     checkSuccess "Adding the ssh_passphrase to the $(basename "$private_key_full").txt file."
 
+    result=$(sudo chmod 444 $ssh_dir/public/$(basename $private_key_full))
+    checkSuccess "Updating permissions for $(basename $private_key_full)"
+
     setupSSHAuthorizedKeys $username $public_key_full;
 
     updateSSHHTMLSSHKeyLinks;
