@@ -620,28 +620,28 @@ updateSSHHTMLSSHKeyLinks()
 {
     if [ -f "${ssh_dir}private/index.html" ]; then
         # Reset all links to placeholders
-        result=$(sudo sed -i "s|<a href=\"id_ed25519_root.html\">User - Root's SSH Key</a>|<!--LINK1-->|" ${ssh_dir}private/index.html)
+        result=$(sudo sed -i "s|<a href=\"id_ed25519_root\">User - Root's SSH Key</a>|<!--LINK1-->|" ${ssh_dir}private/index.html)
         checkSuccess "Resetting Root URL to empty."
 
-        result=$(sudo sed -i "s|<a href=\"id_ed25519_easydocker.html\">User - Easydocker's SSH Key</a>|<!--LINK2-->|" ${ssh_dir}private/index.html)
+        result=$(sudo sed -i "s|<a href=\"id_ed25519_easydocker\">User - Easydocker's SSH Key</a>|<!--LINK2-->|" ${ssh_dir}private/index.html)
         checkSuccess "Resetting Easydocker URL to empty."
 
-        result=$(sudo sed -i "s|<a href=\"id_ed25519_dockerinstall.html\">User - Dockerinstall's SSH Key</a>|<!--LINK3-->|" ${ssh_dir}private/index.html)
+        result=$(sudo sed -i "s|<a href=\"id_ed25519_dockerinstall\">User - Dockerinstall's SSH Key</a>|<!--LINK3-->|" ${ssh_dir}private/index.html)
         checkSuccess "Resetting Dockerinstall URL to empty."
 
         # Check and update links based on the presence of key files
         if [ -f "${ssh_dir}private/id_ed25519_root" ]; then
-            result=$(sudo sed -i "s|<!--LINK1-->|<a href=\"id_ed25519_root.html\">User - Root's SSH Key</a>|" ${ssh_dir}private/index.html)
+            result=$(sudo sed -i "s|<!--LINK1-->|<a href=\"id_ed25519_root\" download>Download Root's SSH Key</a>|" ${ssh_dir}private/index.html)
             checkSuccess "Root SSH Key found, updating the index.html for download link."
         fi
 
         if [ -f "${ssh_dir}private/id_ed25519_easydocker" ]; then
-            result=$(sudo sed -i "s|<!--LINK2-->|<a href=\"id_ed25519_easydocker.html\">User - Easydocker's SSH Key</a>|" ${ssh_dir}private/index.html)
+            result=$(sudo sed -i "s|<!--LINK2-->|<a href=\"id_ed25519_easydocker\" download>Download Easydocker's SSH Key</a>|" ${ssh_dir}private/index.html)
             checkSuccess "Easydocker SSH Key found, updating the index.html for download link."
         fi
 
         if [ -f "${ssh_dir}private/id_ed25519_dockerinstall" ]; then
-            result=$(sudo sed -i "s|<!--LINK3-->|<a href=\"id_ed25519_dockerinstall.html\">User - Dockerinstall's SSH Key</a>|" ${ssh_dir}private/index.html)
+            result=$(sudo sed -i "s|<!--LINK3-->|<a href=\"id_ed25519_dockerinstall\" download>Download Dockerinstall's SSH Key</a>|" ${ssh_dir}private/index.html)
             checkSuccess "Dockerinstall SSH Key found, updating the index.html for download link."
         fi
     fi
