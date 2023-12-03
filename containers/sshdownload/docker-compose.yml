@@ -12,6 +12,14 @@ services:
     - 'PORT1:80'
     volumes:
     - /docker/ssh/private:/usr/local/apache2/htdocs
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.sshdownload.entrypoints: web,websecure
+      #traefik.http.routers.sshdownload.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.sshdownload.tls: true
+      #traefik.http.routers.sshdownload.tls.certresolver: production
+      #traefik.http.services.sshdownload.loadbalancer.server.port: PORT1
+      #traefik.http.routers.sshdownload.middlewares:
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

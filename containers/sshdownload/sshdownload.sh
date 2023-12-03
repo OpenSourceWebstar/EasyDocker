@@ -36,6 +36,37 @@ installSshdownload()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Checking public status for security purposes."
+        echo ""
+
+        if [[ "$public" == "true" ]]; then
+            echo ""
+            isNotice "!!!!!!!!!! PROCEED WITH CAUTION !!!!!!!!!!"
+            isNotice "Public access is not fully recommended for security reasons."
+            if [[ "$login_required" == "false" ]]; then
+                isNotice "NO PASSWORD PROTECTION FOUND."
+                isNotice "Anyone with an internet connection will be able to download your SSH Keys"
+            fi
+            echo ""
+            while true; do
+                isQuestion "Are you sure you want to allow sshdownload to the public? (y/n): "
+                read -p "" sshdownload_public
+                if [[ "$sshdownload_public" == [yY] ]]; then
+                    break
+                else
+                    isNotice "Please confirm the setup or provide a valid input."
+                fi
+            done
+        fi
+        if [[ $sshdownload_public == [yY] ]]; then
+            isError "Setup is not wanted due to public security access, setup is cancelling..."
+            return
+        else
+            isSuccessful "Accepting of public security risks, setup is continuing..."
+        fi
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
