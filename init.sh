@@ -69,76 +69,84 @@ initializeScript()
 	sudo apt-get install git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "SUCCESS: Prerequisite apps installed."
 
-	echo ""
-	echo "####################################################"
-	echo "###           Creating User Accounts             ###"
-	echo "####################################################"
-	echo ""
-	if id "$sudo_user_name" &>/dev/null; then
-		echo "SUCCESS: User $sudo_user_name already exists."
-	else
-		# If the user doesn't exist, create the user
-		useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
-		echo "Setting password for $sudo_user_name user."
-		passwd $sudo_user_name
-		echo "SUCCESS: User $sudo_user_name created successfully."
-	fi
-
-	echo ""
-	echo "####################################################"
-	echo "###        EasyDocker Folder Creation            ###"
-	echo "####################################################"
-	echo ""
-	# Setup folder structure
-	folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
-	for folder in "${folders[@]}"; do
-		if [ ! -d "$folder" ]; then
-			sudo mkdir "$folder"
-			sudo chown $sudo_user_name:$sudo_user_name "$folder"
-			sudo chmod 750 "$folder"
-			echo "SUCCESS: Folder '$folder' created."
-		#else
-			#echo "Folder '$folder' already exists."
+	if [[ "$param1" == "run" ]]; then
+		echo ""
+		echo "####################################################"
+		echo "###           Creating User Accounts             ###"
+		echo "####################################################"
+		echo ""
+		if id "$sudo_user_name" &>/dev/null; then
+			echo "SUCCESS: User $sudo_user_name already exists."
+		else
+			# If the user doesn't exist, create the user
+			useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
+			echo "Setting password for $sudo_user_name user."
+			passwd $sudo_user_name
+			echo "SUCCESS: User $sudo_user_name created successfully."
 		fi
-	done
-	echo "SUCCESS: All folders have been created."
-
-	echo ""
-	echo "####################################################"
-	echo "###      	       Git Clone / Update              ###"
-	echo "####################################################"
-	echo ""
-	# Git Clone and Update
-	# Check if it's a Git repository by checking if it's inside a Git working tree
-	if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-		echo "A Git repository is already cloned in '$script_dir'."
-		echo "NOTICE: Please run the easydocker command to update the repository."
-	else
-		echo "NOTICE: No Git repository found. Cloning Git Repository."
-		# Clone the Git repository into the specified directory
-		sudo runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
-		echo "SUCCESS: Git repository cloned into '$script_dir'."
 	fi
 
-	echo ""
-	echo "####################################################"
-	echo "###      	     Custom Command Setup              ###"
-	echo "####################################################"
-	echo ""
-	# Custom command check
-	if ! grep -q "easydocker" $sudo_bashrc; then
-		echo "NOTICE: Custom command 'easydocker' is not installed. Installing..."
-		echo 'easydocker() {' >> $sudo_bashrc
-		echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
-		echo '    local path="$PWD"' >> $sudo_bashrc
-		echo '    cd /docker/install/ && sudo chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
-		echo '  else' >> $sudo_bashrc
-		echo '    sudo sh -c "rm -rf /docker/install && cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run"' >> $sudo_bashrc
-		echo '  fi' >> $sudo_bashrc
-		echo '}' >> $sudo_bashrc
-		source $sudo_bashrc
-	else
-		echo "SUCCESS: easydocker command already installed."
+	if [[ "$param1" == "run" ]]; then
+		echo ""
+		echo "####################################################"
+		echo "###        EasyDocker Folder Creation            ###"
+		echo "####################################################"
+		echo ""
+		# Setup folder structure
+		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
+		for folder in "${folders[@]}"; do
+			if [ ! -d "$folder" ]; then
+				sudo mkdir "$folder"
+				sudo chown $sudo_user_name:$sudo_user_name "$folder"
+				sudo chmod 750 "$folder"
+				echo "SUCCESS: Folder '$folder' created."
+			#else
+				#echo "Folder '$folder' already exists."
+			fi
+		done
+		echo "SUCCESS: All folders have been created."
+	fi
+
+	if [[ "$param1" == "run" ]]; then
+		echo ""
+		echo "####################################################"
+		echo "###      	       Git Clone / Update              ###"
+		echo "####################################################"
+		echo ""
+		# Git Clone and Update
+		# Check if it's a Git repository by checking if it's inside a Git working tree
+		if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+			echo "A Git repository is already cloned in '$script_dir'."
+			echo "NOTICE: Please run the easydocker command to update the repository."
+		else
+			echo "NOTICE: No Git repository found. Cloning Git Repository."
+			# Clone the Git repository into the specified directory
+			sudo runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
+			echo "SUCCESS: Git repository cloned into '$script_dir'."
+		fi
+	fi
+
+	if [[ "$param1" == "run" ]]; then
+		echo ""
+		echo "####################################################"
+		echo "###      	     Custom Command Setup              ###"
+		echo "####################################################"
+		echo ""
+		# Custom command check
+		if ! grep -q "easydocker" $sudo_bashrc; then
+			echo "NOTICE: Custom command 'easydocker' is not installed. Installing..."
+			echo 'easydocker() {' >> $sudo_bashrc
+			echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
+			echo '    local path="$PWD"' >> $sudo_bashrc
+			echo '    cd /docker/install/ && sudo chmod 0755 /docker/install/* && ./start.sh  "" "" "$path"' >> $sudo_bashrc
+			echo '  else' >> $sudo_bashrc
+			echo '    sudo sh -c "rm -rf /docker/install && cd ~ && rm -rf init.sh && apt-get install wget -y && wget -O init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 init.sh && ./init.sh run"' >> $sudo_bashrc
+			echo '  fi' >> $sudo_bashrc
+			echo '}' >> $sudo_bashrc
+			source $sudo_bashrc
+		else
+			echo "SUCCESS: easydocker command already installed."
+		fi
 	fi
 
 	if [[ "$param1" == "virtualmin" ]]; then
@@ -166,13 +174,13 @@ virtualminInstall()
 	sudo ./virtualmin-install.sh -b LEMP # Using NGINX
 
 	# Disable Firewalld
-	sudo systemctl stop firewalld
-	sudo systemctl disable firewalld
-	virtualmin disable-feature --all-domains --dns
-	echo "Disabled the firewalld & DNS service for EasyDocker"
-	sudo sed -i 's/80 default_server/8033 default_server/g' /etc/nginx/sites-available/default
-	echo "Changing port 80 to port 8033 for NGINX"
-	sudo systemctl restart nginx
+	#sudo systemctl stop firewalld
+	#sudo systemctl disable firewalld
+	#virtualmin disable-feature --all-domains --dns
+	#echo "Disabled the firewalld & DNS service for EasyDocker"
+	#sudo sed -i 's/80 default_server/8033 default_server/g' /etc/nginx/sites-available/default
+	#echo "Changing port 80 to port 8033 for NGINX"
+	#sudo systemctl restart nginx
 
 	while true; do
 		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
@@ -189,13 +197,13 @@ virtualminInstall()
 	echo ""
 	echo "NOTICE - Now that Virtualmin is setup "
 	echo ""
-	echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificate."
-	echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
-	echo ""
-	echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
-	echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
-	echo ""
-	echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
+	#echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificate."
+	#echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
+	#echo ""
+	#echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
+	#echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
+	#echo ""
+	#echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
 }
 
 virtualminAskForFQDN()
