@@ -22,18 +22,19 @@ updateApplicationSpecifics()
 
     isSuccessful "All application specific updates have been completed."
 }
-
 ownCloudSetupConfig()
 {
-    isNotice "ownCloud is currently being setup, please wait..."
+    isNotice "ownCloud is currently being set up, please wait..."
     isNotice "This may take a few minutes..."
     echo ""
+
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
-    local owncloud_config_tmp="$containers_dir$app_name/files/config/config.php.tmp"
+    local temp_dir="/tmp/owncloud_setup_temp"  # Use a temporary directory
+    local owncloud_config_tmp="$temp_dir/config.php.tmp"
 
     local owncloud_timeout=60
-    local owncloud_wait_time=5 # seconds
+    local owncloud_wait_time=5  # seconds
 
     # Loop to check for the existence of the file every second
     local owncloud_counter=0
@@ -47,39 +48,35 @@ ownCloudSetupConfig()
         local owncloud_counter=$((owncloud_counter + 1))
     done
 
-    # Loop to check for the existence of the file every second
-    local owncloud_counter=0
-    while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
-        if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
-            isNotice "File objectstore.config.php not found after 10 seconds. Exiting..."
-            break
-        fi
-        isNotice "Waiting 5 seconds for the objectstore.config.php to appear..."
-        sleep $owncloud_wait_time
-        local owncloud_counter=$((owncloud_counter + 1))
-    done
+    # Copy the original config.php to the temporary file
     result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
     checkSuccess "Copy the original config.php to the temporary file"
 
-    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config" > "$owncloud_config_tmp")
-    checkSuccess "Use awk to delete lines for 'trusted_domains'"
+    # Use awk to delete lines for 'trusted_domains' from the temporary file
+    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config_tmp" > "$owncloud_config_tmp")
+    checkSuccess "Use awk to delete lines for 'trusted_domains' from the temporary file"
 
-    # Use awk to get the line number containing ");"
-    local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config")
-    # Insert the new lines above the line with ");"
+    # Use awk to get the line number containing ");" from the temporary file
+    local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config_tmp")
+    # Insert the new lines above the line with ");" in the temporary file
     sudo sed -i "${line_number}i\\
         'trusted_domains' => array(\\
             0 => '$ip_address',\\
             1 => '$host',\\
         ),\\
-    );" "$owncloud_config"
+    );" "$owncloud_config_tmp"
 
+    # Use sed to replace the line in the original file
+    result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config_tmp")
+    checkSuccess "Updated the internal CLI config IP & Port"
+
+    # Move the modified temporary file back to the original location
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
 
-    # Use sed to replace the line
-    result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config")
-    checkSuccess "Updated the internal CLI config IP & Port"
+    # Remove the temporary directory
+    result=$(sudo rm -rf "$temp_dir")
+    checkSuccess "Clean up temporary directory"
 
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
