@@ -22,6 +22,7 @@ updateApplicationSpecifics()
 
     isSuccessful "All application specific updates have been completed."
 }
+
 ownCloudSetupConfig()
 {
     isNotice "ownCloud is currently being set up, please wait..."
@@ -30,8 +31,7 @@ ownCloudSetupConfig()
 
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
-    local temp_dir="/tmp/owncloud_setup_temp"  # Use a temporary directory
-    local owncloud_config_tmp="$temp_dir/config.php.tmp"
+    local owncloud_config_tmp=$(mktemp /tmp/config.php.XXXXXX)
 
     local owncloud_timeout=60
     local owncloud_wait_time=5  # seconds
@@ -48,9 +48,6 @@ ownCloudSetupConfig()
         local owncloud_counter=$((owncloud_counter + 1))
     done
 
-    result=$(sudo mkdir -p "$temp_dir")
-    checkSuccess "Creating temporary directory"
-
     # Copy the original config.php to the temporary file
     result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
     checkSuccess "Copy the original config.php to the temporary file"
@@ -61,13 +58,24 @@ ownCloudSetupConfig()
 
     # Use awk to get the line number containing ");" from the temporary file
     local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config_tmp")
-    # Insert the new lines above the line with ");" in the temporary file
-    sudo sed -i "${line_number}i\\
-        'trusted_domains' => array(\\
-            0 => '$ip_address',\\
-            1 => '$host',\\
-        ),\\
-    );" "$owncloud_config_tmp"
+    if [[ $public == "true" ]]; then
+        # Insert the new lines above the line with ");" in the temporary file
+        sudo sed -i "${line_number}i\\
+            'trusted_domains' => array(\\
+                0 => '$host_setup',\\
+                1 => '$ip_setup',\\
+                2 => '$host',\\
+            ),\\
+        );" "$owncloud_config_tmp"
+    elif [[ $public == "false" ]]; then
+        # Insert the new lines above the line with ");" in the temporary file
+        sudo sed -i "${line_number}i\\
+            'trusted_domains' => array(\\
+                0 => '$ip_setup',\\
+                1 => '$host',\\
+            ),\\
+        );" "$owncloud_config_tmp"
+    fi
 
     # Use sed to replace the line in the original file
     result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config_tmp")
@@ -76,10 +84,6 @@ ownCloudSetupConfig()
     # Move the modified temporary file back to the original location
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
-
-    # Remove the temporary directory
-    result=$(sudo rm -rf "$temp_dir")
-    checkSuccess "Clean up temporary directory"
 
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
