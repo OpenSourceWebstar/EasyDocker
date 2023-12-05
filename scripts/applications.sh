@@ -48,6 +48,9 @@ ownCloudSetupConfig()
         local owncloud_counter=$((owncloud_counter + 1))
     done
 
+    result=$(sudo mkdir -p "$temp_dir")
+    checkSuccess "Creating temporary directory"
+
     # Copy the original config.php to the temporary file
     result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
     checkSuccess "Copy the original config.php to the temporary file"
