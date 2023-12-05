@@ -194,6 +194,8 @@ virtualminInstall()
 		fi
 	done
 
+	sudo systemctl start webmin
+
 	echo ""
 	echo "NOTICE - Now that Virtualmin is setup "
 	echo ""
