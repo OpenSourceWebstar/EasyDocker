@@ -25,21 +25,47 @@ updateApplicationSpecifics()
 
 ownCloudSetupConfig()
 {
+    isNotice "ownCloud is currently being setup, please wait..."
+    isNotice "This may take a few minutes..."
+    echo ""
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
     local owncloud_config_tmp="$containers_dir$app_name/files/config/config.php.tmp"
 
+    local owncloud_timeout=60
+    local owncloud_wait_time=5 # seconds
+
+    # Loop to check for the existence of the file every second
+    local owncloud_counter=0
+    while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
+        if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
+            isNotice "File not found after $owncloud_timeout seconds. Exiting..."
+            break
+        fi
+        isNotice "Waiting 5 seconds for the objectstore.config.php to appear..."
+        sleep $owncloud_wait_time
+        local owncloud_counter=$((owncloud_counter + 1))
+    done
+
+    # Loop to check for the existence of the file every second
+    local owncloud_counter=0
+    while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
+        if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
+            isNotice "File objectstore.config.php not found after 10 seconds. Exiting..."
+            break
+        fi
+        isNotice "Waiting 5 seconds for the objectstore.config.php to appear..."
+        sleep $owncloud_wait_time
+        local owncloud_counter=$((owncloud_counter + 1))
+    done
     result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
     checkSuccess "Copy the original config.php to the temporary file"
 
-    local found_trusted_domains=false
-
-    # Use awk to delete lines between 'trusted_domains' and '),'
-    sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config" > "$owncloud_config_tmp"
+    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config" > "$owncloud_config_tmp")
+    checkSuccess "Use awk to delete lines for 'trusted_domains'"
 
     # Use awk to get the line number containing ");"
     local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config")
-
     # Insert the new lines above the line with ");"
     sudo sed -i "${line_number}i\\
         'trusted_domains' => array(\\
@@ -55,21 +81,6 @@ ownCloudSetupConfig()
     result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config")
     checkSuccess "Updated the internal CLI config IP & Port"
 
-    local owncloud_timeout=60
-    local owncloud_counter=0
-    # Loop to check for the existence of the file every second
-    while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
-        if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
-            isNotice "File not found after 10 seconds. Exiting..."
-            break
-        fi
-
-        isNotice "Waiting 5 seconds for the file to appear..."
-        read -t 5 # Wait for 5 second
-
-        # Increment the counter
-        local owncloud_counter=$((owncloud_counter + 1))
-    done
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
 }
@@ -88,7 +99,7 @@ dashyUpdateConf()
         echo "#####################################"
         echo ""
 
-        if [ -f "${containers_dir}dashy/etc/" ]; then
+        if [ -f "$conf_file" ]; then
             local result=$(sudo rm -rf "$conf_file")
             checkSuccess "Removed old Dashy conf.yml for new generation"
         fi
@@ -121,7 +132,8 @@ dashyUpdateConf()
         }
 
         # Function to uncomment category lines using sed based on line numbers under the pattern
-        uncomment_category_lines() {
+        uncomment_category_lines() 
+        {
             local category_name="$1"
             local pattern="#### category $category_name"
             local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
@@ -142,7 +154,6 @@ dashyUpdateConf()
                 if [ -f "$app_config_file" ]; then
                     local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
                     if [ -n "$category_info" ]; then
-                        # Call the uncomment_lines function for each app with a category
                         uncomment_lines "$app_name"
                     fi
                 fi
