@@ -96,7 +96,7 @@ result=$(sudo awk -v ip_setup="$ip_setup" -v host_setup="$host_setup" -v public=
         next;
     }
     { print "    " $0 }
-' "$tmp_folder/config.php.tmp" > "$tmp_awk_output"
+' "$tmp_folder/config.php.tmp" > "$tmp_awk_output")
 checkSuccess "Updated trusted domains with public data"
 
     # Use sed to replace the line in the original file
