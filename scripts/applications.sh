@@ -97,7 +97,7 @@ ownCloudSetupConfig()
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
 
-    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config_tmp")
+    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
 }
 
