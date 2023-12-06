@@ -134,15 +134,15 @@ sudo tee -a "$tmp_awk_output" > /dev/null <<EOL
 EOL
 checkSuccess "Add overwrite and trusted_domain (public) lines to the config"
 fi
+    
+    # Update permissions
+    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$tmp_awk_output")
+    checkSuccess "Updating config permissions to associated permissions"
 
     # Move the modified temporary file back to the original location
     result=$(sudo mv "$tmp_awk_output" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
-    
-    # Update permissions
-    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
-    checkSuccess "Updating config permissions to associated permissions"
-    
+
     # Remove the temporary folder in /tmp
     result=$(sudo rm -rf "$tmp_folder")
     checkSuccess "Removed temporary folder: $tmp_folder"
