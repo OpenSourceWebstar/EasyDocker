@@ -12,7 +12,7 @@ updateApplicationSpecifics()
     fi
 
     if [[ $app_name == "owncloud" ]]; then
-        ownCloudSetupConfig;
+        #ownCloudSetupConfig;
         local shouldrestart=true
     fi
 
@@ -149,9 +149,6 @@ fi
         # Remove the temporary folder in /tmp
         result=$(sudo rm -rf "$tmp_folder")
         checkSuccess "Removed temporary folder: $tmp_folder"
-        
-        isNotice "Waiting 60 seconds for ownCloud to finish installing before restarting."
-        sleep 60
     else
         isError "Container is not healthy. Setup seems to have failed."
         return

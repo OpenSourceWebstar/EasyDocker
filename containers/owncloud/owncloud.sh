@@ -104,8 +104,8 @@ if [[ "$public" == "true" ]]; then
 
 runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=DOMAINSUBNAMEHERE:$usedport1
-OWNCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE
+OWNCLOUD_DOMAIN=$host_setup
+OWNCLOUD_TRUSTED_DOMAINS=$host_setup,$ip_setup,$public_ip
 ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
 ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
 HTTP_PORT=$usedport1
@@ -115,7 +115,7 @@ fi
 if [[ "$public" == "false" ]]; then	
 runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=IPADDRESSHERE:$usedport1
+OWNCLOUD_DOMAIN=IPADDRESSHERE
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
 ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
 ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
