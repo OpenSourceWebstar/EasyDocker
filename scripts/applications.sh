@@ -53,7 +53,7 @@ ownCloudSetupConfig()
     checkSuccess "Copy the original config.php to the temporary file"
 
     # Use awk to delete lines for 'trusted_domains' from the temporary file
-    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/' "$owncloud_config_tmp" > "$owncloud_config_tmp")
+    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$owncloud_config_tmp" > "$owncloud_config_tmp")
     checkSuccess "Use awk to delete lines for 'trusted_domains' from the temporary file"
 
     # Use awk to get the line number containing ");" from the temporary file
