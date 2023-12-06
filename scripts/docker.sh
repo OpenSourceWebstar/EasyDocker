@@ -810,7 +810,7 @@ dockerPruneNetworks()
 dockerCheckContainerHealth() 
 {
     local container_name="$1"
-    local health_status=$(docker inspect --format='{{json .State.Health.Status}}' "$container_name")
+    local health_status=$(runCommandForDockerInstallUser "docker inspect --format='{{json .State.Health.Status}}' $container_name")
 
     if [ "$health_status" == "\"healthy\"" ]; then
         return 0  # Container is healthy
