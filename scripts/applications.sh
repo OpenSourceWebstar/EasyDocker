@@ -31,7 +31,7 @@ ownCloudSetupConfig()
 
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
-    local owncloud_config_tmp=$(sudo mktemp /tmp/config.php.XXXXXX)
+    local owncloud_config_tmp="$containers_dir$app_name/files/config/config.php.tmp"
 
     local owncloud_timeout=60
     local owncloud_wait_time=5  # seconds
@@ -48,14 +48,17 @@ ownCloudSetupConfig()
         local owncloud_counter=$((owncloud_counter + 1))
     done
 
+    if [ -f "$owncloud_config_tmp" ]; then
+        local result=$(sudo rm -rf "$owncloud_config_tmp")
+        checkSuccess "Removed old tmp config file for new generation"
+    fi
+
+    local result=$(createTouch "$owncloud_config_tmp" $CFG_DOCKER_INSTALL_USER)
+    checkSuccess "Created config.php.tmp file for $app_name"
+
     # Copy the original config.php to the temporary file
-    result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
-    checkSuccess "Copy the original config.php to the temporary file"
-
-    updateFileOwnership "$owncloud_config_tmp" $CFG_DOCKER_INSTALL_USER
-
-    result=$(sudo chmod 777 $owncloud_config_tmp)
-    checkSuccess "Updating permissions for $(basename $owncloud_config_tmp)"
+    result=$(sudo cat "$owncloud_config" > "$owncloud_config_tmp")
+    checkSuccess "Copy the original config.php contents to the temporary file"
 
     # Use awk to delete lines for 'trusted_domains' from the temporary file
     result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
