@@ -53,28 +53,29 @@ ownCloudSetupConfig()
     checkSuccess "Copy the original config.php to the temporary file"
 
     # Use awk to delete lines for 'trusted_domains' from the temporary file
-    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$owncloud_config_tmp" > "$owncloud_config_tmp")
+    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
     checkSuccess "Use awk to delete lines for 'trusted_domains' from the temporary file"
 
     # Use awk to get the line number containing ");" from the temporary file
     local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config_tmp")
+
     if [[ $public == "true" ]]; then
         # Insert the new lines above the line with ");" in the temporary file
-        sudo sed -i "${line_number}i\\
+        result=$(sudo sed -i "${line_number}i\\
             'trusted_domains' => array(\\
                 0 => '$host_setup',\\
                 1 => '$ip_setup',\\
                 2 => '$host',\\
             ),\\
-        );" "$owncloud_config_tmp"
+        );" "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
     elif [[ $public == "false" ]]; then
         # Insert the new lines above the line with ");" in the temporary file
-        sudo sed -i "${line_number}i\\
+        result=$(sudo sed -i "${line_number}i\\
             'trusted_domains' => array(\\
                 0 => '$ip_setup',\\
                 1 => '$host',\\
             ),\\
-        );" "$owncloud_config_tmp"
+        );" "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
     fi
 
     # Use sed to replace the line in the original file
