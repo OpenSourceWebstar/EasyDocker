@@ -60,6 +60,9 @@ ownCloudSetupConfig()
     # Copy the original config.php to the temporary file in /tmp
     result=$(sudo cp "$owncloud_config" "$tmp_folder/config.php.tmp")
     checkSuccess "Copy the original config.php contents to the temporary file"
+
+    result=$(sudo cp "$owncloud_config" "$owncloud_config_folder/config.php.backup")
+    checkSuccess "Backing up the original config.php file"
     
     local result=$(sudo chmod -R 777 "$tmp_folder")
     checkSuccess "Set permissions to for temp folder & files."
@@ -69,7 +72,11 @@ ownCloudSetupConfig()
     
     # Create another temporary file for awk output
     local tmp_awk_output="$tmp_folder/config_awk_output.tmp"
-    
+
+    # Use sed to replace the line in the original file
+    result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$tmp_awk_output")
+    checkSuccess "Updated the internal CLI config IP & Port"
+
     # Use awk to delete lines for 'trusted_domains' from the temporary file
     result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$tmp_folder/config.php.tmp" > "$tmp_awk_output")
     checkSuccess "Use awk to delete lines for 'trusted_domains' from the temporary file"
@@ -77,26 +84,20 @@ ownCloudSetupConfig()
     # Use awk to get the line number containing ");" from the temporary file
     local line_number=$(sudo awk '/);/{print NR}' "$tmp_folder/config.php.tmp")
 
-    if [[ $public == "true" ]]; then
-        # Insert the new lines above the line with ");" in the temporary file
-        result=$(sudo sed -i "${line_number}s/.*/'trusted_domains' => array(\\
-            0 => '$host_setup',\\
-            1 => '$ip_setup',\\
-            2 => '$public_ip',\\
-        ),/" "$tmp_awk_output")
-        checkSuccess "Updated trusted domains with public data"
-    elif [[ $public == "false" ]]; then
-        # Insert the new lines above the line with ");" in the temporary file
-        result=$(sudo sed -i "${line_number}s/.*/'trusted_domains' => array(\\
-            0 => '$ip_setup',\\
-        ),/" "$tmp_awk_output")
-        checkSuccess "Updated trusted domains with non-public data"
-    fi
+# Use awk to find the line containing ");" and insert new lines above it
+result=$(sudo awk '/);/ {print "    '\''trusted_domains'\'' => array(";
+    if ('$public' == "true") {
+        print "        0 => '\''$host_setup'\'',";
+        print "        1 => '\''$ip_setup'\'',";
+        print "        2 => '\''$public_ip'\'',";
+    } else {
+        print "        0 => '\''$ip_setup'\'',";
+    }
+    print "    ),";
+    next;
+} 1' "$tmp_folder/config.php.tmp" > "$tmp_awk_output")
+checkSuccess "Updated trusted domains with public data"
 
-    # Use sed to replace the line in the original file
-    result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$tmp_awk_output")
-    checkSuccess "Updated the internal CLI config IP & Port"
-    
     # Move the modified temporary file back to the original location
     result=$(sudo mv "$tmp_awk_output" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
