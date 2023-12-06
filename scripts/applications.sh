@@ -30,12 +30,14 @@ ownCloudSetupConfig()
     echo ""
 
     local domains=("$ip_setup" "$host_setup")
-    local owncloud_config="$containers_dir$app_name/files/config/config.php"
-    local owncloud_config_tmp="$containers_dir$app_name/files/config/config.php.tmp"
+    local tmp_folder="/tmp/owncloud_setup_temp"
+    local owncloud_config_folder="$containers_dir$app_name/files/config"
+    local owncloud_config="${owncloud_config_folder}/config.php"
 
     local owncloud_timeout=60
     local owncloud_wait_time=5  # seconds
 
+    # Check when owncloud is setup.
     # Loop to check for the existence of the file every second
     local owncloud_counter=0
     while [ ! -f "$containers_dir$app_name/files/config/objectstore.config.php" ]; do
@@ -47,30 +49,34 @@ ownCloudSetupConfig()
         sleep $owncloud_wait_time
         local owncloud_counter=$((owncloud_counter + 1))
     done
-
-    updateFileOwnership "$owncloud_config" $CFG_DOCKER_INSTALL_USER
-    local result=$(sudo chmod 644 "$owncloud_config")
-    checkSuccess "Set permissions to owncloud_config file."
-
-    if [ -f "$owncloud_config_tmp" ]; then
-        local result=$(sudo rm -rf "$owncloud_config_tmp")
-        checkSuccess "Removed old tmp config file for new generation"
-    fi
-
-    local result=$(createTouch "$owncloud_config_tmp" $CFG_DOCKER_INSTALL_USER)
-    checkSuccess "Created config.php.tmp file for $app_name"
-
+    
+    # Backups and Creation of config files
     # Copy the original config.php to the temporary file
-    result=$(sudo cat "$owncloud_config" | sudo tee "$owncloud_config_tmp" > /dev/null)
+    # Create a temporary folder in /tmp
+    result=$(sudo mkdir -p "$tmp_folder")
+    checkSuccess "Created temporary folder: $tmp_folder"
+    
+    # Backups and Creation of config files
+    # Copy the original config.php to the temporary file in /tmp
+    result=$(sudo cp "$owncloud_config" "$tmp_folder/config.php.tmp")
     checkSuccess "Copy the original config.php contents to the temporary file"
-
+    
+    local result=$(sudo chmod -R 777 "$tmp_folder")
+    checkSuccess "Set permissions to for temp folder & files."
+    
+    local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$tmp_folder")
+    checkSuccess "Updating ownership on temp folder to $CFG_DOCKER_INSTALL_USER"
+    
+    # Create another temporary file for awk output
+    local tmp_awk_output="$tmp_folder/config_awk_output.tmp"
+    
     # Use awk to delete lines for 'trusted_domains' from the temporary file
-    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
+    result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$tmp_folder/config.php.tmp" > "$tmp_awk_output")
     checkSuccess "Use awk to delete lines for 'trusted_domains' from the temporary file"
-
+    
     # Use awk to get the line number containing ");" from the temporary file
-    local line_number=$(sudo awk '/);/{print NR}' "$owncloud_config_tmp")
-
+    line_number=$(sudo awk '/);/{print NR}' "$tmp_folder/config.php.tmp")
+    
     if [[ $public == "true" ]]; then
         # Insert the new lines above the line with ");" in the temporary file
         result=$(sudo sed -i "${line_number}i\\
@@ -79,26 +85,36 @@ ownCloudSetupConfig()
                 1 => '$ip_setup',\\
                 2 => '$public_ip',\\
             ),\\
-        );" "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
+        );" "$tmp_awk_output")
+        checkSuccess "Updated trusted domains with public data"
     elif [[ $public == "false" ]]; then
         # Insert the new lines above the line with ");" in the temporary file
         result=$(sudo sed -i "${line_number}i\\
             'trusted_domains' => array(\\
                 0 => '$ip_setup',\\
             ),\\
-        );" "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
+        );" "$tmp_awk_output")
+        checkSuccess "Updated trusted domains with non-public data"
     fi
-
+    
     # Use sed to replace the line in the original file
-    result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$owncloud_config_tmp")
+    result=$(sudo sed -E -i "s/'overwrite.cli.url' => 'http:\/\/[0-9.:]+'/'overwrite.cli.url' => 'http:\/\/$ip_setup:$usedport\/'/" "$tmp_awk_output")
     checkSuccess "Updated the internal CLI config IP & Port"
-
+    
     # Move the modified temporary file back to the original location
-    result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
+    result=$(sudo mv "$tmp_awk_output" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
-
+    
+    # Update permissions
     result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config")
     checkSuccess "Updating config permissions to associated permissions"
+    
+    # Remove the temporary folder in /tmp
+    result=$(sudo rm -rf "$tmp_folder")
+    checkSuccess "Removed temporary folder: $tmp_folder"
+    
+    isNotice "Waiting 60 seconds for ownCloud to finish installing before restarting."
+    sleep 60
 }
 
 dashyUpdateConf() 
