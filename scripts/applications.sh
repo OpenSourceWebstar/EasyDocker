@@ -93,7 +93,7 @@ result=$(sudo awk '/);/ {
     print "    ),";
     print ");";
     next;
-} 1' "$tmp_folder/config.php.tmp" > "$tmp_awk_output"
+} 1' "$tmp_folder/config.php.tmp" > "$tmp_awk_output")
 checkSuccess "Updated trusted domains with public data"
 
     # Use sed to replace the line in the original file
