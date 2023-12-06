@@ -136,8 +136,11 @@ checkSuccess "Add overwrite and trusted_domain (public) lines to the config"
 fi
     
     # Update permissions
-    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$tmp_awk_output")
-    checkSuccess "Updating config permissions to associated permissions"
+    # Get the permissions of the reference file
+    local reference_permissions=$(stat -c "%a" "$containers_dir$app_name/files/config/objectstore.config.php")
+    # Set the permissions of the config.php file
+    result=$(sudo chmod "$reference_permissions" "$tmp_awk_output")
+    checkSuccess "Setting permissions for the tmp_awk_output to use for the config."
 
     # Move the modified temporary file back to the original location
     result=$(sudo mv "$tmp_awk_output" "$owncloud_config")
