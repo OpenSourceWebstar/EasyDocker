@@ -327,7 +327,7 @@ resetToMenu()
     toolinstallremotesshlist=n
     toolinstallcrontab=n
     toolinstallcrontabssh=n
-    
+
     mainMenu
     return 1
 }

@@ -160,6 +160,10 @@ installRecommendedApps()
 startScan()
 {
 	databasePathInsert $initial_path_save;
+    # To update the configs
+	loadFiles "easydocker_configs";
+    loadFiles "app_configs";
+    loadFiles "containers";
     clearAllPortData;
 	if [[ $CFG_REQUIREMENT_MIGRATE == "true" ]]; then
 		migrateCheckForMigrateFiles;
@@ -182,6 +186,7 @@ startScan()
     databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";
+
 }
 
 startInstall() 

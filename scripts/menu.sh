@@ -4,7 +4,7 @@ mainMenu()
 {
 	# Enable input
 	stty echo
-	
+
 	while true; do
 		echo ""
 		echo "#####################################"
