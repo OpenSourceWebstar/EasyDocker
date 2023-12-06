@@ -847,19 +847,7 @@ viewConfigs()
             viewAppConfigs
             ;;
         x)
-            if [[ $config_edited == "true" ]]; then
-                echo ""
-                isNotice "Reloading configuration file(s) for all Configs."
-                echo ""
-                loadFiles "easydocker_configs";
-                loadFiles "app_configs";
-            else
-                isNotice "Exiting..."
-                echo ""
-                checkConfigFilesMissingVariables true;
-                databaseCycleThroughListAppsCrontab true;
-                return
-            fi
+            endStart;
             ;;
         *)
             isNotice "Invalid option. Please choose a valid option or 'x' to exit."
