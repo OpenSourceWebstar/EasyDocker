@@ -825,19 +825,21 @@ dockerCheckContainerHealthLoop()
     local timeout="$2"
     local wait_time="$3"
 
+    isNotice "This container health check will timeout after $timeout seconds"
+
     local counter=0
     while true; do
         if dockerCheckContainerHealth "$container_name"; then
-            echo "Container is healthy!"
+            isSuccessful "Container is healthy!"
             break
         fi
 
         if [ "$counter" -ge "$timeout" ]; then
-            echo "Container health check timed out after $timeout seconds. Exiting..."
+            isNotice "Container health check timed out after $timeout seconds. Exiting..."
             break
         fi
 
-        echo "Waiting $wait_time seconds for container health..."
+        isNotice "Waiting $wait_time seconds for container to turn healthy..."
         sleep "$wait_time"
         counter=$((counter + wait_time))
     done

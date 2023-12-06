@@ -29,7 +29,7 @@ ownCloudSetupConfig()
     isNotice "This may take a few minutes..."
     echo ""
     # Run the health check loop with timings
-    dockerCheckContainerHealthLoop "owncloud" 180 5
+    dockerCheckContainerHealthLoop "owncloud" 180 15
 
     # If container is healthy
     if dockerCheckContainerHealth "owncloud"; then
