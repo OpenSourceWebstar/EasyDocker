@@ -54,7 +54,7 @@ ownCloudSetupConfig()
 
     updateFileOwnership "$owncloud_config_tmp" $CFG_DOCKER_INSTALL_USER
 
-    result=$(sudo chmod 644 $owncloud_config_tmp)
+    result=$(sudo chmod 777 $owncloud_config_tmp)
     checkSuccess "Updating permissions for $(basename $owncloud_config_tmp)"
 
     # Use awk to delete lines for 'trusted_domains' from the temporary file
@@ -70,7 +70,7 @@ ownCloudSetupConfig()
             'trusted_domains' => array(\\
                 0 => '$host_setup',\\
                 1 => '$ip_setup',\\
-                2 => '$host',\\
+                2 => '$public_ip',\\
             ),\\
         );" "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
     elif [[ $public == "false" ]]; then
@@ -78,7 +78,6 @@ ownCloudSetupConfig()
         result=$(sudo sed -i "${line_number}i\\
             'trusted_domains' => array(\\
                 0 => '$ip_setup',\\
-                1 => '$host',\\
             ),\\
         );" "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
     fi
