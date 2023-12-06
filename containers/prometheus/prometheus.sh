@@ -95,7 +95,7 @@ installPrometheus()
 
         # Prometheus
         if [ -f "${containers_dir}prometheus/prometheus/prometheus.yml" ]; then
-            updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER
+            updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER $CFG_DOCKER_INSTALL_USER
         fi
         if [ -d "${containers_dir}prometheus/prometheus" ]; then
             local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")

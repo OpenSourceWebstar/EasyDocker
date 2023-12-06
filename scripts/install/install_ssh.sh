@@ -428,13 +428,13 @@ generateSSHKeyPair()
     fi
 
     if [ -f "$ssh_dir/$(basename $private_key_full)" ]; then
-        updateFileOwnership $ssh_dir/$(basename $private_key_full) $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership $ssh_dir/$(basename $private_key_full) $CFG_DOCKER_INSTALL_USER $CFG_DOCKER_INSTALL_USER
         result=$(sudo mv "$ssh_dir/$(basename "$private_key_full")" "$private_key_full")
         checkSuccess "Private key moved to $private_key_full"
     fi
 
     if [ -f "$ssh_dir/$(basename $public_key_full)" ]; then
-        updateFileOwnership $ssh_dir/$(basename $public_key_full) $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership $ssh_dir/$(basename $public_key_full) $CFG_DOCKER_INSTALL_USER $CFG_DOCKER_INSTALL_USER
         result=$(sudo mv "$ssh_dir/$(basename "$public_key_full")" "$public_key_full")
         checkSuccess "Public key moved to $public_key_full"
     fi
