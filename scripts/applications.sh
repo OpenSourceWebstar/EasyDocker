@@ -81,19 +81,22 @@ ownCloudSetupConfig()
     local line_number=$(sudo awk '/);/{print NR}' "$tmp_folder/config.php.tmp")
 
 # Use awk to find the line containing ");" and insert new lines above it
-result=$(sudo awk '/);/ {
-    print "    '\''trusted_domains'\'' => array(";
-    if ('$public' == "true") {
-        print "        0 => '\''$host_setup'\'',";
-        print "        1 => '\''$ip_setup'\'',";
-        print "        2 => '\''$public_ip'\'',";
-    } else {
-        print "        0 => '\''$ip_setup'\'',";
+result=$(sudo awk -v ip_setup="$ip_setup" -v host_setup="$host_setup" -v public="$public" -v public_ip="$public_ip" '
+    /);/ {
+        print " '\''trusted_domains'\'' => array(";
+        if (public == "true") {
+            print "     0 => '\''" host_setup "'\'',";
+            print "     1 => '\''" ip_setup "'\'',";
+            print "     2 => '\''" public_ip "'\'',";
+        } else {
+            print "     0 => '\''" ip_setup "'\'',";
+        }
+        print " ),";
+        print ");";
+        next;
     }
-    print "    ),";
-    print ");";
-    next;
-} 1' "$tmp_folder/config.php.tmp" > "$tmp_awk_output")
+    { print "    " $0 }
+' "$tmp_folder/config.php.tmp" > "$tmp_awk_output"
 checkSuccess "Updated trusted domains with public data"
 
     # Use sed to replace the line in the original file
