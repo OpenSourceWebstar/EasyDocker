@@ -60,7 +60,8 @@ ownCloudSetupConfig()
         
         # Loop to check for the existence of the file every second
         local owncloud_counter=0
-        while [ ! -f "$containers_dir$app_name/files/config/config.php" ]; do
+        # File does not exist or is 0 KB
+        while [ ! -f "$containers_dir$app_name/files/config/config.php" ] || [ $(stat -c %s "$containers_dir$app_name/files/config/config.php") -eq 0 ]; do
             if [ "$owncloud_counter" -ge "$owncloud_timeout" ]; then
                 isNotice "File not found after $owncloud_timeout seconds. Exiting..."
                 break
