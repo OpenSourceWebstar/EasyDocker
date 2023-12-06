@@ -48,6 +48,10 @@ ownCloudSetupConfig()
         local owncloud_counter=$((owncloud_counter + 1))
     done
 
+    updateFileOwnership "$owncloud_config" $CFG_DOCKER_INSTALL_USER
+    local result=$(sudo chmod 644 "$owncloud_config")
+    checkSuccess "Set permissions to owncloud_config file."
+
     if [ -f "$owncloud_config_tmp" ]; then
         local result=$(sudo rm -rf "$owncloud_config_tmp")
         checkSuccess "Removed old tmp config file for new generation"
