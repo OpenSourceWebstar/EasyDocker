@@ -38,7 +38,7 @@ services:
       #traefik.http.routers.dashy.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.dashy.tls: true
       #traefik.http.routers.dashy.tls.certresolver: production
-      #traefik.http.services.dashy.loadbalancer.server.port: PORT1
+      #traefik.http.services.dashy.loadbalancer.server.port: 80
       #traefik.http.routers.dashy.middlewares:
     networks:
       vpn:
