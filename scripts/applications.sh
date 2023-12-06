@@ -139,9 +139,9 @@ fi
     # Move the modified temporary file back to the original location
     result=$(sudo mv "$tmp_awk_output" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
-
-    # Get the permissions of the reference file
-    updateFileOwnership "$owncloud_config" 165568 $CFG_DOCKER_INSTALL_USER
+    
+    result=$(sudo chown 165568:$CFG_DOCKER_INSTALL_USER $owncloud_config)
+    checkSuccess "Update permissions of ownCloud config to reflect container needs."
     
     # Remove the temporary folder in /tmp
     result=$(sudo rm -rf "$tmp_folder")
