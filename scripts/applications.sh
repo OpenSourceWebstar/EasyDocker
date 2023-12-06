@@ -31,7 +31,7 @@ ownCloudSetupConfig()
 
     local domains=("$ip_setup" "$host_setup")
     local owncloud_config="$containers_dir$app_name/files/config/config.php"
-    local owncloud_config_tmp=$(mktemp /tmp/config.php.XXXXXX)
+    local owncloud_config_tmp=$(sudo mktemp /tmp/config.php.XXXXXX)
 
     local owncloud_timeout=60
     local owncloud_wait_time=5  # seconds
@@ -52,8 +52,10 @@ ownCloudSetupConfig()
     result=$(sudo cp -p "$owncloud_config" "$owncloud_config_tmp")
     checkSuccess "Copy the original config.php to the temporary file"
 
-    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config_tmp")
-    checkSuccess "Updating config permissions to associated permissions"
+    updateFileOwnership "$owncloud_config_tmp" $CFG_DOCKER_INSTALL_USER
+
+    result=$(sudo chmod 644 $owncloud_config_tmp)
+    checkSuccess "Updating permissions for $(basename $owncloud_config_tmp)"
 
     # Use awk to delete lines for 'trusted_domains' from the temporary file
     result=$(sudo awk '/'"'trusted_domains'"'/,/\),/{next} {print}' "$owncloud_config_tmp" | sudo tee "$owncloud_config_tmp" > /dev/null)
@@ -88,6 +90,9 @@ ownCloudSetupConfig()
     # Move the modified temporary file back to the original location
     result=$(sudo mv "$owncloud_config_tmp" "$owncloud_config")
     checkSuccess "Overwrite the original config.php with the updated content"
+
+    result=$(sudo chmod --reference="$containers_dir$app_name/files/config/objectstore.config.php" "$owncloud_config_tmp")
+    checkSuccess "Updating config permissions to associated permissions"
 }
 
 dashyUpdateConf() 
