@@ -806,3 +806,39 @@ dockerPruneNetworks()
     local result=$(runCommandForDockerInstallUser "docker network prune -f")
     checkSuccess "Pruning any unused Docker networks"
 }
+
+dockerCheckContainerHealth() 
+{
+    local container_name="$1"
+    local health_status=$(docker inspect --format='{{json .State.Health.Status}}' "$container_name")
+
+    if [ "$health_status" == "\"healthy\"" ]; then
+        return 0  # Container is healthy
+    else
+        return 1  # Container is not healthy
+    fi
+}
+
+dockerCheckContainerHealthLoop() 
+{
+    local container_name="$1"
+    local timeout="$2"
+    local wait_time="$3"
+
+    local counter=0
+    while true; do
+        if dockerCheckContainerHealth "$container_name"; then
+            echo "Container is healthy!"
+            break
+        fi
+
+        if [ "$counter" -ge "$timeout" ]; then
+            echo "Container health check timed out after $timeout seconds. Exiting..."
+            break
+        fi
+
+        echo "Waiting $wait_time seconds for container health..."
+        sleep "$wait_time"
+        counter=$((counter + wait_time))
+    done
+}
