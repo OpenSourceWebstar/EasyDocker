@@ -61,7 +61,7 @@ ownCloudSetupConfig()
     checkSuccess "Created config.php.tmp file for $app_name"
 
     # Copy the original config.php to the temporary file
-    result=$(sudo cat "$owncloud_config" > "$owncloud_config_tmp")
+    result=$(sudo cat "$owncloud_config" | sudo tee "$owncloud_config_tmp" > /dev/null)
     checkSuccess "Copy the original config.php contents to the temporary file"
 
     # Use awk to delete lines for 'trusted_domains' from the temporary file
