@@ -11,11 +11,6 @@ updateApplicationSpecifics()
         updateDNS $app_name install;
     fi
 
-    if [[ $app_name == "owncloud" ]]; then
-        #ownCloudSetupConfig;
-        local shouldrestart=true
-    fi
-
     if [[ $shouldrestart == "true" ]]; then
         dockerDownUp $app_name;
     fi
