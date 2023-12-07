@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : privacy
-# Description : Invidious - Alternative YouTube Frontend (c/u/s/r/i):
+# Description : Invidious - Alternative YouTube Frontend (c/u/s/r/i/t):
 
 installInvidious()
 {
@@ -13,6 +13,10 @@ installInvidious()
 
     if [[ "$invidious" == *[cC]* ]]; then
         editAppConfig $app_name;
+    fi
+
+    if [[ "$invidious" == *[tT]* ]]; then
+        invidiousToolsMenu;
     fi
 
 	if [[ "$invidious" == *[uU]* ]]; then
