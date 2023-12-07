@@ -378,6 +378,7 @@ dashyToolsMenu()
 		echo "#####################################"
 		echo ""
 		isOption "1. Run Config Updater"
+		isOption "x. Exit to Main Menu"
 		echo ""
 		isQuestion "What is your choice: "
 		read -rp "" choice
@@ -387,7 +388,7 @@ dashyToolsMenu()
 				dashyUpdateConf
 				;;
 			x)
-				exitScript;
+				endStart;
 
 				;;
 			*)
@@ -410,6 +411,7 @@ invidiousToolsMenu()
 		echo "#####################################"
 		echo ""
 		isOption "1. Reset a users password"
+		isOption "x. Exit to Main Menu"
 		echo ""
 		isQuestion "What is your choice: "
 		read -rp "" choice
@@ -419,7 +421,7 @@ invidiousToolsMenu()
 				invidiousResetUserPassword;
 				;;
 			x)
-				exitScript;
+				endStart;
 
 				;;
 			*)
