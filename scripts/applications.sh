@@ -282,12 +282,12 @@ invidiousResetUserPassword()
         if [[ "$invidiousresetconfirm" != [xX] ]]; then
             runCommandForDockerInstallUser "docker exec invidious-invidious-db-1 /bin/bash -c '
                 su - postgres &&
-                psql -U kemal -d invidious -c \"UPDATE users SET password = ''\$2b\$10\$.ifJ1ph40pbjQqCLpstsgeHc5S7MbG.iBQ0nlwF8upMDjoBdFD35e'' WHERE email = ''$invidiousresetconfirm'';\" &&
+                psql -U kemal -d invidious -c \"UPDATE users SET password = '\$2b\$10\$.ifJ1ph40pbjQqCLpstsgeHc5S7MbG.iBQ0nlwF8upMDjoBdFD35e' WHERE email = '$invidiousresetconfirm';\" &&
                 exit
             ' </dev/null"
             isSuccessful "If the user $invidiousresetconfirm exists, the new password will be 'password'"
             sleep 5;
+            break
         fi
-        isNotice "Please provide a valid port number between 1 and 65535 or enter 'x' to exit."
     done
 }
