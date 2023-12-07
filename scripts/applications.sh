@@ -269,3 +269,26 @@ dashyUpdateConf()
         fi
     fi
 }
+
+invidiousResetUserPassword()
+{
+    while true; do
+        isQuestion "Please enter the username or email which you would like to password reset (enter 'x' to exit): "
+        read -p "" invidiousresetconfirm
+        if [[ "$invidiousresetconfirm" == [xX] ]]; then
+            isNotice "Exiting..."
+            break
+        fi
+        if [[ "$invidiousresetconfirm" != [xX] ]]; then
+            runCommandForDockerInstallUser "{
+                docker exec -it invidious-invidious-db-1 /bin/bash &&
+                su - postgres &&
+                psql -U kemal -d invidious -c \"UPDATE users SET password = '$2b$10$.ifJ1ph40pbjQqCLpstsgeHc5S7MbG.iBQ0nlwF8upMDjoBdFD35e' WHERE email = '$invidiousresetconfirm';\" &&
+                exit
+            }"
+            isSuccessful "If the user $invidiousresetconfirm exists, the new password will be 'password'"
+            sleep 5;
+        fi
+        isNotice "Please provide a valid port number between 1 and 65535 or enter 'x' to exit."
+    done
+}

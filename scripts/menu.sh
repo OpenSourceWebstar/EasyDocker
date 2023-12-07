@@ -396,3 +396,35 @@ dashyToolsMenu()
 		esac
 	done
 }
+
+
+invidiousToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###         Invidious Tools       ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Reset a users password"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" choice
+
+		case $choice in
+			1)
+				invidiousResetUserPassword;
+				;;
+			x)
+				exitScript;
+
+				;;
+			*)
+				echo "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
