@@ -6,6 +6,7 @@ networks:
 
 services:
   invidious:
+    container_name: invidious
     image: quay.io/invidious/invidious:latest
     # image: quay.io/invidious/invidious:latest-arm64 # ARM64/AArch64 devices
     restart: unless-stopped
@@ -53,6 +54,7 @@ services:
         ipv4_address: IPADDRESSHERE
 
   invidious-db:
+    container_name: invidious-db
     image: docker.io/library/postgres:14
     restart: unless-stopped
     volumes:
