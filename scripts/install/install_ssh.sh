@@ -398,7 +398,7 @@ generateSSHKeyPair()
     local private_key_full="$3"
     local public_key_full="$4"
     local flag="$5"
-
+    echo ""
     echo ""
     echo "############################################"
     echo "######   SSH Key Generation for $username"
@@ -632,9 +632,9 @@ updateSSHHTMLSSHKeyLinks()
     local index_file="index.html"
     local private_path="${ssh_dir}private/"
 
-    local root_user_key="${CFG_INSTALL_NAME}_id_ed25519_root"
-    local sudo_user_key="${CFG_INSTALL_NAME}_id_ed25519_${sudo_user_name}"
-    local instal_user_key="${CFG_INSTALL_NAME}_id_ed25519_${CFG_DOCKER_INSTALL_USER}"
+    local root_user_key="${CFG_INSTALL_NAME}_sshkey_root"
+    local sudo_user_key="${CFG_INSTALL_NAME}_sshkey_${sudo_user_name}"
+    local instal_user_key="${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}"
 
     if [ -f "$private_path$index_file" ]; then
         # Reset all links to placeholders
