@@ -294,7 +294,7 @@ checkSSHSetupKeyPair()
 {
     local username="$1"
 
-    local private_key_file="id_ed25519_$username"
+    local private_key_file="${CFG_INSTALL_NAME}_sshkey_$username"
     local private_key_path="${ssh_dir}private"
     local private_key_full="$private_key_path/$private_key_file"
 
@@ -315,7 +315,7 @@ generateSSHSetupKeyPair()
     local username="$1"
     local flag="$2"
 
-    local private_key_file="${CFG_INSTALL_NAME}_id_ed25519_$username"
+    local private_key_file="${CFG_INSTALL_NAME}_sshkey_$username"
     local private_key_path="${ssh_dir}private"
     local private_key_full="$private_key_path/$private_key_file"
 
@@ -398,6 +398,12 @@ generateSSHKeyPair()
     local private_key_full="$3"
     local public_key_full="$4"
     local flag="$5"
+
+    echo ""
+    echo "############################################"
+    echo "######   SSH Key Generation for $username"
+    echo "############################################"
+    echo ""
 
     if [[ "$flag" == "reinstall" ]]; then
         if [ -f "$private_key_full" ]; then
@@ -487,6 +493,8 @@ setupSSHAuthorizedKeys()
 
     result=$(sudo chmod 600 ${ssh_path}/authorized_keys)
     checkSuccess "Updating permissions for ${username}'s authorized_keys file."
+
+    updateFileOwnership "${ssh_path}/authorized_keys" $username $username
 
     result=$(sudo systemctl reload ssh)
     checkSuccess "Reloading SSH service"
