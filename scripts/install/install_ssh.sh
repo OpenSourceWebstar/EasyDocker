@@ -628,7 +628,7 @@ updateSSHHTMLSSHKeyLinks()
     local sudo_user_key="${CFG_INSTALL_NAME}_id_ed25519_${sudo_user_name}"
     local instal_user_key="${CFG_INSTALL_NAME}_id_ed25519_${CFG_DOCKER_INSTALL_USER}"
 
-    if [ -f "$index_file" ]; then
+    if [ -f "$private_path$index_file" ]; then
         # Reset all links to placeholders
         result=$(sudo sed -i "s|<a href=\"$root_user_key\">User - Root's SSH Key</a>|<!--LINK1-->|" $private_path$index_file)
         checkSuccess "Resetting Root URL to empty."
