@@ -1,6 +1,6 @@
 #!/bin/bash
 
-runCommandForDockerInstallUser()
+runCommandForDockerInstallUser() 
 {
     local silent_flag=""
     if [ "$1" == "--silent" ]; then
@@ -13,23 +13,31 @@ runCommandForDockerInstallUser()
     local private_path="${ssh_dir}private/"
     local install_user_key="${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}"
 
+    # Set SSHPASS environment variable if using password authentication
+    if [ "$passwordAuth" == "yes" ]; then
+        export SSHPASS="$CFG_DOCKER_INSTALL_PASS"
+    fi
+
     # Run the SSH command using the existing SSH variables
     local output
     if [ -z "$silent_flag" ]; then
         if [ "$passwordAuth" == "yes" ]; then
-            sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+            sshpass ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
         else
-            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${install_user_key}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
         fi
         local exit_code=$?
     else
         if [ "$passwordAuth" == "yes" ]; then
-            sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+            sshpass ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
         else
-            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${install_user_key}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
         fi
         local exit_code=$?
     fi
+
+    # Unset SSHPASS environment variable after use
+    unset SSHPASS
 
     if [ $exit_code -eq 0 ]; then
         return 0  # Success, command completed without errors
