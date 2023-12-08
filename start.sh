@@ -67,7 +67,8 @@ startPreInstall()
 
     installDebianUbuntu;
     installArch;
-
+    installSSHKeysForDownload install;
+    
     #######################################################
     ###                   Install Docker                ###
     #######################################################
@@ -93,7 +94,6 @@ startPreInstall()
     installSQLiteDatabase;
     installCrontab;
 
-    installSSHKeysForDownload install;
 	installDockerManagerUser;
     installSSHRemoteList;
 

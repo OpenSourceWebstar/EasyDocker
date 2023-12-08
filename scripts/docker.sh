@@ -8,14 +8,26 @@ runCommandForDockerInstallUser()
         shift
     fi
     local remote_command="$1"
-    
+    # Get the value of PasswordAuthentication from sshd_config
+    local passwordAuth=$(grep -i "^PasswordAuthentication" /etc/ssh/sshd_config | awk '{print $2}')
+    local private_path="${ssh_dir}private/"
+    local install_user_key="${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}"
+
     # Run the SSH command using the existing SSH variables
     local output
     if [ -z "$silent_flag" ]; then
-        sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+        if [ "$passwordAuth" == "yes" ]; then
+            sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+        else
+            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+        fi
         local exit_code=$?
     else
-        sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+        if [ "$passwordAuth" == "yes" ]; then
+            sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+        else
+            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+        fi
         local exit_code=$?
     fi
 
