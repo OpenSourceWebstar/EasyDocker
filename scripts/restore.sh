@@ -205,7 +205,7 @@ restoreStart()
 restoreSingleBackupList()
 {
     local app_name="$1"
-    localchosen_backup_file="$2"
+    local chosen_backup_file="$2"
     if [[ "$restoresingle" == [lL] ]]; then
         # Function to display a numbered list of app_names (zip files)
         select_app() {
