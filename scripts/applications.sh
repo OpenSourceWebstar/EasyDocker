@@ -333,8 +333,8 @@ mattermostResetUserPassword()
         checkSuccess "EnableLocalMode set to true for password update."
         restartApp mattermost;
         
-        isNotice "Waiting 30 seconds for mattermost to load the local socket"
-        sleep 30
+        isNotice "Waiting 10 seconds for mattermost to load the local socket"
+        sleep 10
         # Update Password
         runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
         
@@ -343,7 +343,7 @@ mattermostResetUserPassword()
         checkSuccess "EnableLocalMode set to false for password update."
         restartApp mattermost;
 
-        isSuccessful "Password for username $mattermostusername has been changed to $mattermostpassword"
+        isSuccessful "Password for username $mattermostusername has been changed to $mattermostpassword if the user exists."
         sleep 5
     fi
 }

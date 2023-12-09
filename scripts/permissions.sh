@@ -42,7 +42,7 @@ fixConfigPermissions()
         isNotice "Updating config read permissions for EasyDocker"
     fi
 
-    fixFolderPermissions $app_name;
+    fixFolderPermissions $silent_flag $app_name;
 }
 
 updateDockerInstallPassword()
@@ -53,21 +53,30 @@ updateDockerInstallPassword()
 
 fixFolderPermissions()
 {
-    local app_name="$1"
+    local silent_flag="$1"
+    local app_name="$2"
 
 	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
         local result=$(sudo chmod +x "$docker_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $docker_dir with execute permissions."
+        if [ "$silent_flag" == "loud" ]; then
+            checkSuccess "Updating $docker_dir with execute permissions."
+        fi
 
         local result=$(sudo chmod +x "$containers_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $containers_dir with execute permissions."
+        if [ "$silent_flag" == "loud" ]; then
+            checkSuccess "Updating $containers_dir with execute permissions."
+        fi
         
         local result=$(sudo find "$script_dir" "$ssl_dir" "$ssh_dir" "$backup_dir" "$restore_dir" "$migrate_dir" -maxdepth 2 -type d -exec sudo chmod +x {} \;)
-        checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+        if [ "$silent_flag" == "loud" ]; then
+            checkSuccess "Adding execute permissions for $CFG_DOCKER_INSTALL_USER user"
+        fi
 
         # Install user related
         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
+        if [ "$silent_flag" == "loud" ]; then
+            checkSuccess "Updating $containers_dir with $CFG_DOCKER_INSTALL_USER ownership"
+        fi
     fi
 }
 
