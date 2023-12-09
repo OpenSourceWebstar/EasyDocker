@@ -6,6 +6,8 @@
 installMattermost()
 {
     if [[ "$mattermost" == *[cCtTuUsSrRiI]* ]]; then
+    	local DCN=docker-compose.nginx.yml
+		local DCWN=docker-compose.without-nginx.yml
     	setupConfigToContainer silent mattermost;
 		local app_name=$CFG_MATTERMOST_APP_NAME
 		local easy_setup=$CFG_MATTERMOST_EASY_SETUP
@@ -178,9 +180,6 @@ networks:
     external: true
 EOF
 }
-
-		local DCN=docker-compose.nginx.yml
-		local DCWN=docker-compose.without-nginx.yml
 
         status=$(checkAppInstalled "traefik" "docker")
         if [ "$status" == "installed" ]; then
