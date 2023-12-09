@@ -398,7 +398,6 @@ dashyToolsMenu()
 	done
 }
 
-
 invidiousToolsMenu()
 {
 	# Enable input
@@ -419,6 +418,38 @@ invidiousToolsMenu()
 		case $choice in
 			1)
 				invidiousResetUserPassword;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				echo "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+mattermostToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###        Mattermost Tools       ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Reset a users password"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" choice
+
+		case $choice in
+			1)
+				mattermostResetUserPassword;
 				;;
 			x)
 				endStart;

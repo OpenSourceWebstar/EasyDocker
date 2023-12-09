@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : user
-# Description : Mattermost - Collaboration Platform (c/u/s/r/i):
+# Description : Mattermost - Collaboration Platform (c/u/s/r/i/t):
 
 installMattermost()
 {
@@ -14,6 +14,10 @@ installMattermost()
 
     if [[ "$mattermost" == *[cC]* ]]; then
         editAppConfig $app_name;
+    fi
+
+    if [[ "$mattermost" == *[tT]* ]]; then
+        mattermostToolsMenu;
     fi
 
 	if [[ "$mattermost" == *[uU]* ]]; then
