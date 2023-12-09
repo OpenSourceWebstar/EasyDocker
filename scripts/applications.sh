@@ -280,10 +280,11 @@ invidiousResetUserPassword()
             break
         fi
         if [[ "$invidiousresetconfirm" != [xX] ]]; then
-runCommandForDockerInstallUser 'docker exec invidious-db /bin/bash -c "psql -U kemal -d invidious <<EOF
-UPDATE users SET password = ''$2b$10$xN4J3LJafAv91X29KJJREeg7RfDcoKmleNm2LIfF0j5IoKuHXVA4O'' WHERE email = '$invidiousresetconfirm';
-EOF" && exit'
-
+        # The hash for 'password'
+        local bcrypt_hash="$2b$10$xN4J3LJafAv91X29KJJREeg7RfDcoKmleNm2LIfF0j5IoKuHXVA4O"
+runCommandForDockerInstallUser "docker exec invidious-db /bin/bash -c \"psql -U kemal -d invidious <<EOF
+UPDATE users SET password = E'$bcrypt_hash' WHERE email = E'$email';
+EOF\" && exit"
             isSuccessful "If the user $invidiousresetconfirm exists, the new password will be 'password'"
             sleep 5;
             break
