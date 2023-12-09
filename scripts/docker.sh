@@ -8,8 +8,12 @@ runCommandForDockerInstallUser()
         shift
     fi
     local remote_command="$1"
+
     # Get the value of PasswordAuthentication from sshd_config
+    local result=$(sudo sed -i '/#PasswordAuthentication/d' /etc/ssh/sshd_config)
     local passwordAuth=$(grep -i "^PasswordAuthentication" /etc/ssh/sshd_config | awk '{print $2}')
+
+    # Keys
     local private_path="${ssh_dir}private/"
     local install_user_key="${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}"
 
