@@ -310,8 +310,9 @@ mattermostResetUserPassword()
         read -p "" mattermostusername
         if [[ "$mattermostusername" == [xX] ]]; then
             isNotice "Exiting..."
-            break
+            endStart;
         fi
+        break
     done
 
     while true; do
@@ -319,8 +320,9 @@ mattermostResetUserPassword()
         read -p "" mattermostpassword
         if [[ "$mattermostpassword" == [xX] ]]; then
             isNotice "Exiting..."
-            break
+            endStart;
         fi
+        break
     done
 
     if [[ "$mattermostusername" != [xX] && "$mattermostpassword" != [xX] ]]; then
