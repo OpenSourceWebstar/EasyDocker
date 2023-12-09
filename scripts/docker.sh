@@ -13,31 +13,23 @@ runCommandForDockerInstallUser()
     local private_path="${ssh_dir}private/"
     local install_user_key="${CFG_INSTALL_NAME}_sshkey_${CFG_DOCKER_INSTALL_USER}"
 
-    # Set SSHPASS environment variable if using password authentication
-    if [ "$passwordAuth" == "yes" ]; then
-        export SSHPASS="$CFG_DOCKER_INSTALL_PASS"
-    fi
-
     # Run the SSH command using the existing SSH variables
     local output
-    if [ -z "$silent_flag" ]; then
-        if [ "$passwordAuth" == "yes" ]; then
-            sshpass ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+    if [ "$passwordAuth" == "yes" ]; then
+        if [ -z "$silent_flag" ]; then
+            sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
         else
-            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${install_user_key}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
+            sshpass -p "$CFG_DOCKER_INSTALL_PASS" ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
         fi
-        local exit_code=$?
     else
-        if [ "$passwordAuth" == "yes" ]; then
-            sshpass ssh -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+        if [ -z "$silent_flag" ]; then
+            ssh -i "${private_path}${install_user_key}" -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command"
         else
-            sshpass -e ssh -o StrictHostKeyChecking=no -i "${private_path}${install_user_key}" "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
+            ssh -i "${private_path}${install_user_key}" -o StrictHostKeyChecking=no "$CFG_DOCKER_INSTALL_USER@localhost" "$remote_command" > /dev/null 2>&1
         fi
-        local exit_code=$?
     fi
 
-    # Unset SSHPASS environment variable after use
-    unset SSHPASS
+    local exit_code=$?
 
     if [ $exit_code -eq 0 ]; then
         return 0  # Success, command completed without errors
