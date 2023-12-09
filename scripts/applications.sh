@@ -300,8 +300,11 @@ invidiousResetUserPassword()
     done
 }
 
-mattermostResetUserPassword()
+mattermostResetUserPassword() 
 {
+    local mattermostusername
+    local mattermostpassword
+
     while true; do
         isQuestion "Please enter the username or email which you would like to password reset (enter 'x' to exit): "
         read -p "" mattermostusername
@@ -309,30 +312,34 @@ mattermostResetUserPassword()
             isNotice "Exiting..."
             break
         fi
-        while true; do
-            isQuestion "Please enter the password you would like to use (enter 'x' to exit): "
-            read -p "" mattermostpassword
-            if [[ "$mattermostpassword" == [xX] ]]; then
-                isNotice "Exiting..."
-                break
-            fi
-        done
     done
 
-    if [[ "$mattermostusername" != [xX] &&  "$mattermostpassword" != [xX] ]]; then
+    while true; do
+        isQuestion "Please enter the password you would like to use (enter 'x' to exit): "
+        read -p "" mattermostpassword
+        if [[ "$mattermostpassword" == [xX] ]]; then
+            isNotice "Exiting..."
+            break
+        fi
+    done
+
+    if [[ "$mattermostusername" != [xX] && "$mattermostpassword" != [xX] ]]; then
         local config_json="$containers_dir/mattermost/volumes/app/mattermost/config/config.json"
+        
         # Enable local mode
-        result=$(sudo sed -i "s|"EnableLocalMode": false|"EnableLocalMode": true|" "$config_json")
+        result=$(sudo sed -i "s|\"EnableLocalMode\": false|\"EnableLocalMode\": true|" "$config_json")
         checkSuccess "EnableLocalMode set to true for password update."
         restartApp mattermost;
+        
         # Update Password
-        runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c "mmctl --local user change-password $mattermostusername --password $mattermostpassword" && exit"
+        runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
+        
         # Disable local mode
-        result=$(sudo sed -i "s|"EnableLocalMode": true|"EnableLocalMode": false|" "$config_json")
+        result=$(sudo sed -i "s|\"EnableLocalMode\": true|\"EnableLocalMode\": false|" "$config_json")
         checkSuccess "EnableLocalMode set to false for password update."
         restartApp mattermost;
+
         isSuccessful "Password for username $mattermostusername has been changed to $mattermostpassword"
         sleep 5
-        break
     fi
 }
