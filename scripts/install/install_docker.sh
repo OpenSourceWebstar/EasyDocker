@@ -278,6 +278,7 @@ EOF
 sudo bash -c "cat <<EOL > '$override_conf_file'
 [Service]
 Environment='DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER=slirp4netns'
+Environment='DOCKERD_ROOTLESS_ROOTLESSKIT_MTU=1500'
 EOL"
 
             local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER $override_conf_file)
