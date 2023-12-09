@@ -309,15 +309,14 @@ mattermostResetUserPassword()
             isNotice "Exiting..."
             break
         fi
-    done
-
-    while true; do
-        isQuestion "Please enter the password you would like to use (enter 'x' to exit): "
-        read -p "" mattermostpassword
-        if [[ "$mattermostpassword" == [xX] ]]; then
-            isNotice "Exiting..."
-            break
-        fi
+        while true; do
+            isQuestion "Please enter the password you would like to use (enter 'x' to exit): "
+            read -p "" mattermostpassword
+            if [[ "$mattermostpassword" == [xX] ]]; then
+                isNotice "Exiting..."
+                break
+            fi
+        done
     done
 
     if [[ "$mattermostusername" != [xX] &&  "$mattermostpassword" != [xX] ]]; then
