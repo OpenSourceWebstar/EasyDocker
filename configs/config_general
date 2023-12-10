@@ -19,6 +19,7 @@ CFG_LOGIN_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 # Network
 CFG_NETWORK_NAME=vpn
 CFG_NETWORK_SUBNET=10.8.1.0/24
+CFG_NETWORK_MTU=1500
 CFG_DNS_SERVER_1=9.9.9.9
 CFG_DNS_SERVER_2=9.9.9.11
 # Examples for below :
