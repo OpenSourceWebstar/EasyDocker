@@ -153,11 +153,60 @@ fi
 
 dashyUpdateConf() 
 {
-    # Hardcoded path to Dashy's conf.yml file
     local conf_file="${containers_dir}dashy/etc/conf.yml"
     local status=$(checkAppInstalled "dashy" "docker")
 
-    # Check if Dashy app is installed
+    setupAppURL() 
+    {
+        local app_name="$1"
+
+        setupBasicAppVariable $app_name;
+
+        if [ "$app_public" == "true" ]; then
+            local dashy_app_url="$app_host_setup"
+        elif [ "$app_public" == "true" ]; then
+            local dashy_app_url="$app_ip_setup:$app_usedport1"
+        fi
+    }
+
+    # Function to uncomment app lines using sed based on line numbers under the pattern
+    uncommentApp() 
+    {
+        local app_name="$1"
+        local pattern="#### app $app_name"
+        local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
+
+        setupAppURL $app_name;
+
+        if [ -n "$start_line" ]; then
+            # Uncomment lines under the app section based on line numbers
+            sudo sed -i "$((start_line+1))s/#- title/- title/" "$conf_file"
+            sudo sed -i "$((start_line+2))s/#  description/  description/" "$conf_file"
+            sudo sed -i "$((start_line+3))s/#  icon/  icon/" "$conf_file"
+            sudo sed -i "$((start_line+4))s|#  url: http://APPADDRESSHERE/|  url: http://$dashy_app_url/|" "$conf_file"
+            sudo sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
+            sudo sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
+        fi
+    }
+
+    # Function to uncomment category lines using sed based on line numbers under the pattern
+    uncommentCategoryForApp() 
+    {
+        local app_name="$1"
+        local pattern="#### category $app_name"
+        local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
+
+        if [ -n "$start_line" ]; then
+            # Uncomment lines under the category section based on line numbers
+            sudo sed -i "$((start_line+1))s/^#- name/- name/" "$conf_file"
+            sudo sed -i "$((start_line+2))s/^#  icon/  icon/" "$conf_file"
+            sudo sed -i "$((start_line+3))s/^#  items/  items/" "$conf_file"
+        fi
+    }
+
+    # Array to keep track of uncommented categories
+    local uncommented_categories=()
+
     if [ "$status" == "installed" ]; then
         echo ""
         echo "#####################################"
@@ -166,100 +215,37 @@ dashyUpdateConf()
         echo ""
 
         if [ -f "$conf_file" ]; then
-            local result=$(sudo rm -rf "$conf_file")
+            sudo rm -rf "$conf_file"
             checkSuccess "Removed old Dashy conf.yml for new generation"
         fi
 
-        # Copy the default dashy conf.yml configuration file
-        local result=$(copyResource "dashy" "conf.yml" "etc")
+        copyResource "dashy" "conf.yml" "etc"
         checkSuccess "Copy default dashy conf.yml configuration file"
 
         local original_md5=$(md5sum "$conf_file")
 
-        # Initialize changes_made flag as false
-        local changes_made=false
+        sudo sed -i "s/INSTALLNAMEHERE/$CFG_INSTALL_NAME/" "$conf_file"
 
-        # Function to uncomment lines using sed based on line numbers under the pattern
-        uncomment_lines() 
-        {
-            local app_name="$1"
-            local pattern="#### app $app_name"
-            local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
-
-            if [ -n "$start_line" ]; then
-                # Uncomment lines under the app section based on line numbers
-                sudo sed -i "$((start_line+1))s/#- title/- title/" "$conf_file"
-                sudo sed -i "$((start_line+2))s/#  description/  description/" "$conf_file"
-                sudo sed -i "$((start_line+3))s/#  icon/  icon/" "$conf_file"
-                sudo sed -i "$((start_line+4))s/#  url/  url/" "$conf_file"
-                sudo sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
-                sudo sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
-            fi
-        }
-
-        # Function to uncomment category lines using sed based on line numbers under the pattern
-        uncomment_category_lines() 
-        {
-            local category_name="$1"
-            local pattern="#### category $category_name"
-            local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
-
-            if [ -n "$start_line" ]; then
-                # Uncomment lines under the category section based on line numbers
-                sudo sed -i "$((start_line+1))s/^#- name/- name/" "$conf_file"
-                sudo sed -i "$((start_line+2))s/^#  icon/  icon/" "$conf_file"
-                sudo sed -i "$((start_line+3))s/^#  items/  items/" "$conf_file"
-            fi
-        }
-
-        # Loop through immediate subdirectories of $containers_dir
-        for app_dir in "$install_containers_dir"/*/; do
+        for app_dir in "${containers_dir}"/*/; do
             if [ -d "$app_dir" ]; then
                 local app_name=$(basename "$app_dir")
-                local app_config_file="$app_dir$app_name.sh"
+                local app_config_file="${install_containers_dir}/${app_name}/${app_name}.sh"
+
                 if [ -f "$app_config_file" ]; then
                     local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
-                    if [ -n "$category_info" ]; then
-                        uncomment_lines "$app_name"
+                    if [ -n "$category_info" ] && [[ ! " ${uncommented_categories[@]} " =~ " $category_info " ]]; then
+                        uncommentApp "$app_name"
+                        uncommentCategoryForApp "$app_name"
+                        uncommented_categories+=("$category_info")
                     fi
+
+                    uncommentApp "$app_name"
                 fi
             fi
-        done
-
-        # Collect all installed app paths
-        installed_app_paths=()
-        while IFS= read -r -d $'\0' app_name_dir; do
-            local app_name_path="$app_name_dir"
-            local installed_app_paths+=("$app_name_path")
-        done < <(sudo find "$containers_dir" -type d -print0)
-
-        # Get unique category names related to installed apps
-        local installed_categories=()
-        for app_path in "${installed_app_paths[@]}"; do
-            if [ -d "$app_path" ]; then
-                local app_config_file="$app_path/$(basename "$app_path").sh"
-                if [ -f "$app_config_file" ]; then
-                    local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
-                    if [ -n "$category_info" ]; then
-                        # Get the category name from the app's folder
-                        local category_name=$(basename "$(dirname "$app_path")")
-                        # Add the category to the list if not already present
-                        if [[ ! " ${installed_categories[@]} " =~ " $category_name " ]]; then
-                            local installed_categories+=("$category_name")
-                        fi
-                    fi
-                fi
-            fi
-        done
-
-        # Call the uncomment_category_lines function for each installed category
-        for category_name in "${installed_categories[@]}"; do
-            uncomment_category_lines "$category_name"
         done
 
         local updated_md5=$(md5sum "$conf_file")
 
-        # Check if changes were made to the file
         if [ "$original_md5" != "$updated_md5" ]; then
             isNotice "Changes made to dashy config file...restarting dashy..."
             runCommandForDockerInstallUser "docker restart dashy" > /dev/null 2>&1
