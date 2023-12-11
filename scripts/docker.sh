@@ -467,7 +467,7 @@ dockerUpdateAndStartApp()
 
     # Starting variable for app
     clearAllPortData;
-    setupInstallVariables $app_name;
+    setupScanVariables $app_name;
 
     # Always keep YML updated
     dockerUpdateCompose $app_name $flags $norestart;
@@ -486,7 +486,7 @@ dockerScan()
 
             # Starting variable for app
             clearAllPortData;
-            setupInstallVariables $app_name;
+            setupScanVariables $app_name;
     
             # Always keep YML updated
             dockerUpdateCompose $app_name scan;
