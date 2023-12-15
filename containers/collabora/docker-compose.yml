@@ -11,6 +11,7 @@ services:
     container_name: collabora
     environment:
       - TZ=TIMEZONEHERE
+      - DONT_GEN_SSL_CERT=true
       - domain=cloud.DOMAINNAMEHERE
       - server_name=DOMAINSUBNAMEHERE
       - username=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
