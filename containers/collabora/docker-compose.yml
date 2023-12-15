@@ -1,0 +1,28 @@
+version: "3.5"
+
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+  collabora:
+    image: collabora/code
+    container_name: collabora
+    environment:
+      - extra_params=o:ssl.enable=false
+      - username=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+      - password=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+    ports:
+      - "PORT1:9980"
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.collabora.entrypoints: web,websecure
+      #traefik.http.routers.collabora.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.collabora.tls: true
+      #traefik.http.routers.collabora.tls.certresolver: production
+      #traefik.http.services.collabora.loadbalancer.server.port: PORT1
+      #traefik.http.routers.collabora.middlewares:
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
