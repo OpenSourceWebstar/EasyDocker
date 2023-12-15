@@ -19,6 +19,7 @@ services:
       - WG_DEFAULT_ADDRESS=10.8.0.x
 
       # https://docs.pi-hole.net/guides/vpn/wireguard/internal/
+      - WG_MTU=MTUHERE
       - WG_POST_UP=iptables -w -t nat -A POSTROUTING -o eth0 -j MASQUERADE
       - WG_POST_DOWN=iptables -w -t nat -D POSTROUTING -o eth0 -j MASQUERADE
       - WG_ALLOWED_IPS=0.0.0.0/0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
