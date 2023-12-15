@@ -10,7 +10,9 @@ services:
     image: collabora/code
     container_name: collabora
     environment:
-      - domain=DOMAINSUBNAMEHERE
+      - TZ=TIMEZONEHERE
+      - domain=cloud.DOMAINNAMEHERE
+      - server_name=DOMAINSUBNAMEHERE
       - username=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
       - password=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
       - "extra_params = --o:ssl.enable=false --o:ssl.termination=true"
