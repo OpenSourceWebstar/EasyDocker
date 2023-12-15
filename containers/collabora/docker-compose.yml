@@ -11,8 +11,6 @@ services:
     container_name: collabora
     environment:
       - extra_params=o:ssl.enable=false
-      - username=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
-      - password=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
     ports:
       - "PORT1:9980"
     #labels:
