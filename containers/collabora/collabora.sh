@@ -116,6 +116,9 @@ installCollabora()
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""
 
+        # Extract the content after the equals sign for username and password
+        local username=$(grep -oP 'username=\K[^ ]+' "$containers_dir$app_name/docker-compose.yml")
+        local password=$(grep -oP 'password=\K[^ ]+' "$containers_dir$app_name/docker-compose.yml")
         menuShowFinalMessages $username $password;
 		    
 		menu_number=0
