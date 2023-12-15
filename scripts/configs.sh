@@ -485,8 +485,8 @@ checkConfigFilesEdited()
                             fi
                         done
 
-                        result=$(sudo sed -i "s|CFG_TIMZEZONE=Etc/UTC|CFG_TIMZEZONE=$setup_timezone|" "$general_config_file")
-                        checkSuccess "Updating CFG_TIMZEZONE to $setup_timezone in the $config_file_general config."
+                        result=$(sudo sed -i "s|CFG_TIMEZONE=Etc/UTC|CFG_TIMEZONE=$setup_timezone|" "$general_config_file")
+                        checkSuccess "Updating CFG_TIMEZONE to $setup_timezone in the $config_file_general config."
                         
                         loadFiles "easydocker_configs";
 

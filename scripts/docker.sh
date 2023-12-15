@@ -545,8 +545,8 @@ dockerUpdateCompose()
         if [ -f "$yaml_file" ]; then
             # This is for updating Timzeones
             if sudo grep -q " TZ=" "$yaml_file"; then
-                if sudo grep -q " TZ=TIMZEONEHERE" "$yaml_file"; then
-                    local result=$(sudo sed -i "s| TZ=TIMZEONEHERE| TZ=$CFG_TIMEZONE|" "$yaml_file")
+                if sudo grep -q " TZ=TIMEZONEHERE" "$yaml_file"; then
+                    local result=$(sudo sed -i "s| TZ=TIMEZONEHERE| TZ=$CFG_TIMEZONE|" "$yaml_file")
                     checkSuccess "Update the IP whitelist for $app_name"
                     local timezoneupdates=true
                     break  # Exit the loop after updating
@@ -554,7 +554,7 @@ dockerUpdateCompose()
                 # If the timzones are setup already but need an update
                 local current_timezone=""
                 local current_timezone=$(grep " TZ=" "$yaml_file" | cut -d '=' -f 2 | xargs)
-                if [ "$current_timezone" != "$CFG_TIMEZONE" ] && [ "$current_timezone" != "TIMZEONEHERE" ]; then
+                if [ "$current_timezone" != "$CFG_TIMEZONE" ] && [ "$current_timezone" != "TIMEZONEHERE" ]; then
                     local result=$(sudo sed -i "s| TZ=$current_timezone| TZ=$CFG_TIMEZONE|" "$yaml_file")
                     checkSuccess "Update the Timezone for $app_name"
                     local timezoneupdates=true
