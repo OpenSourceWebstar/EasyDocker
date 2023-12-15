@@ -81,7 +81,7 @@ checkEasyDockerConfigFilesMissingVariables()
                                 fi
 
                                 checkSuccess "Adding the $var_line to '$local_config_filename':"
-                                source "$configs_dir/$local_config_file"
+                                source "$local_config_file"
                             ;;
                             2)
                                 echo ""
@@ -97,7 +97,7 @@ checkEasyDockerConfigFilesMissingVariables()
                                 fi
 
                                 checkSuccess "Adding the ${remote_var}=$custom_value to '$local_config_filename':"
-                                source "$configs_dir/$local_config_file"
+                                source "$local_config_file"
                             ;;
                             [xX])
                                 # User chose to skip
@@ -181,7 +181,7 @@ checkApplicationsConfigFilesMissingVariables()
                             fi
 
                             checkSuccess "Adding the $var_line to '$container_config_filename':"
-                            source "$containers_dir$config_app_name/$container_config_file"
+                            source "$container_config_file"
 
                             if [[ $var_line == *"WHITELIST="* ]]; then
                                 local app_dir=$install_containers_dir$config_app_name
@@ -252,7 +252,7 @@ checkApplicationsConfigFilesMissingVariables()
                             fi
 
                             checkSuccess "Adding the ${remote_var}=$custom_value to '$container_config_filename':"
-                            source "$containers_dir$config_app_name/$container_config_file"
+                            source "$container_config_file"
 
                             if [[ $remote_var == *"WHITELIST="* ]]; then
                                 local app_dir=$install_containers_dir$config_app_name
