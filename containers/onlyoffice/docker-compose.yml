@@ -24,7 +24,7 @@ services:
       ## Middleware definition
       # Headers for onlyoffice, https://github.com/ONLYOFFICE/onlyoffice-nextcloud/issues/151
       #traefik.http.middlewares.onlyoffice-headers.headers.customrequestheaders.X-Forwarded-Proto: https
-      #traefik.http.middlewares.onlyoffice-headers.headers.accesscontrolalloworiginlist: *
+      #traefik.http.middlewares.onlyoffice-headers.headers.accesscontrolalloworiginlist: "*"
     volumes:
       - ./document_data:/var/www/onlyoffice/Data
       - ./document_log:/var/log/onlyoffice
