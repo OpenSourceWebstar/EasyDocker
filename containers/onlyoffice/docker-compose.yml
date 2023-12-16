@@ -1,0 +1,33 @@
+version: "3.5"
+
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+  onlyoffice:
+    container_name: onlyoffice
+    image: onlyoffice/documentserver:latest
+    stdin_open: true
+    tty: true
+    restart: always
+    #labels:
+      #traefik.enable=true"
+      #traefik.http.routers.onlyoffice.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.onlyoffice.entrypoints: websecure
+      #traefik.http.routers.onlyoffice.tls.certresolver: production
+      #traefik.http.routers.onlyoffice.tls: true
+      #traefik.http.routers.onlyoffice.middlewares:
+      #traefik.http.services.onlyoffice.loadbalancer.server.port: 80
+
+      ## Middleware definition
+      # Headers for onlyoffice, https://github.com/ONLYOFFICE/onlyoffice-nextcloud/issues/151
+      #traefik.http.middlewares.onlyoffice-headers.headers.customrequestheaders.X-Forwarded-Proto: https
+      #traefik.http.middlewares.onlyoffice-headers.headers.accesscontrolalloworiginlist: *
+    volumes:
+      - ./document_data:/var/www/onlyoffice/Data
+      - ./document_log:/var/log/onlyoffice
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

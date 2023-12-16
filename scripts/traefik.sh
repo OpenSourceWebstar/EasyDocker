@@ -18,6 +18,10 @@ setupTraefikLabelsSetupMiddlewares()
         middleware_entries+=("protectionAuth@file")
     fi
 
+    if [[ "$app_name" == "onlyoffice" ]]; then
+        middleware_entries+=("onlyoffice-headers")
+    fi
+
     if [[ "$authelia_setup" == "true" && "$whitelist" == "true" ]]; then
         middleware_entries+=("global-ipwhitelist@file")
         if [[ $(checkAppInstalled "authelia" "docker") == "installed" ]]; then
