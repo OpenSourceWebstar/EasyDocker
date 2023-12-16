@@ -232,13 +232,14 @@ dashyUpdateConf()
                 local app_config_file="${install_containers_dir}/${app_name}/${app_name}.sh"
 
                 if [ -f "$app_config_file" ]; then
-                    local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
-                    if [ -n "$category_info" ] && [[ ! " ${uncommented_categories[@]} " =~ " $category_info " ]]; then
-                        uncommentCategoryForApp "$category_info"  # Uncomment category only if not already uncommented
+                    local category_info=$(awk -F ': ' '/# Category :/{print $2}' "$app_config_file")
+
+                    if [ -n "$category_info" ] && ! [[ " ${uncommented_categories[@]} " =~ " $category_info " ]]; then
+                        uncommentCategoryForApp "$category_info"
                         uncommented_categories+=("$category_info")
                     fi
 
-                    uncommentApp "$app_name"  # Uncomment app regardless of category's status
+                    uncommentApp "$app_name"
                 fi
             fi
         done
