@@ -159,14 +159,15 @@ dashyUpdateConf()
     setupAppURL() 
     {
         local app_name="$1"
-
         setupBasicAppVariable $app_name;
 
+        local dashy_app_url=""
         if [ "$app_public" == "true" ]; then
-            local dashy_app_url="$app_host_setup"
-        elif [ "$app_public" == "true" ]; then
-            local dashy_app_url="$app_ip_setup:$app_usedport1"
+            dashy_app_url="$app_host_setup"
+        else
+            dashy_app_url="$app_ip_setup:$app_usedport1"
         fi
+        echo "$dashy_app_url"
     }
 
     # Function to uncomment app lines using sed based on line numbers under the pattern
@@ -176,14 +177,12 @@ dashyUpdateConf()
         local pattern="#### app $app_name"
         local start_line=$(grep -n "$pattern" "$conf_file" | cut -d: -f1)
 
-        setupAppURL $app_name;
-
         if [ -n "$start_line" ]; then
             # Uncomment lines under the app section based on line numbers
             sudo sed -i "$((start_line+1))s/#- title/- title/" "$conf_file"
             sudo sed -i "$((start_line+2))s/#  description/  description/" "$conf_file"
             sudo sed -i "$((start_line+3))s/#  icon/  icon/" "$conf_file"
-            sudo sed -i "$((start_line+4))s|#  url: http://APPADDRESSHERE/|  url: http://$dashy_app_url/|" "$conf_file"
+            sudo sed -i "$((start_line+4))s|#  url: http://APPADDRESSHERE/|  url: http://$(setupAppURL $app_name)/|" "$conf_file"
             sudo sed -i "$((start_line+5))s/#  statusCheck/  statusCheck/" "$conf_file"
             sudo sed -i "$((start_line+6))s/#  target/  target/" "$conf_file"
         fi
