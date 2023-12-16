@@ -234,12 +234,11 @@ dashyUpdateConf()
                 if [ -f "$app_config_file" ]; then
                     local category_info=$(grep -Po '(?<=# Category : ).*' "$app_config_file")
                     if [ -n "$category_info" ] && [[ ! " ${uncommented_categories[@]} " =~ " $category_info " ]]; then
-                        uncommentApp "$app_name"
-                        uncommentCategoryForApp "$app_name"
+                        uncommentCategoryForApp "$category_info"  # Uncomment category only if not already uncommented
                         uncommented_categories+=("$category_info")
                     fi
 
-                    uncommentApp "$app_name"
+                    uncommentApp "$app_name"  # Uncomment app regardless of category's status
                 fi
             fi
         done
