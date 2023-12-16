@@ -15,14 +15,14 @@ checkUpdates()
 
 		databasePathInsert $initial_path;
 
-		# Internet Test
-		isNotice "Testing internet, please wait..."
-		if sudo ping -c 4 "9.9.9.9" > /dev/null; then
-			isSuccessful "Internet connectivity is working."
-		else
-			isError "Internet connectivity is not working."
-			exit 1
-		fi
+        # Internet Test with Quad9 DNS
+        isNotice "Testing internet, please wait..."
+        if curl -sSf https://9.9.9.9 >/dev/null; then
+            isSuccessful "Internet connectivity is working."
+        else
+            isError "Internet connectivity is not working."
+            exit 1
+        fi
 
 		cd "$script_dir" || { echo "Error: Cannot navigate to the repository directory"; exit 1; }
 
