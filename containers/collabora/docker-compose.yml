@@ -11,11 +11,11 @@ services:
     container_name: collabora
     environment:
       - TZ=TIMEZONEHERE
-      - domain=cloud.DOMAINNAMEHERE
-      - server_name=DOMAINSUBNAMEHERE
+      #- domain=cloud.DOMAINNAMEHERE
+      #- server_name=DOMAINSUBNAMEHERE
       - username=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
       - password=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
-      - "SLEEPFORDEBUGGER=0"
+      #- "SLEEPFORDEBUGGER=0"
       - "extra_params = --o:ssl.enable=false --o:ssl.termination=true"
     ports:
       - "PORT1:9980"
