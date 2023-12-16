@@ -213,6 +213,8 @@ dashyUpdateConf()
         echo "#####################################"
         echo ""
 
+        local original_md5=$(md5sum "$conf_file")
+
         if [ -f "$conf_file" ]; then
             sudo rm -rf "$conf_file"
             checkSuccess "Removed old Dashy conf.yml for new generation"
@@ -222,8 +224,6 @@ dashyUpdateConf()
         checkSuccess "Copy default dashy conf.yml configuration file"
 
         sudo sed -i "s/INSTALLNAMEHERE/$CFG_INSTALL_NAME/" "$conf_file"
-
-        local original_md5=$(md5sum "$conf_file")
 
         for app_dir in "${containers_dir}"/*/; do
             if [ -d "$app_dir" ]; then
