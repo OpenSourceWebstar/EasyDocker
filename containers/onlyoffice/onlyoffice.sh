@@ -1,37 +1,37 @@
 #!/bin/bash
 
 # Category : user
-# Description : Collabora - Collaborative Documents (c/t/u/s/r/i):
+# Description : Onlyoffice - Document Collaboration (c/t/u/s/r/i):
 
-installCollabora()
+installOnlyoffice()
 {
-    if [[ "$collabora" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent collabora;
-        local app_name=$CFG_COLLABORA_APP_NAME
+    if [[ "$onlyoffice" == *[cCtTuUsSrRiI]* ]]; then
+        setupConfigToContainer silent onlyoffice;
+        local app_name=$CFG_ONLYOFFICE_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
-    if [[ "$collabora" == *[cC]* ]]; then
+    if [[ "$onlyoffice" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-    if [[ "$collabora" == *[tT]* ]]; then
-        collaboraToolsMenu;
+    if [[ "$onlyoffice" == *[tT]* ]]; then
+        onlyofficeToolsMenu;
     fi
 
-    if [[ "$collabora" == *[uU]* ]]; then
+    if [[ "$onlyoffice" == *[uU]* ]]; then
         uninstallApp $app_name;
     fi
 
-    if [[ "$collabora" == *[sS]* ]]; then
+    if [[ "$onlyoffice" == *[sS]* ]]; then
         shutdownApp $app_name;
     fi
 
-    if [[ "$collabora" == *[rR]* ]]; then
+    if [[ "$onlyoffice" == *[rR]* ]]; then
         dockerDownUp $app_name;
     fi
 
-    if [[ "$collabora" == *[iI]* ]]; then
+    if [[ "$onlyoffice" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###          Install $app_name"
@@ -125,5 +125,5 @@ installCollabora()
         sleep 3s
         cd
     fi
-    collabora=n
+    onlyoffice=n
 }
