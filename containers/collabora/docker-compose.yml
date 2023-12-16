@@ -11,14 +11,18 @@ services:
     container_name: collabora
     environment:
       - TZ=TIMEZONEHERE
-      - DONT_GEN_SSL_CERT=true
       - domain=cloud.DOMAINNAMEHERE
       - server_name=DOMAINSUBNAMEHERE
       - username=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
       - password=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+      - "SLEEPFORDEBUGGER=0"
       - "extra_params = --o:ssl.enable=false --o:ssl.termination=true"
     ports:
       - "PORT1:9980"
+    cap_add:
+      - MKNOD
+    restart:
+      unless-stopped
     #labels:
       #traefik.enable: true
       #traefik.http.routers.collabora.entrypoints: web,websecure
