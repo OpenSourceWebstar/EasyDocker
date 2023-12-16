@@ -15,12 +15,12 @@ checkUpdates()
 
 		databasePathInsert $initial_path;
 
-        # Internet Test with Quad9 DNS
-        isNotice "Testing internet, please wait..."
-        if curl -sSf https://9.9.9.9 >/dev/null; then
-            isSuccessful "Internet connectivity is working."
+        # DNS Query Test with Quad9
+        isNotice "Testing internet DNS, please wait..."
+        if dig +short @9.9.9.9 quad9.net >/dev/null; then
+            isSuccessful "Internet DNS is working."
         else
-            isError "Internet connectivity is not working."
+            isError "Internet DNS is not working."
             exit 1
         fi
 
