@@ -222,9 +222,9 @@ dashyUpdateConf()
         copyResource "dashy" "conf.yml" "etc"
         checkSuccess "Copy default dashy conf.yml configuration file"
 
-        local original_md5=$(md5sum "$conf_file")
-
         sudo sed -i "s/INSTALLNAMEHERE/$CFG_INSTALL_NAME/" "$conf_file"
+
+        local original_md5=$(md5sum "$conf_file")
 
         for app_dir in "${containers_dir}"/*/; do
             if [ -d "$app_dir" ]; then
