@@ -151,7 +151,7 @@ sections:
   #### app speedtest
   #- title: SpeedTest
   #  description: Used for testing the speed of your internet
-  #  icon: h1-docker
+  #  icon: h1-librespeed
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -159,7 +159,7 @@ sections:
   #### app actual
   #- title: Actual
   #  description: Money Budgetting Platform
-  #  icon: h1-docker
+  #  icon: h1-actual
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -180,7 +180,7 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: hl-rocket
+  #  icon: hl-mattermost
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab

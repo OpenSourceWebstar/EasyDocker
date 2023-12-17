@@ -62,11 +62,7 @@ setupConfigToContainer()
             isNotice "The directory '$target_path' already exists."
         fi
     else
-        if [ "$silent_flag" == "loud" ]; then
-            mkdirFolders "$silent_flag" "$CFG_DOCKER_INSTALL_USER" "$target_path"
-        elif [ "$silent_flag" == "silent" ]; then
-            mkdirFolders "$silent_flag" "$CFG_DOCKER_INSTALL_USER" "$target_path"
-        fi
+        mkdirFolders "$silent_flag" "$CFG_DOCKER_INSTALL_USER" "$target_path"
     fi
 
     if [ ! -f "$source_file" ]; then
