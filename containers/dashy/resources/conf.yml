@@ -180,7 +180,7 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: fas fa-docker
+  #  icon: hl-rocket
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -188,7 +188,7 @@ sections:
   #### app jitsimeet
   #- title: Jitsi Meet
   #  description: Video Conferencing Platform (Zoom alternative)
-  #  icon: fas fa-jitsi-meet
+  #  icon: hl-jitsi-meet
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -196,7 +196,7 @@ sections:
   #### app owncloud
   #- title: OwnCloud
   #  description: File & Document Hosting
-  #  icon: fas fa-docker
+  #  icon: hl-onlyoffice
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -204,7 +204,7 @@ sections:
   #### app onlyoffice
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
-  #  icon: fas fa-docker
+  #  icon: hl-onlyoffice
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -212,7 +212,7 @@ sections:
   #### app kimai
   #- title: Kimai
   #  description: Time Management Client Platform
-  #  icon: fas fa-docker
+  #  icon: hl-fa-kimai
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -220,7 +220,7 @@ sections:
   #### app killbill
   #- title: Kill Bill
   #  description: Payment Processing Platform
-  #  icon: fas fa-btcpay-server
+  #  icon: hl-btcpay-server
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -228,7 +228,7 @@ sections:
   #### app rustdesk
   #- title: RustDesk
   #  description: Remote Desktop Server
-  #  icon: fas fa-d-link-wifi
+  #  icon: hl-d-link-wifi
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -236,7 +236,7 @@ sections:
   #### app tiledesk
   #- title: TileDesk
   #  description: Live Chat Platform
-  #  icon: fas fa-nextcloud-talk
+  #  icon: hl-nextcloud-talk
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
