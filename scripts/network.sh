@@ -259,13 +259,8 @@ openPort()
             if [[ $disallow_open_port == "false" ]]; then
                 databasePortOpenInsert "$app_name" "$portdata"
                 if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                    #if [[ $app_name != *"virtualmin"* ]]; then
-                        local result=$(sudo ufw allow "$port/$type")
-                        checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
-                    #else
-                        #local result=$(sudo ufw allow from $ip_setup to any port "$port")
-                        #checkSuccess "Opening port $port from $ip_setup for $app_name in the UFW Firewall"
-                    #fi
+                    local result=$(sudo ufw allow "$port/$type")
+                    checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
                     local result=$(sudo ufw-docker allow "$app_name" "$port/$type")
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW-Docker Firewall"
@@ -636,13 +631,8 @@ removePortsFromDatabase()
         local type="${port_info[1]}"
 
         if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-            #if [[ $app_name != *"virtualmin"* ]]; then
-                local result=$(sudo ufw delete allow "$port")
-                checkSuccess "Closing port $port for $app_name in the UFW Firewall"
-            #else
-                #local result=$(sudo ufw delete from $ip_setup to any port "$port")
-                #checkSuccess "Closing port $port for $app_name in the UFW Firewall"
-            #fi
+            local result=$(sudo ufw delete allow "$port")
+            checkSuccess "Closing port $port for $app_name in the UFW Firewall"
         elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
             local result=$(sudo ufw-docker deny "$app_name" "$port")
             checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"

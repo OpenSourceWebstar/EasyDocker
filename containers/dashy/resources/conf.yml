@@ -22,7 +22,15 @@ sections:
 #- name: System Applications
 #  icon: fas fa-rocket
 #  items:
-  
+
+  #### app traefik
+  #- title: Traefik
+  #  description: For VPN connections
+  #  icon: hl-docker
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
   #### app wireguard
   #- title: WireGuard
   #  description: For VPN connections
@@ -108,18 +116,26 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### app invidious
-  #- title: Invidious
-  #  description: Alternative YouTube Frontend
-  #  icon: hl-invidious
-  #  url: http://APPADDRESSHERE/
-  #  statusCheck: true
-  #  target: newtab
-
   #### app vaultwarden
   #- title: VaultWarden
   #  description: Password Manager
   #  icon: hl-bitwarden
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app Trillium
+  #- title: Trilium
+  #  description: Note Manager
+  #  icon: hl-benotes
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app invidious
+  #- title: Invidious
+  #  description: Alternative YouTube Frontend
+  #  icon: hl-invidious
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
