@@ -31,6 +31,14 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
+  #### app adguard
+  #- title: Adguard
+  #  description: DNS Server with AdBlocking DNS-over-TLS
+  #  icon: hl-adguard-home
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
   #### app pihole
   #- title: Pi-Hole
   #  description: DNS Server with AdBlocking and Unbound
@@ -47,6 +55,38 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
+  #### app authelia
+  #- title: Authelia
+  #  description: Single Sign-On Platform
+  #  icon: hl-authelia
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app grafana
+  #- title: Grafana
+  #  description: Metrics Visualizer
+  #  icon: hl-grafana
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app prometheus
+  #- title: Prometheus
+  #  description: Metrics Collector
+  #  icon: hl-prometheus
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app headscale
+  #- title: Headscale
+  #  description: VPN Networking
+  #  icon: hl-diagrams-net
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
   #### app duplicati
   #- title: Duplicati
   #  description: Docker backup system
@@ -59,6 +99,22 @@ sections:
 #- name: Privacy Apps
 #  icon: fas fa-rocket
 #  items:
+
+  #### app mailcow
+  #- title: Mail Cow
+  #  description: Mail Server
+  #  icon: hl-mailcow
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app invidious
+  #- title: Invidious
+  #  description: Alternative YouTube Frontend
+  #  icon: hl-invidious
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
 
   #### app vaultwarden
   #- title: VaultWarden
@@ -84,18 +140,26 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
+  #### app actual
+  #- title: Actual
+  #  description: Money Budgetting Platform
+  #  icon: h1-actual
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app ipinfo
+  #- title: ipinfo
+  #  description: Shows your current IP Address
+  #  icon: hl-it-tools-light
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
 #### category user
 #- name: User Apps
 #  icon: fas fa-rocket
 #  items:
-
-  #### app kimai
-  #- title: Kimai
-  #  description: Time Management client Platform
-  #  icon: fas fa-rocket
-  #  url: http://APPADDRESSHERE/
-  #  statusCheck: true
-  #  target: newtab
 
   #### app mattermost
   #- title: Mattermost
@@ -104,11 +168,59 @@ sections:
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
-  
-  #### app crater
-  #- title: Crater
-  #  description: Client Invoicing Platform
-  #  icon: fas fa-rocket
+
+  #### app jitsimeet
+  #- title: Jitsi Meet
+  #  description: Video Conferencing Platform (Zoom alternative)
+  #  icon: fas fa-jitsi-meet
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app owncloud
+  #- title: OwnCloud
+  #  description: File & Document Hosting
+  #  icon: fas fa-onlyoffice
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app onlyoffice
+  #- title: OnlyOffice
+  #  description: Document Collaboration Connector
+  #  icon: fas fa-onlyoffice
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app kimai
+  #- title: Kimai
+  #  description: Time Management Client Platform
+  #  icon: fas fa-kimai
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app killbill
+  #- title: Kill Bill
+  #  description: Payment Processing Platform
+  #  icon: fas fa-btcpay-server
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app rustdesk
+  #- title: RustDesk
+  #  description: Remote Desktop Server
+  #  icon: fas fa-d-link-wifi
+  #  url: http://APPADDRESSHERE/
+  #  statusCheck: true
+  #  target: newtab
+
+  #### app tiledesk
+  #- title: TileDesk
+  #  description: Live Chat Platform
+  #  icon: fas fa-nextcloud-talk
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
