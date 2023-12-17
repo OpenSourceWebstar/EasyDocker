@@ -4,14 +4,15 @@ setupTraefikLabelsSetupMiddlewares()
 {
     local app_name="$1"
     local temp_file="$2"
-
     local middlewares_line=$(grep -m 1 ".middlewares:" "$temp_file")
-
     local middleware_entries=()
 
-
-    # Default Values non app specific
-    middleware_entries+=("default@file")
+    # List of app names to exclude from default middleware
+    local exclude_apps=("onlyoffice")
+    # Check if app_name is not in the list of excluded apps
+    if [[ ! " ${exclude_apps[@]} " =~ " $app_name " ]]; then
+        middleware_entries+=("default@file")
+    fi
 
     # App Specific middlewears
     if [[ "$login_required" == "true" ]]; then
