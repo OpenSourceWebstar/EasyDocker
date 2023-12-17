@@ -28,13 +28,13 @@ sections:
   #  description: For VPN connections
   #  icon: hl-docker
   #  url: http://APPADDRESSHERE/
-  #  statusCheck: true
+  #  statusCheck: false
   #  target: newtab
 
   #### app wireguard
   #- title: WireGuard
   #  description: For VPN connections
-  #  icon: hl-adguard-home
+  #  icon: hl-netbox
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -143,7 +143,7 @@ sections:
   #### app searxng
   #- title: SearXNG
   #  description: Privacy based Search Engine
-  #  icon: h1-elasticsearch
+  #  icon: h1-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -151,7 +151,7 @@ sections:
   #### app speedtest
   #- title: SpeedTest
   #  description: Used for testing the speed of your internet
-  #  icon: h1-librespeed
+  #  icon: h1-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -159,7 +159,7 @@ sections:
   #### app actual
   #- title: Actual
   #  description: Money Budgetting Platform
-  #  icon: h1-actual
+  #  icon: h1-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -180,7 +180,7 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: fas fa-rocket
+  #  icon: fas fa-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -196,7 +196,7 @@ sections:
   #### app owncloud
   #- title: OwnCloud
   #  description: File & Document Hosting
-  #  icon: fas fa-onlyoffice
+  #  icon: fas fa-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -204,7 +204,7 @@ sections:
   #### app onlyoffice
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
-  #  icon: fas fa-onlyoffice
+  #  icon: fas fa-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -212,7 +212,7 @@ sections:
   #### app kimai
   #- title: Kimai
   #  description: Time Management Client Platform
-  #  icon: fas fa-kimai
+  #  icon: fas fa-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
