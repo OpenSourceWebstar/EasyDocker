@@ -8,7 +8,7 @@ setupTraefikLabelsSetupMiddlewares()
     local middleware_entries=()
 
     # List of app names to exclude from default middleware
-    local exclude_apps=("onlyoffice")
+    local exclude_apps=("onlyoffice" "owncloud")
     # Check if app_name is not in the list of excluded apps
     if [[ ! " ${exclude_apps[@]} " =~ " $app_name " ]]; then
         middleware_entries+=("default@file")
