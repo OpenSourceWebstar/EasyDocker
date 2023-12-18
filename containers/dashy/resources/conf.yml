@@ -26,7 +26,7 @@ sections:
   #### app traefik
   #- title: Traefik
   #  description: For VPN connections
-  #  icon: hl-docker
+  #  icon: si-traefikproxy
   #  url: http://APPADDRESSHERE/
   #  statusCheck: false
   #  target: newtab
@@ -34,7 +34,7 @@ sections:
   #### app wireguard
   #- title: WireGuard
   #  description: For VPN connections
-  #  icon: hl-netbox
+  #  icon: si-wireguard
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -42,7 +42,7 @@ sections:
   #### app adguard
   #- title: Adguard
   #  description: DNS Server with AdBlocking DNS-over-TLS
-  #  icon: hl-adguard-home
+  #  icon: si-adguard
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -50,7 +50,7 @@ sections:
   #### app pihole
   #- title: Pi-Hole
   #  description: DNS Server with AdBlocking and Unbound
-  #  icon: hl-pi-hole
+  #  icon: si-pihole
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -58,7 +58,7 @@ sections:
   #### app portainer
   #- title: Portainer
   #  description: Docker service management panel
-  #  icon: hl-portainer
+  #  icon: si-portainer
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -66,7 +66,7 @@ sections:
   #### app authelia
   #- title: Authelia
   #  description: Single Sign-On Platform
-  #  icon: hl-authelia
+  #  icon: si-authelia
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -74,7 +74,7 @@ sections:
   #### app grafana
   #- title: Grafana
   #  description: Metrics Visualizer
-  #  icon: hl-grafana
+  #  icon: si-grafana
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -82,7 +82,7 @@ sections:
   #### app prometheus
   #- title: Prometheus
   #  description: Metrics Collector
-  #  icon: hl-prometheus
+  #  icon: si-prometheus
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -90,7 +90,7 @@ sections:
   #### app headscale
   #- title: Headscale
   #  description: VPN Networking
-  #  icon: hl-diagrams-net
+  #  icon: si-traefikmesh
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -98,7 +98,7 @@ sections:
   #### app duplicati
   #- title: Duplicati
   #  description: Docker backup system
-  #  icon: hl-docker
+  #  icon: si-stackblitz
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -111,7 +111,7 @@ sections:
   #### app mailcow
   #- title: Mail Cow
   #  description: Mail Server
-  #  icon: hl-mailcow
+  #  icon: si-maildotcom
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -119,15 +119,15 @@ sections:
   #### app vaultwarden
   #- title: VaultWarden
   #  description: Password Manager
-  #  icon: hl-bitwarden
+  #  icon: si-vaultwarden
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
 
-  #### app Trillium
+  #### app trillium
   #- title: Trilium
   #  description: Note Manager
-  #  icon: hl-benotes
+  #  icon: si-trilium
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -135,7 +135,7 @@ sections:
   #### app invidious
   #- title: Invidious
   #  description: Alternative YouTube Frontend
-  #  icon: hl-invidious
+  #  icon: si-youtube
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -143,7 +143,7 @@ sections:
   #### app searxng
   #- title: SearXNG
   #  description: Privacy based Search Engine
-  #  icon: h1-docker
+  #  icon: si-searxng
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -151,7 +151,7 @@ sections:
   #### app speedtest
   #- title: SpeedTest
   #  description: Used for testing the speed of your internet
-  #  icon: h1-librespeed
+  #  icon: si-speedtest
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -159,7 +159,7 @@ sections:
   #### app actual
   #- title: Actual
   #  description: Money Budgetting Platform
-  #  icon: h1-actual
+  #  icon: si-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -167,7 +167,7 @@ sections:
   #### app ipinfo
   #- title: IP Info
   #  description: Shows your current IP Address
-  #  icon: hl-it-tools-light
+  #  icon: si-neutralinojs
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -180,7 +180,7 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: hl-mattermost
+  #  icon: si-mattermost
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -188,7 +188,7 @@ sections:
   #### app jitsimeet
   #- title: Jitsi Meet
   #  description: Video Conferencing Platform (Zoom alternative)
-  #  icon: hl-jitsi-meet
+  #  icon: si-jitsi
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -196,7 +196,7 @@ sections:
   #### app owncloud
   #- title: OwnCloud
   #  description: File & Document Hosting
-  #  icon: hl-onlyoffice
+  #  icon: si-owncloud
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -204,7 +204,7 @@ sections:
   #### app onlyoffice
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
-  #  icon: hl-onlyoffice
+  #  icon: si-onlyoffice
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -212,7 +212,7 @@ sections:
   #### app kimai
   #- title: Kimai
   #  description: Time Management Client Platform
-  #  icon: hl-fa-kimai
+  #  icon: si-timescale
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -220,7 +220,7 @@ sections:
   #### app killbill
   #- title: Kill Bill
   #  description: Payment Processing Platform
-  #  icon: hl-btcpay-server
+  #  icon: si-contactlesspayment
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -228,7 +228,7 @@ sections:
   #### app rustdesk
   #- title: RustDesk
   #  description: Remote Desktop Server
-  #  icon: hl-d-link-wifi
+  #  icon: si-freedesktopdotorg
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -236,7 +236,7 @@ sections:
   #### app tiledesk
   #- title: TileDesk
   #  description: Live Chat Platform
-  #  icon: hl-nextcloud-talk
+  #  icon: si-helpdesk
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
