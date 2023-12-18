@@ -31,18 +31,10 @@ sections:
   #  statusCheck: false
   #  target: newtab
 
-  #### app wireguard
-  #- title: WireGuard
-  #  description: For VPN connections
-  #  icon: si-wireguard
-  #  url: http://APPADDRESSHERE/
-  #  statusCheck: true
-  #  target: newtab
-
   #### app adguard
   #- title: Adguard
   #  description: DNS Server with AdBlocking DNS-over-TLS
-  #  icon: si-adguard
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -50,7 +42,7 @@ sections:
   #### app pihole
   #- title: Pi-Hole
   #  description: DNS Server with AdBlocking and Unbound
-  #  icon: si-pihole
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -58,7 +50,7 @@ sections:
   #### app portainer
   #- title: Portainer
   #  description: Docker service management panel
-  #  icon: si-portainer
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -66,7 +58,7 @@ sections:
   #### app authelia
   #- title: Authelia
   #  description: Single Sign-On Platform
-  #  icon: si-authelia
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -74,7 +66,7 @@ sections:
   #### app grafana
   #- title: Grafana
   #  description: Metrics Visualizer
-  #  icon: si-grafana
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -82,7 +74,7 @@ sections:
   #### app prometheus
   #- title: Prometheus
   #  description: Metrics Collector
-  #  icon: si-prometheus
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -98,7 +90,7 @@ sections:
   #### app duplicati
   #- title: Duplicati
   #  description: Docker backup system
-  #  icon: si-stackblitz
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -111,7 +103,7 @@ sections:
   #### app mailcow
   #- title: Mail Cow
   #  description: Mail Server
-  #  icon: si-maildotcom
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -119,7 +111,7 @@ sections:
   #### app vaultwarden
   #- title: VaultWarden
   #  description: Password Manager
-  #  icon: si-vaultwarden
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -127,7 +119,7 @@ sections:
   #### app trillium
   #- title: Trilium
   #  description: Note Manager
-  #  icon: si-trilium
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -135,7 +127,7 @@ sections:
   #### app invidious
   #- title: Invidious
   #  description: Alternative YouTube Frontend
-  #  icon: si-youtube
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -143,7 +135,7 @@ sections:
   #### app searxng
   #- title: SearXNG
   #  description: Privacy based Search Engine
-  #  icon: si-searxng
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -151,7 +143,7 @@ sections:
   #### app speedtest
   #- title: SpeedTest
   #  description: Used for testing the speed of your internet
-  #  icon: si-speedtest
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -159,7 +151,7 @@ sections:
   #### app actual
   #- title: Actual
   #  description: Money Budgetting Platform
-  #  icon: si-docker
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -167,7 +159,7 @@ sections:
   #### app ipinfo
   #- title: IP Info
   #  description: Shows your current IP Address
-  #  icon: si-neutralinojs
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -180,7 +172,7 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: si-mattermost
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -188,7 +180,7 @@ sections:
   #### app jitsimeet
   #- title: Jitsi Meet
   #  description: Video Conferencing Platform (Zoom alternative)
-  #  icon: si-jitsi
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -196,7 +188,7 @@ sections:
   #### app owncloud
   #- title: OwnCloud
   #  description: File & Document Hosting
-  #  icon: si-owncloud
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -204,7 +196,7 @@ sections:
   #### app onlyoffice
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
-  #  icon: si-onlyoffice
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -212,7 +204,7 @@ sections:
   #### app kimai
   #- title: Kimai
   #  description: Time Management Client Platform
-  #  icon: si-timescale
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -220,7 +212,7 @@ sections:
   #### app killbill
   #- title: Kill Bill
   #  description: Payment Processing Platform
-  #  icon: si-contactlesspayment
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -228,7 +220,7 @@ sections:
   #### app rustdesk
   #- title: RustDesk
   #  description: Remote Desktop Server
-  #  icon: si-freedesktopdotorg
+  #  icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -236,7 +228,7 @@ sections:
   #### app tiledesk
   #- title: TileDesk
   #  description: Live Chat Platform
-  #  icon: si-helpdesk
+  #  icon: icon: favicon
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
