@@ -19,7 +19,7 @@ viewLogsAppMenu()
     read -p "" app_log_choice
     case "$app_log_choice" in
         1)
-            runCommandForDockerInstallUser "docker logs $app_name --follow"
+            runCommandForDockerInstallUser "docker logs -f $app_name | tail -n 20"
             isQuestion "Press Enter to continue..."
             read -p "" continueafterlogs
             viewLogsAppMenu "$app_name"
