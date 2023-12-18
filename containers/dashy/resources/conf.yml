@@ -34,7 +34,7 @@ sections:
   #### app adguard
   #- title: Adguard
   #  description: DNS Server with AdBlocking DNS-over-TLS
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -42,7 +42,7 @@ sections:
   #### app pihole
   #- title: Pi-Hole
   #  description: DNS Server with AdBlocking and Unbound
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -50,7 +50,7 @@ sections:
   #### app portainer
   #- title: Portainer
   #  description: Docker service management panel
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -58,7 +58,7 @@ sections:
   #### app authelia
   #- title: Authelia
   #  description: Single Sign-On Platform
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -66,7 +66,7 @@ sections:
   #### app grafana
   #- title: Grafana
   #  description: Metrics Visualizer
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -74,7 +74,7 @@ sections:
   #### app prometheus
   #- title: Prometheus
   #  description: Metrics Collector
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -90,7 +90,7 @@ sections:
   #### app duplicati
   #- title: Duplicati
   #  description: Docker backup system
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -103,7 +103,7 @@ sections:
   #### app mailcow
   #- title: Mail Cow
   #  description: Mail Server
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -111,7 +111,7 @@ sections:
   #### app vaultwarden
   #- title: VaultWarden
   #  description: Password Manager
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -119,7 +119,7 @@ sections:
   #### app trillium
   #- title: Trilium
   #  description: Note Manager
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -127,7 +127,7 @@ sections:
   #### app invidious
   #- title: Invidious
   #  description: Alternative YouTube Frontend
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -135,7 +135,7 @@ sections:
   #### app searxng
   #- title: SearXNG
   #  description: Privacy based Search Engine
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -143,7 +143,7 @@ sections:
   #### app speedtest
   #- title: SpeedTest
   #  description: Used for testing the speed of your internet
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -151,7 +151,7 @@ sections:
   #### app actual
   #- title: Actual
   #  description: Money Budgetting Platform
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -159,7 +159,7 @@ sections:
   #### app ipinfo
   #- title: IP Info
   #  description: Shows your current IP Address
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -172,7 +172,7 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -180,7 +180,7 @@ sections:
   #### app jitsimeet
   #- title: Jitsi Meet
   #  description: Video Conferencing Platform (Zoom alternative)
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -188,7 +188,7 @@ sections:
   #### app owncloud
   #- title: OwnCloud
   #  description: File & Document Hosting
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -196,7 +196,7 @@ sections:
   #### app onlyoffice
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -204,7 +204,7 @@ sections:
   #### app kimai
   #- title: Kimai
   #  description: Time Management Client Platform
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -212,7 +212,7 @@ sections:
   #### app killbill
   #- title: Kill Bill
   #  description: Payment Processing Platform
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -220,7 +220,7 @@ sections:
   #### app rustdesk
   #- title: RustDesk
   #  description: Remote Desktop Server
-  #  icon: favicon
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -228,7 +228,7 @@ sections:
   #### app tiledesk
   #- title: TileDesk
   #  description: Live Chat Platform
-  #  icon: icon: favicon
+  #  icon: icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
