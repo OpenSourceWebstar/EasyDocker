@@ -198,7 +198,7 @@ DNS = ${CFG_DNS_SERVER_1},${CFG_DNS_SERVER_2}
 PublicKey = ${SERVER_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
 Endpoint = ${WIREGUARD_ENDPOINT}
-AllowedIPs = ${CFG_WG_ALLOWED_IPS}" >"${HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+AllowedIPs = ${CFG_WG_ALLOWED_IPS}" >"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
 
 	# Add the client as a peer to the server
 	echo -e "\n### Client ${WIREGUARD_CLIENT_NAME}
@@ -213,11 +213,11 @@ AllowedIPs = ${WIREGUARD_CLIENT_WG_IPV4}/32,${WIREGUARD_CLIENT_WG_IPV6}/128" >>"
 	# Generate QR code if qrencode is installed
 	if command -v qrencode &>/dev/null; then
 		isNotice "Here is your client config file as a QR Code:"
-		qrencode -t ansiutf8 -l L <"${HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+		qrencode -t ansiutf8 -l L <"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
 		echo ""
 	fi
 
-	isSuccessful "Your client config file is in ${HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+	isSuccessful "Your client config file is in ${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
 }
 
 wireguardListClients() 
@@ -233,7 +233,7 @@ wireguardListClients()
     grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
 }
 
-wireguardRevokeClient() 
+wireguardRevokeClient()
 {
     echo ""
     echo "#####################################"
@@ -260,7 +260,7 @@ wireguardRevokeClient()
 	result=$(sed -i "/^### Client ${WIREGUARD_CLIENT_NAME}\$/,/^$/d" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
     checkSuccess "Removed [Peer] block matching $WIREGUARD_CLIENT_NAME"
 
-	result=$(rm -f "${HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+	result=$(rm -f "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf")
     checkSuccess "Removed generated client file for $WIREGUARD_CLIENT_NAME"
 
 	result=$(wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
