@@ -32,7 +32,7 @@ installStandaloneWireGuard()
 {
     if [[ $CFG_REQUIREMENT_WIREGUARD == "true" ]]; then
 		# Check if WireGuard is already installed and load params
-		if [[ -e /etc/wireguard/params ]]; then
+		if [[ ! -e /etc/wireguard/params ]]; then
             echo ""
             echo "############################################"
             echo "######       Wireguard Installer      ######"
