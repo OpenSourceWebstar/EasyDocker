@@ -35,7 +35,7 @@ sections:
   #- title: Adguard
   #  description: DNS Server with AdBlocking DNS-over-TLS
   #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/
+  #  url: http://APPADDRESSHERE/login.html
   #  statusCheck: true
   #  target: newtab
 
@@ -51,7 +51,7 @@ sections:
   #- title: Portainer
   #  description: Docker service management panel
   #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/
+  #  url: http://APPADDRESSHERE/#!/auth
   #  statusCheck: true
   #  target: newtab
 
@@ -159,7 +159,7 @@ sections:
   #### app ipinfo
   #- title: IP Info
   #  description: Shows your current IP Address
-  #  icon: favicon-local
+  #  icon: generative
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -173,7 +173,7 @@ sections:
   #- title: Mattermost
   #  description: Project Management & Chat Platform
   #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/
+  #  url: http://APPADDRESSHERE/login
   #  statusCheck: true
   #  target: newtab
 
@@ -197,7 +197,7 @@ sections:
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
   #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/
+  #  url: http://APPADDRESSHERE/welcome/
   #  statusCheck: true
   #  target: newtab
 
