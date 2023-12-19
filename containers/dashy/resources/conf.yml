@@ -34,8 +34,8 @@ sections:
   #### app adguard
   #- title: Adguard
   #  description: DNS Server with AdBlocking DNS-over-TLS
-  #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/login.html
+  #  icon: hl-adblock
+  #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
 
@@ -50,8 +50,8 @@ sections:
   #### app portainer
   #- title: Portainer
   #  description: Docker service management panel
-  #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/#!/auth
+  #  icon: hl-portainer
+  #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
 
@@ -111,7 +111,7 @@ sections:
   #### app vaultwarden
   #- title: VaultWarden
   #  description: Password Manager
-  #  icon: favicon-local
+  #  icon: hl-bitwarden
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -159,7 +159,7 @@ sections:
   #### app ipinfo
   #- title: IP Info
   #  description: Shows your current IP Address
-  #  icon: generative
+  #  icon: hl-docker
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
@@ -172,8 +172,8 @@ sections:
   #### app mattermost
   #- title: Mattermost
   #  description: Project Management & Chat Platform
-  #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/login
+  #  icon: hl-mattermost
+  #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
 
@@ -196,8 +196,8 @@ sections:
   #### app onlyoffice
   #- title: OnlyOffice
   #  description: Document Collaboration Connector
-  #  icon: favicon-local
-  #  url: http://APPADDRESSHERE/welcome/
+  #  icon: hl-onlyoffice
+  #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
 
