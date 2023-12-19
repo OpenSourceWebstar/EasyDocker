@@ -101,7 +101,7 @@ installKimai()
 
         # If container is healthy
         if dockerCheckContainerHealth "kimai"; then
-            runCommandForDockerInstallUser "docker exec kimai /bin/bash -c \"php -d memory_limit=1G ../../bin/console kimai:reload --env=prod\" && exit"
+            runCommandForDockerInstallUser "docker exec kimai /bin/bash -c "php -d memory_limit=1G /opt/kimai/bin/console kimai:reload --env=prod" && exit"
         else
             isNotice "It has not been possible to change the memory limit, this may cause issues"
         fi
