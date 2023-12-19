@@ -37,7 +37,7 @@ config_file_backup=config_backup
 config_file_general=config_general
 config_file_requirements=config_requirements
 config_file_wireguard=config_wireguard
-config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$config_file_requirements" "$config_wireguard")
+config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$config_file_requirements" "$config_file_wireguard")
 
 # Menu
 menu_number=0
