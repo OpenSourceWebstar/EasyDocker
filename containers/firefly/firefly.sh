@@ -84,19 +84,19 @@ installFirefly()
         setupFileWithConfigData $app_name ".db.env";
 
         local APP_KEY=$(head /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | head -c 32 && echo)
-        result=$(sudo sed -i 's|SomeRandomStringOf32CharsExactly|${APP_KEY}|' "$containers_dir$app_name/resources/.db.env")
+        result=$(sudo sed -i 's|SomeRandomStringOf32CharsExactly|${APP_KEY}|' "$containers_dir$app_name/.db.env")
         checkSuccess "Enabling environment in the docker-compose file."
 
         local random_password=$(openssl rand -base64 12 | tr -d '+/=')
-        result=$(sudo sed -i 's|secret_firefly_password|${random_password}|' "$containers_dir$app_name/resources/.env")
+        result=$(sudo sed -i 's|secret_firefly_password|${random_password}|' "$containers_dir$app_name/.env")
         checkSuccess "Updating the MYSQL password in .env."
-        result=$(sudo sed -i 's|secret_firefly_password|${random_password}|' "$containers_dir$app_name/resources/.db.env")
+        result=$(sudo sed -i 's|secret_firefly_password|${random_password}|' "$containers_dir$app_name/.db.env")
         checkSuccess "Updating the MYSQL password in .db.env."
 
         if [[ $public == "true" ]]; then
-            result=$(sudo sed -i 's|APP_URL=http://localhost|APP_URL=https://$host_setup|' "$containers_dir$app_name/resources/.env")
+            result=$(sudo sed -i 's|APP_URL=http://localhost|APP_URL=https://$host_setup|' "$containers_dir$app_name/.env")
             checkSuccess "Enabling environment in the docker-compose file."
-            result=$(sudo sed -i 's|TRUSTED_PROXIES=|TRUSTED_PROXIES=*|' "$containers_dir$app_name/resources/.env")
+            result=$(sudo sed -i 's|TRUSTED_PROXIES=|TRUSTED_PROXIES=*|' "$containers_dir$app_name/.env")
             checkSuccess "Enabling TRUSTED_PROXIES in the .env file."
         fi
 
