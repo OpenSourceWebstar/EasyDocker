@@ -5,7 +5,7 @@ networks:
     external: true
 
 services:
-  actual_server:
+  actual:
     image: actualbudget/actual-server:latest
     container_name: actual
     ports:
@@ -13,14 +13,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./actual-data:/data
-    #labels:
-      #traefik.enable: true
-      #traefik.http.routers.actual.entrypoints: web,websecure
-      #traefik.http.routers.actual.rule: Host(`DOMAINSUBNAMEHERE`)
-      #traefik.http.routers.actual.tls: true
-      #traefik.http.routers.actual.tls.certresolver: production
-      #traefik.http.routers.actual.middlewares:
-      #traefik.http.services.actual.loadbalancer.server.port: PORT1
     restart: unless-stopped
     networks:
       vpn:
