@@ -29,6 +29,7 @@ files_to_source=(
     "scripts/migrate.sh"
     
     "scripts/install/install_os.sh"
+    "scripts/install/install_wireguard.sh"
     "scripts/install/install_docker.sh"
     "scripts/install/install_ufw.sh"
     "scripts/install/install_misc.sh"
