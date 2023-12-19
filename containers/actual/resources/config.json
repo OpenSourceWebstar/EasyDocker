@@ -1,6 +1,0 @@
-{
-    "https": {
-      "key": "/data/key.pem",
-      "cert": "/data/cert.pem"
-    }
-  }

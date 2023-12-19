@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # Category : privacy
-# Description : Actual - Money Budgetting (c/u/s/r/i):
+# Description : Firefly - Money Budgetting (c/u/s/r/i):
 
-installActual()
+installFirefly()
 {
-    if [[ "$actual" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent actual;
+    if [[ "$firefly" == *[cCtTuUsSrRiI]* ]]; then
+        setupConfigToContainer silent firefly;
         local app_name=$CFG_ACTUAL_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
-    if [[ "$actual" == *[cC]* ]]; then
+    if [[ "$firefly" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-	if [[ "$actual" == *[uU]* ]]; then
+	if [[ "$firefly" == *[uU]* ]]; then
 		uninstallApp $app_name;
 	fi
 
-	if [[ "$actual" == *[sS]* ]]; then
+	if [[ "$firefly" == *[sS]* ]]; then
 		shutdownApp $app_name;
 	fi
 
-    if [[ "$actual" == *[rR]* ]]; then
+    if [[ "$firefly" == *[rR]* ]]; then
         dockerDownUp $app_name;
     fi
 
-    if [[ "$actual" == *[iI]* ]]; then
+    if [[ "$firefly" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###      Install $app_name"
@@ -70,32 +70,34 @@ installActual()
 
         setupComposeFile $app_name;
 
-		# SSL Cert is needed to load, using self signed
-		if [ -f "$ssl_dir$ssl_key" ]; then
-			checkSuccess "Self Signed SSL Certificate found, installing...."
+        result=$(rm -rf "$containers_dir$app_name/resources/.env")
+        checkSuccess "Removing old .env file"
+        result=$(rm -rf "$containers_dir$app_name/resources/.db.env")
+        checkSuccess "Removing old .db.env file"
 
-			local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/actual-data)
-			checkSuccess "Create actual-data folder"
-			
-			local result=$(copyFile "loud" $install_containers_dir$app_name/resources/config.json $containers_dir$app_name/actual-data/config.json $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying config.json to actual-data folder"
+        local result=$(copyResource "$app_name" ".env" "")
+        checkSuccess "Copying the .env for $app_name"
+        local result=$(copyResource "$app_name" ".db.env" "")
+        checkSuccess "Copying the .db.env for $app_name"
 
-			local result=$(copyFile "loud" $ssl_dir$ssl_crt $containers_dir$app_name/actual-data/cert.pem $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying cert to actual-data folder"
+        setupFileWithConfigData $app_name ".env";
+        setupFileWithConfigData $app_name ".db.env";
 
-			local result=$(copyFile "loud" $ssl_dir$ssl_key $containers_dir$app_name/actual-data/key.pem $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
-			checkSuccess "Copying key to actual-data folder"
-			
-		else
-			checkSuccess "Self Signed SSL Certificate not found, this may cause an issue!"
-		fi
+        local APP_KEY=$(head /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | head -c 32 && echo)
+        result=$(sudo sed -i 's|SomeRandomStringOf32CharsExactly|${APP_KEY}|' "$containers_dir$app_name/resources/.db.env")
+        checkSuccess "Enabling environment in the docker-compose file."
 
-        if [ "$public" == "false" ]; then
-            # Enable local SSL
-            result=$(sudo sed -i 's|^#environment|environment|' "$containers_dir$app_name/docker-compose.yml")
+        local random_password=$(openssl rand -base64 12 | tr -d '+/=')
+        result=$(sudo sed -i 's|secret_firefly_password|${random_password}|' "$containers_dir$app_name/resources/.env")
+        checkSuccess "Updating the MYSQL password in .env."
+        result=$(sudo sed -i 's|secret_firefly_password|${random_password}|' "$containers_dir$app_name/resources/.db.env")
+        checkSuccess "Updating the MYSQL password in .db.env."
+
+        if [[ $public == "true" ]]; then
+            result=$(sudo sed -i 's|APP_URL=http://localhost|APP_URL=https://$host_setup|' "$containers_dir$app_name/resources/.env")
             checkSuccess "Enabling environment in the docker-compose file."
-            result=$(sudo sed -i 's|^# - ACTUAL_HTTPS| - ACTUAL_HTTPS|' "$containers_dir$app_name/docker-compose.yml")
-            checkSuccess "Enabling the HTTPS variables in the docker-compose file."
+            result=$(sudo sed -i 's|TRUSTED_PROXIES=|TRUSTED_PROXIES=*|' "$containers_dir$app_name/resources/.env")
+            checkSuccess "Enabling TRUSTED_PROXIES in the .env file."
         fi
 
 		((menu_number++))
@@ -146,5 +148,5 @@ installActual()
         sleep 3s
         cd
 	fi
-	actual=n
+	firefly=n
 }

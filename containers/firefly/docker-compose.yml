@@ -1,0 +1,53 @@
+version: '3.3'
+
+networks:
+  vpn:
+    external: true
+
+services:
+  firefly:
+    image: fireflyiii/core:latest
+    hostname: firefly
+    container_name: firefly_iii_core
+    restart: always
+    volumes:
+      - ./firefly_iii_upload:/var/www/html/storage/upload
+    env_file: .env
+    ports:
+      - PORT1:PORT1
+    depends_on:
+      - firefly_iii_db
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.firefly.entrypoints: web,websecure
+      #traefik.http.routers.firefly.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.firefly.tls: true
+      #traefik.http.routers.firefly.tls.certresolver: production
+      #traefik.http.services.firefly.loadbalancer.server.port: PORT1
+      #traefik.http.routers.firefly.middlewares:
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
+
+  firefly_iii_db:
+    image: mariadb
+    hostname: firefly_iii_db
+    container_name: firefly_iii_db
+    restart: always
+    env_file: .db.env
+    volumes:
+      - ./firefly_iii_db:/var/lib/mysql
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.124
+
+  firefly_iii_cron:
+    image: alpine
+    restart: always
+    container_name: firefly_iii_cron
+    command: sh -c "echo \"0 3 * * * wget -qO- http://firefly:PORT1/api/v1/cron/REPLACEME\" | crontab - && crond -f -L /dev/stdout"
+    networks:
+      - firefly_iii
+    networks:
+      vpn:
+        ipv4_address: 10.8.1.125
