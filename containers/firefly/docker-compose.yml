@@ -47,7 +47,5 @@ services:
     container_name: firefly_iii_cron
     command: sh -c "echo \"0 3 * * * wget -qO- http://firefly:PORT1/api/v1/cron/REPLACEME\" | crontab - && crond -f -L /dev/stdout"
     networks:
-      - firefly_iii
-    networks:
       vpn:
         ipv4_address: 10.8.1.125

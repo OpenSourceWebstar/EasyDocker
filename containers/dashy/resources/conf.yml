@@ -148,8 +148,8 @@ sections:
   #  statusCheck: true
   #  target: newtab
 
-  #### app actual
-  #- title: Actual
+  #### app firefly
+  #- title: FireFly iii
   #  description: Money Budgetting Platform
   #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
@@ -228,7 +228,7 @@ sections:
   #### app tiledesk
   #- title: TileDesk
   #  description: Live Chat Platform
-  #  icon: icon: favicon-local
+  #  icon: favicon-local
   #  url: http://APPADDRESSHERE/
   #  statusCheck: true
   #  target: newtab
