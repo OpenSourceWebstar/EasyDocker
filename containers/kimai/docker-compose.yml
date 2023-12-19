@@ -98,7 +98,7 @@ services:
       #traefik.http.routers.kimai-nginx.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.kimai-nginx.tls: true
       #traefik.http.routers.kimai-nginx.tls.certresolver: production
-      #traefik.http.services.kimai-nginx.loadbalancer.server.port: PORT1
+      #traefik.http.services.kimai-nginx.loadbalancer.server.port: 80
       #traefik.http.routers.kimai-nginx.middlewares:
     networks:
       vpn:
