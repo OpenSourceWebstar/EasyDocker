@@ -1,15 +1,18 @@
 version: '3'
-
 networks:
   vpn:
     external: true
-
 services:
   actual:
     image: actualbudget/actual-server:latest
     container_name: actual
     ports:
       - 'PORT1:PORT1'
+    #environment:
+      # - ACTUAL_HTTPS_KEY=/data/key.pem
+      # - ACTUAL_HTTPS_CERT=/data/cert.pem
+      # - ACTUAL_NORDIGEN_SECRET_ID=xxxx
+      # - ACTUAL_NORDIGEN_SECRET_KEY=xxxx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./actual-data:/data
