@@ -48,7 +48,7 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | Privacy        | <a href="https://github.com/PeterDaveHello/ipinfo.tw">IPInfo - Show IP Address</a>                  | Tested & Working |
 | Privacy        | <a href="https://github.com/zadam/trilium">Trilium - Note Manager</a>                               | Tested & Working |
 | Privacy        | <a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden - Password Manager</a>             | Tested & Working |
-| Privacy        | <a href="https://github.com/actualbudget/actual">Actual - Money Budgetting</a>                      | Tested & Working |
+| Privacy        | <a href="https://github.com/firefly-iii/firefly-iii/">Firefly - Money Budgetting</a>                | Tested & Working |
 | Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*      | Needs Testing    |
 | User           | <a href="https://github.com/jitsi/docker-jitsi-meet">Jitsi Meet - Video Conferencing</a>            | Tested & Working |
 | User           | <a href="https://github.com/owncloud-docker/server">OwnCloud - File & Document Cloud</a>            | Tested & Working |
