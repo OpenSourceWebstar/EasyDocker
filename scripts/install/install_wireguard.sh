@@ -3,31 +3,6 @@
 # Secure WireGuard server installer
 # Adapted from : https://github.com/angristan/wireguard-install
 
-checkOS() 
-{
-    source /etc/os-release
-    WG_OS="${ID}"
-    WG_CAN_INSTALL="true";
-    if [[ ${WG_OS} == "debian" || ${WG_OS} == "raspbian" ]]; then
-        if [[ ${WG_VERSION_ID} -lt 10 ]]; then
-            echo "Your version of Debian (${WG_VERSION_ID}) is not supported. Please use Debian 10 Buster or later"
-            WG_CAN_INSTALL="false";
-        fi
-        WG_OS=debian
-        WG_CAN_INSTALL="true";
-    elif [[ ${WG_OS} == "ubuntu" ]]; then
-        RELEASE_YEAR=$(echo "${WG_VERSION_ID}" | cut -d'.' -f1)
-        if [[ ${RELEASE_YEAR} -lt 18 ]]; then
-            echo "Your version of Ubuntu (${WG_VERSION_ID}) is not supported. Please use Ubuntu 18.04 or later"
-            WG_CAN_INSTALL="false";
-        fi
-        WG_CAN_INSTALL="true";
-    else
-        echo "Looks like you aren't running this installer on a Debian, Ubuntu Linux system"
-        WG_CAN_INSTALL="false";
-    fi
-}
-
 installStandaloneWireGuard() 
 {
     if [[ $CFG_REQUIREMENT_WIREGUARD == "true" ]]; then
@@ -43,7 +18,6 @@ installStandaloneWireGuard()
 
             if [ "$(systemd-detect-virt)" == "openvz" ]; then
                 echo "OpenVZ is not supported"
-                resetToMenu;
             fi
 
             if [ "$(systemd-detect-virt)" == "lxc" ]; then
@@ -52,28 +26,24 @@ installStandaloneWireGuard()
                 echo "but the kernel module has to be installed on the host,"
                 echo "the container has to be run with some specific parameters"
                 echo "and only the tools need to be installed in the container."
-                resetToMenu;
             fi
-
-            checkOS;
 
             if [[ $WG_CAN_INSTALL == 'true' ]]; then
 
                 # Install WireGuard tools and module
-                if [[ ${WG_OS} == 'ubuntu' ]] || [[ ${WG_OS} == 'debian' && ${WG_VERSION_ID} -gt 10 ]]; then
+                if [[ "$OS" == [1234567] ]]; then
                     sudo apt-get update
                     sudo apt-get install -y wireguard iptables resolvconf qrencode
-                fi
 
-                #  (this does not seem to be the case on fedora)
-                result=$(sudo mkdir /etc/wireguard >/dev/null 2>&1)
-                checkSuccess "Created the WireGuard"
+                    #  (this does not seem to be the case on fedora)
+                    result=$(sudo mkdir /etc/wireguard >/dev/null 2>&1)
+                    checkSuccess "Created the WireGuard"
 
-                result=$(sudo chmod 600 -R /etc/wireguard/)
-                checkSuccess "Updated permissions for /etc/wireguard"
+                    result=$(sudo chmod 600 -R /etc/wireguard/)
+                    checkSuccess "Updated permissions for /etc/wireguard"
 
-                local SERVER_PRIV_KEY=$(wg genkey)
-                local SERVER_PUB_KEY=$(echo "${SERVER_PRIV_KEY}" | wg pubkey)
+                    local SERVER_PRIV_KEY=$(wg genkey)
+                    local SERVER_PUB_KEY=$(echo "${SERVER_PRIV_KEY}" | wg pubkey)
 
                 # Save WireGuard settings
                 echo "SERVER_PUB_IP=${public_ip_v4}
@@ -111,29 +81,30 @@ PostDown = ip6tables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sud
                 echo "net.ipv4.ip_forward = 1
 net.ipv6.conf.all.forwarding = 1" | sudo tee /etc/sysctl.d/wg.conf >/dev/null
 
-                result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-                checkSuccess "Started wg-quick@${CFG_WG_SERVER_WG_NIC} service."
-                result=$(sudo systemctl enable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-                checkSuccess "Enabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+                    result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+                    checkSuccess "Started wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+                    result=$(sudo systemctl enable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+                    checkSuccess "Enabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-                result=$(sudo sysctl --system)
-                checkSuccess "Reloaded sysctl"
+                    result=$(sudo sysctl --system)
+                    checkSuccess "Reloaded sysctl"
 
-                wireguardNewClient install;
+                    wireguardNewClient install;
 
-                # Check if WireGuard is running
-                systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
-                WIREGUARD_RUNNING=$?
+                    # Check if WireGuard is running
+                    systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
+                    WIREGUARD_RUNNING=$?
 
-                # WireGuard might not work if we updated the kernel. Tell the user to reboot
-                if [[ ${WIREGUARD_RUNNING} -ne 0 ]]; then
-                    isNotice "***WARNING*** WireGuard does not seem to be running."
-                    isNotice "You can check if WireGuard is running with: systemctl status wg-quick@${CFG_WG_SERVER_WG_NIC}${NC}"
-                    isNotice "If you get something like 'Cannot find device ${CFG_WG_SERVER_WG_NIC}', please reboot!"
-                else # WireGuard is running
-                    isSuccessful "WireGuard is running."
-                    isSuccessful "You can check the status of WireGuard with: systemctl status wg-quick@${CFG_WG_SERVER_WG_NIC}"
-                    isNotice "If you don't have internet connectivity from your client, try to reboot the server."
+                    # WireGuard might not work if we updated the kernel. Tell the user to reboot
+                    if [[ ${WIREGUARD_RUNNING} -ne 0 ]]; then
+                        isNotice "***WARNING*** WireGuard does not seem to be running."
+                        isNotice "You can check if WireGuard is running with: systemctl status wg-quick@${CFG_WG_SERVER_WG_NIC}${NC}"
+                        isNotice "If you get something like 'Cannot find device ${CFG_WG_SERVER_WG_NIC}', please reboot!"
+                    else # WireGuard is running
+                        isSuccessful "WireGuard is running."
+                        isSuccessful "You can check the status of WireGuard with: systemctl status wg-quick@${CFG_WG_SERVER_WG_NIC}"
+                        isNotice "If you don't have internet connectivity from your client, try to reboot the server."
+                    fi
                 fi
             fi
         #else
@@ -292,40 +263,40 @@ wireguardUninstall()
     read -p "" WIREGUARD_REMOVE
     
     if [[ $WIREGUARD_REMOVE == [yY] ]]; then
-        checkOS;
+        if [[ "$OS" == [1234567] ]]; then
+            result=$(sudo systemctl stop "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+            checkSuccess "Stopped wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-        result=$(sudo systemctl stop "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-        checkSuccess "Stopped wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+            result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+            checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-        result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-        checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+            if [[ ${WG_OS} == 'ubuntu' ]]; then
+                result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
+                checkSuccess "Removed wireguard wireguard-tools qrencode"
+            elif [[ ${WG_OS} == 'debian' ]]; then
+                result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
+                checkSuccess "Removed wireguard wireguard-tools qrencode"
+            fi
 
-        if [[ ${WG_OS} == 'ubuntu' ]]; then
-            result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
-            checkSuccess "Removed wireguard wireguard-tools qrencode"
-        elif [[ ${WG_OS} == 'debian' ]]; then
-            result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
-            checkSuccess "Removed wireguard wireguard-tools qrencode"
-        fi
+            result=$(sudo rm -rf /etc/wireguard)
+            checkSuccess "Deleted /etc/wireguard folder."
+            result=$(sudo rm -f /etc/sysctl.d/wg.conf)
+            checkSuccess "Delete /etc/sysctl.d/wg.conf file."
 
-        result=$(sudo rm -rf /etc/wireguard)
-        checkSuccess "Deleted /etc/wireguard folder."
-        result=$(sudo rm -f /etc/sysctl.d/wg.conf)
-        checkSuccess "Delete /etc/sysctl.d/wg.conf file."
+            result=$(sudo sysctl --system)
+            checkSuccess "Reloaded sysctl"
 
-        result=$(sudo sysctl --system)
-        checkSuccess "Reloaded sysctl"
+            # Check if WireGuard is running
+            systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
+            WIREGUARD_RUNNING=$?
 
-        # Check if WireGuard is running
-        systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
-        WIREGUARD_RUNNING=$?
-
-        if [[ ${WIREGUARD_RUNNING} -eq 0 ]]; then
-            isError "WireGuard failed to uninstall properly."
-            wireguardManageMenu;
-        else
-            isSuccessful "WireGuard uninstalled successfully."
-            wireguardManageMenu;
+            if [[ ${WIREGUARD_RUNNING} -eq 0 ]]; then
+                isError "WireGuard failed to uninstall properly."
+                wireguardManageMenu;
+            else
+                isSuccessful "WireGuard uninstalled successfully."
+                wireguardManageMenu;
+            fi
         fi
     else
         echo ""
