@@ -235,16 +235,20 @@ gitCheckForUpdate()
         isSuccessful "The repository is up to date...continuing..."
     else
         isNotice "Updates found."
-        while true; do
-            isQuestion "Do you want to update EasyDocker now? (y/n): "
-            read -rp "" acceptupdates
-            if [[ "$acceptupdates" =~ ^[yYnN]$ ]]; then
-                break
-            fi
-            isNotice "Please provide a valid input (y/n)."
-        done
-        if [[ $acceptupdates == [yY] ]]; then
+        if [[ $CFG_REQUIREMENT_AUTO_UPDATES == "true" ]]; then
             gitFolderResetAndBackup;
+        else
+            while true; do
+                isQuestion "Do you want to update EasyDocker now? (y/n): "
+                read -rp "" acceptupdates
+                if [[ "$acceptupdates" =~ ^[yYnN]$ ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input (y/n)."
+            done
+            if [[ $acceptupdates == [yY] ]]; then
+                gitFolderResetAndBackup;
+            fi
         fi
     fi
 }
