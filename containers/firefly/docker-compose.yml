@@ -8,7 +8,7 @@ services:
   firefly:
     image: fireflyiii/core:latest
     hostname: firefly
-    container_name: firefly_iii_core
+    container_name: firefly
     restart: always
     volumes:
       - ./firefly_iii_upload:/var/www/html/storage/upload
