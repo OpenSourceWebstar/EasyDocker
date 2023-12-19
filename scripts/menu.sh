@@ -30,6 +30,10 @@ mainMenu()
 		echo ""
 		isOption "c. Configs"
 		isOption "d. Database"
+		status=$(checkAppInstalled "wireguard" "linux")
+        if [ "$status" == "installed" ]; then
+			isOption "w. WireGuard"
+        fi
 		status=$(checkAppInstalled "ufw" "linux")
         if [ "$status" == "installed" ]; then
 			isOption "f. Firewall"
@@ -323,7 +327,7 @@ menuPublic()
 	if [[ "$public" == "true" ]]; then
 		echo "    Public : https://$host_setup/"
 	fi
-	echo "    External : http://$public_ip:$usedport1/"
+	echo "    External : http://$public_ip_v4:$usedport1/"
 	echo "    Local : http://$ip_setup:$usedport1/"
 	echo ""
 }

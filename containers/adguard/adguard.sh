@@ -96,7 +96,7 @@ installAdguard()
         echo "    NOTICE : Below are the urls for the setup ONLY."
         echo "    NOTICE : You can press next x5 until the installation is complete."
         echo ""
-        echo "    External : http://$public_ip:$usedport1/"
+        echo "    External : http://$public_ip_v4:$usedport1/"
         echo "    Local : http://$ip_setup:$usedport1/"
         echo ""
         echo "    NOTICE : Skip this setup if you have already installed Adguard"

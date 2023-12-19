@@ -68,6 +68,7 @@ startPreInstall()
     installDebianUbuntu;
     installArch;
     installSSHKeysForDownload install;
+    installStandaloneWireGuard;
     
     #######################################################
     ###                   Install Docker                ###
@@ -121,10 +122,9 @@ installRecommendedApps()
         echo "###           Recommended Applications           ###"
         echo "####################################################"
         echo ""
-        isNotice "It's recommended to install both Traefik & Wiregard upon first install."
+        isNotice "It's recommended to install Traefik upon first install."
         echo ""
         isNotice "Traefik secures your Network traffic and automatically installs SSL Certificates"
-        isNotice "Wireguard allows remote VPN access into your docker network"
         echo ""
         while true; do
             isQuestion "Would you like to follow the recommendations? (y/n): "
@@ -139,12 +139,6 @@ installRecommendedApps()
             if [[ "$traefik_status" != "installed" ]]; then
                 traefik=i
                 installTraefik;
-            fi
-
-            # Wireguard
-            if [[ "$wireguard_status" != "installed" ]]; then
-                wireguard=i
-                installWireguard;
             fi
 
             isSuccessful "All recommended apps have successfully been set up."

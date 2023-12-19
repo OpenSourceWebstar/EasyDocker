@@ -520,7 +520,7 @@ migrateBuildTXT()
         createTouch "$migrate_file_path" $CFG_DOCKER_INSTALL_USER
 
         # Add MIGRATE_IP options to $migrate_file for $app_name
-        echo "MIGRATE_IP=$public_ip" | sudo tee -a "$migrate_file_path" >/dev/null
+        echo "MIGRATE_IP=$public_ip_v4" | sudo tee -a "$migrate_file_path" >/dev/null
         # Add MIGRATE_INSTALL_NAME options to $migrate_file for $app_name
         echo "MIGRATE_INSTALL_NAME=$CFG_INSTALL_NAME" | sudo tee -a "$migrate_file_path" >/dev/null
 
@@ -595,20 +595,20 @@ migrateCheckAndUpdateIP()
     if [ -f "$migrate_file_path" ]; then
         local migrate_ip=$(sudo grep -o 'MIGRATE_IP=.*' "$migrate_file_path" | cut -d '=' -f 2)
         
-        if [ "$migrate_ip" != "$public_ip" ]; then
+        if [ "$migrate_ip" != "$public_ip_v4" ]; then
             if ! sudo grep -q "MIGRATE_IP=" "$migrate_file_path"; then
                 # Add MIGRATE_IP if it's missing
-                local result=$(sudo sed -i "1s/^/MIGRATE_IP=$public_ip\n/" "$migrate_file_path")
+                local result=$(sudo sed -i "1s/^/MIGRATE_IP=$public_ip_v4\n/" "$migrate_file_path")
                 checkSuccess "Adding missing MIGRATE_IP for $app_name : $migrate_file."
             else
                 # Update MIGRATE_IP if it's already there
-                local result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip/" "$migrate_file_path")
-                checkSuccess "Updated MIGRATE_IP for $app_name : $migrate_file to $public_ip."
+                local result=$(sudo sed -i "s/MIGRATE_IP=.*/MIGRATE_IP=$public_ip_v4/" "$migrate_file_path")
+                checkSuccess "Updated MIGRATE_IP for $app_name : $migrate_file to $public_ip_v4."
             fi
             
             # Replace old IP with the new IP in .yml and .env files
-            local result=$(sudo find "$containers_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s|$migrate_ip|$public_ip|g" {} \;)
-            checkSuccess "Replaced old IP with $public_ip in .yml and .env files in $app_name."
+            local result=$(sudo find "$containers_dir/$app_name" -type f \( -name "*.yml" -o -name "*.env" \) -exec sudo sed -i "s|$migrate_ip|$public_ip_v4|g" {} \;)
+            checkSuccess "Replaced old IP with $public_ip_v4 in .yml and .env files in $app_name."
         fi
     else
         isError "$migrate_file not found in $app_name."

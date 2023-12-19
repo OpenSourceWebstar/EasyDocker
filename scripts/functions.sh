@@ -286,7 +286,7 @@ resetToMenu()
     mailcow=n
     tiledesk=n
     gitlab=n
-    actual=n
+    firefly=n
     cozy=n
     duplicati=n
     caddy=n

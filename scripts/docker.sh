@@ -73,10 +73,8 @@ setupConfigToContainer()
     if [ ! -f "$target_path/$config_file" ]; then
         if [ "$silent_flag" == "loud" ]; then
             isNotice "Copying config file to '$target_path/$config_file'..."
-            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $sudo_user_name | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
-        elif [ "$silent_flag" == "silent" ]; then
-            copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $sudo_user_name | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
         fi
+        copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $sudo_user_name | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
     fi
 
     fixConfigPermissions $silent_flag $app_name;
@@ -209,7 +207,16 @@ checkAllowedInstall()
     #elif [ "$status" == "not_installed" ]; then
     #elif [ "$status" == "invalid_flag" ]; then
 
-    #case "$app_name" in
+    case "$app_name" in
+        "wireguard")
+            # Check if WireGuard is already installed and load params
+            if [[ -e /etc/wireguard/params ]]; then
+                isError "Virtualmin is installed, this will conflict with $app_name."
+                isError "Installation is now aborting..."
+                uninstallApp "$app_name"
+                return 1
+            fi
+            ;;
         #"mailcow")
             #local status=$(checkAppInstalled "webmin" "linux" "check_active")
             #if [ "$status" == "installed" ]; then
@@ -262,7 +269,7 @@ checkAllowedInstall()
               #return 1
             #fi
             #;;
-    #esac
+    esac
 
     isSuccessful "Application is allowed to be installed."
 }
@@ -681,7 +688,7 @@ setupFileWithConfigData()
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
         -e "s|DOMAINSUBNAMEHERE|$host_setup|g" \
         -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
-        -e "s|PUBLICIPHERE|$public_ip|g" \
+        -e "s|PUBLICIPHERE|$public_ip_v4|g" \
         -e "s|IPADDRESSHERE|$ip_setup|g" \
         -e "s|PORT1|$usedport1|g" \
         -e "s|PORT2|$usedport2|g" \

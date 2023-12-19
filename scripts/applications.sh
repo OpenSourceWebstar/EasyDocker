@@ -114,7 +114,7 @@ sudo tee -a "$tmp_awk_output" > /dev/null <<EOL
 array(
     0 => '$host_setup',
     1 => '$ip_setup',
-    2 => '$public_ip',
+    2 => '$public_ip_v4',
 ),
 );
 

@@ -18,7 +18,9 @@ current_date=$(date +%Y-%m-%d)
 current_time=$(date +%H:%M:%S)
 
 # Domain/Network
-public_ip=$(hostname -I | awk '{print $1}')
+public_ip_v4=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | awk '{print $1}' | head -1)
+public_ip_v6=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
+server_nic="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
 
 # Files
 swap_file=/swapfile
@@ -34,9 +36,10 @@ ip_file=ips_hostname
 config_file_backup=config_backup
 config_file_general=config_general
 config_file_requirements=config_requirements
-config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$config_file_requirements")
+config_file_wireguard=config_wireguard
+config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$config_file_requirements" "$config_wireguard")
 
 # Menu
 menu_number=0
 
-#Secondary IP available : 10.8.1.124
+#Secondary IP available : 10.8.1.126
