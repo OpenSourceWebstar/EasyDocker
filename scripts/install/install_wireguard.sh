@@ -9,16 +9,16 @@ checkOS()
     WG_OS="${ID}"
     WG_CAN_INSTALL="true";
     if [[ ${WG_OS} == "debian" || ${WG_OS} == "raspbian" ]]; then
-        if [[ ${VERSION_ID} -lt 10 ]]; then
-            echo "Your version of Debian (${VERSION_ID}) is not supported. Please use Debian 10 Buster or later"
+        if [[ ${WG_VERSION_ID} -lt 10 ]]; then
+            echo "Your version of Debian (${WG_VERSION_ID}) is not supported. Please use Debian 10 Buster or later"
             WG_CAN_INSTALL="false";
         fi
         WG_OS=debian
         WG_CAN_INSTALL="true";
     elif [[ ${WG_OS} == "ubuntu" ]]; then
-        RELEASE_YEAR=$(echo "${VERSION_ID}" | cut -d'.' -f1)
+        RELEASE_YEAR=$(echo "${WG_VERSION_ID}" | cut -d'.' -f1)
         if [[ ${RELEASE_YEAR} -lt 18 ]]; then
-            echo "Your version of Ubuntu (${VERSION_ID}) is not supported. Please use Ubuntu 18.04 or later"
+            echo "Your version of Ubuntu (${WG_VERSION_ID}) is not supported. Please use Ubuntu 18.04 or later"
             WG_CAN_INSTALL="false";
         fi
         WG_CAN_INSTALL="true";
@@ -31,8 +31,8 @@ checkOS()
 installStandaloneWireGuard() 
 {
     if [[ $CFG_REQUIREMENT_WIREGUARD == "true" ]]; then
-		# Check if WireGuard is already installed and load params
-		if [[ ! -e /etc/wireguard/params ]]; then
+        # Check if WireGuard is already installed and load params
+        if [[ ! -e /etc/wireguard/params ]]; then
             echo ""
             echo "############################################"
             echo "######       Wireguard Installer      ######"
@@ -60,23 +60,23 @@ installStandaloneWireGuard()
             if [[ $WG_CAN_INSTALL == 'true' ]]; then
 
                 # Install WireGuard tools and module
-                if [[ ${WG_OS} == 'ubuntu' ]] || [[ ${WG_OS} == 'debian' && ${VERSION_ID} -gt 10 ]]; then
-                    apt-get update
-                    apt-get install -y wireguard iptables resolvconf qrencode
+                if [[ ${WG_OS} == 'ubuntu' ]] || [[ ${WG_OS} == 'debian' && ${WG_VERSION_ID} -gt 10 ]]; then
+                    sudo apt-get update
+                    sudo apt-get install -y wireguard iptables resolvconf qrencode
                 fi
 
-                #  (this does not seem the be the case on fedora)
-                result=$(mkdir /etc/wireguard >/dev/null 2>&1)
+                #  (this does not seem to be the case on fedora)
+                result=$(sudo mkdir /etc/wireguard >/dev/null 2>&1)
                 checkSuccess "Created the WireGuard"
 
-                result=$(chmod 600 -R /etc/wireguard/)
+                result=$(sudo chmod 600 -R /etc/wireguard/)
                 checkSuccess "Updated permissions for /etc/wireguard"
 
                 local SERVER_PRIV_KEY=$(wg genkey)
                 local SERVER_PUB_KEY=$(echo "${SERVER_PRIV_KEY}" | wg pubkey)
 
-	# Save WireGuard settings
-	echo "SERVER_PUB_IP=${public_ip_v4}
+                # Save WireGuard settings
+                echo "SERVER_PUB_IP=${public_ip_v4}
 SERVER_PUB_NIC=${server_nic}
 SERVER_WG_NIC=${CFG_WG_SERVER_WG_NIC}
 SERVER_WG_IPV4=${CFG_WG_SERVER_WG_IPV4}
@@ -86,15 +86,15 @@ SERVER_PRIV_KEY=${SERVER_PRIV_KEY}
 SERVER_PUB_KEY=${SERVER_PUB_KEY}
 CLIENT_DNS_1=${CFG_DNS_SERVER_1}
 CLIENT_DNS_2=${CFG_DNS_SERVER_2}
-ALLOWED_IPS=${CFG_WG_ALLOWED_IPS}" >/etc/wireguard/params
+ALLOWED_IPS=${CFG_WG_ALLOWED_IPS}" | sudo tee /etc/wireguard/params >/dev/null
 
-	# Add server interface
-	echo "[Interface]
+                # Add server interface
+                echo "[Interface]
 Address = ${CFG_WG_SERVER_WG_IPV4}/24,${CFG_WG_SERVER_WG_IPV6}/64
 ListenPort = ${CFG_WG_SERVER_PORT}
-PrivateKey = ${SERVER_PRIV_KEY}" >"/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf"
+PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
-	echo "PostUp = iptables -I INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
+                echo "PostUp = iptables -I INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
 PostUp = iptables -I FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostUp = iptables -I FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -o ${server_nic} -j MASQUERADE
@@ -105,18 +105,18 @@ PostDown = iptables -D FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j AC
 PostDown = iptables -D FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE
 PostDown = ip6tables -D FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostDown = ip6tables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" >>"/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf"
+PostDown = ip6tables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
-	# Enable routing on the server
-	echo "net.ipv4.ip_forward = 1
-net.ipv6.conf.all.forwarding = 1" >/etc/sysctl.d/wg.conf
+                # Enable routing on the server
+                echo "net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1" | sudo tee /etc/sysctl.d/wg.conf >/dev/null
 
-                result=$(systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+                result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
                 checkSuccess "Started wg-quick@${CFG_WG_SERVER_WG_NIC} service."
-                result=$(systemctl enable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+                result=$(sudo systemctl enable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
                 checkSuccess "Enabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-                result=$(sysctl --system)
+                result=$(sudo sysctl --system)
                 checkSuccess "Reloaded sysctl"
 
                 wireguardNewClient install;
@@ -151,7 +151,7 @@ wireguardNewClient()
     echo "###   Wireguard Client Creation   ###"
     echo "#####################################"
     echo ""
-	echo "The client name must consist of alphanumeric character(s). It may also include underscores or dashes and can't exceed 15 chars."
+    echo "The client name must consist of alphanumeric character(s). It may also include underscores or dashes and can't exceed 15 chars."
     echo ""
 
     until [[ ${WIREGUARD_CLIENT_NAME} =~ ^[a-zA-Z0-9_-]+$ && ${WIREGUARD_CLIENT_EXISTS} == '0' && ${#WIREGUARD_CLIENT_NAME} -lt 16 ]]; do
@@ -169,27 +169,27 @@ wireguardNewClient()
         fi
     done
 
-	for WIREGUARD_DOT_IP in {2..254}; do
-		local WIREGUARD_DOT_EXISTS=$(grep -c "${CFG_WG_SERVER_WG_IPV4::-1}${WIREGUARD_DOT_IP}" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
-		if [[ ${WIREGUARD_DOT_EXISTS} == '0' ]]; then
-			break
-		fi
-	done
+    for WIREGUARD_DOT_IP in {2..254}; do
+        local WIREGUARD_DOT_EXISTS=$(grep -c "${CFG_WG_SERVER_WG_IPV4::-1}${WIREGUARD_DOT_IP}" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+        if [[ ${WIREGUARD_DOT_EXISTS} == '0' ]]; then
+            break
+        fi
+    done
 
-	if [[ ${WIREGUARD_DOT_EXISTS} == '1' ]]; then
-		echo ""
-		isNotice "The subnet configured supports only 253 clients."
+    if [[ ${WIREGUARD_DOT_EXISTS} == '1' ]]; then
         echo ""
-	fi
+        isNotice "The subnet configured supports only 253 clients."
+        echo ""
+    fi
 
-	# Generate key pair for the client
-	local WIREGUARD_CLIENT_PRIV_KEY=$(wg genkey)
-	local WIREGUARD_CLIENT_PUB_KEY=$(echo "${WIREGUARD_CLIENT_PRIV_KEY}" | wg pubkey)
-	local WIREGUARD_CLIENT_PRE_SHARED_KEY=$(wg genpsk)
-	local WIREGUARD_ENDPOINT="${public_ip_v4}:${CFG_WG_SERVER_PORT}"
+    # Generate key pair for the client
+    local WIREGUARD_CLIENT_PRIV_KEY=$(sudo wg genkey)
+    local WIREGUARD_CLIENT_PUB_KEY=$(echo "${WIREGUARD_CLIENT_PRIV_KEY}" | sudo wg pubkey)
+    local WIREGUARD_CLIENT_PRE_SHARED_KEY=$(sudo wg genpsk)
+    local WIREGUARD_ENDPOINT="${public_ip_v4}:${CFG_WG_SERVER_PORT}"
 
-	# Create client file and add the server as a peer
-	echo "[Interface]
+    # Create client file and add the server as a peer
+    echo "[Interface]
 PrivateKey = ${WIREGUARD_CLIENT_PRIV_KEY}
 Address = ${WIREGUARD_CLIENT_WG_IPV4}/32,${WIREGUARD_CLIENT_WG_IPV6}/128
 DNS = ${CFG_DNS_SERVER_1},${CFG_DNS_SERVER_2}
@@ -198,26 +198,26 @@ DNS = ${CFG_DNS_SERVER_1},${CFG_DNS_SERVER_2}
 PublicKey = ${SERVER_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
 Endpoint = ${WIREGUARD_ENDPOINT}
-AllowedIPs = ${CFG_WG_ALLOWED_IPS}" >"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf" >/dev/null
 
-	# Add the client as a peer to the server
-	echo -e "\n### Client ${WIREGUARD_CLIENT_NAME}
+    # Add the client as a peer to the server
+    echo -e "\n### Client ${WIREGUARD_CLIENT_NAME}
 [Peer]
 PublicKey = ${WIREGUARD_CLIENT_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
-AllowedIPs = ${WIREGUARD_CLIENT_WG_IPV4}/32,${WIREGUARD_CLIENT_WG_IPV6}/128" >>"/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf"
+AllowedIPs = ${WIREGUARD_CLIENT_WG_IPV4}/32,${WIREGUARD_CLIENT_WG_IPV6}/128" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
-	result=$(wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
+    result=$(sudo wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
     checkSuccess "Syncing config file for $CFG_WG_SERVER_WG_NIC"
 
-	# Generate QR code if qrencode is installed
-	if command -v qrencode &>/dev/null; then
-		isNotice "Here is your client config file as a QR Code:"
-		qrencode -t ansiutf8 -l L <"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
-		echo ""
-	fi
+    # Generate QR code if qrencode is installed
+    if command -v qrencode &>/dev/null; then
+        isNotice "Here is your client config file as a QR Code:"
+        sudo qrencode -t ansiutf8 -l L <"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+        echo ""
+    fi
 
-	isSuccessful "Your client config file is in ${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+    isSuccessful "Your client config file is in ${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
 }
 
 wireguardListClients() 
@@ -230,7 +230,7 @@ wireguardListClients()
 
     wireguardCheckClients;
 
-    grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
+    sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
 }
 
 wireguardRevokeClient()
@@ -243,27 +243,27 @@ wireguardRevokeClient()
 
     wireguardCheckClients;
 
-	echo ""
-	echo "Select the existing client you want to revoke"
-	grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
-	until [[ ${WIREGUARD_CLIENT_NUMBER} -ge 1 && ${WIREGUARD_CLIENT_NUMBER} -le ${WIREGUARD_NUMBER_OF_CLIENTS} ]]; do
-		if [[ ${WIREGUARD_CLIENT_NUMBER} == '1' ]]; then
-			read -rp "Select one client [1]: " WIREGUARD_CLIENT_NUMBER
-		else
-			read -rp "Select one client [1-${WIREGUARD_NUMBER_OF_CLIENTS}]: " WIREGUARD_CLIENT_NUMBER
-		fi
-	done
+    echo ""
+    echo "Select the existing client you want to revoke"
+    sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
+    until [[ ${WIREGUARD_CLIENT_NUMBER} -ge 1 && ${WIREGUARD_CLIENT_NUMBER} -le ${WIREGUARD_NUMBER_OF_CLIENTS} ]]; do
+        if [[ ${WIREGUARD_CLIENT_NUMBER} == '1' ]]; then
+            read -rp "Select one client [1]: " WIREGUARD_CLIENT_NUMBER
+        else
+            read -rp "Select one client [1-${WIREGUARD_NUMBER_OF_CLIENTS}]: " WIREGUARD_CLIENT_NUMBER
+        fi
+    done
 
-	# match the selected number to a client name
-	local WIREGUARD_CLIENT_NAME=$(grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | sed -n "${WIREGUARD_CLIENT_NUMBER}"p)
+    # match the selected number to a client name
+    local WIREGUARD_CLIENT_NAME=$(sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | sed -n "${WIREGUARD_CLIENT_NUMBER}"p)
 
-	result=$(sed -i "/^### Client ${WIREGUARD_CLIENT_NAME}\$/,/^$/d" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+    result=$(sudo sed -i "/^### Client ${WIREGUARD_CLIENT_NAME}\$/,/^$/d" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
     checkSuccess "Removed [Peer] block matching $WIREGUARD_CLIENT_NAME"
 
-	result=$(rm -f "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf")
+    result=$(sudo rm -f "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf")
     checkSuccess "Removed generated client file for $WIREGUARD_CLIENT_NAME"
 
-	result=$(wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
+    result=$(sudo wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
     checkSuccess "Restart wireguard to apply changes"
 }
 
@@ -285,52 +285,52 @@ wireguardUninstall()
     echo "###     Wireguard Uninstaller     ###"
     echo "#####################################"
     echo ""
-	isNotice "***WARNING*** This will uninstall WireGuard and remove all the configuration files!"
-	isNotice "Please backup the /etc/wireguard directory if you want to keep your configuration files."
+    isNotice "***WARNING*** This will uninstall WireGuard and remove all the configuration files!"
+    isNotice "Please backup the /etc/wireguard directory if you want to keep your configuration files."
     echo ""
     isQuestion "Do you really want to remove WireGuard? (y/n): "
     read -p "" WIREGUARD_REMOVE
     
-	if [[ $WIREGUARD_REMOVE == [yY] ]]; then
-		checkOS;
+    if [[ $WIREGUARD_REMOVE == [yY] ]]; then
+        checkOS;
 
-		result=$(systemctl stop "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+        result=$(sudo systemctl stop "wg-quick@${CFG_WG_SERVER_WG_NIC}")
         checkSuccess "Stopped wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-		result=$(systemctl disable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
+        result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
         checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-		if [[ ${WG_OS} == 'ubuntu' ]]; then
-			result=$(apt-get remove -y wireguard wireguard-tools qrencode)
+        if [[ ${WG_OS} == 'ubuntu' ]]; then
+            result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
             checkSuccess "Removed wireguard wireguard-tools qrencode"
-		elif [[ ${WG_OS} == 'debian' ]]; then
-			result=$(apt-get remove -y wireguard wireguard-tools qrencode)
+        elif [[ ${WG_OS} == 'debian' ]]; then
+            result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
             checkSuccess "Removed wireguard wireguard-tools qrencode"
-		fi
+        fi
 
-		result=$(rm -rf /etc/wireguard)
+        result=$(sudo rm -rf /etc/wireguard)
         checkSuccess "Deleted /etc/wireguard folder."
-	    result=$(rm -f /etc/sysctl.d/wg.conf)
+        result=$(sudo rm -f /etc/sysctl.d/wg.conf)
         checkSuccess "Delete /etc/sysctl.d/wg.conf file."
 
-		result=$(sysctl --system)
+        result=$(sudo sysctl --system)
         checkSuccess "Reloaded sysctl"
 
-		# Check if WireGuard is running
-		systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
-		WIREGUARD_RUNNING=$?
+        # Check if WireGuard is running
+        systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
+        WIREGUARD_RUNNING=$?
 
-		if [[ ${WIREGUARD_RUNNING} -eq 0 ]]; then
-			isError "WireGuard failed to uninstall properly."
-			wireguardManageMenu;
-		else
-			isSuccessful "WireGuard uninstalled successfully."
-			wireguardManageMenu;
-		fi
-	else
-		echo ""
-		isNotice "Removal aborted!"
-	fi
+        if [[ ${WIREGUARD_RUNNING} -eq 0 ]]; then
+            isError "WireGuard failed to uninstall properly."
+            wireguardManageMenu;
+        else
+            isSuccessful "WireGuard uninstalled successfully."
+            wireguardManageMenu;
+        fi
+    else
+        echo ""
+        isNotice "Removal aborted!"
+    fi
 }
 
 wireguardManageMenu() 
