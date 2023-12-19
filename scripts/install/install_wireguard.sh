@@ -16,8 +16,10 @@ installStandaloneWireGuard()
             echo "Based on : https://github.com/angristan/wireguard-install"
             echo ""
 
+            local WG_CAN_INSTALL="true"
             if [ "$(systemd-detect-virt)" == "openvz" ]; then
                 echo "OpenVZ is not supported"
+                local WG_CAN_INSTALL="false"
             fi
 
             if [ "$(systemd-detect-virt)" == "lxc" ]; then
@@ -26,9 +28,10 @@ installStandaloneWireGuard()
                 echo "but the kernel module has to be installed on the host,"
                 echo "the container has to be run with some specific parameters"
                 echo "and only the tools need to be installed in the container."
+                local WG_CAN_INSTALL="false"
             fi
 
-            if [[ $WG_CAN_INSTALL == 'true' ]]; then
+            if [[ $WG_CAN_INSTALL != 'true' ]]; then
 
                 # Install WireGuard tools and module
                 if [[ "$OS" == [1234567] ]]; then
