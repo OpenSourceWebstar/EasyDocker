@@ -7,7 +7,7 @@ installFirefly()
 {
     if [[ "$firefly" == *[cCtTuUsSrRiI]* ]]; then
         setupConfigToContainer silent firefly;
-        local app_name=$CFG_ACTUAL_APP_NAME
+        local app_name=$CFG_FIREFLY_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
