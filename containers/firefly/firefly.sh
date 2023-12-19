@@ -84,7 +84,7 @@ installFirefly()
         setupFileWithConfigData $app_name ".db.env";
 
         local APP_KEY=$(head /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | head -c 32 && echo)
-        result=$(sudo sed -i 's|SomeRandomStringOf32CharsExactly|${APP_KEY}|' "$containers_dir$app_name/.db.env")
+        result=$(sudo sed -i "s|SomeRandomStringOf32CharsExactly|${APP_KEY}|" "$containers_dir$app_name/.db.env")
         checkSuccess "Enabling environment in the docker-compose file."
 
         local random_password=$(openssl rand -base64 12 | tr -d '+/=')
