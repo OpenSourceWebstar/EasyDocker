@@ -18,7 +18,7 @@ installStandaloneWireGuard()
 
             local WG_CAN_INSTALL="true"
             local WG_CHECK_VIRTUALIZATION=$(systemd-detect-virt)
-            
+
             if [ "$WG_CHECK_VIRTUALIZATION" == "openvz" ]; then
                 echo "OpenVZ is not supported"
                 local WG_CAN_INSTALL="false"
@@ -33,7 +33,7 @@ installStandaloneWireGuard()
                 local WG_CAN_INSTALL="false"
             fi
 
-            if [[ $WG_CAN_INSTALL != 'true' ]]; then
+            if [[ $WG_CAN_INSTALL == 'true' ]]; then
 
                 # Install WireGuard tools and module
                 if [[ "$OS" == [1234567] ]]; then
