@@ -100,6 +100,9 @@ PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo
                     result=$(sudo sysctl --system)
                     checkSuccess "Reloaded sysctl"
 
+                    useport wireguardstandalone $CFG_WG_SERVER_PORT install;
+                    openPort wireguardstandalone $CFG_WG_SERVER_PORT/udp install;
+
                     wireguardNewClient install;
 
                     # Check if WireGuard is running
@@ -297,6 +300,9 @@ wireguardUninstall()
 
             result=$(sudo sysctl --system)
             checkSuccess "Reloaded sysctl"
+
+            unusePort wireguardstandalone $CFG_WG_SERVER_PORT install;
+            closePort wireguardstandalone $CFG_WG_SERVER_PORT/udp install;
 
             # Check if WireGuard is running
             systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_NIC}"
