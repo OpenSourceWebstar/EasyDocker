@@ -194,7 +194,7 @@ AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee "${CFG_WG_HOME_DIR}/${CFG_WG_SERV
 [Peer]
 PublicKey = ${WIREGUARD_CLIENT_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
-AllowedIPs = ${CFG_WG_ALLOWED_IPS}/32" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
+AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
     result=$(sudo wg syncconf ${CFG_WG_SERVER_NIC} /etc/wireguard/${CFG_WG_SERVER_NIC}.conf)
     checkSuccess "Syncing config file for $CFG_WG_SERVER_NIC"
