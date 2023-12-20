@@ -17,12 +17,14 @@ installStandaloneWireGuard()
             echo ""
 
             local WG_CAN_INSTALL="true"
-            if [ "$(systemd-detect-virt)" == "openvz" ]; then
+            local WG_CHECK_VIRTUALIZATION=$(systemd-detect-virt)
+            
+            if [ "$WG_CHECK_VIRTUALIZATION" == "openvz" ]; then
                 echo "OpenVZ is not supported"
                 local WG_CAN_INSTALL="false"
             fi
 
-            if [ "$(systemd-detect-virt)" == "lxc" ]; then
+            if [ "$WG_CHECK_VIRTUALIZATION" == "lxc" ]; then
                 echo "LXC is not supported (yet)."
                 echo "WireGuard can technically run in an LXC container,"
                 echo "but the kernel module has to be installed on the host,"
