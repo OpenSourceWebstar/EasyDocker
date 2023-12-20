@@ -37,7 +37,6 @@ installStandaloneWireGuard()
 
                 # Install WireGuard tools and module
                 if [[ "$OS" == [1234567] ]]; then
-                    sudo apt-get update
                     sudo apt-get install -y wireguard iptables resolvconf qrencode
 
                     # Update DNS after installing resolvconf
