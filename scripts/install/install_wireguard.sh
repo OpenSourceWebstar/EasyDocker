@@ -128,7 +128,8 @@ wireguardNewClient()
     echo "###   Wireguard Client Creation   ###"
     echo "#####################################"
     echo ""
-    echo "The client name must consist of alphanumeric character(s). It may also include underscores or dashes and can't exceed 15 chars."
+    isNotice "The client name must consist of alphanumeric character(s)."
+    isNotice "It may also include underscores or dashes and can't exceed 15 chars."
     echo ""
 
     until [[ ${WIREGUARD_CLIENT_NAME} =~ ^[a-zA-Z0-9_-]+$ && ${WIREGUARD_CLIENT_EXISTS} == '0' && ${#WIREGUARD_CLIENT_NAME} -lt 16 ]]; do
@@ -165,6 +166,9 @@ wireguardNewClient()
     local WIREGUARD_CLIENT_PRE_SHARED_KEY=$(sudo wg genpsk)
     local WIREGUARD_ENDPOINT="${public_ip_v4}:${CFG_WG_SERVER_PORT}"
 
+    # Create client file
+    createTouch "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf" $sudo_user_name
+    
     # Create client file and add the server as a peer
     echo "[Interface]
 PrivateKey = ${WIREGUARD_CLIENT_PRIV_KEY}
