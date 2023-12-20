@@ -336,14 +336,12 @@ closePort()
         if portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
             if [[ $disallow_open_port == "false" ]]; then
                 databasePortOpenRemove "$app_name" "$portdata"
-                if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-                    #if [[ $app_name != *"virtualmin"* ]]; then
-                        local result=$(sudo ufw delete allow "$port/$type")
-                        checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
-                    #else
-                        #local result=$(sudo ufw delete allow from $ip_setup to any port "$port")
-                        #checkSuccess "Closing port $port from $ip_setup for $app_name in the UFW Firewall"
-                    #fi
+                if [[ $app_name == "standalonewireguard" ]]; then
+                    local result=$(sudo ufw delete allow "$port/$type")
+                    checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
+                elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                    local result=$(sudo ufw delete allow "$port/$type")
+                    checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
                     local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type")
                     checkSuccess "Closing port $port and type $type for $app_name in the UFW-Docker Firewall"
