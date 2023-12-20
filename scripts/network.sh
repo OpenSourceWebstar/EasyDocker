@@ -702,8 +702,8 @@ updateDNS()
                     isSuccessful "Ping to $adguard_ip was successful."
                 else
                     isNotice "Ping to $adguard_ip failed."
-                    isNotice "Defaulting to Quad 9 - 9.9.9.9"
-                    local adguard_ip="9.9.9.9"
+                    isNotice "Defaulting to DNS Server 1"
+                    local adguard_ip="$CFG_DNS_SERVER_1"
                 fi
             fi
         else
@@ -714,8 +714,8 @@ updateDNS()
                 isSuccessful "Ping to $adguard_ip was successful."
             else
                 isNotice "Ping to $adguard_ip failed."
-                isNotice "Defaulting to Quad 9 - 9.9.9.9"
-                local adguard_ip="9.9.9.9"
+                isNotice "Defaulting to DNS Server 1"
+                local adguard_ip="$CFG_DNS_SERVER_1"
             fi
         fi
 
@@ -738,8 +738,8 @@ updateDNS()
                     isSuccessful "Ping to $pihole_ip was successful."
                 else
                     isNotice "Ping to $pihole_ip failed."
-                    isNotice "Defaulting to Quad 9 - 9.9.9.11"
-                    local pihole_ip="9.9.9.11"
+                    isNotice "Defaulting to DNS Server 2"
+                    local pihole_ip="$CFG_DNS_SERVER_2"
                 fi
             fi
         else
@@ -748,8 +748,8 @@ updateDNS()
                 isSuccessful "Ping to $pihole_ip was successful."
             else
                 isNotice "Ping to $pihole_ip failed."
-                isNotice "Defaulting to Quad 9 - 9.9.9.11"
-                local pihole_ip="9.9.9.11"
+                isNotice "Defaulting to DNS Server 2"
+                local pihole_ip="$CFG_DNS_SERVER_2"
             fi
         fi
 

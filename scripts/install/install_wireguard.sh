@@ -40,6 +40,9 @@ installStandaloneWireGuard()
                     sudo apt-get update
                     sudo apt-get install -y wireguard iptables resolvconf qrencode
 
+                    # Update DNS after installing resolvconf
+                    updateDNS;
+
                     # Check if the directory exists; if not, create it
                     if [ ! -d "/etc/wireguard" ]; then
                         result=$(sudo mkdir /etc/wireguard)
@@ -57,7 +60,6 @@ installStandaloneWireGuard()
 SERVER_PUB_NIC=${server_nic}
 SERVER_WG_NIC=${CFG_WG_SERVER_WG_NIC}
 SERVER_WG_IPV4=${CFG_WG_SERVER_WG_IPV4}
-SERVER_WG_IPV6=${CFG_WG_SERVER_WG_IPV6}
 SERVER_PORT=${CFG_WG_SERVER_PORT}
 SERVER_PRIV_KEY=${SERVER_PRIV_KEY}
 SERVER_PUB_KEY=${SERVER_PUB_KEY}
@@ -67,7 +69,7 @@ ALLOWED_IPS=${CFG_WG_ALLOWED_IPS}" | sudo tee /etc/wireguard/params >/dev/null
 
                 # Add server interface
                 echo "[Interface]
-Address = ${CFG_WG_SERVER_WG_IPV4}/24,${CFG_WG_SERVER_WG_IPV6}/64
+Address = ${CFG_WG_SERVER_WG_IPV4}/24
 ListenPort = ${CFG_WG_SERVER_PORT}
 PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
@@ -75,18 +77,13 @@ PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_WG_N
 PostUp = iptables -I FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostUp = iptables -I FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -o ${server_nic} -j MASQUERADE
-PostUp = ip6tables -I FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostUp = ip6tables -t nat -A POSTROUTING -o ${server_nic} -j MASQUERADE
 PostDown = iptables -D INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
 PostDown = iptables -D FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostDown = iptables -D FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE
-PostDown = ip6tables -D FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostDown = ip6tables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
+PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
                 # Enable routing on the server
-                echo "net.ipv4.ip_forward = 1
-net.ipv6.conf.all.forwarding = 1" | sudo tee /etc/sysctl.d/wg.conf >/dev/null
+                echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/wg.conf >/dev/null
 
                     result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
                     checkSuccess "Started wg-quick@${CFG_WG_SERVER_WG_NIC} service."
@@ -169,7 +166,7 @@ wireguardNewClient()
     # Create client file and add the server as a peer
     echo "[Interface]
 PrivateKey = ${WIREGUARD_CLIENT_PRIV_KEY}
-Address = ${WIREGUARD_CLIENT_WG_IPV4}/32,${WIREGUARD_CLIENT_WG_IPV6}/128
+Address = ${WIREGUARD_CLIENT_WG_IPV4}/32
 DNS = ${CFG_DNS_SERVER_1},${CFG_DNS_SERVER_2}
 
 [Peer]
@@ -183,7 +180,7 @@ AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee "${CFG_WG_HOME_DIR}/${CFG_WG_SERV
 [Peer]
 PublicKey = ${WIREGUARD_CLIENT_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
-AllowedIPs = ${WIREGUARD_CLIENT_WG_IPV4}/32,${WIREGUARD_CLIENT_WG_IPV6}/128" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
+AllowedIPs = ${WIREGUARD_CLIENT_WG_IPV4}/32" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
     result=$(sudo wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
     checkSuccess "Syncing config file for $CFG_WG_SERVER_WG_NIC"
@@ -309,42 +306,4 @@ wireguardUninstall()
         echo ""
         isNotice "Removal aborted!"
     fi
-}
-
-wireguardManageMenu() 
-{
-    echo ""
-    echo "#####################################"
-    echo "###       Wireguard Manager       ###"
-    echo "#####################################"
-    echo ""
-	echo "Built from: https://github.com/angristan/wireguard-install"
-	echo ""
-	echo "What do you want to do?"
-	echo "1) Add a new user"
-	echo "2) List all users"
-	echo "3) Revoke existing user"
-	echo "4) Uninstall WireGuard"
-	echo "x) Exit"
-    echo ""
-	until [[ ${WIREGUARD_MENU_OPTION} =~ ^[1-5]$ ]]; do
-		read -rp "Select an option [1-5]: " WIREGUARD_MENU_OPTION
-	done
-	case "${WIREGUARD_MENU_OPTION}" in
-	1)
-		wireguardNewClient
-		;;
-	2)
-		wireguardListClients
-		;;
-	3)
-		wireguardRevokeClient
-		;;
-	4)
-		wireguardUninstall
-		;;
-	x)
-		resetToMenu;
-		;;
-	esac
 }
