@@ -137,7 +137,7 @@ wireguardNewClient()
         else
             read -rp "Client name: " -e WIREGUARD_CLIENT_NAME
         fi
-        local WIREGUARD_CLIENT_EXISTS=$(grep -c -E "^### Client ${WIREGUARD_CLIENT_NAME}\$" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+        local WIREGUARD_CLIENT_EXISTS=$(sudo grep -c -E "^### Client ${WIREGUARD_CLIENT_NAME}\$" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
 
         if [[ ${WIREGUARD_CLIENT_EXISTS} != 0 ]]; then
             echo ""
@@ -147,7 +147,7 @@ wireguardNewClient()
     done
 
     for WIREGUARD_DOT_IP in {2..254}; do
-        local WIREGUARD_DOT_EXISTS=$(grep -c "${CFG_WG_SERVER_WG_IPV4::-1}${WIREGUARD_DOT_IP}" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+        local WIREGUARD_DOT_EXISTS=$(sudo grep -c "${CFG_WG_SERVER_WG_IPV4::-1}${WIREGUARD_DOT_IP}" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
         if [[ ${WIREGUARD_DOT_EXISTS} == '0' ]]; then
             break
         fi
