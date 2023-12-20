@@ -258,7 +258,10 @@ openPort()
         if ! portOpenExistsInDatabase "$app_name" "$port" "$type" "$flag"; then
             if [[ $disallow_open_port == "false" ]]; then
                 databasePortOpenInsert "$app_name" "$portdata"
-                if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+                if [[ $app_name == "standalonewireguard" ]]; then
+                    local result=$(sudo ufw allow "$port/$type")
+                    checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
+                elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
                     local result=$(sudo ufw allow "$port/$type")
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
