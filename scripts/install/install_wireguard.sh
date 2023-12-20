@@ -71,7 +71,7 @@ ALLOWED_IPS=${CFG_WG_ALLOWED_IPS}" | sudo tee /etc/wireguard/params >/dev/null
 
                     # Add server interface
                     echo "[Interface]
-Address = ${CFG_WG_SERVER_IPV4}/24
+Address = ${CFG_WG_SERVER_IPV4}/32
 ListenPort = ${CFG_WG_SERVER_PORT}
 PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
