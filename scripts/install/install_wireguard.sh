@@ -177,7 +177,7 @@ wireguardNewClient()
     # Create client file and add the server as a peer
     echo "[Interface]
 PrivateKey = ${WIREGUARD_CLIENT_PRIV_KEY}
-Address = ${CFG_WG_SERVER_IPV4}/32
+Address = ${CFG_WG_SERVER_IPV4}/24
 DNS = ${CFG_DNS_SERVER_1},${CFG_DNS_SERVER_2}
 
 [Peer]
