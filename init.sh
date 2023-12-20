@@ -15,6 +15,7 @@ docker_dir="/docker"
 containers_dir="$docker_dir/containers/"
 ssl_dir="$docker_dir/ssl/"
 ssh_dir="$docker_dir/ssh/"
+wireguard_dir="$docker_dir/wireguard/"
 logs_dir="$docker_dir/logs/"
 configs_dir="$docker_dir/configs/"
 backup_dir="$docker_dir/backups"
@@ -93,7 +94,7 @@ initializeScript()
 		echo "####################################################"
 		echo ""
 		# Setup folder structure
-		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
+		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$wireguard_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 		for folder in "${folders[@]}"; do
 			if [ ! -d "$folder" ]; then
 				sudo mkdir "$folder"
