@@ -40,9 +40,11 @@ installStandaloneWireGuard()
                     sudo apt-get update
                     sudo apt-get install -y wireguard iptables resolvconf qrencode
 
-                    #  (this does not seem to be the case on fedora)
-                    result=$(sudo mkdir /etc/wireguard >/dev/null 2>&1)
-                    checkSuccess "Created the WireGuard"
+                    # Check if the directory exists; if not, create it
+                    if [ ! -d "/etc/wireguard" ]; then
+                        result=$(sudo mkdir /etc/wireguard)
+                        checkSuccess "Created the WireGuard folder"
+                    fi
 
                     result=$(sudo chmod 600 -R /etc/wireguard/)
                     checkSuccess "Updated permissions for /etc/wireguard"
