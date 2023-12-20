@@ -58,8 +58,8 @@ installStandaloneWireGuard()
                 # Save WireGuard settings
                 echo "SERVER_PUB_IP=${public_ip_v4}
 SERVER_PUB_NIC=${server_nic}
-SERVER_WG_NIC=${CFG_WG_SERVER_WG_NIC}
-SERVER_WG_IPV4=${CFG_WG_SERVER_WG_IPV4}
+SERVER_WG_NIC=${CFG_WG_SERVER_NIC}
+SERVER_WG_IPV4=${CFG_WG_SERVER_IPV4}
 SERVER_PORT=${CFG_WG_SERVER_PORT}
 SERVER_PRIV_KEY=${SERVER_PRIV_KEY}
 SERVER_PUB_KEY=${SERVER_PUB_KEY}
@@ -69,28 +69,28 @@ ALLOWED_IPS=${CFG_WG_ALLOWED_IPS}" | sudo tee /etc/wireguard/params >/dev/null
 
                 # Add server interface
                 echo "[Interface]
-Address = ${CFG_WG_SERVER_WG_IPV4}/24
+Address = ${CFG_WG_SERVER_IPV4}/24
 ListenPort = ${CFG_WG_SERVER_PORT}
-PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
+PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
                 echo "PostUp = iptables -I INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
-PostUp = iptables -I FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostUp = iptables -I FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
+PostUp = iptables -I FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_NIC} -j ACCEPT
+PostUp = iptables -I FORWARD -i ${CFG_WG_SERVER_NIC} -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -o ${server_nic} -j MASQUERADE
 PostDown = iptables -D INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
-PostDown = iptables -D FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostDown = iptables -D FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
-PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
+PostDown = iptables -D FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_NIC} -j ACCEPT
+PostDown = iptables -D FORWARD -i ${CFG_WG_SERVER_NIC} -j ACCEPT
+PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
                     result=$(sudo sed -i '/^net.ipv4.ip_forward/d' /etc/sysctl.conf)
                     checkSuccess "Removing all instances of net.ipv4.ip_forward from sysctl.conf"
                     result=$(echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf)
                     checkSuccess "Add the configuration for IPv4 IP forwarding"
 
-                    result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-                    checkSuccess "Started wg-quick@${CFG_WG_SERVER_WG_NIC} service."
-                    result=$(sudo systemctl enable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-                    checkSuccess "Enabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+                    result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_NIC}")
+                    checkSuccess "Started wg-quick@${CFG_WG_SERVER_NIC} service."
+                    result=$(sudo systemctl enable "wg-quick@${CFG_WG_SERVER_NIC}")
+                    checkSuccess "Enabled wg-quick@${CFG_WG_SERVER_NIC} service."
 
                     result=$(sudo sysctl --system)
                     checkSuccess "Reloaded sysctl"
@@ -98,17 +98,17 @@ PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo
                     wireguardNewClient install;
 
                     # Check if WireGuard is running
-                    systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
+                    systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_NIC}"
                     WIREGUARD_RUNNING=$?
 
                     # WireGuard might not work if we updated the kernel. Tell the user to reboot
                     if [[ ${WIREGUARD_RUNNING} -ne 0 ]]; then
                         isNotice "***WARNING*** WireGuard does not seem to be running."
-                        isNotice "You can check if WireGuard is running with: systemctl status wg-quick@${CFG_WG_SERVER_WG_NIC}${NC}"
-                        isNotice "If you get something like 'Cannot find device ${CFG_WG_SERVER_WG_NIC}', please reboot!"
+                        isNotice "You can check if WireGuard is running with: systemctl status wg-quick@${CFG_WG_SERVER_NIC}${NC}"
+                        isNotice "If you get something like 'Cannot find device ${CFG_WG_SERVER_NIC}', please reboot!"
                     else # WireGuard is running
                         isSuccessful "WireGuard is running."
-                        isSuccessful "You can check the status of WireGuard with: systemctl status wg-quick@${CFG_WG_SERVER_WG_NIC}"
+                        isSuccessful "You can check the status of WireGuard with: systemctl status wg-quick@${CFG_WG_SERVER_NIC}"
                         isNotice "If you don't have internet connectivity from your client, try to reboot the server."
                     fi
                 fi
@@ -138,7 +138,7 @@ wireguardNewClient()
         else
             read -rp "Client name: " -e WIREGUARD_CLIENT_NAME
         fi
-        local WIREGUARD_CLIENT_EXISTS=$(sudo grep -c -E "^### Client ${WIREGUARD_CLIENT_NAME}\$" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+        local WIREGUARD_CLIENT_EXISTS=$(sudo grep -c -E "^### Client ${WIREGUARD_CLIENT_NAME}\$" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf")
 
         if [[ ${WIREGUARD_CLIENT_EXISTS} != 0 ]]; then
             echo ""
@@ -148,7 +148,7 @@ wireguardNewClient()
     done
 
     for WIREGUARD_DOT_IP in {2..254}; do
-        local WIREGUARD_DOT_EXISTS=$(sudo grep -c "${CFG_WG_SERVER_WG_IPV4::-1}${WIREGUARD_DOT_IP}" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+        local WIREGUARD_DOT_EXISTS=$(sudo grep -c "${CFG_WG_SERVER_IPV4::-1}${WIREGUARD_DOT_IP}" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf")
         if [[ ${WIREGUARD_DOT_EXISTS} == '0' ]]; then
             break
         fi
@@ -167,38 +167,38 @@ wireguardNewClient()
     local WIREGUARD_ENDPOINT="${public_ip_v4}:${CFG_WG_SERVER_PORT}"
 
     # Create client file
-    createTouch "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf" $sudo_user_name
+    createTouch "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf" $sudo_user_name
     
     # Create client file and add the server as a peer
     echo "[Interface]
 PrivateKey = ${WIREGUARD_CLIENT_PRIV_KEY}
-Address = ${WIREGUARD_CLIENT_WG_IPV4}/32
+Address = ${CFG_WG_SERVER_IPV4}/32
 DNS = ${CFG_DNS_SERVER_1},${CFG_DNS_SERVER_2}
 
 [Peer]
 PublicKey = ${SERVER_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
 Endpoint = ${WIREGUARD_ENDPOINT}
-AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf" >/dev/null
+AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf" >/dev/null
 
     # Add the client as a peer to the server
     echo -e "\n### Client ${WIREGUARD_CLIENT_NAME}
 [Peer]
 PublicKey = ${WIREGUARD_CLIENT_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
-AllowedIPs = ${WIREGUARD_CLIENT_WG_IPV4}/32" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
+AllowedIPs = ${CFG_WG_SERVER_IPV4}/32" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
-    result=$(sudo wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
-    checkSuccess "Syncing config file for $CFG_WG_SERVER_WG_NIC"
+    result=$(sudo wg syncconf "${CFG_WG_SERVER_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_NIC}"))
+    checkSuccess "Syncing config file for $CFG_WG_SERVER_NIC"
 
     # Generate QR code if qrencode is installed
     if command -v qrencode &>/dev/null; then
         isNotice "Here is your client config file as a QR Code:"
-        sudo qrencode -t ansiutf8 -l L <"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+        sudo qrencode -t ansiutf8 -l L <"${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
         echo ""
     fi
 
-    isSuccessful "Your client config file is in ${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
+    isSuccessful "Your client config file is in ${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf"
 }
 
 wireguardListClients() 
@@ -211,7 +211,7 @@ wireguardListClients()
 
     wireguardCheckClients;
 
-    sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
+    sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
 }
 
 wireguardRevokeClient()
@@ -226,7 +226,7 @@ wireguardRevokeClient()
 
     echo ""
     echo "Select the existing client you want to revoke"
-    sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
+    sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" | cut -d ' ' -f 3 | nl -s ') '
     until [[ ${WIREGUARD_CLIENT_NUMBER} -ge 1 && ${WIREGUARD_CLIENT_NUMBER} -le ${WIREGUARD_NUMBER_OF_CLIENTS} ]]; do
         if [[ ${WIREGUARD_CLIENT_NUMBER} == '1' ]]; then
             read -rp "Select one client [1]: " WIREGUARD_CLIENT_NUMBER
@@ -236,21 +236,21 @@ wireguardRevokeClient()
     done
 
     # match the selected number to a client name
-    local WIREGUARD_CLIENT_NAME=$(sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" | cut -d ' ' -f 3 | sed -n "${WIREGUARD_CLIENT_NUMBER}"p)
+    local WIREGUARD_CLIENT_NAME=$(sudo grep -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" | cut -d ' ' -f 3 | sed -n "${WIREGUARD_CLIENT_NUMBER}"p)
 
-    result=$(sudo sed -i "/^### Client ${WIREGUARD_CLIENT_NAME}\$/,/^$/d" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+    result=$(sudo sed -i "/^### Client ${WIREGUARD_CLIENT_NAME}\$/,/^$/d" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf")
     checkSuccess "Removed [Peer] block matching $WIREGUARD_CLIENT_NAME"
 
-    result=$(sudo rm -f "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_WG_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf")
+    result=$(sudo rm -f "${CFG_WG_HOME_DIR}/${CFG_WG_SERVER_NIC}-client-${WIREGUARD_CLIENT_NAME}.conf")
     checkSuccess "Removed generated client file for $WIREGUARD_CLIENT_NAME"
 
-    result=$(sudo wg syncconf "${CFG_WG_SERVER_WG_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_WG_NIC}"))
+    result=$(sudo wg syncconf "${CFG_WG_SERVER_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_NIC}"))
     checkSuccess "Restart wireguard to apply changes"
 }
 
 wireguardCheckClients() 
 {
-	local WIREGUARD_NUMBER_OF_CLIENTS=$(grep -c -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf")
+	local WIREGUARD_NUMBER_OF_CLIENTS=$(grep -c -E "^### Client" "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf")
 	if [[ ${WIREGUARD_NUMBER_OF_CLIENTS} == '0' ]]; then
 		echo ""
 		isError "You have no existing clients!"
@@ -274,11 +274,11 @@ wireguardUninstall()
     
     if [[ $WIREGUARD_REMOVE == [yY] ]]; then
         if [[ "$OS" == [1234567] ]]; then
-            result=$(sudo systemctl stop "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-            checkSuccess "Stopped wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+            result=$(sudo systemctl stop "wg-quick@${CFG_WG_SERVER_NIC}")
+            checkSuccess "Stopped wg-quick@${CFG_WG_SERVER_NIC} service."
 
-            result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
-            checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
+            result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_NIC}")
+            checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_NIC} service."
 
             if [[ "$OS" == [1234567] ]]; then
                 result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
@@ -294,7 +294,7 @@ wireguardUninstall()
             checkSuccess "Reloaded sysctl"
 
             # Check if WireGuard is running
-            systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_WG_NIC}"
+            systemctl is-active --quiet "wg-quick@${CFG_WG_SERVER_NIC}"
             WIREGUARD_RUNNING=$?
 
             if [[ ${WIREGUARD_RUNNING} -eq 0 ]]; then
