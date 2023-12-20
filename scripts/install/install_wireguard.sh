@@ -55,8 +55,8 @@ installStandaloneWireGuard()
                     local SERVER_PRIV_KEY=$(wg genkey)
                     local SERVER_PUB_KEY=$(echo "${SERVER_PRIV_KEY}" | wg pubkey)
 
-                # Save WireGuard settings
-                echo "SERVER_PUB_IP=${public_ip_v4}
+                    # Save WireGuard settings
+                    echo "SERVER_PUB_IP=${public_ip_v4}
 SERVER_PUB_NIC=${server_nic}
 SERVER_WG_NIC=${CFG_WG_SERVER_NIC}
 SERVER_WG_IPV4=${CFG_WG_SERVER_IPV4}
@@ -67,13 +67,16 @@ CLIENT_DNS_1=${CFG_DNS_SERVER_1}
 CLIENT_DNS_2=${CFG_DNS_SERVER_2}
 ALLOWED_IPS=${CFG_WG_ALLOWED_IPS}" | sudo tee /etc/wireguard/params >/dev/null
 
-                # Add server interface
-                echo "[Interface]
+                    result=$(sudo chmod 644 /etc/wireguard/params)
+                    checkSuccess "Updating permissions for /etc/wireguard/params"
+
+                    # Add server interface
+                    echo "[Interface]
 Address = ${CFG_WG_SERVER_IPV4}/24
 ListenPort = ${CFG_WG_SERVER_PORT}
 PrivateKey = ${SERVER_PRIV_KEY}" | sudo tee "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
-                echo "PostUp = iptables -I INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
+                    echo "PostUp = iptables -I INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
 PostUp = iptables -I FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_NIC} -j ACCEPT
 PostUp = iptables -I FORWARD -i ${CFG_WG_SERVER_NIC} -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -o ${server_nic} -j MASQUERADE
@@ -81,6 +84,9 @@ PostDown = iptables -D INPUT -p udp --dport ${CFG_WG_SERVER_PORT} -j ACCEPT
 PostDown = iptables -D FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_NIC} -j ACCEPT
 PostDown = iptables -D FORWARD -i ${CFG_WG_SERVER_NIC} -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
+
+                    result=$(sudo chmod 644 /etc/wireguard/${CFG_WG_SERVER_NIC}.conf)
+                    checkSuccess "Updating permissions for /etc/wireguard/${CFG_WG_SERVER_NIC}.conf"
 
                     result=$(sudo sed -i '/^net.ipv4.ip_forward/d' /etc/sysctl.conf)
                     checkSuccess "Removing all instances of net.ipv4.ip_forward from sysctl.conf"
@@ -186,9 +192,9 @@ AllowedIPs = ${CFG_WG_ALLOWED_IPS}" | sudo tee "${CFG_WG_HOME_DIR}/${CFG_WG_SERV
 [Peer]
 PublicKey = ${WIREGUARD_CLIENT_PUB_KEY}
 PresharedKey = ${WIREGUARD_CLIENT_PRE_SHARED_KEY}
-AllowedIPs = ${CFG_WG_SERVER_IPV4}/32" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
+AllowedIPs = ${CFG_WG_ALLOWED_IPS}/32" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_NIC}.conf" >/dev/null
 
-    result=$(sudo wg syncconf "${CFG_WG_SERVER_NIC}" <(sudo wg-quick strip "${CFG_WG_SERVER_NIC}"))
+    result=$(sudo wg syncconf ${CFG_WG_SERVER_NIC} /etc/wireguard/${CFG_WG_SERVER_NIC}.conf)
     checkSuccess "Syncing config file for $CFG_WG_SERVER_NIC"
 
     # Generate QR code if qrencode is installed
