@@ -100,7 +100,7 @@ PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo
                     result=$(sudo sysctl --system)
                     checkSuccess "Reloaded sysctl"
 
-                    useport wireguardstandalone $CFG_WG_SERVER_PORT install;
+                    usePort wireguardstandalone $CFG_WG_SERVER_PORT install;
                     openPort wireguardstandalone $CFG_WG_SERVER_PORT/udp install;
 
                     wireguardNewClient install;
