@@ -689,7 +689,7 @@ updateDNS()
             setupDNSIP adguard;
             local adguard_ip="$dns_ip_setup"
             # Testing Docker IP Address
-            result=$(sudo ping -c 3 $adguard_ip)
+            result=$(sudo ping -c 1 $adguard_ip)
             if [ $? -eq 0 ]; then
                 isSuccessful "Ping to $adguard_ip was successful."
             else
@@ -697,7 +697,7 @@ updateDNS()
                 isNotice "Defaulting to DNS 1 Server $CFG_DNS_SERVER_1."
                 local adguard_ip="$CFG_DNS_SERVER_1"
                 # Fallback to Quad9 if DNS has issues
-                result=$(sudo ping -c 3 $adguard_ip)
+                result=$(sudo ping -c 1 $adguard_ip)
                 if [ $? -eq 0 ]; then
                     isSuccessful "Ping to $adguard_ip was successful."
                 else
@@ -709,7 +709,7 @@ updateDNS()
         else
             local adguard_ip="$CFG_DNS_SERVER_1"
             # Fallback to Quad9 if DNS has issues
-            result=$(sudo ping -c 3 $adguard_ip)
+            result=$(sudo ping -c 1 $adguard_ip)
             if [ $? -eq 0 ]; then
                 isSuccessful "Ping to $adguard_ip was successful."
             else
@@ -725,7 +725,7 @@ updateDNS()
             setupDNSIP pihole;
             local pihole_ip="$dns_ip_setup"
             # Testing Docker IP Address
-            result=$(sudo ping -c 3 $pihole_ip)
+            result=$(sudo ping -c 1 $pihole_ip)
             if [ $? -eq 0 ]; then
                 isSuccessful "Ping to $pihole_ip was successful."
             else
@@ -733,7 +733,7 @@ updateDNS()
                 isNotice "Defaulting to DNS 2 Server $CFG_DNS_SERVER_2."
                 local pihole_ip="$CFG_DNS_SERVER_2"
                 # Fallback to Quad9 if DNS has issues
-                result=$(sudo ping -c 3 $pihole_ip)
+                result=$(sudo ping -c 1 $pihole_ip)
                 if [ $? -eq 0 ]; then
                     isSuccessful "Ping to $pihole_ip was successful."
                 else
@@ -767,8 +767,8 @@ updateDNS()
                 result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
                 checkSuccess "Updated Wireguard default DNS to $adguard_ip"
             fi
-            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
-            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf > /dev/null
+            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf > /dev/null
         elif [[ "$pihole_ip" == *10.8.1* ]]; then
             # Wireguard update
             local status=$(checkAppInstalled "wireguard" "docker")
@@ -782,8 +782,8 @@ updateDNS()
                 result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$pihole_ip/" $containers_dir$app_name/$compose_file)
                 checkSuccess "Updated Wireguard default DNS to $pihole_ip"
             fi
-            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
-            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf > /dev/null
+            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf > /dev/null
         else
             # Wireguard update
             local status=$(checkAppInstalled "wireguard" "docker")
@@ -797,8 +797,8 @@ updateDNS()
                 result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
                 checkSuccess "Updated Wireguard default DNS to $adguard_ip"
             fi
-            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf
-            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf
+            echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf > /dev/null
+            echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf > /dev/null
         fi
         if [ "$flag" == "install" ]; then
             setupInstallVariables $app_name;
