@@ -82,8 +82,10 @@ PostDown = iptables -D FORWARD -i ${server_nic} -o ${CFG_WG_SERVER_WG_NIC} -j AC
 PostDown = iptables -D FORWARD -i ${CFG_WG_SERVER_WG_NIC} -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo tee -a "/etc/wireguard/${CFG_WG_SERVER_WG_NIC}.conf" >/dev/null
 
-                # Enable routing on the server
-                echo "net.ipv4.ip_forward = 1" | sudo tee /etc/sysctl.d/wg.conf >/dev/null
+                    result=$(sudo sed -i '/^net.ipv4.ip_forward/d' /etc/sysctl.conf)
+                    checkSuccess "Removing all instances of net.ipv4.ip_forward from sysctl.conf"
+                    result=$(echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf)
+                    checkSuccess "Add the configuration for IPv4 IP forwarding"
 
                     result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_WG_NIC}")
                     checkSuccess "Started wg-quick@${CFG_WG_SERVER_WG_NIC} service."
@@ -274,10 +276,7 @@ wireguardUninstall()
             result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_WG_NIC}")
             checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_WG_NIC} service."
 
-            if [[ ${WG_OS} == 'ubuntu' ]]; then
-                result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
-                checkSuccess "Removed wireguard wireguard-tools qrencode"
-            elif [[ ${WG_OS} == 'debian' ]]; then
+            if [[ "$OS" == [1234567] ]]; then
                 result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
                 checkSuccess "Removed wireguard wireguard-tools qrencode"
             fi
