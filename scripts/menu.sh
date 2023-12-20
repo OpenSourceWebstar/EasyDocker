@@ -483,6 +483,7 @@ mattermostToolsMenu()
 
 wireguardManageMenu() 
 {
+	local WIREGUARD_MENU_OPTION=""
     echo ""
     echo "#####################################"
     echo "###       Wireguard Manager       ###"
