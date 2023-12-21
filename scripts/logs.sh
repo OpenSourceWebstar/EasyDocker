@@ -92,7 +92,7 @@ viewLogs()
         ;;
         e)
             isNotice "Viewing easydocker.log:"
-            sudo nano "$logs_dir/easydocker.log"
+            sudo $CFG_TEXT_EDITOR "$logs_dir/easydocker.log"
             viewLogs;
         ;;
         x)

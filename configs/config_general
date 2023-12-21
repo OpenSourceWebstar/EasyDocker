@@ -37,6 +37,7 @@ CFG_UPDATER_CHECK=60
 CFG_SWAPFILE_SIZE=2G
 CFG_GENERATED_PASS_LENGTH=26
 CFG_UFW_LOGGING=off
+CFG_TEXT_EDITOR=nano
 
 # Unused/Unfinished
 # Docker Manager (Used for remote access)

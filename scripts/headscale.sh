@@ -392,7 +392,7 @@ headscaleEditConfig()
 {
     local config_file="${containers_dir}headscale/config/config.yaml"
     local previous_md5=$(md5sum "$config_file" | awk '{print $1}')
-    nano "$config_file"
+    $CFG_TEXT_EDITOR "$config_file"
     local current_md5=$(md5sum "$config_file" | awk '{print $1}')
 
     if [ "$previous_md5" != "$current_md5" ]; then

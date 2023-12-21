@@ -117,8 +117,8 @@ installCrontab()
             checkSuccess "Setting up crontab for $sudo_user_name user"
         fi
 
-        export VISUAL=nano
-        export EDITOR=nano
+        export VISUAL=$CFG_TEXT_EDITOR
+        export EDITOR=$CFG_TEXT_EDITOR
 
         isSuccessful "Crontab has been setup on the system"
         #installCrontabSSHScan;

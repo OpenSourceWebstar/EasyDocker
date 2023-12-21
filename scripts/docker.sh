@@ -107,8 +107,8 @@ setupConfigToContainer()
                             # Calculate the checksum of the original file
                             local original_checksum=$(sudo md5sum "$target_path/$config_file")
 
-                            # Open the file with nano for editing
-                            sudo nano "$target_path/$config_file"
+                            # Open the file with $CFG_TEXT_EDITOR for editing
+                            sudo $CFG_TEXT_EDITOR "$target_path/$config_file"
 
                             # Calculate the checksum of the edited file
                             local edited_checksum=$(sudo md5sum "$target_path/$config_file")
@@ -169,8 +169,8 @@ setupConfigToContainer()
                         # Calculate the checksum of the original file
                         local original_checksum=$(sudo md5sum "$target_path/$config_file")
 
-                        # Open the file with nano for editing
-                        sudo nano "$target_path/$config_file"
+                        # Open the file with $CFG_TEXT_EDITOR for editing
+                        sudo $CFG_TEXT_EDITOR "$target_path/$config_file"
 
                         # Calculate the checksum of the edited file
                         local edited_checksum=$(sudo md5sum "$target_path/$config_file")

@@ -530,8 +530,8 @@ editAppConfig()
             # Calculate the checksum of the original file
             local original_checksum=$(md5sum "$config_file")
 
-            # Open the file with nano for editing
-            sudo nano "$config_file"
+            # Open the file with $CFG_TEXT_EDITOR for editing
+            sudo $CFG_TEXT_EDITOR "$config_file"
 
             # Calculate the checksum of the edited file
             local edited_checksum=$(md5sum "$config_file")
@@ -656,7 +656,7 @@ viewEasyDockerConfigs()
                 isNotice "No config found with the selected letter. Please try again."
                 read -p "Press Enter to continue."
             else
-                sudo nano "$selected_file"
+                sudo $CFG_TEXT_EDITOR "$selected_file"
                 
                 # Update the last modified timestamp of the edited file
                 createTouch "$selected_file" $sudo_user_name
@@ -775,14 +775,14 @@ viewComposeFiles()
 
             case "$selected_files" in
               [0-9]*)
-                # Edit the selected Docker Compose files with nano
+                # Edit the selected Docker Compose files with $CFG_TEXT_EDITOR
                 local IFS=' '   # Declare IFS as a local variable
                 read -r -a selected_file_numbers <<< "$selected_files"  # Declare selected_file_numbers as an array
                 for file_number in "${selected_file_numbers[@]}"; do
                   local index=$((file_number - 1))
                   if ((index >= 0 && index < ${#selected_compose_files[@]})); then
                     local selected_file="${selected_compose_files[index]}"
-                    sudo nano "$selected_file"
+                    sudo $CFG_TEXT_EDITOR "$selected_file"
                   fi
                 done
 
