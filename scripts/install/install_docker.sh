@@ -84,7 +84,7 @@ installDockerUser()
             isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
         else
             # If the user doesn't exist, create the user
-            local result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER" -m -G sudo "$CFG_DOCKER_INSTALL_USER")
+            local result=$(sudo useradd -s /bin/bash -d "/home/$CFG_DOCKER_INSTALL_USER")
             checkSuccess "Creating $CFG_DOCKER_INSTALL_USER User."
             updateDockerInstallPassword;
         fi
