@@ -47,7 +47,8 @@ sourceFiles()
         echo "###       Loading EasyDocker Startup Files       ###"
         echo "####################################################"
         echo ""
-        echo "If you are experiencing loading issues, please run 'rm -rf /docker/install && easydocker'"
+        echo "${YELLOW}NOTICE:${NC} If you are experiencing loading issues..."
+        echo "${YELLOW}NOTICE:${NC} Please run the following : 'rm -rf /docker/install && easydocker'"
         echo ""
     fi
     for file_to_source in "${files_to_source[@]}"; do
