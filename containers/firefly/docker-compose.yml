@@ -23,7 +23,7 @@ services:
       #traefik.http.routers.firefly.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.firefly.tls: true
       #traefik.http.routers.firefly.tls.certresolver: production
-      #traefik.http.routers.firefly.service= firefly
+      #traefik.http.routers.firefly.service: firefly
       #traefik.http.services.firefly.loadbalancer.server.port: PORT1
       #traefik.http.routers.firefly.middlewares:
     networks:
