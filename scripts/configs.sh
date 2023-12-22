@@ -506,13 +506,13 @@ checkConfigFilesEdited()
                         config_check_done=true  # Set the flag to exit the loop
                         break  # Exit the loop
                     ;;
-                    [aA)
+                    [aA])
                         viewEasyDockerConfigs;
                         # No need to set config_check_done here; it will continue to the next iteration of the loop
                         break  # Exit the loop
                     ;;
                     *)
-                        isNotice "Please provide a valid input (c or e)."
+                        isNotice "Please provide a valid input (s or a)."
                     ;;
                 esac
             done
