@@ -180,7 +180,7 @@ installWireguard()
             isNotice "Setup is now available, please follow the instructions above."
             echo ""
             isQuestion "Have you followed the instructions above? (y/n): "
-            read -rp "" wireguard_instructions
+            read -p "" wireguard_instructions
             if [[ "$wireguard_instructions" == 'y' || "$wireguard_instructions" == 'Y' ]]; then
                 break
             else

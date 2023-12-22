@@ -30,7 +30,7 @@ migrateCheckForMigrateFiles()
             echo ""
             # Question and Options
             isQuestion "Please select from the availables options above, or press 'c' to continue: "
-            read -rp "" migrationmainoptions
+            read -p "" migrationmainoptions
             case $migrationmainoptions in
                 f|F)
                     migrateListFullMigrateFiles;
@@ -55,7 +55,7 @@ migrateEnableConfig()
 {
     while true; do
         isQuestion "Do you want to enable migration in the config file? (y/n): "
-        read -r "" enableconfigmigrate
+        read -rp "" enableconfigmigrate
         if [[ "$enableconfigmigrate" =~ ^[yYnN]$ ]]; then
             break
         fi
@@ -113,7 +113,7 @@ migrateListFullMigrateFiles()
     for full_backup_file in $full_files_without_string; do
         echo ""
         isQuestion "Do you want to restore $full_backup_file? (y/n): "
-        read -rp "" fullmigrateoption
+        read -p "" fullmigrateoption
         case $fullmigrateoption in
             y|Y)
                 selected_files+=("$full_backup_file")
@@ -168,7 +168,7 @@ migrateListSingleMigrateFiles()
     local selected_files=()
     for single_backup_file in $single_files_without_string; do
         isQuestion "Do you want to restore $single_backup_file? (y/n): "
-        read -rp "" singlemigrateoption
+        read -p "" singlemigrateoption
         case $singlemigrateoption in
             y|Y)
                 selected_files+=("$single_backup_file")
@@ -203,7 +203,7 @@ migrateRestoreFileMoveToMigrate()
       isNotice "*TIP* You can also move the backup file back for future restorations using the migrate menu."
       echo ""
       isQuestion "Would you store $chosen_backup_file in the Migrate Folder? (y/n): "
-      read -r "" confirmmovetomigrate
+      read -rp "" confirmmovetomigrate
       if [[ -n "$confirmmovetomigrate" ]]; then
           break
       fi
@@ -225,7 +225,7 @@ migrateRestoreFileMoveToMigrate()
     while true; do
         echo ""
         isQuestion "Would you like to delete the $chosen_backup_file? (y/n): "
-        read -r "" confirmremovetomigrate
+        read -rp "" confirmremovetomigrate
         if [[ -n "$confirmremovetomigrate" ]]; then
             break
         fi
@@ -270,7 +270,7 @@ migrateRestoreFilesMoveToMigrate()
     local selected_files=()
     for full_backup_file in $full_files_without_string; do
         isQuestion "Do you want to move $full_backup_file to the migrate folder for storage? (y/n): "
-        read -rp "" fullmovemigrateoption
+        read -p "" fullmovemigrateoption
         case $fullmovemigrateoption in
             y|Y)
                 selected_files+=("$full_backup_file")
@@ -314,7 +314,7 @@ migrateRestoreFilesMoveToMigrate()
     for single_backup_file in $single_files_without_string; do
         echo ""
         isQuestion "Do you want to move $single_backup_file to the migrate folder for storage? (y/n): "
-        read -rp "" singlemovemigrateoption
+        read -p "" singlemovemigrateoption
         case $singlemovemigrateoption in
             y|Y)
                 local selected_files+=("$single_backup_file")
@@ -347,7 +347,7 @@ migrateRestoreFileMoveFromMigrate()
         isOption "3. Bulk move"
         echo ""
         isQuestion "Enter your choice (1/2/3) or press (x) to exit: "
-        read -rp "" choice
+        read -p "" choice
 
         if [ "$choice" = "1" ]; then
             local file_count=$(sudo find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
@@ -365,7 +365,7 @@ migrateRestoreFileMoveFromMigrate()
             done
             echo ""
             isQuestion "Enter the file number or press (x) to exit : "
-            read -rp "" file_choice
+            read -p "" file_choice
             if [ -z "$file_choice" ]; then
                 continue
             fi
@@ -398,7 +398,7 @@ migrateRestoreFileMoveFromMigrate()
             done
 
             isQuestion "Enter the file number: "
-            read -rp "" file_choice
+            read -p "" file_choice
             if [ -z "$file_choice" ]; then
                 continue
             fi
@@ -421,7 +421,7 @@ migrateRestoreFileMoveFromMigrate()
             isOption "2. Full backups"
             echo ""
             isQuestion "Enter your choice (1/2) or (b) to go Back or (x) to exit : "
-            read -rp "" backup_choice
+            read -p "" backup_choice
             if [ "$backup_choice" = "1" ]; then
                 local src_dir="$migrate_single_dir"
                 local dst_dir="$backup_single_dir"
@@ -455,7 +455,7 @@ migrateRestoreFileMoveFromMigrate()
             while true; do
                 echo ""
                 isQuestion "Do you want to move all the files above to the Backup folder? (y/n): "
-                read -r "" migrateconfirmmove
+                read -rp "" migrateconfirmmove
                 if [[ -n "$migrateconfirmmove" ]]; then
                     break
                 fi
@@ -557,7 +557,7 @@ migrateGenerateTXTSingle()
             isNotice "$migrate_file already exists for $app_name."
             while true; do
                 isQuestion "Do you want to update $migrate_file to the local machine? (y/n): "
-                read -r "" replacemigration
+                read -rp "" replacemigration
                 if [[ "$replacemigration" =~ ^[yYnN]$ ]]; then
                     break
                 fi

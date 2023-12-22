@@ -16,7 +16,7 @@ restoreStart()
         isNotice "You are trying to restore a full backup! This is dangerous is unintended."
         while true; do
             isQuestion "Are you sure you want to restore a full backup? (y/n): "
-            read -r "" confirmfullrestore
+            read -rp "" confirmfullrestore
             if [[ "$confirmfullrestore" =~ ^[yYnN]$ ]]; then
                 break
             fi
@@ -259,7 +259,7 @@ restoreSingleBackupList()
         # Read the user's choice number for app_name
         echo ""
         isQuestion "Select an application (number): "
-        read -rp "" chosen_app_number
+        read -p "" chosen_app_number
 
         # Validate the user's choice number
         if [[ "$chosen_app_number" =~ ^[0-9]+$ ]]; then
@@ -272,7 +272,7 @@ restoreSingleBackupList()
                 # Read the user's choice number for backup file
                 echo ""
                 isQuestion "Select a backup file (number): "
-                read -rp "" chosen_backup_number
+                read -p "" chosen_backup_number
 
                 # Validate the user's choice number for backup file
                 if [[ "$chosen_backup_number" =~ ^[0-9]+$ ]]; then
@@ -336,7 +336,7 @@ restoreFullBackupList()
         # Read the user's choice number for backup file
         echo ""
         isQuestion "Select a backup file (number): "
-        read -rp "" chosen_backup_number
+        read -p "" chosen_backup_number
 
         # Validate the user's choice number for backup file
         if [[ "$chosen_backup_number" =~ ^[0-9]+$ ]]; then
@@ -391,7 +391,7 @@ restoreRemoteMenu()
             isOption "x. Exit"
             echo ""
             isQuestion "Enter your choice: "
-            read -r "" select_remote
+            read -rp "" select_remote
 
             case "$select_remote" in
                 1)
@@ -448,7 +448,7 @@ restoreRemoteMenu()
             isOption "x. Exit"
             echo ""
             isQuestion "Enter your choice: "
-            read -r "" select_option
+            read -rp "" select_option
 
             case "$select_option" in
                 1)
@@ -460,7 +460,7 @@ restoreRemoteMenu()
                 2)
                     echo ""
                     isQuestion "Enter the Install Name you would like to restore from: "
-                    read -r "" restore_install_name
+                    read -rp "" restore_install_name
                     isNotice "Restoring using Install Name :  $restore_install_name"
                     echo ""
                     ;;
@@ -520,7 +520,7 @@ restoreRemoteMenu()
             # Read the user's choice number or 'x' to go to the main menu
             echo ""
             isQuestion "Select an application (number) or 'x' to go to the main menu: "
-            read -rp "" chosen_app_option
+            read -p "" chosen_app_option
 
             if [[ "$chosen_app_option" == "x" ]]; then
                 resetToMenu;  # Go back to the main menu
@@ -567,7 +567,7 @@ restoreRemoteMenu()
             # Read the user's choice number or input
             echo ""
             isQuestion "Select a backup file (number) or 'b' to go back: "
-            read -rp "" chosen_backup_option
+            read -p "" chosen_backup_option
 
             if [[ "$chosen_backup_option" == "b" ]]; then
                 select_app  # Go back to the application selection
@@ -612,7 +612,7 @@ restoreCopyFile()
         echo ""
 		while true; do
 			isQuestion "Would you like to Redownload $chosen_backup_file? (y/n): "
-			read -rp "" redownload_backup_file
+			read -p "" redownload_backup_file
 			if [[ -n "$redownload_backup_file" ]]; then
 				break
 			fi

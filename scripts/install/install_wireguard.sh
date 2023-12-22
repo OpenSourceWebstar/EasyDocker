@@ -283,7 +283,7 @@ wireguardUninstall()
     isNotice "Please backup the /etc/wireguard directory if you want to keep your configuration files."
     echo ""
     isQuestion "Do you really want to remove WireGuard? (y/n): "
-    read -rp "" WIREGUARD_REMOVE
+    read -p "" WIREGUARD_REMOVE
     
     if [[ $WIREGUARD_REMOVE == [yY] ]]; then
         if [[ "$OS" == [1234567] ]]; then

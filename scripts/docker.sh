@@ -100,7 +100,7 @@ setupConfigToContainer()
                 echo ""
                 while true; do
                     isQuestion "Would you like to make edits to the config file? (y/n): "
-                    read -r "" editconfigaccept
+                    read -rp "" editconfigaccept
                     echo ""
                     case $editconfigaccept in
                         [yY])
@@ -135,7 +135,7 @@ setupConfigToContainer()
                 echo ""
                 while true; do
                     isQuestion "Would you like to reset the config file? (y/n): "
-                    read -r "" resetconfigaccept
+                    read -rp "" resetconfigaccept
                     echo ""
                     case $resetconfigaccept in
                         [yY])
@@ -162,7 +162,7 @@ setupConfigToContainer()
             echo ""
             while true; do
                 isQuestion "Would you like to make edits to the config file? (y/n): "
-                read -r "" editconfigaccept
+                read -rp "" editconfigaccept
                 echo ""
                 case $editconfigaccept in
                     [yY])
@@ -249,7 +249,7 @@ checkAllowedInstall()
                     #isNotice "Traefik is not installed, it is required."
                     #echo ""
                     #isQuestion "Would you like to install Traefik? (y/n): "
-                    #read -rp "" virtualmin_traefik_choice
+                    #read -p "" virtualmin_traefik_choice
                     #if [[ -n "$virtualmin_traefik_choice" ]]; then
                         #break
                     #fi
@@ -644,7 +644,7 @@ dockerUpdateRestart()
             echo ""
             isQuestion "Would you like to restart $app_name? (y/n): "
             echo ""
-            read -rp "" restart_choice
+            read -p "" restart_choice
             if [[ -n "$restart_choice" ]]; then
                 break
             fi

@@ -43,7 +43,7 @@ installSSHRemoteList()
                             while true; do
                                 isNotice "Make sure you have the host setup and ready with the EasyDocker preinstallation before doing this!"
                                 isQuestion "Is $ip prepared with the EasyDocker pre-installation? (y/n): "
-                                read -r "" ishostsetupprompt
+                                read -rp "" ishostsetupprompt
                                 if [[ -n "$ishostsetupprompt" ]]; then
                                     break
                                 fi
@@ -52,7 +52,7 @@ installSSHRemoteList()
                             if [[ "$ishostsetupprompt" == [yY] ]]; then
                                 while true; do
                                     isQuestion "Record found for $ip. Do you want to reinstall? (y/n): "
-                                    read -r "" toolreinstallremotessh
+                                    read -rp "" toolreinstallremotessh
                                     if [[ -n "$toolreinstallremotessh" ]]; then
                                         break
                                     fi
@@ -341,7 +341,7 @@ generateSSHSetupKeyPair()
     {
         while true; do
             isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
-            read -rp "" key_regenerate_accept
+            read -p "" key_regenerate_accept
             case "$key_regenerate_accept" in
                 [Yy]*)
                     generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
@@ -553,7 +553,7 @@ disableSSHPasswords()
         echo ""
         while true; do
             isQuestion "Do you want to install (i) the missing SSH keys or (c) continue or (x) to exit? (i/c/x): "
-            read -rp "" disable_ssh_passwords
+            read -p "" disable_ssh_passwords
             case "$disable_ssh_passwords" in
                 [iI]*)
                     installSSHKeysForDownload install;
@@ -586,7 +586,7 @@ disableSSHPasswordFunction()
             while true; do
                 echo ""
                 isQuestion "Do you want to disable SSH password logins? (y/n): "
-                read -rp "" disable_ssh_passwords
+                read -p "" disable_ssh_passwords
                 case "$disable_ssh_passwords" in
                     [Yy]*)
                         local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"
@@ -606,7 +606,7 @@ disableSSHPasswordFunction()
                     [Nn]*)
                         while true; do
                             isQuestion "Do you want to stop being asked to disable SSH Password logins? (y/n): "
-                            read -r "" sshdisablepasswordask
+                            read -rp "" sshdisablepasswordask
                             if [[ "$sshdisablepasswordask" =~ ^[yYnN]$ ]]; then
                                 break
                             fi

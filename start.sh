@@ -35,7 +35,7 @@ startUp()
             isNotice "If you need to access this again, you can install it via the system install option"
             echo ""
             isQuestion "Would like to destroy the SSH Download service for security purposes? (y/n): "
-            read -rp "" ssh_download_uninstall
+            read -p "" ssh_download_uninstall
             if [[ -n "$ssh_download_uninstall" ]]; then
                 break
             fi
@@ -128,7 +128,7 @@ installRecommendedApps()
         echo ""
         while true; do
             isQuestion "Would you like to follow the recommendations? (y/n): "
-            read -rp "" recommendation_choice
+            read -p "" recommendation_choice
             if [[ -n "$recommendation_choice" ]]; then
                 break
             fi

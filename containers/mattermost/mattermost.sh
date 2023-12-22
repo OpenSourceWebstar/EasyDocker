@@ -44,7 +44,7 @@ installMattermost()
                 isNotice "Traefik is RECOMMENDED to use before installing Mattermost"
                 echo ""
                 isQuestion "Are you using the Reverse Proxy that comes with Mattermost? (y/n): "
-                read -r "" acceptproxymattermost
+                read -rp "" acceptproxymattermost
                 if [[ "$acceptproxymattermost" =~ ^[yYnN]$ ]]; then
                     break
                 fi
@@ -201,7 +201,7 @@ EOF
             isNotice "Traefik is RECOMMENDED to use before installing Mattermost"
             echo ""
             isQuestion "Do you want to install the Reverse Proxy that comes with Mattermost? (y/n): "
-            read -r "" MATN
+            read -rp "" MATN
 
             if [[ "$MATN" == [nN] ]]; then
                 dockerDown "$app_name" "$DCWN";

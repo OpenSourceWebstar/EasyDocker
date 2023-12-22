@@ -71,7 +71,7 @@ installSSLCertificate()
                     isNotice "Certificate for $domain_value does not match in the SSL folder."
 
                     isQuestion "Do you want to regenerate the SSL certificate for $domain_value? (y/n): "
-                    read -r "" SSLRegenchoice
+                    read -rp "" SSLRegenchoice
 
                     if [ "$SSLRegenchoice" == "y" ]; then
                         echo "Regenerating SSL certificate for $domain_value..."
@@ -150,7 +150,7 @@ removeBackupCrontabAppFolderRemoved()
         isNotice "Application $name is no longer installed."
         while true; do
             isQuestion "Do you want to remove automatic backups for $name (y/n): "
-            read -r "" removecrontab
+            read -rp "" removecrontab
             if [[ "$removecrontab" =~ ^[yYnN]$ ]]; then
                 break
             fi
@@ -181,7 +181,7 @@ checkBackupCrontabApp()
             isNotice "Automatic Backups for $name are not set up."
             while true; do
                 isQuestion "Do you want to set up automatic $name backups (y/n): "
-                read -r "" setupcrontab
+                read -rp "" setupcrontab
                 if [[ "$setupcrontab" =~ ^[yYnN]$ ]]; then
                     break
                 fi
@@ -197,7 +197,7 @@ checkBackupCrontabApp()
             if [[ "$setupcrontab" == [nN] ]]; then
                 while true; do
                     isQuestion "Do you want to disable automatic $name backups (y/n): "
-                    read -r "" setupdisablecrontab
+                    read -rp "" setupdisablecrontab
                     if [[ "$setupdisablecrontab" =~ ^[yYnN]$ ]]; then
                         break
                     fi
@@ -223,7 +223,7 @@ checkBackupCrontabApp()
             isNotice "Automatic Backups for $name are set up but disabled in the configs."
             while true; do
                 isQuestion "Do you want to remove the automatic $name backups (y/n): "
-                read -r "" disablecrontab
+                read -rp "" disablecrontab
                 if [[ "$disablecrontab" =~ ^[yYnN]$ ]]; then
                     break
                 fi

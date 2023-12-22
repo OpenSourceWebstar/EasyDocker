@@ -107,7 +107,7 @@ installAdguard()
             isNotice "Setup is now available, please follow the instructions above."
             echo ""
             isQuestion "Have you followed the instructions above? (y/n): "
-            read -rp "" adguard_instructions
+            read -p "" adguard_instructions
             if [[ "$adguard_instructions" == 'y' || "$adguard_instructions" == 'Y' ]]; then
                 break
             else

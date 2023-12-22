@@ -47,7 +47,7 @@ mainMenu()
 		isOption "x. Exit"
 		echo ""
 		isQuestion "What is your choice: "
-		read -r "" choice
+		read -rp "" choice
 
 		case $choice in
 			s)
@@ -106,9 +106,9 @@ mainMenu()
 				echo "#####################################"
 				echo ""
 				isOptionMenu "Single App Backup - Docker Container Folder (y/n): "
-				read -r "" backupsingle
+				read -rp "" backupsingle
 				isOptionMenu "Full Backup - Docker Folder (y/n): "
-				read -r "" backupfull
+				read -rp "" backupfull
 
 				startOther;
 
@@ -123,9 +123,9 @@ mainMenu()
     			echo "Please select 'r' for remote restore."
 				echo ""
 				isOptionMenu "Single Restore - App (l/r): "
-				read -r "" restoresingle
+				read -rp "" restoresingle
 				isOptionMenu "Full Restore - Docker Folder (l/r): "
-				read -r "" restorefull
+				read -rp "" restorefull
 
 				startOther;
 
@@ -138,17 +138,17 @@ mainMenu()
 				echo ""
 
 				isOptionMenu "Check for Migration file(s) (y/n): "
-				read -r "" migratecheckforfiles
+				read -rp "" migratecheckforfiles
 				isOptionMenu "Move files from Migrate folder(s) (y/n): "
-				read -r "" migratemovefrommigrate
+				read -rp "" migratemovefrommigrate
 				isOptionMenu "Generate Migrate.txt files(s) (y/n): "
-				read -r "" migrategeneratetxt
+				read -rp "" migrategeneratetxt
 				isOptionMenu "Scan Folders for Migrate.txt updates (IP/InstallName) (y/n): "
-				read -r "" migratescanforupdates
+				read -rp "" migratescanforupdates
 				isOptionMenu "Scan Folders for Missing Config Values to Migrate.txt (y/n): "
-				read -r "" migratescanforconfigstomigrate
+				read -rp "" migratescanforconfigstomigrate
 				isOptionMenu "Scan Folders for Migrate.txt updated values to Config (y/n): "
-				read -r "" migratescanformigratetoconfigs
+				read -rp "" migratescanformigratetoconfigs
 
 				startOther;
 				
@@ -167,17 +167,17 @@ mainMenu()
 				echo ""
 				
 				isOptionMenu "View Database Tables & Data? (y/n): "
-				read -r "" toollistalltables
+				read -rp "" toollistalltables
 				isOptionMenu "List all apps database? (y/n): "
-				read -r "" toollistallapps
+				read -rp "" toollistallapps
 				isOptionMenu "List all installed apps? (y/n): "
-				read -r "" toollistinstalledapps
+				read -rp "" toollistinstalledapps
 				isOptionMenu "Update database with installed apps? (y/n): "
-				read -r "" toolupdatedb
+				read -rp "" toolupdatedb
 				isOptionMenu "Empty a Database Tables? (y/n): "
-				read -r "" toolemptytable
+				read -rp "" toolemptytable
 				isOptionMenu "Delete database file? (y/n): "
-				read -r "" tooldeletedb
+				read -rp "" tooldeletedb
 
 				startOther;
 
@@ -190,23 +190,23 @@ mainMenu()
 				echo ""
 
 				isOptionMenu "Setup Tailscale Client for Localhost? (y/n): "
-				read -r "" headscaleclientlocal
+				read -rp "" headscaleclientlocal
 				isOptionMenu "Setup Tailscale Client for a Specific App? (y/n): "
-				read -r "" headscaleclientapp
+				read -rp "" headscaleclientapp
 				isOptionMenu "Create User $CFG_INSTALL_NAME? (y/n): "
-				read -r "" headscaleusercreate
+				read -rp "" headscaleusercreate
 				isOptionMenu "Create API Key for $CFG_INSTALL_NAME? (y/n): "
-				read -r "" headscaleapikeyscreate
+				read -rp "" headscaleapikeyscreate
 				isOptionMenu "List all API Keys? (y/n): "
-				read -r "" headscaleapikeyslist
+				read -rp "" headscaleapikeyslist
 				isOptionMenu "List all Nodes? (y/n): "
-				read -r "" headscalenodeslist
+				read -rp "" headscalenodeslist
 				isOptionMenu "List all Users? (y/n): "	 
-				read -r "" headscaleuserlist
+				read -rp "" headscaleuserlist
 				isOptionMenu "View Headscale Version? (y/n): "
-				read -r "" headscaleversion
+				read -rp "" headscaleversion
 				isOptionMenu "View/Edit Headscale Config File? (y/n): " 
-				read -r "" headscaleconfigfile
+				read -rp "" headscaleconfigfile
 
 				startOther;
 
@@ -220,15 +220,15 @@ mainMenu()
 				echo ""
 
 				isOptionMenu "Allow specific port through the firewall? (y/n): "
-				read -r "" firewallallowport
+				read -rp "" firewallallowport
 				isOptionMenu "Block specific port through the firewall? (y/n): "
-				read -r "" firewallblockport
+				read -rp "" firewallblockport
 				isOptionMenu "Block port 22 (SSH)? (y/n): "
-				read -r "" firewallblock22
+				read -rp "" firewallblock22
 				isOptionMenu "Allow port 22 (SSH)? (y/n): "
-				read -r "" firewallallow22
+				read -rp "" firewallallow22
 				isOptionMenu "Update logging type for UFW based on Config? (y/n): "
-				read -r "" firewallchangelogging
+				read -rp "" firewallchangelogging
 
 				startOther;
 
@@ -249,27 +249,27 @@ mainMenu()
 				echo ""
 
 				isOptionMenu "Setup SSH Keys for Download (y/n): "
-				read -r "" toolsetupsshkeys
+				read -rp "" toolsetupsshkeys
 				isOptionMenu "Reset EasyDocker Git Folder (y/n): "
-				read -r "" toolsresetgit
+				read -rp "" toolsresetgit
 				isOptionMenu "Start Pre-Installation (y/n): "
-				read -r "" toolstartpreinstallation
+				read -rp "" toolstartpreinstallation
 				isOptionMenu "Start/Restart all docker containers? (y/n): "
-				read -r "" toolrestartcontainers
+				read -rp "" toolrestartcontainers
 				isOptionMenu "Stop all docker containers? (y/n): "
-				read -r "" toolstopcontainers
+				read -rp "" toolstopcontainers
 				isOptionMenu "Scan apps for Crontab Backup? (y/n): "
-				read -r "" toolsstartcrontabsetup
+				read -rp "" toolsstartcrontabsetup
 				isOptionMenu "Install Crontab? (y/n): "
-				read -r "" toolinstallcrontab
+				read -rp "" toolinstallcrontab
 				#isOptionMenu "Remove Docker Manager User from this PC? (y/n): "
-				#read -r "" toolsremovedockermanageruser
+				#read -rp "" toolsremovedockermanageruser
 				#isOptionMenu "Install Docker Manager User on this PC? (y/n): "
-				#read -r "" toolsinstalldockermanageruser
+				#read -rp "" toolsinstalldockermanageruser
 				#isOptionMenu "Install Remote SSH Keys? (y/n): "
-				#read -r "" toolinstallremotesshlist
+				#read -rp "" toolinstallremotesshlist
 				#isOptionMenu "Install SSH Scanning into Crontab? (y/n): "
-				#read -r "" toolinstallcrontabssh
+				#read -rp "" toolinstallcrontabssh
 
 				startOther;
 
@@ -341,7 +341,7 @@ menuContinue()
 	if [[ "$public" == "CFG_REQUIREMENT_CONTINUE_PROMPT" ]]; then
 		while true; do
 			isQuestion "Press Enter to continue or press (d) to disable being asked to continue after an app installs."
-			read -rp "" app_installed_continue
+			read -p "" app_installed_continue
 			if [[ -n "$app_installed_continue" ]]; then
 				break
 			fi
@@ -379,7 +379,7 @@ scanCategory()
                 fi
 
                 isOptionMenu "$app_description "
-                read -r "" $app_name
+                read -rp "" $app_name
             fi
         fi
     done
@@ -400,7 +400,7 @@ dashyToolsMenu()
 		isOption "x. Exit to Main Menu"
 		echo ""
 		isQuestion "What is your choice: "
-		read -r "" choice
+		read -rp "" choice
 
 		case $choice in
 			1)
@@ -432,7 +432,7 @@ invidiousToolsMenu()
 		isOption "x. Exit to Main Menu"
 		echo ""
 		isQuestion "What is your choice: "
-		read -r "" choice
+		read -rp "" choice
 
 		case $choice in
 			1)
@@ -464,7 +464,7 @@ mattermostToolsMenu()
 		isOption "x. Exit to Main Menu"
 		echo ""
 		isQuestion "What is your choice: "
-		read -r "" choice
+		read -rp "" choice
 
 		case $choice in
 			1)

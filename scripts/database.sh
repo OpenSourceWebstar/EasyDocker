@@ -210,7 +210,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -rp "" found_empty_remove_choice
+                        read -p "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -228,7 +228,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -rp "" found_empty_remove_choice
+                        read -p "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -246,7 +246,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -rp "" found_empty_remove_choice
+                        read -p "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -264,7 +264,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -rp "" found_empty_remove_choice
+                        read -p "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -320,7 +320,7 @@ databaseListAllApps()
             echo "$output" | while IFS= read -r line; do
                 echo "$line"
             done
-            read -rp "Press Enter to continue..."
+            read -p "Press Enter to continue..."
             else
             isNotice "No applications found"
         fi
@@ -378,7 +378,7 @@ databaseListInstalledApps()
         done <<< "$results"
 
         if [[ "$toollistinstalledapps" == [yY] ]]; then
-            read -rp "Press Enter to continue..."
+            read -p "Press Enter to continue..."
         fi
     else
         isSuccessful "No apps found."
@@ -396,7 +396,7 @@ databaseCycleThroughListApps()
         if [[ "$backupfull" == [yY] ]]; then
             local name=full
             isQuestion "Do you want a $name Backup? (y/n) "
-            read -r "" BACKUPACCEPT
+            read -rp "" BACKUPACCEPT
 
             if [[ $BACKUPACCEPT == [yY] ]]; then
                 isNotice "Starting a $name backup."
@@ -408,7 +408,7 @@ databaseCycleThroughListApps()
         if [[ "$migratefull" == [yY] ]]; then
             local name=full
             isQuestion "Do you want a $name Migration  (y/n)? "
-            read -r "" MIGRATEACCEPT
+            read -rp "" MIGRATEACCEPT
 
             if [[ $MIGRATEACCEPT == [yY] ]]; then
                 isNotice "Starting a $name migrate."
@@ -438,7 +438,7 @@ databaseCycleThroughListApps()
         if [[ "$backupsingle" == [yY] ]]; then
             for name in "${app_names[@]}"; do
                 isQuestion "Do you want a $name Backup? (y/n) "
-                read -r "" BACKUPACCEPT
+                read -rp "" BACKUPACCEPT
 
                 if [[ $BACKUPACCEPT == [yY] ]]; then
                     isNotice "Starting a $name backup."
@@ -451,7 +451,7 @@ databaseCycleThroughListApps()
         if [[ "$migratesingle" == [yY] ]]; then
             for name in "${app_names[@]}"; do
                 isQuestion "Do you want a $name Migration  (y/n)? "
-                read -r "" MIGRATEACCEPT
+                read -rp "" MIGRATEACCEPT
 
 
                 if [[ $MIGRATEACCEPT == [yY] ]]; then
@@ -605,7 +605,7 @@ databaseDisplayTables()
 
             echo ""
             isQuestion "Enter the number of the table to view data (x to exit): "
-            read -rp "" selected_table
+            read -p "" selected_table
 
             if [[ "$selected_table" == "x" ]]; then
                 echo ""
@@ -622,7 +622,7 @@ databaseDisplayTables()
                 sudo sqlite3 -column -header "$docker_dir/$db_file" "SELECT * FROM $selected_table;"
                 echo ""
                 isQuestion "Press Enter to continue..."
-                read -rp "" input
+                read -p "" input
             else
                 isNotice "Invalid table number. Please try again."
             fi
@@ -668,7 +668,7 @@ databaseEmptyTable()
 
     echo ""
     isQuestion "Enter the table name to empty (x to exit): "
-    read -rp "" table_name
+    read -p "" table_name
     echo ""
     if [[ "$table_name" == "x" ]]; then
       isNotice "Exiting."

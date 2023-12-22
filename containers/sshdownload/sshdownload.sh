@@ -50,7 +50,7 @@ installSshdownload()
             echo ""
             while true; do
                 isQuestion "Are you sure you want to allow sshdownload to the public? (y/n): "
-                read -rp "" sshdownload_public
+                read -p "" sshdownload_public
                 if [[ "$sshdownload_public" == [yY] ]]; then
                     break
                 else
@@ -152,7 +152,7 @@ installSshdownload()
         echo ""
         while true; do
             isQuestion "Have you followed the instructions above? (y/n): "
-            read -rp "" sshdownload_instructions
+            read -p "" sshdownload_instructions
             if [[ "$sshdownload_instructions" == 'y' || "$sshdownload_instructions" == 'Y' ]]; then
                 break
             else
@@ -176,7 +176,7 @@ installSshdownload()
         echo ""
 
         if [[ "$CFG_REQUIREMENT_CONTINUE_PROMPT" == "true" ]]; then
-            read -rp "Press Enter to continue."
+            read -p "Press Enter to continue."
         fi
 
 		menu_number=0
