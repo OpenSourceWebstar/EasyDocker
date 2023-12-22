@@ -18,8 +18,7 @@ current_date=$(date +%Y-%m-%d)
 current_time=$(date +%H:%M:%S)
 
 # Domain/Network
-public_ip_v4=$(ip -4 addr | sed -ne 's|^.* inet \([^/]*\)/.* scope global.*$|\1|p' | awk '{print $1}' | head -1)
-public_ip_v6=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
+public_ip_v4=$(curl -s https://api64.ipify.org?format=json | awk -F'"' '/ip/{print $4}')
 server_nic="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
 
 # Files
