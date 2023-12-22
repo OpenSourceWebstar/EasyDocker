@@ -325,8 +325,6 @@ generateSSHSetupKeyPair()
     local public_key_path="${ssh_dir}public"
     local public_key_full="$public_key_path/$public_key_file"
 
-    local ssh_should_setup=false
-
     # Check if the directory exists; if not, create it
     if [ ! -d "$private_key_path" ]; then
         local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $private_key_path)
@@ -337,60 +335,37 @@ generateSSHSetupKeyPair()
         checkSuccess "Creating $(basename "$public_key_path") folder"
     fi
 
-    regenerateSSHKey()
-    {
-        while true; do
-            isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
-            read -p "" key_regenerate_accept
-            case "$key_regenerate_accept" in
-                [Yy]*)
-                    generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
-                    break
-                    ;;
-                [Nn]*)
-                    # No action needed
-                    break
-                    ;;
-                *)
-                    echo "Please enter 'y' or 'n'."
-                    ;;
-            esac
-        done
-    }
-
-    local username_caps=$(echo "$username" | tr '[:lower:]' '[:upper:]')
-    local sshkey_requirement="CFG_REQUIREMENT_SSHKEY_${USERNAMEINCAPS}"
-    local sshkey_requirement_data="${!sshkey_requirement}"
-
-    # Check if the private and public keys exist
-    if [ -f "$private_key_full" ] && [ -f "$public_key_full" ] && [[ "$flag" != "install" ]]; then
-        local ssh_should_setup=true
-        echo ""
-        isNotice "SSH Key pair for $username already exists: $(basename "$private_key_full") / $(basename "$public_key_full")"
-        echo ""
-        if [[ "$sshkey_requirement_data" == "true" ]]; then
-            generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
-        else
-            regenerateSSHKey;
-        fi
-    fi
-
-    # If public key does not exist
-    if [ ! -f "$public_key_full" ] && [[ "$ssh_should_setup" == "false" ]]; then
-        local ssh_should_setup=true
-        echo ""
-        isNotice "SSH Private key for $username exists without a corresponding public key: $(basename "$private_key_full")"
-        echo ""
-        if [[ "$sshkey_requirement_data" == "true" ]]; then
-            generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
-        else
-            regenerateSSHKey;
-        fi
-    fi
-
-    if [ ! -f "$private_key_full" ] && [ -f "$public_key_full" ] && [[ "$ssh_should_setup" == "false" ]]; then
+    # Check if the private key exist
+    if [ -f "$private_key_full" ]; then
         generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
     fi
+    # Check if the public key exist
+    if [ -f "$public_key_full" ]; then
+        generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
+    fi
+}
+
+regenerateSSHSetupKeyPair()
+{
+    local username="$1"
+
+    while true; do
+        isQuestion "Are you sure you want to generate new SSH Key(s) for the $username user? (y/n): "
+        read -p "" key_regenerate_accept
+        case "$key_regenerate_accept" in
+            [Yy]*)
+                generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
+                break
+                ;;
+            [Nn]*)
+                # No action needed
+                break
+                ;;
+            *)
+                echo "Please enter 'y' or 'n'."
+                ;;
+        esac
+    done
 }
 
 generateSSHKeyPair()
@@ -400,6 +375,7 @@ generateSSHKeyPair()
     local private_key_full="$3"
     local public_key_full="$4"
     local flag="$5"
+
     echo ""
     echo ""
     echo "############################################"
