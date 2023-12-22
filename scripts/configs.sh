@@ -437,16 +437,29 @@ checkConfigFilesEdited()
 
                         # Domain Name
                         while true; do
-                            isQuestion "Please input a domain that is pointed towards this server - e.g (test@jake.com) : "
-                            read -p "" setup_domain_name
+                            isQuestion "Are you wanting to use public SSL LetsEncrypt Certified applications? (y/n): "
+                            read -p "" setup_certificate_letsencrypt
                             # Check if the input is a valid domain name using regex
-                            if [[ "$setup_domain_name" =~ ^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$ ]]; then
+                            if [[ "$setup_certificate_letsencrypt" != [yYnN] ]]; then
                                 break
                             fi
-                            isNotice "Please provide a valid domain name."
+                            isNotice "Please provide a valid input."
                         done
-                        result=$(sudo sed -i "s|CFG_DOMAIN_1=changeme.co.uk|CFG_DOMAIN_1=$setup_domain_name|" "$general_config_file")
-                        checkSuccess "Updating CFG_DOMAIN_1 to $setup_domain_name in the $config_file_general config."
+
+                        if [[ "$setup_certificate_letsencrypt" == [yY] ]]; then
+                            # Domain Name
+                            while true; do
+                                isQuestion "Please input a domain that is pointed towards this server - e.g (example.org) : "
+                                read -p "" setup_domain_name
+                                # Check if the input is a valid domain name using regex
+                                if [[ "$setup_domain_name" =~ ^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$ ]]; then
+                                    break
+                                fi
+                                isNotice "Please provide a valid domain name."
+                            done
+                            result=$(sudo sed -i "s|CFG_DOMAIN_1=changeme.co.uk|CFG_DOMAIN_1=$setup_domain_name|" "$general_config_file")
+                            checkSuccess "Updating CFG_DOMAIN_1 to $setup_domain_name in the $config_file_general config."
+                        fi
 
                         # Timezones
                         while true; do
