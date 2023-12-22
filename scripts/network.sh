@@ -679,12 +679,17 @@ updateDNS()
     local app_name="$1"
     local flag="$2"
 
+
+
 	if [[ "$OS" == [1234567] ]]; then
-        # Remove all existing nameserver lines
-        result=$(sudo sed -i '/^nameserver/d' /etc/resolv.conf)
-        checkSuccess "Removing all instances of Nameserver from Resolv.conf"
+        dnsRemoveNameservers()
+        {
+            result=$(sudo sed -i '/^nameserver/d' /etc/resolv.conf)
+            checkSuccess "Removing all instances of Nameserver from Resolv.conf"
+        }
 
 	    if [[ "$flag" == "standalonewireguard" ]]; then
+            dnsRemoveNameservers;
             echo "nameserver $CFG_DNS_SERVER_1" | sudo tee -a /etc/resolv.conf > /dev/null
             echo "nameserver $CFG_DNS_SERVER_2" | sudo tee -a /etc/resolv.conf > /dev/null
         else
@@ -772,6 +777,7 @@ updateDNS()
                     result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
                     checkSuccess "Updated Wireguard default DNS to $adguard_ip"
                 fi
+                dnsRemoveNameservers;
                 echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf > /dev/null
                 echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf > /dev/null
             elif [[ "$pihole_ip" == *10.8.1* ]]; then
@@ -787,6 +793,7 @@ updateDNS()
                     result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$pihole_ip/" $containers_dir$app_name/$compose_file)
                     checkSuccess "Updated Wireguard default DNS to $pihole_ip"
                 fi
+                dnsRemoveNameservers;
                 echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf > /dev/null
                 echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf > /dev/null
             else
@@ -802,6 +809,7 @@ updateDNS()
                     result=$(sudo sed -i "s/\(WG_DEFAULT_DNS=\).*/\1$adguard_ip/" $containers_dir$app_name/$compose_file)
                     checkSuccess "Updated Wireguard default DNS to $adguard_ip"
                 fi
+                dnsRemoveNameservers;
                 echo "nameserver $adguard_ip" | sudo tee -a /etc/resolv.conf > /dev/null
                 echo "nameserver $pihole_ip" | sudo tee -a /etc/resolv.conf > /dev/null
             fi
