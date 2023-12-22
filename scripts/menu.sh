@@ -242,36 +242,7 @@ mainMenu()
 
 				;;
 			t)
-				echo ""
-				echo "#####################################"
-				echo "###             Tools             ###"
-				echo "#####################################"
-				echo ""
-
-				isOptionMenu "Setup SSH Keys for Download (y/n): "
-				read -rp "" toolsetupsshkeys
-				isOptionMenu "Reset EasyDocker Git Folder (y/n): "
-				read -rp "" toolsresetgit
-				isOptionMenu "Start Pre-Installation (y/n): "
-				read -rp "" toolstartpreinstallation
-				isOptionMenu "Start/Restart all docker containers? (y/n): "
-				read -rp "" toolrestartcontainers
-				isOptionMenu "Stop all docker containers? (y/n): "
-				read -rp "" toolstopcontainers
-				isOptionMenu "Scan apps for Crontab Backup? (y/n): "
-				read -rp "" toolsstartcrontabsetup
-				isOptionMenu "Install Crontab? (y/n): "
-				read -rp "" toolinstallcrontab
-				#isOptionMenu "Remove Docker Manager User from this PC? (y/n): "
-				#read -rp "" toolsremovedockermanageruser
-				#isOptionMenu "Install Docker Manager User on this PC? (y/n): "
-				#read -rp "" toolsinstalldockermanageruser
-				#isOptionMenu "Install Remote SSH Keys? (y/n): "
-				#read -rp "" toolinstallremotesshlist
-				#isOptionMenu "Install SSH Scanning into Crontab? (y/n): "
-				#read -rp "" toolinstallcrontabssh
-
-				startOther;
+				toolsMenu;
 
 				;;
 			y)
@@ -289,6 +260,314 @@ mainMenu()
 				;;
 			*)
 				echo "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+toolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###          Tools Menu           ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Menu - SSH"
+		isOption "2. Menu - Docker"
+		isOption "3. Menu - Crontab"
+		isOption "4. Tool - Reset EasyDocker Git Folder"
+		isOption "5. Tool - Force Pre-Installation"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" tools_menu_choice
+
+		case $tools_menu_choice in
+			1)
+				sshToolsMenu;
+				;;
+			2)
+				dockerToolsMenu;
+				;;
+			3)
+				crontabToolsMenu;
+				;;
+			4)
+				toolsresetgit=y
+				startOther;
+				;;
+			5)
+				toolstartpreinstallation=y
+				startOther;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+sshToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###           SSH Menu            ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Regenerate SSH Key - EasyDocker"
+		isOption "2. Regenerate SSH Key - Dockerinstall"
+		isOption "3. Setup SSH Keys for Download"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" ssh_menu_choice
+
+		case $ssh_menu_choice in
+			1)
+				regenerateSSHSetupKeyPair "easydocker";
+				;;
+			2)
+				regenerateSSHSetupKeyPair "dockerinstall";
+				;;
+			3)
+				toolsetupsshkeys=y
+				startOther;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+dockerToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###    Docker Management Menu     ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Start/Restart all docker containers"
+		isOption "1. Stop all docker containers"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" docker_menu_choice
+
+		case $docker_menu_choice in
+			1)
+				toolrestartcontainers=y
+				startOther;
+				;;
+			2)
+				toolstopcontainers=y
+				startOther;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+crontabToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###         Crontab Menu          ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Scan apps for Crontab Backup"
+		isOption "2. Force Crontab Reinstall"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" crontab_menu_choice
+
+		case $crontab_menu_choice in
+			1)
+				toolsstartcrontabsetup=y
+				startOther;
+				;;
+			2)
+				toolinstallcrontab=y
+				startOther;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+dashyToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###         Dashy Tools           ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Run Config Updater"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" dashy_menu_choice
+
+		case $dashy_menu_choice in
+			1)
+				dashyUpdateConf
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+invidiousToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###         Invidious Tools       ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Reset a users password"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" invidious_menu_choice
+
+		case $invidious_menu_choice in
+			1)
+				invidiousResetUserPassword;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+mattermostToolsMenu()
+{
+	# Enable input
+	stty echo
+	
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###        Mattermost Tools       ###"
+		echo "#####################################"
+		echo ""
+		isOption "1. Reset a users password"
+		isOption "x. Exit to Main Menu"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" mattermost_menu_choice
+
+		case $mattermost_menu_choice in
+			1)
+				mattermostResetUserPassword;
+				;;
+			x)
+				endStart;
+
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
+				;;
+		esac
+	done
+}
+
+wireguardManageMenu() 
+{
+	# Enable input
+	stty echo
+
+	while true; do
+		echo ""
+		echo "#####################################"
+		echo "###       Wireguard Manager       ###"
+		echo "#####################################"
+		echo ""
+		echo "Built from: https://github.com/angristan/wireguard-install"
+		echo ""
+		isOption "1. Add a new user"
+		isOption "2. List all users"
+		isOption "3. Revoke existing user"
+		isOption "4. Uninstall WireGuard"
+		isOption "x. Exit"
+		echo ""
+		isQuestion "What is your choice: "
+		read -rp "" wireguard_menu_option
+
+		case "${wireguard_menu_option}" in
+			1)
+				wireguardNewClient
+				;;
+			2)
+				wireguardListClients
+				;;
+			3)
+				wireguardRevokeClient
+				;;
+			4)
+				wireguardUninstall
+				;;
+			x)
+				resetToMenu;
+				;;
+			*)
+				isNotice "Invalid choice. Please select a valid option."
 				;;
 		esac
 	done
@@ -384,139 +663,4 @@ scanCategory()
             fi
         fi
     done
-}
-
-dashyToolsMenu()
-{
-	# Enable input
-	stty echo
-	
-	while true; do
-		echo ""
-		echo "#####################################"
-		echo "###         Dashy Tools           ###"
-		echo "#####################################"
-		echo ""
-		isOption "1. Run Config Updater"
-		isOption "x. Exit to Main Menu"
-		echo ""
-		isQuestion "What is your choice: "
-		read -rp "" choice
-
-		case $choice in
-			1)
-				dashyUpdateConf
-				;;
-			x)
-				endStart;
-
-				;;
-			*)
-				echo "Invalid choice. Please select a valid option."
-				;;
-		esac
-	done
-}
-
-invidiousToolsMenu()
-{
-	# Enable input
-	stty echo
-	
-	while true; do
-		echo ""
-		echo "#####################################"
-		echo "###         Invidious Tools       ###"
-		echo "#####################################"
-		echo ""
-		isOption "1. Reset a users password"
-		isOption "x. Exit to Main Menu"
-		echo ""
-		isQuestion "What is your choice: "
-		read -rp "" choice
-
-		case $choice in
-			1)
-				invidiousResetUserPassword;
-				;;
-			x)
-				endStart;
-
-				;;
-			*)
-				echo "Invalid choice. Please select a valid option."
-				;;
-		esac
-	done
-}
-
-mattermostToolsMenu()
-{
-	# Enable input
-	stty echo
-	
-	while true; do
-		echo ""
-		echo "#####################################"
-		echo "###        Mattermost Tools       ###"
-		echo "#####################################"
-		echo ""
-		isOption "1. Reset a users password"
-		isOption "x. Exit to Main Menu"
-		echo ""
-		isQuestion "What is your choice: "
-		read -rp "" choice
-
-		case $choice in
-			1)
-				mattermostResetUserPassword;
-				;;
-			x)
-				endStart;
-
-				;;
-			*)
-				echo "Invalid choice. Please select a valid option."
-				;;
-		esac
-	done
-}
-
-wireguardManageMenu() 
-{
-	local WIREGUARD_MENU_OPTION=""
-    echo ""
-    echo "#####################################"
-    echo "###       Wireguard Manager       ###"
-    echo "#####################################"
-    echo ""
-	echo "Built from: https://github.com/angristan/wireguard-install"
-	echo ""
-	echo "What do you want to do?"
-	echo "1) Add a new user"
-	echo "2) List all users"
-	echo "3) Revoke existing user"
-	echo "4) Uninstall WireGuard"
-	echo "x) Exit"
-    echo ""
-	until [[ ${WIREGUARD_MENU_OPTION} =~ ^[1-5]$ ]]; do
-		read -rp "Select an option [1-5]: " WIREGUARD_MENU_OPTION
-	done
-	case "${WIREGUARD_MENU_OPTION}" in
-	1)
-		wireguardNewClient
-		;;
-	2)
-		wireguardListClients
-		;;
-	3)
-		wireguardRevokeClient
-		;;
-	4)
-		wireguardUninstall
-		;;
-	x)
-		resetToMenu;
-		;;
-	esac
 }
