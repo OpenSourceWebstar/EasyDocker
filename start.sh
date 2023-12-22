@@ -115,8 +115,7 @@ startPreInstall()
 installRecommendedApps()
 {
     local traefik_status=$(checkAppInstalled "traefik" "docker")
-    local wireguard_status=$(checkAppInstalled "wireguard" "docker")
-    if [[ "$traefik_status" != "installed" || "$wireguard_status" != "installed" ]]; then
+    if [[ "$traefik_status" != "installed" ]]; then
         echo ""
         echo "####################################################"
         echo "###           Recommended Applications           ###"
@@ -143,6 +142,7 @@ installRecommendedApps()
 
             isSuccessful "All recommended apps have successfully been set up."
         elif [[ "$recommendation_choice" == [nN] ]]; then
+            local general_config_file="$configs_dir$config_file_general"
             result=$(sudo sed -i "s|CFG_REQUIREMENT_SUGGEST_INSTALLS=true|CFG_REQUIREMENT_SUGGEST_INSTALLS=false|" "$general_config_file")
             checkSuccess "Disabling install recommendations in the requirements config."
             isNotice "You can re-enable this in the requirements config file"
