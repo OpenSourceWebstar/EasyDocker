@@ -113,7 +113,7 @@ installPortainer()
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""
         
-        menuShowFinalMessages;
+        menuShowFinalMessages $app_name;
 
 		menu_number=0
         sleep 3s

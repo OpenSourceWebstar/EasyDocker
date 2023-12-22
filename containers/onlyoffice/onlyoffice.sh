@@ -119,7 +119,7 @@ installOnlyoffice()
         # Extract the content after the equals sign for username and password
         local username=$(grep -oP 'username=\K[^ ]+' "$containers_dir$app_name/docker-compose.yml")
         local password=$(grep -oP 'password=\K[^ ]+' "$containers_dir$app_name/docker-compose.yml")
-        menuShowFinalMessages $username $password;
+        menuShowFinalMessages $app_name $username $password;
 		    
 		menu_number=0
         sleep 3s

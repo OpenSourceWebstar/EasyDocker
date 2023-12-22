@@ -296,8 +296,9 @@ mainMenu()
 
 menuShowFinalMessages()
 {
-	local username="$1"
-	local password="$2"
+	local app_name="$1"
+	local username="$2"
+	local password="$3"
 	menuLoginRequired;
 	menuPublic;
 	menuContinue;

@@ -156,7 +156,7 @@ installRustdesk()
         echo "    Your Rustdesk Key is : $public_key"
         echo ""
 
-        menuShowFinalMessages;
+        menuShowFinalMessages $app_name;
 
 		menu_number=0
         sleep 3s

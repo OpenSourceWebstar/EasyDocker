@@ -114,7 +114,7 @@ installPihole()
         echo "    NOTE - The password to login in defined in the yml install file that was installed"
         echo ""
 
-        menuShowFinalMessages;
+        menuShowFinalMessages $app_name;
         
 		menu_number=0
         sleep 3s

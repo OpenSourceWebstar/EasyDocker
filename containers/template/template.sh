@@ -112,7 +112,7 @@ installTemplate()
         echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""
         
-        menuShowFinalMessages;
+        menuShowFinalMessages $app_name;
 
 		menu_number=0
         sleep 3s

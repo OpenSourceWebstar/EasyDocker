@@ -166,7 +166,7 @@ installAdguard()
         echo "    NOTICE : Below are the URLs for the admin panel to use after you have setup Adguard"
         echo ""
         
-        menuShowFinalMessages;
+        menuShowFinalMessages $app_name;
 
 		menu_number=0
         sleep 3s
