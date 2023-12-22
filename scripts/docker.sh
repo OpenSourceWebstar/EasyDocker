@@ -100,7 +100,7 @@ setupConfigToContainer()
                 echo ""
                 while true; do
                     isQuestion "Would you like to make edits to the config file? (y/n): "
-                    read -rp "" editconfigaccept
+                    read -r "" editconfigaccept
                     echo ""
                     case $editconfigaccept in
                         [yY])
@@ -135,7 +135,7 @@ setupConfigToContainer()
                 echo ""
                 while true; do
                     isQuestion "Would you like to reset the config file? (y/n): "
-                    read -rp "" resetconfigaccept
+                    read -r "" resetconfigaccept
                     echo ""
                     case $resetconfigaccept in
                         [yY])
@@ -162,7 +162,7 @@ setupConfigToContainer()
             echo ""
             while true; do
                 isQuestion "Would you like to make edits to the config file? (y/n): "
-                read -rp "" editconfigaccept
+                read -r "" editconfigaccept
                 echo ""
                 case $editconfigaccept in
                     [yY])

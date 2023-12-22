@@ -30,7 +30,7 @@ installUFW()
 
             while true; do
                 isQuestion "Do you want to keep port 22 (SSH) open? (y/n): "
-                read -rp "" UFWSSH
+                read -r "" UFWSSH
                 if [[ "$UFWSSH" =~ ^[yYnN]$ ]]; then
                     break
                 fi

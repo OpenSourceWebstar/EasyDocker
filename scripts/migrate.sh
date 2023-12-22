@@ -55,7 +55,7 @@ migrateEnableConfig()
 {
     while true; do
         isQuestion "Do you want to enable migration in the config file? (y/n): "
-        read -rp "" enableconfigmigrate
+        read -r "" enableconfigmigrate
         if [[ "$enableconfigmigrate" =~ ^[yYnN]$ ]]; then
             break
         fi
@@ -203,7 +203,7 @@ migrateRestoreFileMoveToMigrate()
       isNotice "*TIP* You can also move the backup file back for future restorations using the migrate menu."
       echo ""
       isQuestion "Would you store $chosen_backup_file in the Migrate Folder? (y/n): "
-      read -rp "" confirmmovetomigrate
+      read -r "" confirmmovetomigrate
       if [[ -n "$confirmmovetomigrate" ]]; then
           break
       fi
@@ -225,7 +225,7 @@ migrateRestoreFileMoveToMigrate()
     while true; do
         echo ""
         isQuestion "Would you like to delete the $chosen_backup_file? (y/n): "
-        read -rp "" confirmremovetomigrate
+        read -r "" confirmremovetomigrate
         if [[ -n "$confirmremovetomigrate" ]]; then
             break
         fi
@@ -455,7 +455,7 @@ migrateRestoreFileMoveFromMigrate()
             while true; do
                 echo ""
                 isQuestion "Do you want to move all the files above to the Backup folder? (y/n): "
-                read -rp "" migrateconfirmmove
+                read -r "" migrateconfirmmove
                 if [[ -n "$migrateconfirmmove" ]]; then
                     break
                 fi
@@ -557,7 +557,7 @@ migrateGenerateTXTSingle()
             isNotice "$migrate_file already exists for $app_name."
             while true; do
                 isQuestion "Do you want to update $migrate_file to the local machine? (y/n): "
-                read -rp "" replacemigration
+                read -r "" replacemigration
                 if [[ "$replacemigration" =~ ^[yYnN]$ ]]; then
                     break
                 fi

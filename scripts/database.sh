@@ -396,7 +396,7 @@ databaseCycleThroughListApps()
         if [[ "$backupfull" == [yY] ]]; then
             local name=full
             isQuestion "Do you want a $name Backup? (y/n) "
-            read -rp "" BACKUPACCEPT
+            read -r "" BACKUPACCEPT
 
             if [[ $BACKUPACCEPT == [yY] ]]; then
                 isNotice "Starting a $name backup."
@@ -408,7 +408,7 @@ databaseCycleThroughListApps()
         if [[ "$migratefull" == [yY] ]]; then
             local name=full
             isQuestion "Do you want a $name Migration  (y/n)? "
-            read -rp "" MIGRATEACCEPT
+            read -r "" MIGRATEACCEPT
 
             if [[ $MIGRATEACCEPT == [yY] ]]; then
                 isNotice "Starting a $name migrate."
@@ -438,7 +438,7 @@ databaseCycleThroughListApps()
         if [[ "$backupsingle" == [yY] ]]; then
             for name in "${app_names[@]}"; do
                 isQuestion "Do you want a $name Backup? (y/n) "
-                read -rp "" BACKUPACCEPT
+                read -r "" BACKUPACCEPT
 
                 if [[ $BACKUPACCEPT == [yY] ]]; then
                     isNotice "Starting a $name backup."
@@ -451,7 +451,7 @@ databaseCycleThroughListApps()
         if [[ "$migratesingle" == [yY] ]]; then
             for name in "${app_names[@]}"; do
                 isQuestion "Do you want a $name Migration  (y/n)? "
-                read -rp "" MIGRATEACCEPT
+                read -r "" MIGRATEACCEPT
 
 
                 if [[ $MIGRATEACCEPT == [yY] ]]; then

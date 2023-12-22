@@ -16,7 +16,7 @@ restoreStart()
         isNotice "You are trying to restore a full backup! This is dangerous is unintended."
         while true; do
             isQuestion "Are you sure you want to restore a full backup? (y/n): "
-            read -rp "" confirmfullrestore
+            read -r "" confirmfullrestore
             if [[ "$confirmfullrestore" =~ ^[yYnN]$ ]]; then
                 break
             fi
@@ -391,7 +391,7 @@ restoreRemoteMenu()
             isOption "x. Exit"
             echo ""
             isQuestion "Enter your choice: "
-            read -rp "" select_remote
+            read -r "" select_remote
 
             case "$select_remote" in
                 1)
@@ -448,7 +448,7 @@ restoreRemoteMenu()
             isOption "x. Exit"
             echo ""
             isQuestion "Enter your choice: "
-            read -rp "" select_option
+            read -r "" select_option
 
             case "$select_option" in
                 1)
@@ -460,7 +460,7 @@ restoreRemoteMenu()
                 2)
                     echo ""
                     isQuestion "Enter the Install Name you would like to restore from: "
-                    read -rp "" restore_install_name
+                    read -r "" restore_install_name
                     isNotice "Restoring using Install Name :  $restore_install_name"
                     echo ""
                     ;;

@@ -21,7 +21,7 @@ function checkSuccess()
         # Ask to continue
         while true; do
             isQuestion "An error has occurred. Do you want to continue, exit or go to back to the Menu? (c/x/m) "
-            read -rp "" error_occurred
+            read -r "" error_occurred
             if [[ -n "$error_occurred" ]]; then
                 break
             fi
@@ -148,7 +148,7 @@ detectOS()
             isError "This OS ($detected_os) is untested and may not be fully supported."
             while true; do
                 isQuestion "Do you wish to continue anyway? (y/n): "
-                read -rp "" oswarningaccept
+                read -r "" oswarningaccept
                 if [[ -n "$oswarningaccept" ]]; then
                     break
                 fi

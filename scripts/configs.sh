@@ -67,7 +67,7 @@ checkEasyDockerConfigFilesMissingVariables()
                         echo ""
 
                         isQuestion "Enter your choice (1 or 2) or 'x' to skip : "
-                        read -rp "" choice
+                        read -r "" choice
 
                         case "$choice" in
                             1)
@@ -167,7 +167,7 @@ checkApplicationsConfigFilesMissingVariables()
                     echo ""
 
                     isQuestion "Enter your choice (1 or 2) or 'x' to skip : "
-                    read -rp "" choice
+                    read -r "" choice
 
                     case "$choice" in
                         1)
@@ -192,7 +192,7 @@ checkApplicationsConfigFilesMissingVariables()
                                     echo ""
                                     while true; do
                                         isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
-                                        read -rp "" whitelistaccept
+                                        read -r "" whitelistaccept
                                         echo ""
                                         case $whitelistaccept in
                                             [yY])
@@ -219,7 +219,7 @@ checkApplicationsConfigFilesMissingVariables()
                                     echo ""
                                     while true; do
                                         isQuestion "Would you like to reinstall $config_app_name? (y/n): "
-                                        read -rp "" reinstallafterconfig
+                                        read -r "" reinstallafterconfig
                                         echo ""
                                         case $reinstallafterconfig in
                                             [yY])
@@ -263,7 +263,7 @@ checkApplicationsConfigFilesMissingVariables()
                                     echo ""
                                     while true; do
                                         isQuestion "Would you like to update the ${config_app_name}'s whitelist settings? (y/n): "
-                                        read -rp "" whitelistaccept
+                                        read -r "" whitelistaccept
                                         echo ""
                                         case $whitelistaccept in
                                             [yY])
@@ -289,7 +289,7 @@ checkApplicationsConfigFilesMissingVariables()
                                     echo ""
                                     while true; do
                                         isQuestion "Would you like to reinstall $config_app_name? (y/n): "
-                                        read -rp "" reinstallafterconfig
+                                        read -r "" reinstallafterconfig
                                         echo ""
                                         case $reinstallafterconfig in
                                             [yY])
@@ -350,7 +350,7 @@ checkIpsHostnameFilesMissingEntries()
                     
                     echo ""
                     isQuestion "Enter your choice (1 or x): "
-                    read -rp "" ipschoice
+                    read -r "" ipschoice
                     echo ""
                     case "$ipschoice" in
                         1)
@@ -402,7 +402,7 @@ checkConfigFilesEdited()
             echo ""
             while true; do
                 isQuestion "Which setup would you like to choose? (s/a): "
-                read -rp "" configsnotchanged
+                read -r "" configsnotchanged
                 echo ""
                 case $configsnotchanged in
                     [sS])

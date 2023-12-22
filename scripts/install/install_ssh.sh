@@ -43,7 +43,7 @@ installSSHRemoteList()
                             while true; do
                                 isNotice "Make sure you have the host setup and ready with the EasyDocker preinstallation before doing this!"
                                 isQuestion "Is $ip prepared with the EasyDocker pre-installation? (y/n): "
-                                read -rp "" ishostsetupprompt
+                                read -r "" ishostsetupprompt
                                 if [[ -n "$ishostsetupprompt" ]]; then
                                     break
                                 fi
@@ -52,7 +52,7 @@ installSSHRemoteList()
                             if [[ "$ishostsetupprompt" == [yY] ]]; then
                                 while true; do
                                     isQuestion "Record found for $ip. Do you want to reinstall? (y/n): "
-                                    read -rp "" toolreinstallremotessh
+                                    read -r "" toolreinstallremotessh
                                     if [[ -n "$toolreinstallremotessh" ]]; then
                                         break
                                     fi
@@ -606,7 +606,7 @@ disableSSHPasswordFunction()
                     [Nn]*)
                         while true; do
                             isQuestion "Do you want to stop being asked to disable SSH Password logins? (y/n): "
-                            read -rp "" sshdisablepasswordask
+                            read -r "" sshdisablepasswordask
                             if [[ "$sshdisablepasswordask" =~ ^[yYnN]$ ]]; then
                                 break
                             fi

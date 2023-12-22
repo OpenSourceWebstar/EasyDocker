@@ -206,7 +206,7 @@ gitCheckConfigs()
                 echo ""
                 while true; do
                     isQuestion "Do you want to continue with the install? (y/n): "
-                    read -rp "" acceptnoconfigs
+                    read -r "" acceptnoconfigs
                     if [[ "$acceptnoconfigs" =~ ^[yYnN]$ ]]; then
                         break
                     fi
@@ -240,7 +240,7 @@ gitCheckForUpdate()
         else
             while true; do
                 isQuestion "Do you want to update EasyDocker now? (y/n): "
-                read -rp "" acceptupdates
+                read -r "" acceptupdates
                 if [[ "$acceptupdates" =~ ^[yYnN]$ ]]; then
                     break
                 fi
