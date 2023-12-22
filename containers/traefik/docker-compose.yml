@@ -12,7 +12,6 @@ services:
     ports:
       - PORT1:80
       - PORT2:443
-      - PORT3:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc:/etc/traefik
@@ -20,12 +19,11 @@ services:
       #traefik.docker.network: DOCKERNETWORK
       #traefik.enable: "true"
       #traefik.http.routers.traefik.entrypoints: web,websecure
-      #traefik.http.routers.traefik.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.traefik.rule=Host(`DOMAINSUBNAMEHERE`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`)
       #traefik.http.routers.traefik.service: api@internal
       #traefik.http.routers.traefik.tls: true
       #traefik.http.routers.traefik.tls.certresolver: production
       #traefik.http.routers.traefik.tls.options: modern@file
-      #traefik.http.services.traefik.loadbalancer.server.port: PORT3
       #traefik.http.routers.traefik.middlewares:
     restart: unless-stopped
     networks:

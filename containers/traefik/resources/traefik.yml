@@ -31,7 +31,7 @@ log:
   filePath: log/traefik.log
   format: common
 api:
-  insecure: true
+  #insecure: true
   dashboard: true
 providers:
   docker:
@@ -40,3 +40,4 @@ providers:
     # watch for dynamic configuration changes
     directory: /etc/traefik/
     watch: true
+api: {}
