@@ -213,7 +213,7 @@ virtualminAskForFQDN()
 {
 	while true; do
 		# Prompt the user for the domain they want to use with Virtualmin
-		read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
+		read -rp "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
 
 		# Check if the input appears to be a valid domain (FQDN)
 		if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
@@ -240,7 +240,7 @@ virtualminQuestions()
 	echo "NOTICE - EasyDocker can work alongside Virtualmin"
 	echo "Please only install if you need it"
 	echo ""
-	read -p "Do you want to install Virtualmin? (y/n): " install_virtualmin
+	read -rp "Do you want to install Virtualmin? (y/n): " install_virtualmin
 	if [[ "$install_virtualmin" == [yY] ]]; then
 		# Check if a valid subdomain is already stored in easydocker-fqdn.txt
 		if [[ -f "$fqdn_file" ]]; then
@@ -251,7 +251,7 @@ virtualminQuestions()
 					echo "NOTICE - An existing subdomain is configured: $existing_subdomain"
 					echo ""
 					echo "QUESTION : Would you like to use $existing_subdomain for your subdomain? (y/n): "
-					read -p "" reinstall_virtualmin_choice
+					read -rp "" reinstall_virtualmin_choice
 					if [[ -n "$reinstall_virtualmin_choice" ]]; then
 						break
 					fi
@@ -320,7 +320,7 @@ virtualminReinstall()
 				echo "NOTICE - Virtualmin install already found."
 				echo ""
 				echo "QUESTION : Would you like to reinstall Virtualmin? (y/n): "
-				read -p "" reinstall_virtualmin_choice
+				read -rp "" reinstall_virtualmin_choice
 				if [[ -n "$reinstall_virtualmin_choice" ]]; then
 					break
 				fi

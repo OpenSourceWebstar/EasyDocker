@@ -106,7 +106,7 @@ installMailcow()
 				isNotice "Mailcow install already found."
 				echo ""
 				isQuestion "Would you like to reinstall $app_name? *THIS WILL WIPE ALL DATA* (y/n): "
-				read -p "" reinstall_choice
+				read -rp "" reinstall_choice
 				if [[ -n "$reinstall_choice" ]]; then
 					break
 				fi
@@ -143,7 +143,7 @@ installMailcow()
 
 			while true; do
 				isQuestion "Would you like to disable Lets Encrypt? *RECOMMENDED* (y/n): "
-				read -p "" lets_encrypt_choice
+				read -rp "" lets_encrypt_choice
 				if [[ -n "$lets_encrypt_choice" ]]; then
 					break
 				fi
@@ -156,7 +156,7 @@ installMailcow()
 
 			while true; do
 				isQuestion "Would you like to disable ClamD Antivirus? *Resource Reduction* (y/n): "
-				read -p "" clamd_antivirus_choice
+				read -rp "" clamd_antivirus_choice
 				if [[ -n "$clamd_antivirus_choice" ]]; then
 					break
 				fi

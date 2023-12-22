@@ -259,7 +259,7 @@ invidiousResetUserPassword()
 {
     while true; do
         isQuestion "Please enter the username or email which you would like to password reset (enter 'x' to exit): "
-        read -p "" invidiousresetconfirm
+        read -rp "" invidiousresetconfirm
         if [[ "$invidiousresetconfirm" == [xX] ]]; then
             isNotice "Exiting..."
             break
@@ -292,7 +292,7 @@ mattermostResetUserPassword()
 
     while true; do
         isQuestion "Please enter the username or email which you would like to password reset (enter 'x' to exit): "
-        read -p "" mattermostusername
+        read -rp "" mattermostusername
         if [[ "$mattermostusername" == [xX] ]]; then
             isNotice "Exiting..."
             endStart;
@@ -302,7 +302,7 @@ mattermostResetUserPassword()
 
     while true; do
         isQuestion "Please enter the password you would like to use (enter 'x' to exit): "
-        read -p "" mattermostpassword
+        read -rp "" mattermostpassword
         if [[ "$mattermostpassword" == [xX] ]]; then
             isNotice "Exiting..."
             endStart;

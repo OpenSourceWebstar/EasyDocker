@@ -341,7 +341,7 @@ menuContinue()
 	if [[ "$public" == "CFG_REQUIREMENT_CONTINUE_PROMPT" ]]; then
 		while true; do
 			isQuestion "Press Enter to continue or press (d) to disable being asked to continue after an app installs."
-			read -p "" app_installed_continue
+			read -rp "" app_installed_continue
 			if [[ -n "$app_installed_continue" ]]; then
 				break
 			fi

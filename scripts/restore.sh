@@ -259,7 +259,7 @@ restoreSingleBackupList()
         # Read the user's choice number for app_name
         echo ""
         isQuestion "Select an application (number): "
-        read -p "" chosen_app_number
+        read -rp "" chosen_app_number
 
         # Validate the user's choice number
         if [[ "$chosen_app_number" =~ ^[0-9]+$ ]]; then
@@ -272,7 +272,7 @@ restoreSingleBackupList()
                 # Read the user's choice number for backup file
                 echo ""
                 isQuestion "Select a backup file (number): "
-                read -p "" chosen_backup_number
+                read -rp "" chosen_backup_number
 
                 # Validate the user's choice number for backup file
                 if [[ "$chosen_backup_number" =~ ^[0-9]+$ ]]; then
@@ -336,7 +336,7 @@ restoreFullBackupList()
         # Read the user's choice number for backup file
         echo ""
         isQuestion "Select a backup file (number): "
-        read -p "" chosen_backup_number
+        read -rp "" chosen_backup_number
 
         # Validate the user's choice number for backup file
         if [[ "$chosen_backup_number" =~ ^[0-9]+$ ]]; then
@@ -520,7 +520,7 @@ restoreRemoteMenu()
             # Read the user's choice number or 'x' to go to the main menu
             echo ""
             isQuestion "Select an application (number) or 'x' to go to the main menu: "
-            read -p "" chosen_app_option
+            read -rp "" chosen_app_option
 
             if [[ "$chosen_app_option" == "x" ]]; then
                 resetToMenu;  # Go back to the main menu
@@ -567,7 +567,7 @@ restoreRemoteMenu()
             # Read the user's choice number or input
             echo ""
             isQuestion "Select a backup file (number) or 'b' to go back: "
-            read -p "" chosen_backup_option
+            read -rp "" chosen_backup_option
 
             if [[ "$chosen_backup_option" == "b" ]]; then
                 select_app  # Go back to the application selection
@@ -612,7 +612,7 @@ restoreCopyFile()
         echo ""
 		while true; do
 			isQuestion "Would you like to Redownload $chosen_backup_file? (y/n): "
-			read -p "" redownload_backup_file
+			read -rp "" redownload_backup_file
 			if [[ -n "$redownload_backup_file" ]]; then
 				break
 			fi

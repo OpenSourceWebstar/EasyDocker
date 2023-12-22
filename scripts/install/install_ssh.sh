@@ -341,7 +341,7 @@ generateSSHSetupKeyPair()
     {
         while true; do
             isQuestion "Do you want to generate new SSH Key(s) for the $username user? (y/n): "
-            read -p "" key_regenerate_accept
+            read -rp "" key_regenerate_accept
             case "$key_regenerate_accept" in
                 [Yy]*)
                     generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" reinstall;
@@ -553,7 +553,7 @@ disableSSHPasswords()
         echo ""
         while true; do
             isQuestion "Do you want to install (i) the missing SSH keys or (c) continue or (x) to exit? (i/c/x): "
-            read -p "" disable_ssh_passwords
+            read -rp "" disable_ssh_passwords
             case "$disable_ssh_passwords" in
                 [iI]*)
                     installSSHKeysForDownload install;
@@ -586,7 +586,7 @@ disableSSHPasswordFunction()
             while true; do
                 echo ""
                 isQuestion "Do you want to disable SSH password logins? (y/n): "
-                read -p "" disable_ssh_passwords
+                read -rp "" disable_ssh_passwords
                 case "$disable_ssh_passwords" in
                     [Yy]*)
                         local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"

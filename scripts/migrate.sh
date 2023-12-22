@@ -30,7 +30,7 @@ migrateCheckForMigrateFiles()
             echo ""
             # Question and Options
             isQuestion "Please select from the availables options above, or press 'c' to continue: "
-            read -p "" migrationmainoptions
+            read -rp "" migrationmainoptions
             case $migrationmainoptions in
                 f|F)
                     migrateListFullMigrateFiles;
@@ -113,7 +113,7 @@ migrateListFullMigrateFiles()
     for full_backup_file in $full_files_without_string; do
         echo ""
         isQuestion "Do you want to restore $full_backup_file? (y/n): "
-        read -p "" fullmigrateoption
+        read -rp "" fullmigrateoption
         case $fullmigrateoption in
             y|Y)
                 selected_files+=("$full_backup_file")
@@ -168,7 +168,7 @@ migrateListSingleMigrateFiles()
     local selected_files=()
     for single_backup_file in $single_files_without_string; do
         isQuestion "Do you want to restore $single_backup_file? (y/n): "
-        read -p "" singlemigrateoption
+        read -rp "" singlemigrateoption
         case $singlemigrateoption in
             y|Y)
                 selected_files+=("$single_backup_file")
@@ -270,7 +270,7 @@ migrateRestoreFilesMoveToMigrate()
     local selected_files=()
     for full_backup_file in $full_files_without_string; do
         isQuestion "Do you want to move $full_backup_file to the migrate folder for storage? (y/n): "
-        read -p "" fullmovemigrateoption
+        read -rp "" fullmovemigrateoption
         case $fullmovemigrateoption in
             y|Y)
                 selected_files+=("$full_backup_file")
@@ -314,7 +314,7 @@ migrateRestoreFilesMoveToMigrate()
     for single_backup_file in $single_files_without_string; do
         echo ""
         isQuestion "Do you want to move $single_backup_file to the migrate folder for storage? (y/n): "
-        read -p "" singlemovemigrateoption
+        read -rp "" singlemovemigrateoption
         case $singlemovemigrateoption in
             y|Y)
                 local selected_files+=("$single_backup_file")
@@ -347,7 +347,7 @@ migrateRestoreFileMoveFromMigrate()
         isOption "3. Bulk move"
         echo ""
         isQuestion "Enter your choice (1/2/3) or press (x) to exit: "
-        read -p "" choice
+        read -rp "" choice
 
         if [ "$choice" = "1" ]; then
             local file_count=$(sudo find "$migrate_single_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
@@ -365,7 +365,7 @@ migrateRestoreFileMoveFromMigrate()
             done
             echo ""
             isQuestion "Enter the file number or press (x) to exit : "
-            read -p "" file_choice
+            read -rp "" file_choice
             if [ -z "$file_choice" ]; then
                 continue
             fi
@@ -398,7 +398,7 @@ migrateRestoreFileMoveFromMigrate()
             done
 
             isQuestion "Enter the file number: "
-            read -p "" file_choice
+            read -rp "" file_choice
             if [ -z "$file_choice" ]; then
                 continue
             fi
@@ -421,7 +421,7 @@ migrateRestoreFileMoveFromMigrate()
             isOption "2. Full backups"
             echo ""
             isQuestion "Enter your choice (1/2) or (b) to go Back or (x) to exit : "
-            read -p "" backup_choice
+            read -rp "" backup_choice
             if [ "$backup_choice" = "1" ]; then
                 local src_dir="$migrate_single_dir"
                 local dst_dir="$backup_single_dir"

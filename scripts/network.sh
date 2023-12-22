@@ -476,7 +476,7 @@ portConflictFound()
                     isNotice "Please edit the ports in the configuration file for $app_name."
                     echo ""
                     isQuestion "Would you like to edit the config for $app_name? (y/n): "
-                    read -p "" portconfigedit_choice
+                    read -rp "" portconfigedit_choice
                     if [[ -n "$portconfigedit_choice" ]]; then
                         if [[ "$portconfigedit_choice" =~ [yY] ]]; then
                             editAppConfig "$app_name"
@@ -582,7 +582,7 @@ openPortConflictFound()
                     isNotice "Please edit the ports in the configuration file for $app_name."
                     echo ""
                     isQuestion "Would you like to edit the config for $app_name? (y/n): "
-                    read -p "" openportconfigedit_choice
+                    read -rp "" openportconfigedit_choice
                     if [[ -n "$openportconfigedit_choice" ]]; then
                         if [[ "$openportconfigedit_choice" =~ [yY] ]]; then
                             editAppConfig "$app_name"
@@ -823,7 +823,7 @@ firewallCommands()
         echo ""
         while true; do
             isQuestion "Please enter the port you would like to open (enter 'x' to exit): "
-            read -p "" firewallallowport_port
+            read -rp "" firewallallowport_port
             if [[ "$firewallallowport_port" == [xX] ]]; then
                 isNotice "Exiting..."
                 break
@@ -844,7 +844,7 @@ firewallCommands()
         echo ""
         while true; do
             isQuestion "Please enter the port you would like to block (enter 'x' to exit): "
-            read -p "" firewallblockport_port
+            read -rp "" firewallblockport_port
             if [[ "$firewallblockport_port" == [xX] ]]; then
                 isNotice "Exiting..."
                 break

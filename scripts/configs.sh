@@ -86,7 +86,7 @@ checkEasyDockerConfigFilesMissingVariables()
                             2)
                                 echo ""
                                 isQuestion "Enter your value for $remote_var: "
-                                read -p " " custom_value
+                                read -rp " " custom_value
                                 echo ""
 
                                 if fileHasEmptyLine "$local_config_file"; then
@@ -241,7 +241,7 @@ checkApplicationsConfigFilesMissingVariables()
                         2)
                             echo ""
                             isQuestion "Enter your value for $remote_var: "
-                            read -p " " custom_value
+                            read -rp " " custom_value
                             echo ""
 
                             if fileHasEmptyLine "$container_config_file"; then
@@ -402,7 +402,7 @@ checkConfigFilesEdited()
             echo ""
             while true; do
                 isQuestion "Which setup would you like to choose? (s/a): "
-                read -r "" configsnotchanged
+                read -rp "" configsnotchanged
                 echo ""
                 case $configsnotchanged in
                     [sS])
@@ -412,7 +412,7 @@ checkConfigFilesEdited()
                         # Install Name
                         while true; do
                             isQuestion "Please input a unique Install Name - e.g (Jake-VPS-1) : "
-                            read -p "" setup_install_name
+                            read -rp "" setup_install_name
                             # Check if the input contains only characters, numbers, and hyphens
                             if [[ "$setup_install_name" =~ ^[a-zA-Z0-9-]+$ ]]; then
                                 break
@@ -425,7 +425,7 @@ checkConfigFilesEdited()
                         # Email address
                         while true; do
                             isQuestion "Please input an email address (Used for LetsEncrypt Certificates) : "
-                            read -p "" setup_email
+                            read -rp "" setup_email
                             emailValidation "$setup_email"
                             if [[ $? -eq 0 ]]; then
                                 break
@@ -438,7 +438,7 @@ checkConfigFilesEdited()
                         # Domain Name
                         while true; do
                             isQuestion "Are you wanting to use public SSL LetsEncrypt Certified applications? (y/n): "
-                            read -p "" setup_certificate_letsencrypt
+                            read -rp "" setup_certificate_letsencrypt
                             # Check if the input is a valid domain name using regex
                             if [[ "$setup_certificate_letsencrypt" != [yYnN] ]]; then
                                 break
@@ -450,7 +450,7 @@ checkConfigFilesEdited()
                             # Domain Name
                             while true; do
                                 isQuestion "Please input a domain that is pointed towards this server - e.g (example.org) : "
-                                read -p "" setup_domain_name
+                                read -rp "" setup_domain_name
                                 # Check if the input is a valid domain name using regex
                                 if [[ "$setup_domain_name" =~ ^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$ ]]; then
                                     break
@@ -563,7 +563,7 @@ editAppConfig()
                     isNotice "Changes have been made to the $app_name configuration."
                     echo ""
                     isQuestion "Would you like to reinstall $app_name? (y/n): "
-                    read -p "" reinstall_choice
+                    read -rp "" reinstall_choice
                     if [[ -n "$reinstall_choice" ]]; then
                         break
                     fi
@@ -632,7 +632,7 @@ viewEasyDockerConfigs()
         isOption "x. Exit"
         echo ""
         isQuestion "Enter the first letter of the config (or x to exit): "
-        read -p "" selected_letter
+        read -rp "" selected_letter
         
         if [[ "$selected_letter" == "x" ]]; then
             if [[ $config_edited == "true" ]]; then
@@ -667,7 +667,7 @@ viewEasyDockerConfigs()
             
             if [ -z "$selected_file" ]; then
                 isNotice "No config found with the selected letter. Please try again."
-                read -p "Press Enter to continue."
+                read -rp "Press Enter to continue."
             else
                 sudo $CFG_TEXT_EDITOR "$selected_file"
                 
@@ -687,7 +687,7 @@ viewEasyDockerConfigs()
         else
             isNotice "Invalid input. Please enter a valid letter or 'x' to exit."
             echo ""
-            read -p "Press Enter to continue."
+            read -rp "Press Enter to continue."
         fi
     done
 }
@@ -746,7 +746,7 @@ viewComposeFiles()
   # Read user input for app selection
   echo ""
   isQuestion "Enter the number of the app (or 'x' to exit): "
-  read -p "" selected_option
+  read -rp "" selected_option
 
   case "$selected_option" in
     [1-9]*)
@@ -784,7 +784,7 @@ viewComposeFiles()
             # Read user input for file selection
             echo ""
             isQuestion "Enter the numbers of the files to edit (or 'x' to exit): "
-            read -p "" selected_files
+            read -rp "" selected_files
 
             case "$selected_files" in
               [0-9]*)
@@ -851,7 +851,7 @@ viewConfigs()
         isOption "2. App configs"
         echo ""
         isQuestion "Please select an option (1 or 2, or 'x' to exit): "
-        read -p "" view_config_option
+        read -rp "" view_config_option
         case "$view_config_option" in
         1)
             viewEasyDockerConfigs
@@ -882,7 +882,7 @@ viewAppConfigs()
         isOption "3. User Apps"
         echo ""
         isQuestion "Please select an option (1/2/3 or 'x' to exit): "
-        read -p "" view_app_category_option
+        read -rp "" view_app_category_option
         case "$view_app_category_option" in
         1)
             viewAppCategoryConfigs "system"
@@ -975,7 +975,7 @@ viewAppCategoryConfigs()
         
         echo ""
         isQuestion "Enter the number of the app to edit or 'b' to go back or 'x' to exit: "
-        read -p "" selected_number
+        read -rp "" selected_number
         
         if [[ "$selected_number" == "b" ]]; then
             return
@@ -1008,12 +1008,12 @@ viewAppCategoryConfigs()
             else
                 isNotice "Invalid number. Please select a valid number or 'x' to exit."
                 echo ""
-                read -p "Press Enter to continue."
+                read -rp "Press Enter to continue."
             fi
         else
             isNotice "Invalid input. Please enter a valid number or 'x' to exit."
             echo ""
-            read -p "Press Enter to continue."
+            read -rp "Press Enter to continue."
         fi
     done
 }

@@ -210,7 +210,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -p "" found_empty_remove_choice
+                        read -rp "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -228,7 +228,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -p "" found_empty_remove_choice
+                        read -rp "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -246,7 +246,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -p "" found_empty_remove_choice
+                        read -rp "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -264,7 +264,7 @@ databaseAppScan()
                     while true; do
                         echo ""
                         isQuestion "Would you like to remove $folder_name? *THIS WILL WIPE ALL DATA* (y/n): "
-                        read -p "" found_empty_remove_choice
+                        read -rp "" found_empty_remove_choice
                         if [[ -n "$found_empty_remove_choice" ]]; then
                             break
                         fi
@@ -320,7 +320,7 @@ databaseListAllApps()
             echo "$output" | while IFS= read -r line; do
                 echo "$line"
             done
-            read -p "Press Enter to continue..."
+            read -rp "Press Enter to continue..."
             else
             isNotice "No applications found"
         fi
@@ -378,7 +378,7 @@ databaseListInstalledApps()
         done <<< "$results"
 
         if [[ "$toollistinstalledapps" == [yY] ]]; then
-            read -p "Press Enter to continue..."
+            read -rp "Press Enter to continue..."
         fi
     else
         isSuccessful "No apps found."
@@ -605,7 +605,7 @@ databaseDisplayTables()
 
             echo ""
             isQuestion "Enter the number of the table to view data (x to exit): "
-            read -p "" selected_table
+            read -rp "" selected_table
 
             if [[ "$selected_table" == "x" ]]; then
                 echo ""
@@ -622,7 +622,7 @@ databaseDisplayTables()
                 sudo sqlite3 -column -header "$docker_dir/$db_file" "SELECT * FROM $selected_table;"
                 echo ""
                 isQuestion "Press Enter to continue..."
-                read -p "" input
+                read -rp "" input
             else
                 isNotice "Invalid table number. Please try again."
             fi
@@ -668,7 +668,7 @@ databaseEmptyTable()
 
     echo ""
     isQuestion "Enter the table name to empty (x to exit): "
-    read -p "" table_name
+    read -rp "" table_name
     echo ""
     if [[ "$table_name" == "x" ]]; then
       isNotice "Exiting."

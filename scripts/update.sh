@@ -37,7 +37,7 @@ checkUpdates()
 			isNotice "There are uncommitted changes in the repository."
 			while true; do
 				isQuestion "Do you want to discard these changes and update the repository? (y/n): "
-				read -p "" customupdatesfound
+				read -rp "" customupdatesfound
 				case $customupdatesfound in
 					[yY])
                         remove_changes=true
@@ -167,7 +167,7 @@ gitCheckConfigs()
                 isSuccessful "Valid config found in backup file: $zip_file"
                 while true; do
                     isQuestion "Do you want to restore the latest config backup? (y/n): "
-                    read -p "" defaultconfigfound
+                    read -rp "" defaultconfigfound
                     case $defaultconfigfound in
                         [yY])
                             gitUseExistingBackup $zip_file

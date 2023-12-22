@@ -56,7 +56,7 @@ setupHeadscale()
             while true; do
                 echo ""
                 isQuestion "Would you like to connect your localhost client to the Headscale server? (y/n) "
-                read -p "" local_headscale
+                read -rp "" local_headscale
                 if [[ -n "$local_headscale" ]]; then
                     break
                 fi
@@ -70,7 +70,7 @@ setupHeadscale()
             while true; do
                 echo ""
                 isQuestion "Would you like to set up your localhost Headscale client to Localhost or Remote? (l/r) "
-                read -p "" localhost_type_headscale
+                read -rp "" localhost_type_headscale
                 if [[ -n "$localhost_type_headscale" ]]; then
                     break
                 fi
@@ -283,7 +283,7 @@ headscaleCommands()
         # Read user input for app selection
         echo ""
         isQuestion "Enter the number of the app (or 'x' to exit): "
-        read -p "" selected_option
+        read -rp "" selected_option
 
         case "$selected_option" in
             [1-9]*)
@@ -402,7 +402,7 @@ headscaleEditConfig()
             echo ""
             isQuestion "Would you like to restart Headscale? (y/n): "
             echo ""
-            read -p "" restart_headscale
+            read -rp "" restart_headscale
             if [[ -n "$restart_headscale" ]]; then
                 break
             fi
