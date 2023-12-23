@@ -706,6 +706,8 @@ setupFileWithConfigData()
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
             -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
+            -e "s|UIDHERE|$docker_install_user_id|g" \
+            -e "s|GIDHERE|$docker_install_user_id|g" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
     fi

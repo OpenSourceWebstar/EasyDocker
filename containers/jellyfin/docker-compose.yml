@@ -1,0 +1,23 @@
+version: '3.5'
+
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    ports:
+      - "8096:8096" # HTTP Port
+    user: UIDHERE:GIDHERE
+    volumes:
+      - ./config:/config
+      - ./cache:/cache
+      - ./media:/media
+      - ./media2:/media2:ro
+    restart: 'unless-stopped'
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
