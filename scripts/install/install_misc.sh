@@ -182,6 +182,7 @@ checkBackupCrontabApp()
             while true; do
                 isQuestion "Do you want to set up automatic $name backups (y/n): "
                 read -rp "" setupcrontab
+                echo ""
                 if [[ "$setupcrontab" =~ ^[yYnN]$ ]]; then
                     break
                 fi
@@ -198,6 +199,7 @@ checkBackupCrontabApp()
                 while true; do
                     isQuestion "Do you want to disable automatic $name backups (y/n): "
                     read -rp "" setupdisablecrontab
+                    echo ""
                     if [[ "$setupdisablecrontab" =~ ^[yYnN]$ ]]; then
                         break
                     fi
