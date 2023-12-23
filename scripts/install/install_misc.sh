@@ -178,6 +178,10 @@ checkBackupCrontabApp()
     if [[ -n "${!config_variable}" && "${!config_variable}" == "true" ]]; then
         if ! sudo -u $sudo_user_name crontab -l | grep -q "$name"; then
             echo ""
+            echo "##########################################"
+            echo "###     Auto Backup setup for $name"
+            echo "##########################################"
+            echo ""
             isNotice "Automatic Backups for $name are not set up."
             while true; do
                 isQuestion "Do you want to set up automatic $name backups (y/n): "
