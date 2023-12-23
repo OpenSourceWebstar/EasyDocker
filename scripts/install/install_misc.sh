@@ -270,9 +270,9 @@ installSetupCrontab()
     fi
 
     if [ "$entry_name" = "full" ]; then
-        local crontab_entry="$CFG_BACKUP_CRONTAB_FULL cd /docker/install/ && chmod 0775 crontab.sh && ./crontab.sh $entry_name"
+        local crontab_entry="$CFG_BACKUP_CRONTAB_FULL chmod 0775 /docker/install/crontab.sh && /docker/install/crontab.sh $entry_name >> /docker/logs/backup.log 2>&1"
     else
-        local crontab_entry="$CFG_BACKUP_CRONTAB_APP cd /docker/install/ && chmod 0775 crontab.sh && ./crontab.sh $entry_name"
+        local crontab_entry="$CFG_BACKUP_CRONTAB_APP chmod 0775 /docker/install/crontab.sh && /docker/install/crontab.sh $entry_name >> /docker/logs/backup.log 2>&1"
     fi
 
     local apps_comment="# CRONTAB BACKUP APPS"
