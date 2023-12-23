@@ -10,7 +10,7 @@ services:
     image: jellyfin/jellyfin
     container_name: jellyfin
     ports:
-      - "8096:8096" # HTTP Port
+      - "PORT1:8096" # HTTP Port
     user: UIDHERE:GIDHERE
     volumes:
       - ./config:/config
