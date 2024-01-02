@@ -879,3 +879,83 @@ dockerCheckContainerHealthLoop()
         counter=$((counter + wait_time))
     done
 }
+
+dockerSwitchBetweenRootAndRootless()
+{
+    local rootless_installed="false"
+    local uninstall_rootless="false"
+    local install_rootless="false"
+    local run_switcher="false"
+
+    ### Docker Rootless
+    if sudo grep -q "ROOTLESS" $sysctl; then
+		#isNotice "Docker Rootless is installed."
+        local rootless_installed="true"
+    fi
+
+    # Check if we should uninstall rootless
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" && $rootless_installed == "true" ]]; then
+		#isNotice "Docker Root is enabled but rootless in installed."
+        local uninstall_rootless="true"
+        local run_switcher="true"
+    fi
+
+    # Check if we should install rootless
+    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" && $rootless_installed == "false" ]]; then
+		#isNotice "Docker Rootless is enabled but not installed.."
+        local install_rootless="true"
+        local run_switcher="true"
+    fi
+
+    scanContainersForDockerSocket() 
+    {
+        local directory="$1"
+        local type="$2"
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+
+        for file in "$directory"/*; do
+            if [ -f "$file" ]; then
+                if [[ $type == "root" ]]; then
+                    if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
+                        result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
+                        checkSuccess "Updated file: $file"
+                    fi
+                elif [[ $type == "rootless" ]]; then
+                    if grep -q "/var/run/docker.sock" "$file"; then
+                        result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
+                        checkSuccess "Updated file: $file"
+                    fi
+                fi
+            fi
+        done
+    }
+
+    if [[ $run_switcher == "true" ]]; then
+        echo ""
+        echo "##########################################"
+        echo "###   Docker Root/Rootless Switcher    ###"
+        echo "##########################################"
+        echo ""
+        echo ""
+
+        if [[ $uninstall_rootless == "true" ]]; then
+            isNotice "Docker Root is enabled but rootless is installed...uninstalling rootless now..."
+            uninstallDockerRootless;
+            # Scannning the containers folder
+            local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+            for dir in "${subdirectories[@]}"; do
+                scanContainersForDockerSocket "$dir" "root"
+            done
+        fi
+
+        if [[ $install_rootless == "true" ]]; then
+            isNotice "Rootless Docker is enabled but not installed... installing now..."
+            installDockerRootless;
+            # Scannning the containers folder
+            local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+            for dir in "${subdirectories[@]}"; do
+                scanContainersForDockerSocket "$dir" "rootless"
+            done
+        fi
+    fi
+}

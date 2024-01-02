@@ -321,3 +321,16 @@ EOL"
         fi
     fi
 }
+
+uninstallDockerRootless()
+{
+    echo ""
+    echo "##########################################"
+    echo "###     Uninstall Docker Rootless      ###"
+    echo "##########################################"
+    echo ""
+    
+    local result=$(runCommandForDockerInstallUser "dockerd-rootless-setuptool.sh uninstall")
+    checkSuccess "Uninstalling Rootless docker."
+}
+
