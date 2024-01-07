@@ -177,6 +177,7 @@ startScan()
 	if [[ $CFG_REQUIREMENT_WHITELIST_PORT_UPDATER == "true" ]]; then
 		dockerScan;
     fi
+    dockerSwitchBetweenRootAndRootless;
     databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";
