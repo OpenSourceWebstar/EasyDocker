@@ -126,7 +126,7 @@ installDockerUser()
 installDockerNetwork()
 {
 	# Check if the network already exists
-    if ! runCommandForDocker "docker network ls | grep -wq $CFG_NETWORK_NAME"; then
+    if ! runCommandForDocker "docker network ls | grep -q $CFG_NETWORK_NAME"; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
