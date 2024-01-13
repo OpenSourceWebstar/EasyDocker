@@ -780,13 +780,24 @@ setupEnvFile()
 
 dockerStopAllApps()
 {
+    local type="$1"
+
     isNotice "Please wait for docker containers to stop"
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
-        checkSuccess "Stopping all docker containers"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(sudo -u $sudo_user_name docker stop $(docker ps -a -q))
-        checkSuccess "Stopping all docker containers"
+    
+    if [[ $type == "rootless" ]]; then
+        local result=$(runCommandForDockerInstallUser 'docker ps -q 2>/dev/null')
+        if [[ -n "$result" ]]; then
+            local result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
+            checkSuccess "Stopping all docker containers (Rootless if installed)"
+        fi
+    fi
+
+    if [[ $type == "root" ]]; then
+        local result=$(sudo -u $sudo_user_name docker ps -q 2>/dev/null)
+        if [[ -n "$result" ]]; then
+            local result=$(sudo -u $sudo_user_name docker stop $(docker ps -a -q))
+            checkSuccess "Stopping all docker containers (Rooted if installed)"
+        fi
     fi
 }
 
@@ -896,31 +907,48 @@ dockerCheckContainerHealthLoop()
     done
 }
 
+isDockerRunningForUser() 
+{
+    local type="$1"
+
+    # Check if Docker is running for the specified user
+    if [[ $type == "rootless" ]]; then
+        local docker_command='docker ps 2>&1'
+        local result=$(runCommandForDockerInstallUser "$docker_command")
+    elif [[ $type == "root" ]]; then
+        local docker_command='sudo -u $sudo_user_name docker ps 2>&1'
+        local result=$(eval "$docker_command")
+    else
+        echo "Invalid user type specified."
+        return 1
+    fi
+
+    # Check the result
+    if [[ $result =~ "Cannot connect to the Docker daemon" ]]; then
+        echo "Docker is not running for the specified user."
+        return 1  # Docker is not running
+    else
+        echo "Docker is running for the specified user."
+        return 0  # Docker is running
+    fi
+}
+
 dockerSwitchBetweenRootAndRootless()
 {
-    local rootless_installed="false"
-    local uninstall_rootless="false"
-    local install_rootless="false"
     local run_switcher="false"
 
-    ### Docker Rootless
-    if sudo grep -q "ROOTLESS" $sysctl; then
-		#isNotice "Docker Rootless is installed."
-        local rootless_installed="true"
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        if isDockerRunningForUser "rootless"; then
+            run_switcher="true"
+            switch_type="root"
+        fi
     fi
 
-    # Check if we should uninstall rootless
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" && $rootless_installed == "true" ]]; then
-		#isNotice "Docker Root is enabled but rootless in installed."
-        local uninstall_rootless="true"
-        local run_switcher="true"
-    fi
-
-    # Check if we should install rootless
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" && $rootless_installed == "false" ]]; then
-		#isNotice "Docker Rootless is enabled but not installed.."
-        local install_rootless="true"
-        local run_switcher="true"
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        if isDockerRunningForUser "root"; then
+            run_switcher="true"
+            switch_type="rootless"
+        fi
     fi
 
     scanContainersForDockerSocket() 
@@ -931,14 +959,14 @@ dockerSwitchBetweenRootAndRootless()
 
         for file in "$directory"/*; do
             if [ -f "$file" ]; then
-                if [[ $type == "root" ]]; then
-                    if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
-                        result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
-                        checkSuccess "Updated file: $file"
-                    fi
-                elif [[ $type == "rootless" ]]; then
+                if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
                     if grep -q "/var/run/docker.sock" "$file"; then
                         result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
+                        checkSuccess "Updated file: $file"
+                    fi
+                elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+                    if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
+                        result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
                         checkSuccess "Updated file: $file"
                     fi
                 fi
@@ -953,21 +981,21 @@ dockerSwitchBetweenRootAndRootless()
         echo "##########################################"
         echo ""
 
-        if [[ $uninstall_rootless == "true" ]]; then
-            isNotice "Docker Root is enabled but rootless is installed..."
+        if [[ $switch_type == "root" ]]; then
+            isNotice "Docker Rootless is currently running..."
             while true; do
                 isQuestion "Would you like to switch to Rooted Docker? (y/n): "
                 echo ""
-                read -p "" uninstall_rootless_choice
-                if [[ -n "$uninstall_rootless_choice" ]]; then
+                read -p "" switch_rooted_choice
+                if [[ -n "$switch_rooted_choice" ]]; then
                     break
                 fi
                 isNotice "Please provide a valid input."
             done
-            if [[ "$uninstall_rootless_choice" == [yY] ]]; then
+            if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the rootless Docker now..."
-                stopDocker;
-                startDocker;
+                stopDocker rootless;
+                startDocker root;
                 # Scannning the containers folder
                 local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
                 for dir in "${subdirectories[@]}"; do
@@ -977,20 +1005,21 @@ dockerSwitchBetweenRootAndRootless()
             fi
         fi
 
-        if [[ $install_rootless == "true" ]]; then
-            isNotice "Rootless Docker is enabled but not installed..."
+        if [[ $switch_type == "rootless" ]]; then
+            isNotice "Docker Rooted is currently running..."
             while true; do
                 isQuestion "Would you like to switch to Rootless Docker? (y/n): "
                 echo ""
-                read -p "" install_rootless_choice
-                if [[ -n "$install_rootless_choice" ]]; then
+                read -p "" switch_rootless_choice
+                if [[ -n "$switch_rootless_choice" ]]; then
                     break
                 fi
                 isNotice "Please provide a valid input."
             done
-            if [[ "$install_rootless_choice" == [yY] ]]; then
-                stopDocker;
-                installDockerRootless;
+            if [[ "$switch_rootless_choice" == [yY] ]]; then
+                isNotice "Switching to the Rootless Docker now..."
+                stopDocker root;
+                startDocker rootless;
                 # Scannning the containers folder
                 local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
                 for dir in "${subdirectories[@]}"; do

@@ -40,19 +40,21 @@ startDocker()
 
 stopDocker()
 {
-    # We stop both rootless and rooted.
+    local type="$1"
 
-    # Root
-    local result=$(sudo -u $sudo_user_name systemctl stop docker)
-    checkSuccess "Stopping Rooted Docker Service"
+    if [[ "$type" == "root" ]]; then
+        local result=$(sudo -u $sudo_user_name systemctl stop docker)
+        checkSuccess "Stopping Rooted Docker Service"
 
-    local result=$(sudo -u $sudo_user_name systemctl enable docker)
-    checkSuccess "Disabling Rooted Docker Service"
+        local result=$(sudo -u $sudo_user_name systemctl enable docker)
+        checkSuccess "Disabling Rooted Docker Service"
+    fi
 
-    # Rootless
-    isNotice "Stopping rooted docker service...this may take a moment..."
-    local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
-    checkSuccess "Stop the systemd user docker service"
+    if [[ "$type" == "rootless" ]]; then
+        isNotice "Stopping rooted docker service...this may take a moment..."
+        local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
+        checkSuccess "Stop the systemd user docker service"
+    fi
 }
 
 installDockerCompose()
@@ -189,7 +191,8 @@ installDockerRootless()
             echo "##########################################"
             echo ""
 
-            stopDocker;
+            dockerStopAllApps root;
+            stopDocker root;
 
             ((menu_number++))
             echo ""
