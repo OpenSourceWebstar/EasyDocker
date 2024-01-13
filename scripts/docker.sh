@@ -993,7 +993,7 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Please provide a valid input."
             done
             if [[ "$switch_rooted_choice" == [yY] ]]; then
-                isNotice "Switching to the rootless Docker now..."
+                isNotice "Switching to the Rooted Docker now..."
                 stopDocker rootless;
                 startDocker root;
                 # Scannning the containers folder

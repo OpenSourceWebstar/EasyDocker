@@ -43,6 +43,7 @@ stopDocker()
     local type="$1"
 
     if [[ "$type" == "root" ]]; then
+        isNotice "Stopping rooted docker service...this may take a moment..."
         local result=$(sudo -u $sudo_user_name systemctl stop docker)
         checkSuccess "Stopping Rooted Docker Service"
 
@@ -51,7 +52,7 @@ stopDocker()
     fi
 
     if [[ "$type" == "rootless" ]]; then
-        isNotice "Stopping rooted docker service...this may take a moment..."
+        isNotice "Stopping rootless docker service...this may take a moment..."
         local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
         checkSuccess "Stop the systemd user docker service"
     fi
