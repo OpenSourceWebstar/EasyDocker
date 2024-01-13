@@ -925,10 +925,10 @@ isDockerRunningForUser()
 
     # Check the result
     if [[ $result =~ "Cannot connect to the Docker daemon" ]]; then
-        echo "Docker is not running for the specified user."
+        #echo "Docker is not running for the specified user."
         return 1  # Docker is not running
     else
-        echo "Docker is running for the specified user."
+        #echo "Docker is running for the specified user."
         return 0  # Docker is running
     fi
 }
