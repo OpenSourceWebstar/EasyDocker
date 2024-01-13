@@ -9,7 +9,7 @@ runCommandForDocker()
         runCommandForDockerInstallUser "$command"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
         if [[ $type == "sudo" ]]; then
-            sudo -u $sudo_user_name $command
+            sudo $command
         else
             $command
         fi
