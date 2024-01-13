@@ -89,8 +89,15 @@ PostDown = iptables -t nat -D POSTROUTING -o ${server_nic} -j MASQUERADE" | sudo
 
                     result=$(sudo sed -i '/^net.ipv4.ip_forward/d' /etc/sysctl.conf)
                     checkSuccess "Removing all instances of net.ipv4.ip_forward from sysctl.conf"
-                    result=$(echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf)
+
+                    local result=$(echo '# WIREGUARD START' | sudo tee -a "$sysctl" > /dev/null)
+                    checkSuccess "Adding wireguard header to sysctl"
+
+                    result=$(echo "net.ipv4.ip_forward = 1" | sudo tee -a $sysctl)
                     checkSuccess "Add the configuration for IPv4 IP forwarding"
+
+                    local result=$(echo '# WIREGUARD END' | sudo tee -a "$sysctl" > /dev/null)
+                    checkSuccess "Adding wireguard header to sysctl"
 
                     result=$(sudo systemctl start "wg-quick@${CFG_WG_SERVER_NIC}")
                     checkSuccess "Started wg-quick@${CFG_WG_SERVER_NIC} service."

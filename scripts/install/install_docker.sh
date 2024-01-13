@@ -220,8 +220,8 @@ installDockerRootless()
             echo "---- $menu_number. Update the .bashrc file."
             echo ""
 
-            if ! grep -qF "# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT" "$docker_install_bashrc"; then
-                local result=$(echo '# DOCKER ROOTLESS CONFIG FROM .sh SCRIPT' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+            if ! grep -qF "# DOCKER ROOTLESS BASHRC START" "$docker_install_bashrc"; then
+                local result=$(echo '# DOCKER ROOTLESS BASHRC START' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding rootless header to .bashrc"
  
                 local result=$(echo 'export XDG_RUNTIME_DIR=/run/user/${UID}' | sudo tee -a "$docker_install_bashrc" > /dev/null)
@@ -235,6 +235,9 @@ installDockerRootless()
 
                 local result=$(echo 'export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"' | sudo tee -a "$docker_install_bashrc" > /dev/null)
                 checkSuccess "Adding export DBUS_SESSION_BUS_ADDRESS path to .bashrc"
+
+                local result=$(echo '# DOCKER ROOTLESS BASHRC END' | sudo tee -a "$docker_install_bashrc" > /dev/null)
+                checkSuccess "Adding rootless header to .bashrc"
 
                 isSuccessful "Added $CFG_DOCKER_INSTALL_USER to bashrc file"
             fi
@@ -300,9 +303,9 @@ EOL"
             echo ""
 
             # Update sysctl file
-            if ! grep -qF "# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT" "$sysctl"; then
+            if ! grep -qF "# DOCKER ROOTLESS SYSCTL START" "$sysctl"; then
 
-                local result=$(echo '# DOCKER ROOTLESS CONFIG TO MAKE IT WORK WITH SSL LETSENCRYPT' | sudo tee -a "$sysctl" > /dev/null)
+                local result=$(echo '# DOCKER ROOTLESS SYSCTL START' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding rootless header to sysctl"
 
                 local result=$(echo 'net.ipv4.ip_unprivileged_port_start=0' | sudo tee -a "$sysctl" > /dev/null)
@@ -310,6 +313,9 @@ EOL"
 
                 local result=$(echo 'kernel.unprivileged_userns_clone=1' | sudo tee -a "$sysctl" > /dev/null)
                 checkSuccess "Adding unprivileged_userns_clone to sysctl"
+
+                local result=$(echo '# DOCKER ROOTLESS SYSCTL END' | sudo tee -a "$sysctl" > /dev/null)
+                checkSuccess "Adding rootless end to sysctl"
 
                 isSuccessful "Updated the sysctl with Docker Rootless configuration"
             fi

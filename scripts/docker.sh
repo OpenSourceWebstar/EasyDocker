@@ -939,23 +939,46 @@ dockerSwitchBetweenRootAndRootless()
         echo ""
 
         if [[ $uninstall_rootless == "true" ]]; then
-            isNotice "Docker Root is enabled but rootless is installed...uninstalling rootless now..."
-            uninstallDockerRootless;
-            # Scannning the containers folder
-            local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
-            for dir in "${subdirectories[@]}"; do
-                scanContainersForDockerSocket "$dir" "root"
+            isNotice "Docker Root is enabled but rootless is installed..."
+            while true; do
+                isQuestion "Would you like to uninstall Rootless Docker and setup Rooted Docker? (y/n): "
+                read -p "" uninstall_rootless_choice
+                if [[ -n "$uninstall_rootless_choice" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
             done
+            if [[ "$uninstall_rootless_choice" == [yY] ]]; then
+                isNotice "Uninstalling rootless Docker now..."
+                uninstallDockerRootless;
+                # Scannning the containers folder
+                local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+                for dir in "${subdirectories[@]}"; do
+                    scanContainersForDockerSocket "$dir" "root"
+                    restartApp $dir;
+                done
+            fi
         fi
 
         if [[ $install_rootless == "true" ]]; then
             isNotice "Rootless Docker is enabled but not installed... installing now..."
-            installDockerRootless;
-            # Scannning the containers folder
-            local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
-            for dir in "${subdirectories[@]}"; do
-                scanContainersForDockerSocket "$dir" "rootless"
+            while true; do
+                isQuestion "Would you like to uninstall Rooted Docker and setup Rootless Docker? (y/n): "
+                read -p "" uninstall_rootless_choice
+                if [[ -n "$uninstall_rootless_choice" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
             done
+            if [[ "$uninstall_rootless_choice" == [yY] ]]; then
+                installDockerRootless;
+                # Scannning the containers folder
+                local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+                for dir in "${subdirectories[@]}"; do
+                    scanContainersForDockerSocket "$dir" "rootless"
+                    restartApp $dir;
+                done
+            fi
         fi
     fi
 }
