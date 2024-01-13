@@ -40,17 +40,19 @@ startDocker()
 
 stopDocker()
 {
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(sudo -u $sudo_user_name systemctl stop docker)
-        checkSuccess "Stopping Rooted Docker Service"
+    # We stop both rootless and rooted.
 
-        local result=$(sudo -u $sudo_user_name systemctl enable docker)
-        checkSuccess "Disabling Rooted Docker Service"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        isNotice "Restarting docker service...this may take a moment..."
-        local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
-        checkSuccess "Stop the systemd user docker service"
-    fi
+    # Root
+    local result=$(sudo -u $sudo_user_name systemctl stop docker)
+    checkSuccess "Stopping Rooted Docker Service"
+
+    local result=$(sudo -u $sudo_user_name systemctl enable docker)
+    checkSuccess "Disabling Rooted Docker Service"
+
+    # Rootless
+    isNotice "Stopping rooted docker service...this may take a moment..."
+    local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
+    checkSuccess "Stop the systemd user docker service"
 }
 
 installDockerCompose()
