@@ -68,7 +68,7 @@ installUFW()
 installUFWDocker()
 {
     if [[ "$CFG_REQUIREMENT_UFWD" == "true" ]]; then
-        if [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             if [[ "$ISUFWD" == *"command not found"* ]]; then
                 echo ""
                 echo "##########################################"

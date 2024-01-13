@@ -52,12 +52,12 @@ checkRequirements()
 		ISUFWD=$( (sudo ufw-docker) 2>&1 )
 		ISCRON=$( (sudo -u $sudo_user_name crontab -l) 2>&1 )
 
-		if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+		if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
 			local ISUSER=$( (sudo id -u "$CFG_DOCKER_INSTALL_USER"))
 			if [[ "$ISUSER" == *"no such user"* ]]; then
 				ISACT=$(command -v docker &> /dev/null)
 			fi
-		elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+		elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
 			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
 		fi
 	fi
@@ -138,14 +138,14 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_DOCKER_CE == "true" ]]; then
 		### Docker CE
-		if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+		if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
 			if [[ "$ISACT" != "/usr/bin/docker" ]]; then
 				isSuccessful "Docker appears to be installed and running."
 			else
 				isNotice "Docker does not appear to be installed. Setup will start soon."
 				((preinstallneeded++)) 
 			fi
-		elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+		elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
 			if [[ "$ISACT" == "active" ]]; then
 				isSuccessful "Docker appears to be installed and running."
 			else
@@ -165,7 +165,7 @@ checkRequirements()
 		fi
 	fi
 	
-	if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+	if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
 		### Docker Rootless
 		if sudo grep -q "ROOTLESS" $sysctl; then
 			isSuccessful "Docker Rootless appears to be installed."
@@ -196,7 +196,7 @@ checkRequirements()
 	fi
 
 	if [[ $CFG_REQUIREMENT_UFWD == "true" ]]; then
-		if [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+		if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
 			### UFW Docker
 			if [[ "$ISUFWD" != *"command not found"* ]]; then
 				isSuccessful "UFW-Docker Fix appears to be installed."

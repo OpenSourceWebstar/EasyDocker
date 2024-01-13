@@ -275,11 +275,11 @@ invidiousResetUserPassword()
             echo "Debugging: SQL Query: $sql_query"
 
             # Execute the command
-            if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
 runCommandForDockerInstallUser "docker exec invidious-db /bin/bash -c \"psql -U kemal -d $database_name <<EOF
 $sql_query
 EOF\" && exit"
-            elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
 docker exec invidious-db /bin/bash -c "psql -U kemal -d $database_name <<EOF $sql_query EOF" && exit
             fi
 
@@ -326,9 +326,9 @@ mattermostResetUserPassword()
         isNotice "Waiting 10 seconds for mattermost to load the local socket"
         sleep 10
         # Update Password
-        if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
             runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit
         fi
         # Disable local mode
