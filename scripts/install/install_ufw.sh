@@ -80,10 +80,15 @@ installUFWDocker()
                 echo "---- $menu_number. Installing using linux package installer"
                 echo ""
 
-                local result=$(sudo wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker)
+                local ufwpath="/usr/local/bin/ufw-docker"
+
+                local result=$(sudo wget -O $ufwpath https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker)
                 checkSuccess "Downloading UFW Docker installation files"
 
-                local result=$(sudo chmod +x /usr/local/bin/ufw-docker)
+                local result=$(sudo rm -rf $script_dir/wget-log)
+                checkSuccess "Setting permissions for install files"
+
+                local result=$(sudo chmod +x $ufwpath)
                 checkSuccess "Setting permissions for install files"
 
                 local result=$(sudo ufw-docker install)
