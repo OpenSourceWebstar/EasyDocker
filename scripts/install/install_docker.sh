@@ -3,26 +3,53 @@
 installDocker()
 {
     # Check if Docker is already installed
-    if [[ "$OS" == "1" || "$OS" == "2" || "$OS" == "3" ]]; then
+    if [[ "$OS" == [1234567] ]]; then
         if command -v docker &> /dev/null; then
             isSuccessful "Docker is already installed."
         else
             local result=$(sudo curl -fsSL https://get.docker.com | sh )
             checkSuccess "Downloading & Installing Docker"
 
-            if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-                local result=$(sudo -u $sudo_user_name systemctl start docker)
-                checkSuccess "Starting Docker Service"
-
-                local result=$(sudo -u $sudo_user_name systemctl enable docker)
-                checkSuccess "Enabling Docker Service"
-
-                local result=$(sudo -u $sudo_user_name usermod -aG docker $USER)
-                checkSuccess "Adding user to 'docker' group"
-            fi
+            startDocker;
         fi
 
         isSuccessful "Docker has been installed and configured."
+    fi
+}
+
+startDocker()
+{
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        local result=$(sudo -u $sudo_user_name systemctl start docker)
+        checkSuccess "Starting Docker Service"
+
+        local result=$(sudo -u $sudo_user_name systemctl enable docker)
+        checkSuccess "Enabling Docker Service"
+
+        local result=$(sudo -u $sudo_user_name usermod -aG docker $USER)
+        checkSuccess "Adding user to 'docker' group"
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        local result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
+        checkSuccess "Reload the systemd user manager configuration"
+
+        isNotice "Restarting docker service...this may take a moment..."
+        local result=$(runCommandForDockerInstallUser "systemctl --user restart docker")
+        checkSuccess "Reload the systemd user docker service"
+    fi
+}
+
+stopDocker()
+{
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        local result=$(sudo -u $sudo_user_name systemctl stop docker)
+        checkSuccess "Stopping Rooted Docker Service"
+
+        local result=$(sudo -u $sudo_user_name systemctl enable docker)
+        checkSuccess "Disabling Rooted Docker Service"
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        isNotice "Restarting docker service...this may take a moment..."
+        local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
+        checkSuccess "Stop the systemd user docker service"
     fi
 }
 
@@ -292,7 +319,7 @@ EOL"
 
 			isNotice "Restarting docker service...this may take a moment..."
             local result=$(runCommandForDockerInstallUser "systemctl --user restart docker")
-            checkSuccess "Setting up slirp4netns for Rootless Docker"
+            checkSuccess "Reload the systemd user docker service"
 
             local result=$(sudo cp $sysctl $sysctl.bak)
             checkSuccess "Backing up sysctl file"

@@ -556,7 +556,7 @@ disableSSHPasswordFunction()
 {
     if [[ $CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS == "true" ]]; then
         # Check if already disabled
-        if grep -q "PasswordAuthentication no" /etc/ssh/sshd_config; then
+        if grep -q "PasswordAuthentication no" $sshd_config; then
             isSuccessful "Password Authentication is already disabled."
         else
             while true; do
@@ -565,14 +565,14 @@ disableSSHPasswordFunction()
                 read -p "" disable_ssh_passwords
                 case "$disable_ssh_passwords" in
                     [Yy]*)
-                        local backup_file="/etc/ssh/sshd_config_backup_$current_date-$current_time"
-                        result=$(sudo cp /etc/ssh/sshd_config "$backup_file")
+                        local backup_file="$sshd_config_backup_$current_date-$current_time"
+                        result=$(sudo cp $sshd_config "$backup_file")
                         checkSuccess "Backup sshd_config file"
 
-                        result=$(sudo sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config)
+                        result=$(sudo sed -i '/^PasswordAuthentication/d' $sshd_config)
                         checkSuccess "Removing existing PasswordAuthentication lines"
 
-                        result=$(echo "PasswordAuthentication no" | sudo tee -a /etc/ssh/sshd_config)
+                        result=$(echo "PasswordAuthentication no" | sudo tee -a $sshd_config)
                         checkSuccess "Add new PasswordAuthentication line at the end of sshd_config"
 
                         result=$(sudo systemctl restart sshd)

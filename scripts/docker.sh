@@ -3,11 +3,16 @@
 runCommandForDocker() 
 {
     local command="$1"
-    
+    local type="$2" # sudo
+
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         runCommandForDockerInstallUser "$command"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        $command
+        if [[ $type == "sudo" ]]; then
+            sudo -u $sudo_user_name $command
+        else
+            $command
+        fi
     fi
 }
 
@@ -21,8 +26,8 @@ runCommandForDockerInstallUser()
     local remote_command="$1"
 
     # Get the value of PasswordAuthentication from sshd_config
-    local result=$(sudo sed -i '/#PasswordAuthentication/d' /etc/ssh/sshd_config)
-    local passwordAuth=$(grep -i "^PasswordAuthentication" /etc/ssh/sshd_config | awk '{print $2}')
+    local result=$(sudo sed -i '/#PasswordAuthentication/d' $sshd_config)
+    local passwordAuth=$(grep -i "^PasswordAuthentication" $sshd_config | awk '{print $2}')
 
     # Keys
     local private_path="${ssh_dir}private/"
@@ -779,7 +784,7 @@ dockerStopAllApps()
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
         checkSuccess "Stopping all docker containers"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
         local result=$(sudo -u $sudo_user_name docker stop $(docker ps -a -q))
         checkSuccess "Stopping all docker containers"
     fi
@@ -791,7 +796,7 @@ dockerStartAllApps()
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
         local result=$(sudo -u $sudo_user_name docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
@@ -951,7 +956,7 @@ dockerSwitchBetweenRootAndRootless()
         if [[ $uninstall_rootless == "true" ]]; then
             isNotice "Docker Root is enabled but rootless is installed..."
             while true; do
-                isQuestion "Would you like to uninstall Rootless Docker and setup Rooted Docker? (y/n): "
+                isQuestion "Would you like to switch to Rooted Docker? (y/n): "
                 read -p "" uninstall_rootless_choice
                 if [[ -n "$uninstall_rootless_choice" ]]; then
                     break
@@ -959,8 +964,9 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Please provide a valid input."
             done
             if [[ "$uninstall_rootless_choice" == [yY] ]]; then
-                isNotice "Uninstalling rootless Docker now..."
-                uninstallDockerRootless;
+                isNotice "Switching to the rootless Docker now..."
+                stopDocker;
+                startDocker;
                 # Scannning the containers folder
                 local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
                 for dir in "${subdirectories[@]}"; do
@@ -971,16 +977,17 @@ dockerSwitchBetweenRootAndRootless()
         fi
 
         if [[ $install_rootless == "true" ]]; then
-            isNotice "Rootless Docker is enabled but not installed... installing now..."
+            isNotice "Rootless Docker is enabled but not installed..."
             while true; do
-                isQuestion "Would you like to uninstall Rooted Docker and setup Rootless Docker? (y/n): "
-                read -p "" uninstall_rootless_choice
-                if [[ -n "$uninstall_rootless_choice" ]]; then
+                isQuestion "Would you like to switch to Rootless Docker? (y/n): "
+                read -p "" install_rootless_choice
+                if [[ -n "$install_rootless_choice" ]]; then
                     break
                 fi
                 isNotice "Please provide a valid input."
             done
-            if [[ "$uninstall_rootless_choice" == [yY] ]]; then
+            if [[ "$install_rootless_choice" == [yY] ]]; then
+                stopDocker;
                 installDockerRootless;
                 # Scannning the containers folder
                 local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))

@@ -127,7 +127,7 @@ checkRequirements()
 		fi
 	fi
 	if [[ $CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS == "true" ]]; then
-		if grep -q "PasswordAuthentication no" /etc/ssh/sshd_config; then
+		if grep -q "PasswordAuthentication no" $sshd_config; then
 			isSuccessful "SSH Password appears to be disabled."
 		else
 			isNotice "Password Authentication has not been disabled."
@@ -177,7 +177,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_DOCKER_NETWORK == "true" ]]; then
 		### Docker VPN Network
-		if runCommandForDocker "docker network ls | grep -q \"$CFG_NETWORK_NAME\""; then
+		if runCommandForDocker "docker network ls | grep -q \"$CFG_NETWORK_NAME\"" sudo; then
 			isSuccessful "Docker Network $CFG_NETWORK_NAME appears to be installed."
 		else
 			isNotice "Docker Network $CFG_NETWORK_NAME not found. Setup will start soon."

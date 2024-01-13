@@ -51,7 +51,7 @@ installDockerManagerUser()
                 checkSuccess "Reloading .bashrc"
 
 
-local result=$(sudo -u $sudo_user_name bash -c "cat >> /etc/ssh/sshd_config <<EOL
+local result=$(sudo -u $sudo_user_name bash -c "cat >> $sshd_config <<EOL
 
 ### EasyDocker Manager User Start
 Match User $CFG_DOCKER_MANAGER_USER
@@ -89,9 +89,9 @@ uninstallDockerManagerUser()
             local result=$(sudo -u $sudo_user_name userdel -r "$CFG_DOCKER_MANAGER_USER" 2>&1)
             checkSuccess "Removing the '$CFG_DOCKER_MANAGER_USER' user"
 
-            # Remove the Docker Manager User specific block from /etc/ssh/sshd_config
-            local result=$(sudo sed -i '/### EasyDocker Manager User Start/,/### EasyDocker Manager User End/d' /etc/ssh/sshd_config)
-            checkSuccess "Removing the Docker Manager User from /etc/ssh/sshd_config."
+            # Remove the Docker Manager User specific block from $sshd_config
+            local result=$(sudo sed -i '/### EasyDocker Manager User Start/,/### EasyDocker Manager User End/d' $sshd_config)
+            checkSuccess "Removing the Docker Manager User from $sshd_config."
 
             # Restart SSH Service
             local result=$(sudo -u $sudo_user_name service ssh restart)
