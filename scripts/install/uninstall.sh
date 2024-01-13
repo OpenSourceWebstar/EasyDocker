@@ -70,10 +70,10 @@ dockerDownRemove()
         return
     else
         if [[ "$OS" == [1234567] ]]; then
-            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
                 local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down -v --rmi all --remove-orphans")
                 isNotice "Shutting down & Removing all $app_name container data"
-            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
                 local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose down -v --rmi all --remove-orphans)
                 isNotice "Shutting down & Removing all $app_name container data"
             fi

@@ -18,31 +18,31 @@ viewLogsAppMenu()
     read -p "" app_log_choice
     case "$app_log_choice" in
         1)
-            runCommandForDockerInstallUser "docker logs $app_name --tail 20"
+            runCommandForDocker "docker logs $app_name --tail 20"
             isQuestion "Press Enter to continue..."
             read -p "" continueafterlogs
             viewLogsAppMenu "$app_name"
         ;;
         2)
-            runCommandForDockerInstallUser "docker logs $app_name --tail 50"
+            runCommandForDocker "docker logs $app_name --tail 50"
             isQuestion "Press Enter to continue..."
             read -p "" continueafterlogs
             viewLogsAppMenu "$app_name"
         ;;
         3)
-            runCommandForDockerInstallUser "docker logs $app_name --tail 100"
+            runCommandForDocker "docker logs $app_name --tail 100"
             isQuestion "Press Enter to continue..."
             read -p "" continueafterlogs
             viewLogsAppMenu "$app_name"
         ;;
         4)
-            runCommandForDockerInstallUser "docker logs $app_name --tail 200"
+            runCommandForDocker "docker logs $app_name --tail 200"
             isQuestion "Press Enter to continue..."
             read -p "" continueafterlogs
             viewLogsAppMenu "$app_name"
         ;;
         5)
-            runCommandForDockerInstallUser "docker logs $app_name"
+            runCommandForDocker "docker logs $app_name"
             isQuestion "Press Enter to continue..."
             read -p "" continueafterlogs
             viewLogsAppMenu "$app_name"

@@ -101,8 +101,7 @@ installOwncloud()
         fi
 
 if [[ "$public" == "true" ]]; then	
-
-runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
+runCommandForDocker "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=$host_setup
 OWNCLOUD_TRUSTED_DOMAINS=$host_setup,$ip_setup,$public_ip_v4
@@ -113,7 +112,7 @@ EOF"
 fi
 
 if [[ "$public" == "false" ]]; then	
-runCommandForDockerInstallUser "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
+runCommandForDocker "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE

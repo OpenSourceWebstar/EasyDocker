@@ -56,7 +56,7 @@ fixFolderPermissions()
     local silent_flag="$1"
     local app_name="$2"
 
-	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+	if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         local result=$(sudo chmod +x "$docker_dir" > /dev/null 2>&1)
         if [ "$silent_flag" == "loud" ]; then
             checkSuccess "Updating $docker_dir with execute permissions."
@@ -179,7 +179,7 @@ fixPermissionsBeforeStart()
 
     fixAppFolderPermissions;
 
-	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+	if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         # Mainly for "full"
         changeRootOwnedFilesAndFolders $script_dir $CFG_DOCKER_INSTALL_USER
         changeRootOwnedFile $docker_dir/$db_file $sudo_user_name

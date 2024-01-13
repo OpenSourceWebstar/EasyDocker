@@ -645,7 +645,7 @@ migrateUpdateFiles()
 {            
     local app_name="$1"
 
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$containers_dir$app_name")
         checkSuccess "Updating ownership on migrated folder $app_name to $CFG_DOCKER_INSTALL_USER"
 

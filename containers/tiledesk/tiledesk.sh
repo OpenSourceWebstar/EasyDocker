@@ -93,27 +93,15 @@ installTiledesk()
         echo ""
 
 		if [[ "$OS" == [1234567] ]]; then
-			if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
-				local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
-				checkSuccess "Shutting down docker-compose.$app_name.yml"
-				if [[ "$public" == "true" ]]; then
-					local result=$(runCommandForDockerInstallUser "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
-					checkSuccess "Starting public docker-compose.$app_name.yml"
-				else
-					local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
-					checkSuccess "Starting standard docker-compose.$app_name.yml"
-				fi
-			elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
-				local result=$(sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
-				checkSuccess "Shutting down docker-compose.$app_name.yml"
-				if [[ "$public" == "true" ]]; then
-					local result=$(EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-					checkSuccess "Starting public docker-compose.$app_name.yml"
-				else
-					local result=$(sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d)
-					checkSuccess "Starting standard docker-compose.$app_name.yml"
-				fi
-			fi
+            local result=$(runCommandForDocker "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+            checkSuccess "Shutting down docker-compose.$app_name.yml"
+            if [[ "$public" == "true" ]]; then
+                local result=$(runCommandForDocker "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+                checkSuccess "Starting public docker-compose.$app_name.yml"
+            else
+                local result=$(runCommandForDocker "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+                checkSuccess "Starting standard docker-compose.$app_name.yml"
+            fi
 		fi
 
         ((menu_number++))

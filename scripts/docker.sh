@@ -1,5 +1,16 @@
 #!/bin/bash
 
+runCommandForDocker() 
+{
+    local command="$1"
+    
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+        runCommandForDockerInstallUser "$command"
+    elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+        $command
+    fi
+}
+
 runCommandForDockerInstallUser() 
 {
     local silent_flag=""
@@ -407,18 +418,18 @@ dockerDown()
     fi
 
     if [[ "$OS" == [1234567] ]]; then
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
             local result=$(sudo -u $sudo_user_name docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     else
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
             local result=$(sudo -u $sudo_user_name docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
@@ -440,21 +451,21 @@ dockerUp()
     fi
 
     if [[ "$OS" == [1234567] ]]; then
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
             checkSuccess "Started container for $app_name"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(sudo -u $sudo_user_name docker-compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     else
-        if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
             checkSuccess "Started container for $app_name"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(sudo -u $sudo_user_name docker-compose $setup_compose up -d)
             checkSuccess "Started container for $app_name"
@@ -701,7 +712,7 @@ setupFileWithConfigData()
     "$full_file_path")
     checkSuccess "Updating $file_name for $app_name"
     
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
@@ -765,10 +776,10 @@ setupEnvFile()
 dockerStopAllApps()
 {
     isNotice "Please wait for docker containers to stop"
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser 'docker stop $(docker ps -a -q)')
         checkSuccess "Stopping all docker containers"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
         local result=$(sudo -u $sudo_user_name docker stop $(docker ps -a -q))
         checkSuccess "Stopping all docker containers"
     fi
@@ -777,10 +788,10 @@ dockerStopAllApps()
 dockerStartAllApps()
 {
     isNotice "Please wait for docker containers to start"
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
         local result=$(sudo -u $sudo_user_name docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
@@ -792,14 +803,14 @@ dockerAppDown()
 
     isNotice "Please wait for $app_name container to stop"
 
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         if [ -d "$containers_dir$app_name" ]; then
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
             checkSuccess "Shutting down $app_name container"
         else
             isNotice "Directory $containers_dir$app_name does not exist. Container not found."
         fi
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
         if [ -d "$containers_dir$app_name" ]; then
             local result=$(cd "$containers_dir$app_name" && docker-compose down)
             checkSuccess "Shutting down $app_name container"
@@ -815,10 +826,10 @@ dockerAppUp()
 
     isNotice "Please wait for $app_name container to start"
 
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose up -d")
         checkSuccess "Starting up $app_name container"
-        elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
         local result=$(cd $containers_dir$app_name && docker-compose up -d)
         checkSuccess "Starting up $app_name container"
     fi
@@ -838,14 +849,14 @@ dockerScanForShouldRestart()
 
 dockerPruneNetworks()
 {
-    local result=$(runCommandForDockerInstallUser "docker network prune -f")
+    local result=$(runCommandForDocker "docker network prune -f")
     checkSuccess "Pruning any unused Docker networks"
 }
 
 dockerCheckContainerHealth() 
 {
     local container_name="$1"
-    local health_status=$(runCommandForDockerInstallUser "docker inspect --format='{{json .State.Health.Status}}' $container_name")
+    local health_status=$(runCommandForDocker "docker inspect --format='{{json .State.Health.Status}}' $container_name")
 
     if [ "$health_status" == "\"healthy\"" ]; then
         return 0  # Container is healthy
@@ -894,14 +905,14 @@ dockerSwitchBetweenRootAndRootless()
     fi
 
     # Check if we should uninstall rootless
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" && $rootless_installed == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "root" && $rootless_installed == "true" ]]; then
 		#isNotice "Docker Root is enabled but rootless in installed."
         local uninstall_rootless="true"
         local run_switcher="true"
     fi
 
     # Check if we should install rootless
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" && $rootless_installed == "false" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" && $rootless_installed == "false" ]]; then
 		#isNotice "Docker Rootless is enabled but not installed.."
         local install_rootless="true"
         local run_switcher="true"
@@ -935,7 +946,6 @@ dockerSwitchBetweenRootAndRootless()
         echo "##########################################"
         echo "###   Docker Root/Rootless Switcher    ###"
         echo "##########################################"
-        echo ""
         echo ""
 
         if [[ $uninstall_rootless == "true" ]]; then

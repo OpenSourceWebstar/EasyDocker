@@ -20,10 +20,10 @@ dockerDownShutdown()
     local app_name="$1"
     if [ -e $containers_dir$app_name/docker-compose.yml ]; then
         if [[ "$OS" == [1234567] ]]; then
-            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
                 local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
                 isSuccessful "Shutting down container for $app_name"
-            elif [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
                 local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose down)
                 isSuccessful "Shutting down container for $app_name"
             fi

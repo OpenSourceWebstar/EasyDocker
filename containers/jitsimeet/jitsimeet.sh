@@ -159,7 +159,7 @@ installJitsimeet()
         echo "---- $menu_number. Adjusting $app_name docker system files for port changes."
         echo ""
 
-        #runCommandForDockerInstallUser "docker exec -it $app_name /bin/bash && cd /"
+        #runCommandForDocker "docker exec -it $app_name /bin/bash && cd /"
 
 		#local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/default)
 		#checkSuccess "Updating Docker NGINX default site port 80 to $usedport1"
@@ -173,7 +173,7 @@ installJitsimeet()
 		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_name/web/rootfs/defaults/default)
 		checkSuccess "Updating NGINX default site port 443 to $usedport2"
 
-        #runCommandForDockerInstallUser "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
+        #runCommandForDocker "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
 		dockerDownUp $app_name;
 
         ((menu_number++))

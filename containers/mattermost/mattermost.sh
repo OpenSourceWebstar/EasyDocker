@@ -119,7 +119,7 @@ installMattermost()
 		checkSuccess "Creating folders needed for $app_name"
 
 
-		if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+		if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
             #local docker_rootless_user_id=$(id -u "$sudo_user_name")
             #local result=$(sudo chown -R $docker_rootless_user_id:$docker_rootless_user_id $containers_dir$app_name/volumes/app/mattermost)
             #checkSuccess "Setting folder permissions for $app_name folders"

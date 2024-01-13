@@ -50,7 +50,7 @@ setupHeadscale()
     if [ "$status" == "installed" ]; then
         # We don't set up headscale for headscale
         if [[ "$app_name" == "headscale" ]]; then
-            runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
+            runCommandForDocker "docker exec headscale headscale users create $CFG_INSTALL_NAME"
             checkSuccess "Creating Headscale user $CFG_INSTALL_NAME"
 
             while true; do
@@ -185,8 +185,7 @@ setupHeadscaleLocal()
     tailscaleInstallToContainer $app_name;
 
     setupHeadscaleGenerateAuthKey;
-
-    runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server $headscale_host_setup --authkey $headscale_preauthkey --force-reauth"
+    runCommandForDocker "docker exec $app_name tailscale up --login-server $headscale_host_setup --authkey $headscale_preauthkey --force-reauth"
     checkSuccess "Connecting $app_name to Headscale Server"
 
     result=$(rm -rf $headscale_preauthkey_file)
@@ -205,7 +204,7 @@ setupHeadscaleRemote()
 
     tailscaleInstallToContainer $app_name;
 
-    runCommandForDockerInstallUser "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY --force-reauth"
+    runCommandForDocker "docker exec $app_name tailscale up --login-server https://$CFG_HEADSCALE_HOST --authkey $CFG_HEADSCALE_KEY --force-reauth"
     checkSuccess "Connecting $app_name to Headscale Server"
 }
 
@@ -215,7 +214,7 @@ setupHeadscaleGenerateAuthKey()
     local temp_key_file="/docker/key.txt"
 
     local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-    runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME" > "$temp_key_file" 2>&1
+    runCommandForDocker "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME" > "$temp_key_file" 2>&1
     checkSuccess "Generating Auth Key in Headscale for $app_name"
 
     headscale_preauthkey=$(tr -d '\n' < "$temp_key_file")
@@ -313,7 +312,7 @@ headscaleCommands()
         echo "---- Creating user $CFG_INSTALL_NAME for Headscale :"
         echo ""
         local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-        runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
+        runCommandForDocker "docker exec headscale headscale users create $CFG_INSTALL_NAME"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -325,7 +324,7 @@ headscaleCommands()
         echo "---- Creating user $CFG_INSTALL_NAME for Headscale :"
         echo ""
         local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-        runCommandForDockerInstallUser "docker exec headscale headscale users create $CFG_INSTALL_NAME"
+        runCommandForDocker "docker exec headscale headscale users create $CFG_INSTALL_NAME"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -337,7 +336,7 @@ headscaleCommands()
         echo "---- Generating Auth Key in Headscale for user $CFG_INSTALL_NAME :"
         echo ""
         local CFG_INSTALL_NAME=$(echo "$CFG_INSTALL_NAME" | tr '[:upper:]' '[:lower:]')
-        runCommandForDockerInstallUser "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME"
+        runCommandForDocker "docker exec headscale headscale preauthkeys create -e 1h -u $CFG_INSTALL_NAME"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -348,7 +347,7 @@ headscaleCommands()
         echo ""
         echo "---- Showing all Headscale API Keys :"
         echo ""
-        runCommandForDockerInstallUser "docker exec headscale headscale apikeys list"
+        runCommandForDocker "docker exec headscale headscale apikeys list"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -359,7 +358,7 @@ headscaleCommands()
         echo ""
         echo "---- Showing all Headscale Nodes :"
         echo ""
-        runCommandForDockerInstallUser "docker exec headscale headscale nodes list"
+        runCommandForDocker "docker exec headscale headscale nodes list"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -370,7 +369,7 @@ headscaleCommands()
         echo ""
         echo "---- Showing all Headscale Users :"
         echo ""
-        runCommandForDockerInstallUser "docker exec headscale headscale user list"
+        runCommandForDocker "docker exec headscale headscale user list"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -381,7 +380,7 @@ headscaleCommands()
         echo ""
         checkSuccess "Showing the Headscale Version :"
         echo ""
-        runCommandForDockerInstallUser "docker exec headscale headscale version"
+        runCommandForDocker "docker exec headscale headscale version"
         echo ""
         isNotice "Press Enter to continue..."
         read
@@ -427,9 +426,9 @@ tailscaleInstallToContainer()
     if [[ "$type" != "install" ]]; then
         dockerDownUp $app_name;
     fi
-    #runCommandForDockerInstallUser "docker cp ${install_scripts_dir}tailscale.sh $app_name:/usr/local/bin/tailscale.sh"
+    #runCommandForDocker "docker cp ${install_scripts_dir}tailscale.sh $app_name:/usr/local/bin/tailscale.sh"
     #checkSuccess "Installing Tailscale installer script into the $app_name container"
 
-    runCommandForDockerInstallUser "docker exec -it $app_name /usr/local/bin/tailscale.sh"
+    runCommandForDocker "docker exec -it $app_name /usr/local/bin/tailscale.sh"
     checkSuccess "Executing Tailscale installer script in the $app_name container"
 }

@@ -247,7 +247,7 @@ dashyUpdateConf()
 
         if [ "$original_md5" != "$updated_md5" ]; then
             isNotice "Changes made to dashy config file...restarting dashy..."
-            runCommandForDockerInstallUser "docker restart dashy" > /dev/null 2>&1
+            runCommandForDocker "docker restart dashy" > /dev/null 2>&1
             isSuccessful "Restarted dashy docker container (if running)"
         else
             isSuccessful "No new changes made to the dashy config file."
@@ -275,9 +275,14 @@ invidiousResetUserPassword()
             echo "Debugging: SQL Query: $sql_query"
 
             # Execute the command
-            runCommandForDockerInstallUser "docker exec invidious-db /bin/bash -c \"psql -U kemal -d $database_name <<EOF
-            $sql_query
-            EOF\" && exit"
+            if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+runCommandForDockerInstallUser "docker exec invidious-db /bin/bash -c \"psql -U kemal -d $database_name <<EOF
+$sql_query
+EOF\" && exit"
+            elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+docker exec invidious-db /bin/bash -c "psql -U kemal -d $database_name <<EOF $sql_query EOF" && exit
+            fi
+
             isSuccessful "If the user $invidiousresetconfirm exists, the new password will be 'password'"
             sleep 5;
             break
@@ -321,8 +326,11 @@ mattermostResetUserPassword()
         isNotice "Waiting 10 seconds for mattermost to load the local socket"
         sleep 10
         # Update Password
-        runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
-        
+        if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+            runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
+        elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+            docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit
+        fi
         # Disable local mode
         result=$(sudo sed -i "s|\"EnableLocalMode\": true|\"EnableLocalMode\": false|" "$config_json")
         checkSuccess "EnableLocalMode set to false for password update."

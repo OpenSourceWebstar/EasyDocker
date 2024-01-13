@@ -10,7 +10,7 @@ installDocker()
             local result=$(sudo curl -fsSL https://get.docker.com | sh )
             checkSuccess "Downloading & Installing Docker"
 
-            if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
                 local result=$(sudo -u $sudo_user_name systemctl start docker)
                 checkSuccess "Starting Docker Service"
 
@@ -79,7 +79,7 @@ installDockerCompose()
 
 installDockerUser()
 {   
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
         if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
             isSuccessful "User $CFG_DOCKER_INSTALL_USER already exists."
         else
@@ -94,7 +94,7 @@ installDockerUser()
 installDockerNetwork()
 {
 	# Check if the network already exists
-    if ! runCommandForDockerInstallUser "docker network ls | grep -q \"$CFG_NETWORK_NAME\""; then
+    if ! runCommandForDocker "docker network ls | grep -q \"$CFG_NETWORK_NAME\""; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
@@ -113,7 +113,7 @@ docker network create \
   $CFG_NETWORK_NAME
 EOF
 )
-        local result=$(runCommandForDockerInstallUser "$network_create")
+        local result=$(runCommandForDocker "$network_create")
         checkSuccess "Creating docker network"
 	fi
 }
@@ -123,7 +123,7 @@ installDockerCheck()
     ##########################################
     #### Test if Docker Service is Running ###
     ##########################################
-    if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "false" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
         ISACT=$( (sudo -u $sudo_user_name systemctl is-active docker ) 2>&1 )
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Checking Docker service status. Waiting if not found."
@@ -150,7 +150,7 @@ installDockerCheck()
 
 installDockerRootless()
 {
-	if [[ $CFG_REQUIREMENT_DOCKER_ROOTLESS == "true" ]]; then
+	if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
 		if sudo grep -q "ROOTLESS" $sysctl; then
 			isSuccessful "Docker Rootless appears to be installed."
         else
