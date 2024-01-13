@@ -93,7 +93,7 @@ installTiledesk()
         echo ""
 
 		if [[ "$OS" == [1234567] ]]; then
-			if [[ $CFG_DOCKER_INSTALL_TYPE== "rootless" ]]; then
+			if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
 				local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
@@ -103,7 +103,7 @@ installTiledesk()
 					local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
-			elif [[ $CFG_DOCKER_INSTALL_TYPE== "root" ]]; then
+			elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
 				local result=$(sudo -u $sudo_user_name docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
