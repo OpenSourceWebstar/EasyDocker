@@ -177,7 +177,7 @@ checkRequirements()
 
 	if [[ $CFG_REQUIREMENT_DOCKER_NETWORK == "true" ]]; then
 		### Docker VPN Network
-		if runCommandForDocker "docker network ls | grep -q \"$CFG_NETWORK_NAME\"" sudo; then
+		if runCommandForDocker "docker network ls | grep -q \"$CFG_NETWORK_NAME\""; then
 			isSuccessful "Docker Network $CFG_NETWORK_NAME appears to be installed."
 		else
 			isNotice "Docker Network $CFG_NETWORK_NAME not found. Setup will start soon."
