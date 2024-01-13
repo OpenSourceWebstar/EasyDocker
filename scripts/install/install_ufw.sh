@@ -74,11 +74,13 @@ installUFWDocker()
                 echo "##########################################"
                 echo "###     Install UFW-Docker             ###"
                 echo "##########################################"
+                
+                ((menu_number++))
                 echo ""
                 echo "---- $menu_number. Installing using linux package installer"
                 echo ""
 
-                local result=$(sudo -u $sudo_user_name wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker)
+                local result=$(sudo wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker)
                 checkSuccess "Downloading UFW Docker installation files"
 
                 local result=$(sudo chmod +x /usr/local/bin/ufw-docker)
@@ -87,7 +89,7 @@ installUFWDocker()
                 local result=$(sudo ufw-docker install)
                 checkSuccess "Installing UFW Docker"
 
-                local result=$(sudo -u $sudo_user_name systemctl restart ufw)
+                local result=$(sudo systemctl restart ufw)
                 checkSuccess "Restarting UFW Firewall service"
 
                 echo "---- $menu_number. UFW-Docker has been installed, you can use ufw-docker to see the available commands"

@@ -26,7 +26,7 @@ startDocker()
         local result=$(sudo -u $sudo_user_name systemctl enable docker)
         checkSuccess "Enabling Docker Service"
 
-        local result=$(sudo -u $sudo_user_name usermod -aG docker $USER)
+        local result=$(sudo -u $sudo_user_name usermod -aG docker $sudo_user_name)
         checkSuccess "Adding user to 'docker' group"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
