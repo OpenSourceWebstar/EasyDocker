@@ -427,7 +427,7 @@ dockerDown()
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-            local result=$(sudo -u $sudo_user_name docker-compose $setup_compose down)
+            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     else
@@ -435,7 +435,7 @@ dockerDown()
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-            local result=$(sudo -u $sudo_user_name docker-compose $setup_compose down)
+            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     fi
@@ -462,7 +462,7 @@ dockerUp()
             checkSuccess "Started container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(sudo -u $sudo_user_name docker-compose up -d)
+            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     else
@@ -472,7 +472,7 @@ dockerUp()
             checkSuccess "Started container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(sudo -u $sudo_user_name docker-compose $setup_compose up -d)
+            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose $setup_compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     fi
