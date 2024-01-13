@@ -957,6 +957,7 @@ dockerSwitchBetweenRootAndRootless()
             isNotice "Docker Root is enabled but rootless is installed..."
             while true; do
                 isQuestion "Would you like to switch to Rooted Docker? (y/n): "
+                echo ""
                 read -p "" uninstall_rootless_choice
                 if [[ -n "$uninstall_rootless_choice" ]]; then
                     break
@@ -980,6 +981,7 @@ dockerSwitchBetweenRootAndRootless()
             isNotice "Rootless Docker is enabled but not installed..."
             while true; do
                 isQuestion "Would you like to switch to Rootless Docker? (y/n): "
+                echo ""
                 read -p "" install_rootless_choice
                 if [[ -n "$install_rootless_choice" ]]; then
                     break

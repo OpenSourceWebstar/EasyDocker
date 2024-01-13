@@ -187,6 +187,8 @@ installDockerRootless()
             echo "##########################################"
             echo ""
 
+            stopDocker;
+
             ((menu_number++))
             echo ""
             echo "---- $menu_number. Installing System Requirements."
