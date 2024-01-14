@@ -125,16 +125,18 @@ installDockerUser()
 
 installDockerNetwork()
 {
-	# Check if the network already exists
-    if ! runCommandForDocker "docker network ls | grep -q $CFG_NETWORK_NAME"; then
-        echo ""
-        echo "################################################"
-        echo "######      Create a Docker Network    #########"
-        echo "################################################"
-        echo ""
+    # Rootless
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        # Check if the network already exists
+        if ! runCommandForDocker "docker network ls | grep -q $CFG_NETWORK_NAME"; then
+            echo ""
+            echo "################################################"
+            echo "######      Create a Docker Network    #########"
+            echo "################################################"
+            echo ""
 
-		isNotice "Network $CFG_NETWORK_NAME not found, creating now"
-		# If the network does not exist, create it with the specified subnet
+            isNotice "Network $CFG_NETWORK_NAME not found, creating now"
+            # If the network does not exist, create it with the specified subnet
 network_create=$(cat <<EOF
 docker network create \
   --driver=bridge \
@@ -145,9 +147,37 @@ docker network create \
   $CFG_NETWORK_NAME
 EOF
 )
-        local result=$(runCommandForDocker "$network_create")
-        checkSuccess "Creating docker network"
-	fi
+            local result=$(runCommandForDocker "$network_create")
+            checkSuccess "Creating docker network"
+        fi
+    
+    # Root
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        # Check if the network already exists
+        if ! docker network ls | grep -q $CFG_NETWORK_NAME; then
+            echo ""
+            echo "################################################"
+            echo "######      Create a Docker Network    #########"
+            echo "################################################"
+            echo ""
+
+            isNotice "Network $CFG_NETWORK_NAME not found, creating now"
+            # If the network does not exist, create it with the specified subnet
+network_create=$(cat <<EOF
+docker network create \
+  --driver=bridge \
+  --subnet=$CFG_NETWORK_SUBNET \
+  --ip-range=$CFG_NETWORK_SUBNET \
+  --gateway=${CFG_NETWORK_SUBNET%.*}.1 \
+  --opt com.docker.network.bridge.name=$CFG_NETWORK_NAME \
+  $CFG_NETWORK_NAME
+EOF
+)
+            local result=$($network_create)
+            checkSuccess "Creating docker network"
+        fi
+    fi
+
 }
 
 installDockerCheck()
