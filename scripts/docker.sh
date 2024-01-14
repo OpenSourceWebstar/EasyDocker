@@ -1036,14 +1036,14 @@ scanContainersForDockerSocket()
 
     for file in "$directory"/*; do
         if [ -f "$file" ]; then
-            if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
                 if grep -q "/var/run/docker.sock" "$file"; then
                     isSuccessful "Found Docker socket to change in file: $file"
                     result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
                     checkSuccess "Updated socket in file: $file"
                     docker_socket_file_updated="true"
                 fi
-            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
                 if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
                     isSuccessful "Found Docker socket to change in file: $file"
                     result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
@@ -1057,13 +1057,11 @@ scanContainersForDockerSocket()
 
 dockerUpdateAppsToDockerType()
 {
-    local run_switcher="false"
-
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
         # Scannning the containers folder
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
-            scanContainersForDockerSocket "$dir" "root"
+            scanContainersForDockerSocket "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $dir;
             fi
@@ -1075,7 +1073,7 @@ dockerUpdateAppsToDockerType()
         # Scannning the containers folder
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
-            scanContainersForDockerSocket "$dir" "rootless"
+            scanContainersForDockerSocket "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $dir;
             fi
