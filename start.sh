@@ -178,6 +178,7 @@ startScan()
 		dockerScan;
     fi
     dockerSwitchBetweenRootAndRootless;
+    dockerUpdateAppsToDockerType;
     databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";

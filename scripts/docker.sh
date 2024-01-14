@@ -951,29 +951,6 @@ dockerSwitchBetweenRootAndRootless()
         fi
     fi
 
-    scanContainersForDockerSocket() 
-    {
-        local directory="$1"
-        local type="$2"
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-
-        for file in "$directory"/*; do
-            if [ -f "$file" ]; then
-                if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-                    if grep -q "/var/run/docker.sock" "$file"; then
-                        result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
-                        checkSuccess "Updated file: $file"
-                    fi
-                elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-                    if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
-                        result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
-                        checkSuccess "Updated file: $file"
-                    fi
-                fi
-            fi
-        done
-    }
-
     if [[ $run_switcher == "true" ]]; then
         echo ""
         echo "##########################################"
@@ -996,12 +973,22 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Switching to the Rooted Docker now..."
                 stopDocker rootless;
                 startDocker root;
-                # Scannning the containers folder
-                local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
-                for dir in "${subdirectories[@]}"; do
-                    scanContainersForDockerSocket "$dir" "root"
-                    restartApp $dir;
+                # Reboot
+                isNotice "*** A restart is highly recommended after changing the Docker type ***"
+                echo ""
+                while true; do
+                    isQuestion "Would you like to restart the server? (y/n): "
+                    echo ""
+                    read -p "" switch_rooted_restart_choice
+                    if [[ -n "$switch_rooted_restart_choice" ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input."
                 done
+                if [[ "$switch_rooted_restart_choice" == [yY] ]]; then
+                    isNotice "Restarting server now..."
+                    sudo reboot
+                fi
             fi
         fi
 
@@ -1020,13 +1007,79 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Switching to the Rootless Docker now..."
                 stopDocker root;
                 startDocker rootless;
-                # Scannning the containers folder
-                local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
-                for dir in "${subdirectories[@]}"; do
-                    scanContainersForDockerSocket "$dir" "rootless"
-                    restartApp $dir;
+                # Reboot
+                isNotice "*** A restart is highly recommended after changing the Docker type ***"
+                echo ""
+                while true; do
+                    isQuestion "Would you like to restart the server? (y/n): "
+                    echo ""
+                    read -p "" switch_rootless_restart_choice
+                    if [[ -n "$switch_rootless_restart_choice" ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input."
                 done
+                if [[ "$switch_rootless_restart_choice" == [yY] ]]; then
+                    isNotice "Restarting server now..."
+                    sudo reboot
+                fi
             fi
         fi
+    fi
+}
+
+scanContainersForDockerSocket() 
+{
+    local directory="$1"
+    local type="$2"
+    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+
+    for file in "$directory"/*; do
+        if [ -f "$file" ]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+                if grep -q "/var/run/docker.sock" "$file"; then
+                    isSuccessful "Found Docker socket to change in file: $file"
+                    result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
+                    checkSuccess "Updated socket in file: $file"
+                    docker_socket_file_updated="true"
+                fi
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+                if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
+                    isSuccessful "Found Docker socket to change in file: $file"
+                    result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
+                    checkSuccess "Updated file: $file"
+                    docker_socket_file_updated="true"
+                fi
+            fi
+        fi
+    done
+}
+
+dockerUpdateAppsToDockerType()
+{
+    local run_switcher="false"
+
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        # Scannning the containers folder
+        local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+        for dir in "${subdirectories[@]}"; do
+            scanContainersForDockerSocket "$dir" "root"
+            if [[ $docker_socket_file_updated == "true" ]]; then
+                restartApp $dir;
+            fi
+            docker_socket_file_updated="false"
+        done
+    fi
+
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        # Scannning the containers folder
+        local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+        for dir in "${subdirectories[@]}"; do
+            scanContainersForDockerSocket "$dir" "rootless"
+            if [[ $docker_socket_file_updated == "true" ]]; then
+                restartApp $dir;
+            fi
+            docker_socket_file_updated="false"
+        done
     fi
 }
