@@ -427,7 +427,7 @@ dockerDown()
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose $setup_compose down)
+            local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     else
@@ -435,7 +435,7 @@ dockerDown()
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose $setup_compose down)
+            local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
     fi
@@ -462,7 +462,7 @@ dockerUp()
             checkSuccess "Started container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose up -d)
+            local result=$(cd $containers_dir$app_name && sudo docker-compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     else
@@ -472,7 +472,7 @@ dockerUp()
             checkSuccess "Started container for $app_name"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
-            local result=$(cd $containers_dir$app_name && sudo -u $sudo_user_name docker-compose $setup_compose up -d)
+            local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose up -d)
             checkSuccess "Started container for $app_name"
         fi
     fi
@@ -793,9 +793,9 @@ dockerStopAllApps()
     fi
 
     if [[ $type == "root" ]]; then
-        local result=$(sudo -u $sudo_user_name docker ps -q 2>/dev/null)
+        local result=$(sudo docker ps -q 2>/dev/null)
         if [[ -n "$result" ]]; then
-            local result=$(sudo -u $sudo_user_name docker stop $(docker ps -a -q))
+            local result=$(sudo docker stop $(docker ps -a -q))
             checkSuccess "Stopping all docker containers (Rooted if installed)"
         fi
     fi
@@ -808,7 +808,7 @@ dockerStartAllApps()
         local result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(sudo -u $sudo_user_name docker restart $(docker ps -a -q))
+        local result=$(sudo docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
 }
@@ -916,7 +916,7 @@ isDockerRunningForUser()
         local docker_command='docker ps 2>&1'
         local result=$(runCommandForDockerInstallUser "$docker_command")
     elif [[ $type == "root" ]]; then
-        local docker_command='sudo -u $sudo_user_name docker ps 2>&1'
+        local docker_command='sudo docker ps 2>&1'
         local result=$(eval "$docker_command")
     else
         echo "Invalid user type specified."

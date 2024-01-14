@@ -20,13 +20,13 @@ installDocker()
 startDocker()
 {
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(sudo -u $sudo_user_name systemctl start docker)
+        local result=$(sudo systemctl start docker)
         checkSuccess "Starting Docker Service"
 
-        local result=$(sudo -u $sudo_user_name systemctl enable docker)
+        local result=$(sudo systemctl enable docker)
         checkSuccess "Enabling Docker Service"
 
-        local result=$(sudo -u $sudo_user_name usermod -aG docker $sudo_user_name)
+        local result=$(sudo usermod -aG docker $sudo_user_name)
         checkSuccess "Adding user to 'docker' group"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
@@ -44,10 +44,10 @@ stopDocker()
 
     if [[ "$type" == "root" ]]; then
         isNotice "Stopping rooted docker service...this may take a moment..."
-        local result=$(sudo -u $sudo_user_name systemctl stop docker)
+        local result=$(sudo systemctl stop docker)
         checkSuccess "Stopping Rooted Docker Service"
 
-        local result=$(sudo -u $sudo_user_name systemctl enable docker)
+        local result=$(sudo systemctl disable docker)
         checkSuccess "Disabling Rooted Docker Service"
     fi
 
