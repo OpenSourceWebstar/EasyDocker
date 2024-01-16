@@ -730,6 +730,12 @@ setupFileWithConfigData()
             -e "s|GIDHERE|$docker_install_user_id|g" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        local result=$(sudo sed -i \
+            -e "s|- /run/user/${docker_install_user_id}/docker.sock|- /var/run/docker.sock|g" \
+        "$full_file_path")
+        checkSuccess "Updating docker socket for $app_name"
     fi
 
     if [[ $file_name == *"docker-compose"* ]]; then
