@@ -928,7 +928,7 @@ databaseCronJobsInsert()
 databaseRemoveFile()
 {
 	if [[ "$tooldeletedb" == [yY] ]]; then
-        local result=$(sudo -u $sudo_user_name rm $docker_dir/$db_file)
+        local result=$(sudo rm $docker_dir/$db_file)
         checkSuccess "Removing $db_file file"
     fi
 }

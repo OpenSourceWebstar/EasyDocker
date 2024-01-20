@@ -98,7 +98,7 @@ installDockerCompose()
         ######################################
 
         if [[ "$OS" == "4" ]]; then
-            sudo -u $sudo_user_name pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
+            pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
         fi
 
         echo ""
@@ -190,11 +190,11 @@ installDockerCheck()
     #### Test if Docker Service is Running ###
     ##########################################
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        ISACT=$( (sudo -u $sudo_user_name systemctl is-active docker ) 2>&1 )
+        ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Checking Docker service status. Waiting if not found."
             while [[ "$ISACT" != "active" ]] && [[ $X -le 10 ]]; do
-                sudo -u $sudo_user_name systemctl start docker | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+                sudo systemctl start docker | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
                 sleep 10s &
                 pid=$! # Process Id of the previous running command
                 spin='-\|/'
@@ -206,7 +206,7 @@ installDockerCheck()
                     sleep .1
                 done
                 printf "\r"
-                ISACT=`sudo -u $sudo_user_name systemctl is-active docker`
+                ISACT=`sudo systemctl is-active docker`
                 let X=X+1
                 echo "$X"
             done
@@ -279,7 +279,7 @@ installDockerRootless()
                 else
                     local result=$(echo "kernel.unprivileged_userns_clone=1" | sudo tee -a $sysctl > /dev/null)
                     checkSuccess "Adding kernel.unprivileged_userns_clone=1 to $sysctl..."
-                    local result=$(sudo -u $sudo_user_name sysctl --system)
+                    local result=$(sudo sysctl --system)
                     checkSuccess "Running sudo -u $sudo_user_name sysctl --system..."
                 fi
             fi

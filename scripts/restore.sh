@@ -625,10 +625,10 @@ restoreCopyFile()
                 checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
             elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
                 if [[ "$remote_server" == "1" ]]; then
-                    local result=$(sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
+                    local result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
                     checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"
                 elif [[ "$remote_server" == "2" ]]; then
-                    local result=$(sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
+                    local result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
                     checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_2_IP to $RESTORE_SAVE_DIRECTORY"
                 fi
             fi
@@ -640,10 +640,10 @@ restoreCopyFile()
             checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
         elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
             if [[ "$remote_server" == "1" ]]; then
-                local result=$(sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
+                local result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
                 checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"
             elif [[ "$remote_server" == "2" ]]; then
-                local result=$(sudo -u $sudo_user_name sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
+                local result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_2_PASS" scp -v -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_2_USER"@"$CFG_BACKUP_REMOTE_2_IP":"$remote_path_save/$chosen_backup_file" "$destination_path")
                 checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_2_IP to $RESTORE_SAVE_DIRECTORY"
             fi
         fi

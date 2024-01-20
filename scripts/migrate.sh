@@ -3,8 +3,8 @@
 migrateCheckForMigrateFiles() 
 {
     # Check if there are files without the specified string
-    local full_files_without_string=$(sudo -u $sudo_user_name ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
-    local single_files_without_string=$(sudo -u $sudo_user_name ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local full_files_without_string=$(sudo ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
     # Combine the two lists of files
     local files_without_string="$full_files_without_string"$'\n'"$single_files_without_string"
 
@@ -74,15 +74,15 @@ migrateEnableConfig()
 
 migrateGetAppName() 
 {
-    local selected_file=$(sudo -u $sudo_user_name echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
-    local selected_app_name=$(sudo -u $sudo_user_name echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
+    local selected_file=$(sudo echo "$1" | cut -d':' -f2- | sed 's/^ *//g')
+    local selected_app_name=$(sudo echo "$selected_file" | sed 's/-backup.*//' | sed 's/.*-//')
     #echo "$selected_app_name"
 }
 
 migrateCheckForFullMigrateFiles() 
 {
     # Check if there are backup files found
-    local full_backup_files=$(sudo -u $sudo_user_name ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local full_backup_files=$(sudo ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     if [ -n "$full_backup_files" ]; then
         migrateshowfull=true
@@ -92,7 +92,7 @@ migrateCheckForFullMigrateFiles()
 migrateListFullMigrateFiles()
 {
     # Find files not containing $CFG_INSTALL_NAME
-    local full_files_without_string=$(sudo -u $sudo_user_name ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local full_files_without_string=$(sudo ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$full_files_without_string" ]; then
@@ -138,7 +138,7 @@ migrateListFullMigrateFiles()
 migrateCheckForSingleMigrateFiles() 
 {
     # Check if there are backup files found
-    local single_backup_files=$(sudo -u $sudo_user_name ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
+    local single_backup_files=$(sudo ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
 
     if [ -n "$single_backup_files" ]; then
         migrateshowsingle=true
@@ -148,7 +148,7 @@ migrateCheckForSingleMigrateFiles()
 migrateListSingleMigrateFiles() 
 {
     # Find files not containing $CFG_INSTALL_NAME
-    local single_files_without_string=$(sudo -u $sudo_user_name ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$single_files_without_string" ]; then
@@ -214,10 +214,10 @@ migrateRestoreFileMoveToMigrate()
             isError "No app_name provided, unable to start restore."
             return 1
         elif [[ $app_name == "full" ]]; then
-            local result=$(sudo -u $sudo_user_name mv $backup_full_dir/$chosen_backup_file $migrate_full_dir/$chosen_backup_file)
+            local result=$(sudo mv $backup_full_dir/$chosen_backup_file $migrate_full_dir/$chosen_backup_file)
             checkSuccess "Moving $chosen_backup_file to $migrate_full_dir"
         else
-            local result=$(sudo -u $sudo_user_name mv $backup_single_dir/$chosen_backup_file $migrate_single_dir/$chosen_backup_file)
+            local result=$(sudo mv $backup_single_dir/$chosen_backup_file $migrate_single_dir/$chosen_backup_file)
             checkSuccess "Moving $chosen_backup_file to $migrate_single_dir"
         fi
   fi
@@ -236,10 +236,10 @@ migrateRestoreFileMoveToMigrate()
             isError "No app_name provided, unable to start restore."
             return 1
         elif [[ $app_name == "full" ]]; then
-            local result=$(sudo -u $sudo_user_name mv $backup_full_dir/$chosen_backup_file)
+            local result=$(sudo mv $backup_full_dir/$chosen_backup_file)
             checkSuccess "Deleting $chosen_backup_file in $backup_full_dir"
         else
-            local result=$(sudo -u $sudo_user_name rm $backup_single_dir/$chosen_backup_file)
+            local result=$(sudo rm $backup_single_dir/$chosen_backup_file)
             checkSuccess "Deleting $chosen_backup_file in $backup_single_dir"
         fi
     fi
@@ -249,7 +249,7 @@ migrateRestoreFileMoveToMigrate()
 migrateRestoreFilesMoveToMigrate()
 {
     # Find files not containing $CFG_INSTALL_NAME
-    local full_files_without_string=$(sudo -u $sudo_user_name ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local full_files_without_string=$(sudo ls "$backup_full_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$full_files_without_string" ]; then
@@ -291,7 +291,7 @@ migrateRestoreFilesMoveToMigrate()
         checkSuccess "Moving $full_backup_file to $migrate_full_dir"
     done
 
-    local single_files_without_string=$(sudo -u $sudo_user_name ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$single_files_without_string" ]; then
@@ -380,7 +380,7 @@ migrateRestoreFileMoveFromMigrate()
             local src_path="$file_to_move"
             local dst_path="$backup_single_dir/${file_to_move##*/}"
             echo ""
-            local result=$(sudo -u $sudo_user_name mv "$src_path" "$dst_path")
+            local result=$(sudo mv "$src_path" "$dst_path")
             checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
 
         elif [ "$choice" = "2" ]; then
@@ -410,7 +410,7 @@ migrateRestoreFileMoveFromMigrate()
             local src_path="$file_to_move"
             local dst_path="$backup_full_dir/${file_to_move##*/}"
             echo ""
-            local result=$(sudo -u $sudo_user_name mv "$src_path" "$dst_path")
+            local result=$(sudo mv "$src_path" "$dst_path")
             checkSuccess "Moving $(basename "$file_to_move") to $backup_full_dir"
 
         elif [ "$choice" = "3" ]; then
@@ -465,7 +465,7 @@ migrateRestoreFileMoveFromMigrate()
                 for f in "${files[@]}"; do
                     local src_path="$f"
                     local dst_path="$dst_dir/${f##*/}"
-                    local result=$(sudo -u $sudo_user_name mv "$src_path" "$dst_path")
+                    local result=$(sudo mv "$src_path" "$dst_path")
                     checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
                 done
                 echo ""

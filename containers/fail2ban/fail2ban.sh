@@ -105,7 +105,7 @@ installFail2ban()
             local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name/)
             checkSuccess "Creating $app_name folder"
 
-		    local result=$(copyResource "$app_name" "jail.local" "config/$app_name" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
+		    local result=$(copyResource "$app_name" "jail.local" "config/$app_name" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
             checkSuccess "Coping over jail.local from Resources folder"
 
             local result=$(sudo sed -i "s/my-api-key/$CFG_FAIL2BAN_ABUSEIPDB_APIKEY/g" $containers_dir$app_name/config/$app_name/jail.local)

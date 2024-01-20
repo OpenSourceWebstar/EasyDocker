@@ -70,7 +70,7 @@ installAdguard()
 
         setupComposeFile $app_name;
 
-		local result=$(copyResource "$app_name" "unbound.conf" "etc" | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1)
+		local result=$(copyResource "$app_name" "unbound.conf" "etc" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
 
 		((menu_number++))

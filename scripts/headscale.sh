@@ -421,7 +421,7 @@ tailscaleInstallToContainer()
     local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/tailscale)
     checkSuccess "Creating Tailscale folder"
 
-    copyFile "loud" "${install_scripts_dir}tailscale.sh" "$containers_dir$app_name/tailscale/tailscale.sh" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "loud" "${install_scripts_dir}tailscale.sh" "$containers_dir$app_name/tailscale/tailscale.sh" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
 
     if [[ "$type" != "install" ]]; then
         dockerDownUp $app_name;

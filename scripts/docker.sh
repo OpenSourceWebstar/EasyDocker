@@ -90,7 +90,7 @@ setupConfigToContainer()
         if [ "$silent_flag" == "loud" ]; then
             isNotice "Copying config file to '$target_path/$config_file'..."
         fi
-        copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $sudo_user_name | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+        copyFile "$silent_flag" "$source_file" "$target_path/$config_file" $sudo_user_name | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
     fi
 
     fixConfigPermissions $silent_flag $app_name;
@@ -156,7 +156,7 @@ setupConfigToContainer()
                     case $resetconfigaccept in
                         [yY])
                             isNotice "Resetting $app_name config file."
-                            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+                            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
                             source $target_path/$config_file
                             setupConfigToContainer "loud" $app_name;
                             break
@@ -172,7 +172,7 @@ setupConfigToContainer()
             fi
         else
             isNotice "Config file for $app_name does not exist. Creating it..."
-            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
             echo ""
             isNotice "Config file for $app_name contains no edits."
             echo ""
@@ -396,7 +396,7 @@ setupComposeFile()
         return 1
     fi
     
-    copyFile "loud" "$source_file" "$target_file" $CFG_DOCKER_INSTALL_USER | sudo -u $sudo_user_name tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "loud" "$source_file" "$target_file" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."
