@@ -875,8 +875,8 @@ dockerScanForShouldRestart()
 
 dockerPruneNetworks()
 {
-    local result=$(runCommandForDocker "docker network prune -f")
-    checkSuccess "Pruning any unused Docker networks"
+    local result=$(runCommandForDocker "docker network prune -f --filter \"name!=vpn\"")
+    checkSuccess "Pruning unused Docker networks (excluding vpn)"
 }
 
 dockerCheckContainerHealth() 
