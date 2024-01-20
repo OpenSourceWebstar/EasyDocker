@@ -983,6 +983,8 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Switching to the Rooted Docker now..."
                 stopDocker rootless;
                 startDocker root;
+                dockerFileUserToDockerType;
+                dockerUpdateAppsToDockerType;
                 # Reboot
                 isNotice "*** A restart is highly recommended after changing the Docker type ***"
                 echo ""
@@ -1017,6 +1019,8 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Switching to the Rootless Docker now..."
                 stopDocker root;
                 startDocker rootless;
+                dockerFileUserToDockerType;
+                dockerUpdateAppsToDockerType;
                 # Reboot
                 isNotice "*** A restart is highly recommended after changing the Docker type ***"
                 echo ""
@@ -1063,6 +1067,17 @@ scanContainersForDockerSocket()
             fi
         fi
     done
+}
+
+dockerFileUserToDockerType()
+{
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        update_permissions $CFG_DOCKER_INSTALL_USER $sudo_user_name $containers_dir
+    fi
+
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        update_permissions $sudo_user_name $CFG_DOCKER_INSTALL_USER $containers_dir
+    fi
 }
 
 dockerUpdateAppsToDockerType()

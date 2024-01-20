@@ -45,6 +45,7 @@ startUp()
             uninstallApp sshdownload;
         fi
     fi
+    dockerSwitchBetweenRootAndRootless;
     checkRequirements;
 }
 
@@ -177,8 +178,6 @@ startScan()
 	if [[ $CFG_REQUIREMENT_WHITELIST_PORT_UPDATER == "true" ]]; then
 		dockerScan;
     fi
-    dockerSwitchBetweenRootAndRootless;
-    dockerUpdateAppsToDockerType;
     databaseAppScan;
     databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";
