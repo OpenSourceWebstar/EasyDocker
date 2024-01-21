@@ -54,11 +54,29 @@ stopDocker()
     fi
 
     if [[ "$type" == "rootless" ]]; then
-        if sudo systemctl list-unit-files --type=service | grep -q "docker.service"; then
+        if runCommandForDockerInstallUser "systemctl list-unit-files --type=service | grep -q "docker.service";" then
             isNotice "Stopping rootless docker service...this may take a moment..."
             local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
             checkSuccess "Stop the systemd user docker service"
         fi
+    fi
+}
+
+downAllDockerApps()
+{
+    local type="$1"
+    local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
+
+    if [[ "$type" == "root" ]]; then
+        for dir in "${subdirectories[@]}"; do
+            shutdownApp $(basename $dir);
+        done
+    fi
+
+    if [[ "$type" == "rootless" ]]; then
+        for dir in "${subdirectories[@]}"; do
+            shutdownApp $(basename $dir);
+        done
     fi
 }
 
@@ -196,7 +214,7 @@ installDockerRootless()
             echo "##########################################"
             echo ""
 
-            dockerStopAllApps root;
+            downAllDockerApps root;
             stopDocker root;
 
             ((menu_number++))
