@@ -722,18 +722,16 @@ setupFileWithConfigData()
     checkSuccess "Updating $file_name for $app_name"
     
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
-            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
+            -e "s|- $docker_root_socket|- $docker_rootless_socket|g" \
             -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
             -e "s|UIDHERE|$docker_install_user_id|g" \
             -e "s|GIDHERE|$docker_install_user_id|g" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
-            -e "s|- /run/user/${docker_install_user_id}/docker.sock|- /var/run/docker.sock|g" \
+            -e "s|- $docker_rootless_socket|- $docker_root_socket|g" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
     fi
@@ -943,19 +941,38 @@ isDockerRunningForUser()
     fi
 }
 
+dockerSetSocketPermissions()
+{
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        local result=$(chmod -r "$docker_rootless_socket")
+        checkSuccess "Removing read permissions from Rootless docket socket."
+        
+        local result=$(chmod +r "$docker_root_socket")
+        checkSuccess "Adding read permissions from Rooted docket socket."
+    fi
+
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        local result=$(chmod -r "$docker_rootless_socket")
+        checkSuccess "Removing read permissions from Rooted docket socket."
+
+        local result=$(chmod +r "$docker_root_socket")
+        checkSuccess "Adding read permissions from Rootless docket socket."
+    fi
+}
+
 dockerSwitchBetweenRootAndRootless()
 {
     local run_switcher="false"
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        if isDockerRunningForUser "rootless"; then
+        if [ -r $docker_rootless_socket ]; then
             run_switcher="true"
             switch_type="root"
         fi
     fi
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        if isDockerRunningForUser "root"; then
+        if [ -r $docker_root_socket ]; then
             run_switcher="true"
             switch_type="rootless"
         fi
@@ -982,8 +999,8 @@ dockerSwitchBetweenRootAndRootless()
             if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the Rooted Docker now..."
                 stopDocker rootless;
+                dockerSetSocketPermissions;
                 startDocker root;
-                dockerFileUserToDockerType;
                 dockerUpdateAppsToDockerType;
                 # Reboot
                 isNotice "*** A restart is highly recommended after changing the Docker type ***"
@@ -1019,7 +1036,6 @@ dockerSwitchBetweenRootAndRootless()
                 isNotice "Switching to the Rootless Docker now..."
                 stopDocker root;
                 startDocker rootless;
-                dockerFileUserToDockerType;
                 dockerUpdateAppsToDockerType;
                 # Reboot
                 isNotice "*** A restart is highly recommended after changing the Docker type ***"
@@ -1046,21 +1062,20 @@ scanContainersForDockerSocket()
 {
     local directory="$1"
     local type="$2"
-    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
     for file in "$directory"/*; do
         if [ -f "$file" ]; then
             if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-                if grep -q "/var/run/docker.sock" "$file"; then
+                if grep -q "$docker_root_socket" "$file"; then
                     isSuccessful "Found Docker socket to change in file: $file"
-                    result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
+                    result=$(sudo sed -i -e "s|$docker_root_socket|$docker_rootless_socket|g" "$file")
                     checkSuccess "Updated socket in file: $file"
                     docker_socket_file_updated="true"
                 fi
             elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-                if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
+                if grep -q "$docker_rootless_socket" "$file"; then
                     isSuccessful "Found Docker socket to change in file: $file"
-                    result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
+                    result=$(sudo sed -i -e "s|$docker_rootless_socket|$docker_root_socket|g" "$file")
                     checkSuccess "Updated file: $file"
                     docker_socket_file_updated="true"
                 fi
@@ -1071,12 +1086,16 @@ scanContainersForDockerSocket()
 
 dockerFileUserToDockerType()
 {
+    local directory="$1"
+
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        update_permissions $CFG_DOCKER_INSTALL_USER $sudo_user_name $containers_dir
+        echo "#update_permissions $CFG_DOCKER_INSTALL_USER $sudo_user_name $directory"
+        #update_permissions $CFG_DOCKER_INSTALL_USER $sudo_user_name $directory
     fi
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        update_permissions $sudo_user_name $CFG_DOCKER_INSTALL_USER $containers_dir
+        echo "#update_permissions $sudo_user_name $CFG_DOCKER_INSTALL_USER $directory"
+        #update_permissions $sudo_user_name $CFG_DOCKER_INSTALL_USER $directory
     fi
 }
 
@@ -1086,7 +1105,8 @@ dockerUpdateAppsToDockerType()
         # Scannning the containers folder
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
-            scanContainersForDockerSocket "$dir"
+            scanContainersForDockerSocket "$dir";
+            dockerFileUserToDockerType "$dir";
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $(basename $dir);
             fi
@@ -1099,6 +1119,7 @@ dockerUpdateAppsToDockerType()
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
+            dockerFileUserToDockerType "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $(basename $dir);
             fi

@@ -38,6 +38,12 @@ config_file_requirements=config_requirements
 config_file_wireguard=config_wireguard
 config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$config_file_requirements" "$config_file_wireguard")
 
+# Docker
+docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
+docker_rootless_socket="$docker_rootless_socket"
+docker_root_socket="/var/run/docker.sock"
+
 # Menu
 menu_number=0
 
