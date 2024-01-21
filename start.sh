@@ -166,6 +166,8 @@ startScan()
 		migrateScanFoldersForUpdates;
 	fi
     #databaseSSHScanForKeys;
+    #dockerFileUserToDockerType;
+    dockerUpdateAppsToDockerType;
     scanConfigsForRandomPassword;
     updateDockerInstallPassword;
 	dashyUpdateConf;

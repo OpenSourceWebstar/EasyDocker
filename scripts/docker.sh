@@ -1088,7 +1088,7 @@ dockerUpdateAppsToDockerType()
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
-                restartApp $dir;
+                restartApp $(basename $dir);
             fi
             docker_socket_file_updated="false"
         done
@@ -1100,7 +1100,7 @@ dockerUpdateAppsToDockerType()
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
-                restartApp $dir;
+                restartApp $(basename $dir);
             fi
             docker_socket_file_updated="false"
         done
