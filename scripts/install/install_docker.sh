@@ -204,7 +204,8 @@ installDockerRootless()
             echo "---- $menu_number. Installing System Requirements."
             echo ""
 
-
+            local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+            local docker_install_bashrc="/home/$CFG_DOCKER_INSTALL_USER/.bashrc"
 
             local result=$(sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common uidmap dbus-user-session fuse-overlayfs)
             checkSuccess "Installing necessary packages"
