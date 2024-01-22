@@ -5,4 +5,4 @@ http:
     protectionAuth:
       basicAuth:
         users:
-          - "PROTECTUSER:PROTECTPASS"
+          - "PROTECTUSER:PROTECTPASS" #protection credentials

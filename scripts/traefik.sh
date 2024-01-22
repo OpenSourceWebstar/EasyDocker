@@ -92,8 +92,9 @@ traefikSetupLoginCredentials()
 		# Setup BasicAuth credentials
 		local password_hash=$(htpasswd -Bbn "$CFG_LOGIN_USER" "$CFG_LOGIN_PASS")
 
-		# Update the YAML file in place
-		local result=$(sudo sed -E -i "0,/^\s*- /{s|^\s*- .*|          - \"$password_hash\"|}" $protectionauth_file)
-		checkSuccess "Configured Traefik config with Login user/pass data for login protection."
+        local result=$(sed -i '/#protection credentials/d' "$protectionauth_file")
+        checkSuccess "Delete the line containing protection credentials"
+        local result=$(sed -i "/users:/a\ - \"\$CFG_LOGIN_USER:\$password_hash\" #protection credentials" "$protectionauth_file")
+        checkSuccess "Add the new line with new protection credentials"
 	fi
 }
