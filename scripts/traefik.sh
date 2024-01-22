@@ -92,9 +92,9 @@ traefikSetupLoginCredentials()
 		# Setup BasicAuth credentials
 		local password_hash=$(htpasswd -Bbn "$CFG_LOGIN_USER" "$CFG_LOGIN_PASS")
 
-        local result=$(sed -i '/#protection credentials/d' "$protectionauth_file")
+        local result=$(sudo sed -i '/#protection credentials/d' "$protectionauth_file")
         checkSuccess "Delete the line containing protection credentials"
-        local result=$(sed -i "/users:/a\ - \"\$CFG_LOGIN_USER:\$password_hash\" #protection credentials" "$protectionauth_file")
+        local result=$(sudo sed -i "/users:/a\ - \"\$CFG_LOGIN_USER:\$password_hash\" #protection credentials" "$protectionauth_file")
         checkSuccess "Add the new line with new protection credentials"
 	fi
 }
