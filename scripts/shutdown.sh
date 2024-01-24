@@ -36,10 +36,10 @@ dockerDownShutdown()
             else
                 # Used for Shutting down Rooted type switcher
                 if [[ $type == "rootless" ]]; then
-                    local result=$(cd $containers_dir$app_name && sudo docker-compose down)
+                    local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
                     isSuccessful "Shutting down container for $app_name"
                 elif [[ $type == "root" ]]; then
-                    local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
+                    local result=$(cd $containers_dir$app_name && sudo docker-compose down)
                     isSuccessful "Shutting down container for $app_name"
                 fi
             fi
