@@ -67,17 +67,9 @@ downAllDockerApps()
     local type="$1"
     local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
 
-    if [[ "$type" == "root" ]]; then
-        for dir in "${subdirectories[@]}"; do
-            shutdownApp $(basename $dir);
-        done
-    fi
-
-    if [[ "$type" == "rootless" ]]; then
-        for dir in "${subdirectories[@]}"; do
-            shutdownApp $(basename $dir);
-        done
-    fi
+    for dir in "${subdirectories[@]}"; do
+        shutdownApp $(basename $dir) $type;
+    done
 }
 
 installDockerCompose()

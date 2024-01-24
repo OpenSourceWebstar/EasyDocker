@@ -3,13 +3,15 @@
 shutdownApp()
 {
     local app_name="$1"
+    local type="$2"
+
     echo ""
     echo "##########################################"
     echo "###      Shutting down $app_name"
     echo "##########################################"
     echo ""
 
-    dockerDownShutdown $app_name;
+    dockerDownShutdown $app_name $type;
             
     sleep 3s
     cd
@@ -18,14 +20,28 @@ shutdownApp()
 dockerDownShutdown()
 {
     local app_name="$1"
+    local type="$2"
+
     if [ -e $containers_dir$app_name/docker-compose.yml ]; then
         if [[ "$OS" == [1234567] ]]; then
-            if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-                local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
-                isSuccessful "Shutting down container for $app_name"
-            elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-                local result=$(cd $containers_dir$app_name && sudo docker-compose down)
-                isSuccessful "Shutting down container for $app_name"
+            if [[ "$type" == "" ]]; then
+                # Used for standard app shutdown
+                if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+                    local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
+                    isSuccessful "Shutting down container for $app_name"
+                elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+                    local result=$(cd $containers_dir$app_name && sudo docker-compose down)
+                    isSuccessful "Shutting down container for $app_name"
+                fi
+            else
+                # Used for Shutting down Rooted type switcher
+                if [[ $type == "rootless" ]]; then
+                    local result=$(cd $containers_dir$app_name && sudo docker-compose down)
+                    isSuccessful "Shutting down container for $app_name"
+                elif [[ $type == "root" ]]; then
+                    local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
+                    isSuccessful "Shutting down container for $app_name"
+                fi
             fi
         fi
         dockerDownShutdownSuccessMessage $app_name;
