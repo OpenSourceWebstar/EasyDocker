@@ -945,19 +945,21 @@ isDockerRunningForUser()
 
 dockerSetSocketPermissions()
 {
+    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(chmod -r "$docker_rootless_socket")
+        local result=$(chmod -r "/run/user/${docker_install_user_id}/docker.sock")
         checkSuccess "Removing read permissions from Rootless docket socket."
         
-        local result=$(chmod +r "$docker_root_socket")
+        local result=$(chmod +r "/var/run/docker.sock")
         checkSuccess "Adding read permissions from Rooted docket socket."
     fi
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local result=$(chmod -r "$docker_rootless_socket")
+        local result=$(chmod -r "/var/run/docker.sock")
         checkSuccess "Removing read permissions from Rooted docket socket."
 
-        local result=$(chmod +r "$docker_root_socket")
+        local result=$(chmod +r "/run/user/${docker_install_user_id}/docker.sock")
         checkSuccess "Adding read permissions from Rootless docket socket."
     fi
 }
