@@ -1134,7 +1134,7 @@ dockerUpdateAppsToDockerType()
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
-            dockerFileUserToDockerType "$dir";
+            #dockerFileUserToDockerType "$dir";
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $(basename $dir);
             fi
@@ -1147,7 +1147,7 @@ dockerUpdateAppsToDockerType()
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
-            dockerFileUserToDockerType "$dir";
+            #dockerFileUserToDockerType "$dir";
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $(basename $dir);
             fi

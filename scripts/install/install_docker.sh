@@ -29,12 +29,7 @@ startDocker()
         local result=$(sudo usermod -aG docker $sudo_user_name)
         checkSuccess "Adding user to 'docker' group"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local result=$(runCommandForDockerInstallUser "systemctl --user daemon-reload")
-        checkSuccess "Reload the systemd user manager configuration"
-
-        isNotice "Restarting docker service...this may take a moment..."
-        local result=$(runCommandForDockerInstallUser "systemctl --user restart docker")
-        checkSuccess "Reload the systemd user docker service"
+        installDockerRootless;
     fi
 }
 
@@ -206,8 +201,8 @@ installDockerRootless()
             echo "##########################################"
             echo ""
 
-            downAllDockerApps root;
-            stopDocker root;
+            #downAllDockerApps root;
+            #stopDocker root;
 
             ((menu_number++))
             echo ""
