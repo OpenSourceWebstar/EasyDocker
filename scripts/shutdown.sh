@@ -12,8 +12,11 @@ shutdownApp()
     echo ""
 
     dockerDownShutdown $app_name $type;
-            
-    sleep 3s
+
+    if [[ "$type" != "" ]]; then
+        sleep 3s
+    fi
+
     cd
 }
 
