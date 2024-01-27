@@ -13,7 +13,7 @@ shutdownApp()
 
     dockerDownShutdown $app_name $type;
 
-    if [[ "$type" != "" ]]; then
+    if [[ "$type" == "" ]]; then
         sleep 3s
     fi
 
