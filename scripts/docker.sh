@@ -948,18 +948,18 @@ dockerSetSocketPermissions()
     local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(chmod -r "/run/user/${docker_install_user_id}/docker.sock")
+        local result=$(sudo chmod -r "/run/user/${docker_install_user_id}/docker.sock")
         checkSuccess "Removing read permissions from Rootless docket socket."
         
-        local result=$(chmod +r "/var/run/docker.sock")
+        local result=$(sudo chmod +r "/var/run/docker.sock")
         checkSuccess "Adding read permissions from Rooted docket socket."
     fi
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local result=$(chmod -r "/var/run/docker.sock")
+        local result=$(sudo chmod -r "/var/run/docker.sock")
         checkSuccess "Removing read permissions from Rooted docket socket."
 
-        local result=$(chmod +r "/run/user/${docker_install_user_id}/docker.sock")
+        local result=$(sudo chmod +r "/run/user/${docker_install_user_id}/docker.sock")
         checkSuccess "Adding read permissions from Rootless docket socket."
     fi
 }
@@ -991,7 +991,8 @@ dockerSwitchBetweenRootAndRootless()
         echo ""
 
         if [[ $switch_type == "root" ]]; then
-            isNotice "Docker Rootless is currently running..."
+            isNotice "The current Docker Setup Type is currently : ${RED}Rootless${NC}"
+            echo ""
             while true; do
                 isQuestion "Would you like to switch to Rooted Docker? (y/n): "
                 echo ""
@@ -1028,7 +1029,8 @@ dockerSwitchBetweenRootAndRootless()
         fi
 
         if [[ $switch_type == "rootless" ]]; then
-            isNotice "Docker Rooted is currently running..."
+            isNotice "The current Docker Setup Type is currently : ${RED}Rooted${NC}"
+            echo ""
             while true; do
                 isQuestion "Would you like to switch to Rootless Docker? (y/n): "
                 echo ""
