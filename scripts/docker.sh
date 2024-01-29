@@ -950,8 +950,8 @@ dockerSetSocketPermissions()
     local docker_rooted_socket="/var/run/docker.sock"
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        if [ -e "$docker_rootless_socker" ]; then
-            local result=$(sudo chmod -r "$docker_rootless_socker")
+        if [ -e "$docker_rootless_socket" ]; then
+            local result=$(sudo chmod -r "$docker_rootless_socket")
             checkSuccess "Removing read permissions from Rootless docket socket."
             docker_rootless_found="true"
         else
