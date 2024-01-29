@@ -996,6 +996,8 @@ dockerSwitchBetweenRootAndRootless()
     local docker_install_done="false"
     local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
+    dockerSetSocketPermissions;
+
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
         if [ -r "/run/user/${docker_install_user_id}/docker.sock" ]; then
             run_switcher="true"
@@ -1031,7 +1033,6 @@ dockerSwitchBetweenRootAndRootless()
             done
             if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the Rooted Docker now..."
-                dockerSetSocketPermissions;
                 if [[ $docker_rootless_found == "true" ]]; then
                     downAllDockerApps rootless;
                     stopDocker rootless;
@@ -1076,7 +1077,6 @@ dockerSwitchBetweenRootAndRootless()
             done
             if [[ "$switch_rootless_choice" == [yY] ]]; then
                 isNotice "Switching to the Rootless Docker now..."
-                dockerSetSocketPermissions;
                 if [[ $docker_rooted_found == "true" ]]; then
                     downAllDockerApps root;
                     stopDocker root;
