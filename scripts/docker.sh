@@ -946,27 +946,54 @@ isDockerRunningForUser()
 dockerSetSocketPermissions()
 {
     local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+    local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
+    local docker_rooted_socket="/var/run/docker.sock"
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        local result=$(sudo chmod -r "/run/user/${docker_install_user_id}/docker.sock")
-        checkSuccess "Removing read permissions from Rootless docket socket."
-        
-        local result=$(sudo chmod +r "/var/run/docker.sock")
-        checkSuccess "Adding read permissions from Rooted docket socket."
+        if [ -e "$docker_rootless_socker" ]; then
+            local result=$(sudo chmod -r "$docker_rootless_socker")
+            checkSuccess "Removing read permissions from Rootless docket socket."
+            docker_rootless_found="true"
+        else
+            isNotice "Rootless socket not found, no need to do anything with rootless setup."
+            docker_rootless_found="false"
+        fi
+
+        if [ -e "$docker_rooted_socket" ]; then
+            local result=$(sudo chmod +r "$docker_rooted_socket")
+            checkSuccess "Adding read permissions from Rooted docket socket."
+            docker_rooted_found="true"
+        else
+            isNotice "Rooted socket not found, installation needed..."
+            docker_rooted_found="false"
+        fi
     fi
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local result=$(sudo chmod -r "/var/run/docker.sock")
-        checkSuccess "Removing read permissions from Rooted docket socket."
+        if [ -e "$docker_rooted_socket" ]; then
+            local result=$(sudo chmod -r "$docker_rooted_socket")
+            checkSuccess "Removing read permissions from Rooted docket socket."
+            docker_rooted_found="true"
+        else
+            isNotice "Rooted socket not found, no need to do anything with rooted setup."
+            docker_rooted_found="false"
+        fi
 
-        local result=$(sudo chmod +r "/run/user/${docker_install_user_id}/docker.sock")
-        checkSuccess "Adding read permissions from Rootless docket socket."
+        if [ -e "$docker_rootless_socket" ]; then
+            local result=$(sudo chmod +r "$docker_rootless_socket")
+            checkSuccess "Adding read permissions from Rootless docket socket."
+            docker_rootless_found="true"
+        else
+            isNotice "Rooted socket not found, installation needed..."
+            docker_rootless_found="false"
+        fi
     fi
 }
 
 dockerSwitchBetweenRootAndRootless()
 {
     local run_switcher="false"
+    local docker_install_done="false"
     local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
@@ -1004,10 +1031,16 @@ dockerSwitchBetweenRootAndRootless()
             done
             if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the Rooted Docker now..."
-                downAllDockerApps rootless;
-                stopDocker rootless;
                 dockerSetSocketPermissions;
-                startDocker root;
+                if [[ $docker_rootless_found == "true" ]]; then
+                    downAllDockerApps rootless;
+                    stopDocker rootless;
+                    installDocker;
+                    local docker_install_done="true"
+                fi
+                if [[ $docker_install_done == "true" ]]; then
+                    startDocker root;
+                fi
                 dockerUpdateAppsToDockerType;
                 dockerStartAllApps;
                 # Reboot
@@ -1043,9 +1076,11 @@ dockerSwitchBetweenRootAndRootless()
             done
             if [[ "$switch_rootless_choice" == [yY] ]]; then
                 isNotice "Switching to the Rootless Docker now..."
-                downAllDockerApps root;
-                stopDocker root;
                 dockerSetSocketPermissions;
+                if [[ $docker_rooted_found == "true" ]]; then
+                    downAllDockerApps root;
+                    stopDocker root;
+                fi
                 startDocker rootless;
                 dockerUpdateAppsToDockerType;
                 dockerStartAllApps;
