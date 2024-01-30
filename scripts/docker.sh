@@ -949,16 +949,24 @@ dockerSetSocketPermissions()
     local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
     local docker_rooted_socket="/var/run/docker.sock"
 
+    echo ""
+    echo "##########################################"
+    echo "###        Docker Socket Checker       ###"
+    echo "##########################################"
+    echo ""
+
     if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        # if File exists
         if [ -e "$docker_rootless_socket" ]; then
             local result=$(sudo chmod -r "$docker_rootless_socket")
             checkSuccess "Removing read permissions from Rootless docket socket."
             docker_rootless_found="true"
         else
-            isNotice "Rootless socket not found, no need to do anything with rootless setup."
+            isSuccessful "Rootless socket not found, no need to do anything with rootless setup."
             docker_rootless_found="false"
         fi
 
+        # if File exists
         if [ -e "$docker_rooted_socket" ]; then
             local result=$(sudo chmod +r "$docker_rooted_socket")
             checkSuccess "Adding read permissions from Rooted docket socket."
@@ -970,6 +978,7 @@ dockerSetSocketPermissions()
     fi
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        # if File exists
         if [ -e "$docker_rooted_socket" ]; then
             local result=$(sudo chmod -r "$docker_rooted_socket")
             checkSuccess "Removing read permissions from Rooted docket socket."
@@ -979,6 +988,7 @@ dockerSetSocketPermissions()
             docker_rooted_found="false"
         fi
 
+        # if File exists
         if [ -e "$docker_rootless_socket" ]; then
             local result=$(sudo chmod +r "$docker_rootless_socket")
             checkSuccess "Adding read permissions from Rootless docket socket."
@@ -995,31 +1005,32 @@ dockerSwitchBetweenRootAndRootless()
     local run_switcher="false"
     local docker_install_done="false"
     local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+    local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
+    local docker_rooted_socket="/var/run/docker.sock"
 
     dockerSetSocketPermissions;
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-        if [ -r "/run/user/${docker_install_user_id}/docker.sock" ]; then
-            run_switcher="true"
-            switch_type="root"
+    # Select preexisting docker_type
+    if [ -f "$docker_dir/$db_file" ]; then
+        local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT option FROM options WHERE option = "docker_type";")
+        # Insert into DB if something doesnt exist
+        if [ -n "$docker_type" ]; then
+            databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
+            local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT option FROM options WHERE option = "docker_type";")
         fi
+    else
+        return;
     fi
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        if [ -r "/var/run/docker.sock" ]; then
-            run_switcher="true"
-            switch_type="rootless"
-        fi
-    fi
-
-    if [[ $run_switcher == "true" ]]; then
+    # Check if docker install type is different
+    if [[ $CFG_DOCKER_INSTALL_TYPE != $docker_type ]]; then
         echo ""
         echo "##########################################"
         echo "###   Docker Root/Rootless Switcher    ###"
         echo "##########################################"
         echo ""
 
-        if [[ $switch_type == "root" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
             isNotice "The current Docker Setup Type is currently : ${RED}Rootless${NC}"
             echo ""
             while true; do
@@ -1063,7 +1074,7 @@ dockerSwitchBetweenRootAndRootless()
             fi
         fi
 
-        if [[ $switch_type == "rootless" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
             isNotice "The current Docker Setup Type is currently : ${RED}Rooted${NC}"
             echo ""
             while true; do
@@ -1102,6 +1113,8 @@ dockerSwitchBetweenRootAndRootless()
                 fi
             fi
         fi
+
+        databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
     fi
 }
 

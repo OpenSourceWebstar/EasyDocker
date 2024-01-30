@@ -749,6 +749,98 @@ databasePathInsert()
     fi
 }
 
+
+databaseGetOpenPortsForApp() 
+{
+    local app_name="$1"
+    local ports_open=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports_open WHERE name = '$app_name';")
+    local db_ports_open=()
+    IFS=$'\n' read -r -a db_ports_open <<< "$ports_open"
+    echo "${db_ports_open[@]}"
+}
+
+databaseBackupInsert()
+{
+    local app_name="$1"
+    local table_name=backups
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    checkSuccess "Adding $app_name to the $table_name table."    
+}
+
+databaseRestoreInsert()
+{
+    local app_name="$1"
+    local table_name=restores
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    checkSuccess "Adding $app_name to the $table_name table."
+}
+
+databaseMigrateInsert()
+{
+    local app_name="$1"
+    local table_name=migrations
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    checkSuccess "Adding $app_name to the $table_name table." 
+}
+
+databaseSSHInsert()
+{
+    local app_name="$1"
+    local table_name=ssh
+    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+    checkSuccess "Adding $app_name to the $table_name table." 
+}
+
+databaseSSHKeysInsert()
+{
+    local key_filename="$1"
+    local key_file=$(basename "$key_filename")
+    local table_name=ssh_keys
+    local key_in_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
+
+    if [ "$key_in_db" -eq 0 ]; then
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
+        checkSuccess "Adding $key_file to the $table_name table."
+    else
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$key_file', date = '$current_date', time = '$current_time' WHERE name = '$key_file';")
+        checkSuccess "$key_file already added to the $table_name table. Updating date/time."
+    fi
+}
+
+databaseOptionInsert()
+{
+    local option="$1"
+    local content="$2"
+    local table_name=options
+    local option_in_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE option = '$option';")
+
+    if [ "$option_in_db" -eq 0 ]; then
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (option, content) VALUES ('$key_file', '$current_date', '$current_time');")
+        checkSuccess "Adding $key_file to the $table_name table."
+    else
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$option', date = '$content';")
+        checkSuccess "$key_file already added to the $table_name table. Updating date/time."
+    fi
+}
+
+databaseCronJobsInsert()
+{
+    local app_name="$1"
+    local table_name=cron_jobs
+    local key_in_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$app_name';")
+
+    if [ "$key_in_db" != "" ]; then
+        if [ "$key_in_db" -eq 0 ]; then
+            local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
+            checkSuccess "Adding $app_name to the $table_name table." 
+        else
+            local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$app_name', date = '$current_date', time = '$current_time' WHERE name = '$app_name';")
+            checkSuccess "$app_name already added to the $table_name table. Updating date/time." 
+        fi
+        #isNotice "app_name is empty, unable to insert"
+    fi
+}
+
 databasePortInsert()
 {
     local app_name="$1"
@@ -848,81 +940,6 @@ databaseGetUsedPortsForApp()
     local db_ports=()
     IFS=$'\n' read -r -a db_ports <<< "$used_ports"
     echo "${db_ports[@]}"
-}
-
-databaseGetOpenPortsForApp() 
-{
-    local app_name="$1"
-    local ports_open=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT port FROM ports_open WHERE name = '$app_name';")
-    local db_ports_open=()
-    IFS=$'\n' read -r -a db_ports_open <<< "$ports_open"
-    echo "${db_ports_open[@]}"
-}
-
-databaseBackupInsert()
-{
-    local app_name="$1"
-    local table_name=backups
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
-    checkSuccess "Adding $app_name to the $table_name table."    
-}
-
-databaseRestoreInsert()
-{
-    local app_name="$1"
-    local table_name=restores
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
-    checkSuccess "Adding $app_name to the $table_name table."
-}
-
-databaseMigrateInsert()
-{
-    local app_name="$1"
-    local table_name=migrations
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
-    checkSuccess "Adding $app_name to the $table_name table." 
-}
-
-databaseSSHInsert()
-{
-    local app_name="$1"
-    local table_name=ssh
-    local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (ip, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
-    checkSuccess "Adding $app_name to the $table_name table." 
-}
-
-databaseSSHKeysInsert()
-{
-    local key_filename="$1"
-    local key_file=$(basename "$key_filename")
-    local table_name=ssh_keys
-    local key_in_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$key_file';")
-
-    if [ "$key_in_db" -eq 0 ]; then
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$key_file', '$current_date', '$current_time');")
-        checkSuccess "Adding $key_file to the $table_name table."
-    else
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$key_file', date = '$current_date', time = '$current_time' WHERE name = '$key_file';")
-        checkSuccess "$key_file already added to the $table_name table. Updating date/time."
-    fi
-}
-
-databaseCronJobsInsert()
-{
-    local app_name="$1"
-    local table_name=cron_jobs
-    local key_in_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE name = '$app_name';")
-
-    if [ "$key_in_db" != "" ]; then
-        if [ "$key_in_db" -eq 0 ]; then
-            local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (name, date, time) VALUES ('$app_name', '$current_date', '$current_time');")
-            checkSuccess "Adding $app_name to the $table_name table." 
-        else
-            local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$app_name', date = '$current_date', time = '$current_time' WHERE name = '$app_name';")
-            checkSuccess "$app_name already added to the $table_name table. Updating date/time." 
-        fi
-        #isNotice "app_name is empty, unable to insert"
-    fi
 }
 
 databaseRemoveFile()
