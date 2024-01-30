@@ -815,11 +815,11 @@ databaseOptionInsert()
     local option_in_db=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT COUNT(*) FROM $table_name WHERE option = '$option';")
 
     if [ "$option_in_db" -eq 0 ]; then
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (option, content) VALUES ('$key_file', '$current_date', '$current_time');")
-        checkSuccess "Adding $key_file to the $table_name table."
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (option, content) VALUES ('$option', '$content');")
+        checkSuccess "Adding $option to the $table_name table."
     else
         local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$option', date = '$content';")
-        checkSuccess "$key_file already added to the $table_name table. Updating date/time."
+        checkSuccess "$option already added to the $table_name table. Updating date/time."
     fi
 }
 
