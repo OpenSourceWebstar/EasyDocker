@@ -1012,11 +1012,11 @@ dockerSwitchBetweenRootAndRootless()
 
     # Select preexisting docker_type
     if [ -f "$docker_dir/$db_file" ]; then
-        local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT option FROM options WHERE option = "docker_type";")
+        local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT content FROM options WHERE option = "docker_type";")
         # Insert into DB if something doesnt exist
         if [ -n "$docker_type" ]; then
             databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
-            local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT option FROM options WHERE option = "docker_type";")
+            local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT content FROM options WHERE option = "docker_type";")
         fi
     else
         return;
