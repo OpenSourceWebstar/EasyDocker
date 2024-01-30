@@ -1031,7 +1031,7 @@ dockerSwitchBetweenRootAndRootless()
         echo ""
 
         if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-            isNotice "The current Docker Setup Type is currently : ${RED}Rootless${NC}"
+            isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
             echo ""
             while true; do
                 isQuestion "Would you like to switch to Rooted Docker? (y/n): "
@@ -1075,7 +1075,7 @@ dockerSwitchBetweenRootAndRootless()
         fi
 
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-            isNotice "The current Docker Setup Type is currently : ${RED}Rooted${NC}"
+            isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
             echo ""
             while true; do
                 isQuestion "Would you like to switch to Rootless Docker? (y/n): "
