@@ -818,7 +818,7 @@ databaseOptionInsert()
         local result=$(sudo sqlite3 "$docker_dir/$db_file" "INSERT INTO $table_name (option, content) VALUES ('$option', '$content');")
         checkSuccess "Adding $option to the $table_name table."
     else
-        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET name = '$option', date = '$content';")
+        local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET option = '$option', content = '$content';")
         checkSuccess "$option already added to the $table_name table. Updating date/time."
     fi
 }

@@ -1055,6 +1055,7 @@ dockerSwitchBetweenRootAndRootless()
                 fi
                 dockerUpdateAppsToDockerType;
                 dockerStartAllApps;
+                databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
                 # Reboot
                 isNotice "*** A restart is highly recommended after changing the Docker type ***"
                 echo ""
@@ -1095,6 +1096,7 @@ dockerSwitchBetweenRootAndRootless()
                 startDocker rootless;
                 dockerUpdateAppsToDockerType;
                 dockerStartAllApps;
+                databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
                 # Reboot
                 isNotice "*** A restart is highly recommended after changing the Docker type ***"
                 echo ""
@@ -1113,8 +1115,6 @@ dockerSwitchBetweenRootAndRootless()
                 fi
             fi
         fi
-
-        databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
     fi
 }
 
