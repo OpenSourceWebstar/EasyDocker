@@ -819,7 +819,7 @@ databaseOptionInsert()
         checkSuccess "Adding $option to the $table_name table."
     else
         local result=$(sudo sqlite3 "$docker_dir/$db_file" "UPDATE $table_name SET option = '$option', content = '$content';")
-        checkSuccess "$option already added to the $table_name table. Updating date/time."
+        checkSuccess "$option already added to the $table_name table. Updating content to $content."
     fi
 }
 
