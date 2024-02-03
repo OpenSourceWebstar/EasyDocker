@@ -49,7 +49,7 @@ stopDocker()
     fi
 
     if [[ "$type" == "rootless" ]]; then
-        if runCommandForDockerInstallUser "systemctl list-unit-files --type=service | grep -q "docker.service";"; then
+        if runCommandForDockerInstallUser "systemctl list-unit-files --type=service | grep -q 'docker.service';"; then
             isNotice "Stopping rootless docker service...this may take a moment..."
             local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
             checkSuccess "Stop the systemd user docker service"
