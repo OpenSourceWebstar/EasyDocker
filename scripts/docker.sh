@@ -1057,7 +1057,6 @@ dockerSwitchBetweenRootAndRootless()
                 dockerStartAllApps;
                 databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
-                # Reboot
                 if [[ "$CFG_REQUIREMENT_RESTART_PROMPT" == "false" ]]; then
                     isNotice "Restarting server now..."
                     sudo reboot
@@ -1104,7 +1103,6 @@ dockerSwitchBetweenRootAndRootless()
                 dockerStartAllApps;
                 databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
-                # Reboot
                 if [[ "$CFG_REQUIREMENT_RESTART_PROMPT" == "false" ]]; then
                     isNotice "Restarting server now..."
                     sudo reboot
