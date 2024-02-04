@@ -45,7 +45,7 @@ stopDocker()
         
         local result=$(sudo systemctl disable docker)
         checkSuccess "Disabling Rooted Docker Service"
-        fi
+##
     fi
 
     if [[ "$type" == "rootless" ]]; then
@@ -53,7 +53,7 @@ stopDocker()
 
         local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
         checkSuccess "Stop the systemd user Docker service"
-        fi
+##
     fi
 
 }
