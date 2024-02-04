@@ -38,23 +38,30 @@ stopDocker()
     local type="$1"
 
     if [[ "$type" == "root" ]]; then
-        isNotice "Stopping rooted docker service...this may take a moment..."
-        if sudo systemctl list-unit-files --type=service | grep -q "docker.service"; then
+        isNotice "Stopping rooted Docker service...this may take a moment..."
+        
+        if sudo systemctl is-active --quiet docker; then
             local result=$(sudo systemctl stop docker)
             checkSuccess "Stopping Rooted Docker Service"
             
             local result=$(sudo systemctl disable docker)
             checkSuccess "Disabling Rooted Docker Service"
+        else
+            isNotice "Rooted Docker service is not active."
         fi
     fi
 
     if [[ "$type" == "rootless" ]]; then
-        if runCommandForDockerInstallUser "systemctl list-unit-files --type=service | grep -q 'docker.service';"; then
-            isNotice "Stopping rootless docker service...this may take a moment..."
+        isNotice "Stopping rootless Docker service...this may take a moment..."
+
+        if runCommandForDockerInstallUser "systemctl --user is-active --quiet docker"; then
             local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
-            checkSuccess "Stop the systemd user docker service"
+            checkSuccess "Stop the systemd user Docker service"
+        else
+            isNotice "Rootless Docker service is not active."
         fi
     fi
+
 }
 
 downAllDockerApps()
