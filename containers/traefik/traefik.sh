@@ -115,6 +115,8 @@ installTraefik()
         local result=$(copyResource "$app_name" "tls.yml" "etc/dynamic")
         checkSuccess "Copy Traefik Dynamic tls.yml configuration file for $app_name"
 
+        traefikSetupLoginCredentials;
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
