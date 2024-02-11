@@ -18,8 +18,13 @@ cliInitilize()
         fi
     elif [ "$initial_command1" == "dockertype" ]; then
         cliListDockertypeCommands;
+    elif [ "$initial_command1" == "" ]; then
+        echo "No option given, showing command menu..."
+        echo ""
+        cliShowCommands;
     else
         echo "Unknown command: $1"
+        echo ""
         cliShowCommands;
     fi
 }
