@@ -4,11 +4,11 @@ cliListCommands()
 {
     if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
-    elif [ "$initial_command1" == "application" ]; then
+    elif [ "$initial_command1" == "app" ]; then
         if [[ "$initial_command2" == "" ]] && [[ "$initial_command3" == "" ]]; then
-            cliListApplicationCommands;
+            cliListAppCommands;
         elif [[ "$initial_command2" != "" ]] && [[ "$initial_command3" == "" ]]; then
-            cliApplicationRunCommands $initial_command2 $initial_command3;
+            cliAppRunCommands $initial_command2 $initial_command3;
         fi
     elif [ "$initial_command1" == "dockertype" ]; then
         cliListDockertypeCommands;
@@ -23,24 +23,24 @@ cliShowCommands()
     echo "Available Commands:"
     echo ""
     echo "  easydocker start                        - Start the EasyDocker control panel"
-    echo "  easydocker application [name] [action]  - Manage applications in EasyDocker"
+    echo "  easydocker app [name] [action]  - Manage apps in EasyDocker"
     echo "  easydocker dockertype [type]            - Set the Docker type"
 }
 
-cliListApplicationCommands() 
+cliListAppCommands() 
 {
-    echo "Available Application Commands:"
+    echo "Available App Commands:"
     echo ""
-    echo "  easydocker application list - List all installed applications"
+    echo "  easydocker app list - List all installed apps"
     echo ""
-    echo "  easydocker application install [name]  - Install the specified application"
-    echo "  easydocker application start [name]    - Start the specified application (Must be installed)"
-    echo "  easydocker application stop [name]     - Stop the specified application (Must be installed)"
-    echo "  easydocker application up [name]       - Docker-Compose up (Rebuild application)"
-    echo "  easydocker application down [name]     - Docker-Compose up (Uninstall application)"
+    echo "  easydocker app install [name]  - Install the specified app"
+    echo "  easydocker app start [name]    - Start the specified app (Must be installed)"
+    echo "  easydocker app stop [name]     - Stop the specified app (Must be installed)"
+    echo "  easydocker app up [name]       - Docker-Compose up (Rebuild app)"
+    echo "  easydocker app down [name]     - Docker-Compose up (Uninstall app)"
 }
 
-cliApplicationRunCommands()
+cliAppRunCommands()
 {
     local param1="$1"
     local param2="$2"
@@ -64,7 +64,7 @@ cliApplicationRunCommands()
                     down) dockerAppDown "$param2" ;;
                 esac
             else
-                echo "No application name supplied"
+                echo "No app name supplied"
             fi
             ;;
         *)
@@ -82,7 +82,7 @@ cliListDockertypeCommands()
 }
 
 
-cliApplicationRunCommands()
+cliAppRunCommands()
 {
     local param1="$1"
     local param2="$2"
