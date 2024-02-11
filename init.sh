@@ -145,7 +145,7 @@ setupEasyDockerCommand()
 	echo "###      	     Custom Command Setup              ###"
 	echo "####################################################"
 	echo ""
-	
+
 	# Clear previous custom commands
 	if ! grep -q "EasyDocker Command Start" $sudo_bashrc; then
 		echo "NOTICE: Command maker not found. Removing old EasyDocker command."
@@ -160,11 +160,11 @@ setupEasyDockerCommand()
 	echo '# EasyDocker Command Version 1.1' >> $sudo_bashrc
 	echo 'easydocker()' >> $sudo_bashrc
 	echo '{' >> $sudo_bashrc
-	echo '  local command1="$1"' >> $sudo_bashrc
-	echo '  local command2="$2"' >> $sudo_bashrc
-	echo '  local command3="$3"' >> $sudo_bashrc
-	echo '  local command4="$4"' >> $sudo_bashrc
-	echo '  local command5="$5"' >> $sudo_bashrc
+	echo "  local command1=\"${1:-empty}\"" >> $sudo_bashrc
+	echo "  local command2=\"${2:-empty}\"" >> $sudo_bashrc
+	echo "  local command3=\"${3:-empty}\"" >> $sudo_bashrc
+	echo "  local command4=\"${4:-empty}\"" >> $sudo_bashrc
+	echo "  local command5=\"${5:-empty}\"" >> $sudo_bashrc
 	echo '  local path="$6"' >> $sudo_bashrc
 	echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
 	echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
