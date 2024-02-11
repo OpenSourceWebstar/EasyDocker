@@ -788,6 +788,24 @@ setupEnvFile()
     checkSuccess "Setting up .env file to path"
 }
 
+dockerStartApp()
+{
+    local app_name="$1"
+
+    isNotice "Please wait for docker container to start"
+    local result=$(runCommandForDocker 'docker ps -a --format "{{.Names}}" | grep "'$app_name'" | awk '{print "docker start " $1}' | sh')
+    checkSuccess "Starting all docker containers with the name $app_name"
+}
+
+dockerStopApp()
+{
+    local app_name="$1"
+
+    isNotice "Please wait for docker container to stop"
+    local result=$(runCommandForDocker 'docker ps -a --format "{{.Names}}" | grep "'$app_name'" | awk '{print "docker stop " $1}' | sh')
+    checkSuccess "Stopping all docker containers with the name $app_name"
+}
+
 dockerStopAllApps()
 {
     local type="$1"
@@ -855,7 +873,7 @@ dockerAppUp()
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose up -d")
         checkSuccess "Starting up $app_name container"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
         local result=$(cd $containers_dir$app_name && docker-compose up -d)
         checkSuccess "Starting up $app_name container"
     fi

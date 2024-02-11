@@ -128,26 +128,7 @@ initializeScript()
 	fi
 
 	if [[ "$param1" == "run" ]]; then
-		echo ""
-		echo "####################################################"
-		echo "###      	     Custom Command Setup              ###"
-		echo "####################################################"
-		echo ""
-		# Custom command check
-		if ! grep -q "easydocker" $sudo_bashrc; then
-			echo "NOTICE: Custom command 'easydocker' is not installed. Installing..."
-			echo 'easydocker() {' >> $sudo_bashrc
-			echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
-			echo '    local path="$PWD"' >> $sudo_bashrc
-			echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh  "" "" "$path"' >> $sudo_bashrc
-			echo '  else' >> $sudo_bashrc
-			echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
-			echo '  fi' >> $sudo_bashrc
-			echo '}' >> $sudo_bashrc
-			source $sudo_bashrc
-		else
-			echo "SUCCESS: easydocker command already installed."
-		fi
+		setupEasyDockerCommand;
 	fi
 
 	if [[ "$param1" == "virtualmin" ]]; then
@@ -155,6 +136,48 @@ initializeScript()
 	fi
 
 	completeInitMessage $sudo_user_name;
+}
+
+setupEasyDockerCommand()
+{
+	echo ""
+	echo "####################################################"
+	echo "###      	     Custom Command Setup              ###"
+	echo "####################################################"
+	echo ""
+	# Custom command check
+	if ! grep -q "easydocker" $sudo_bashrc; then
+		# Clear previous custom commands
+		if ! grep -q "EasyDocker Command Start" $sudo_bashrc; then
+			echo "NOTICE: Command maker not found. Removing old EasyDocker command."
+			sed -i '/^easydocker() {$/,/^}$/d' $sudo_bashrc
+		else
+			echo "NOTICE: Command maker found. Removing old EasyDocker command."
+			sed -i '/# EasyDocker Command Start/,/# EasyDocker Command End/d' $sudo_bashrc
+		fi
+		# Add command into bashrc
+		echo "NOTICE: Custom command 'easydocker' is not installed. Installing..."
+		echo '# EasyDocker Command Start' >> $sudo_bashrc
+		echo '# EasyDocker Command Version 1.1' >> $sudo_bashrc
+		echo 'easydocker()' >> $sudo_bashrc
+		echo '{' >> $sudo_bashrc
+		echo '  local command1="$1"' >> $sudo_bashrc
+		echo '  local command2="$2"' >> $sudo_bashrc
+		echo '  local command3="$3"' >> $sudo_bashrc
+		echo '  local command4="$4"' >> $sudo_bashrc
+		echo '  local command5="$5"' >> $sudo_bashrc
+		echo '  local path="$6"' >> $sudo_bashrc
+		echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
+		echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
+		echo '  else' >> $sudo_bashrc
+		echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
+		echo '  fi' >> $sudo_bashrc
+		echo '}' >> $sudo_bashrc
+		echo '# EasyDocker Command End' >> $sudo_bashrc
+		source $sudo_bashrc
+	else
+		echo "SUCCESS: easydocker command already installed."
+	fi
 }
 
 virtualminInstall()

@@ -1,7 +1,12 @@
 #!/bin/bash
 
+initial_command1="$1"
+initial_command2="$2"
+initial_command3="$3"
+initial_command2="$4"
+initial_command3="$5"
 # Used for saving directory path
-initial_path="$3"
+initial_path="$6"
 initial_path_save=$initial_path
 
 displayEasyDockerLogo() 
@@ -16,6 +21,8 @@ ____ ____ ____ _   _    ___  ____ ____ _  _ ____ ____
 startUp()
 {
     installDockerUser;
+    # Used for updating
+    setupEasyDockerCommand;
     scanConfigsForRandomPassword;
 	local traefik_status=$(checkAppInstalled "traefik" "docker")
     if [[ "$traefik_status" == "installed" ]]; then
@@ -354,5 +361,19 @@ exitScript()
 	exit 0
 }
 
-displayEasyDockerLogo;
-source "scripts/sources.sh"
+initEasyDocker()
+{
+	if [[ "$initial_command1" == "" ]]; then
+        cliListCommands();
+    elif [[ "$initial_command1" == "run" ]]; then
+        init_run_flag="true"
+        displayEasyDockerLogo;
+        source "scripts/sources.sh"
+    elif [[ "$initial_command1" != "" ]]; then
+        init_run_flag="false"
+        source "scripts/sources.sh"
+        cliRunCommands();
+    fi
+}
+
+initEasyDocker;

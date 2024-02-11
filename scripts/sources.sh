@@ -151,4 +151,8 @@ loadFiles()
     done < <(sudo find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
 }
 
-sourceScripts "start";
+if [[ $init_run_flag == "true" ]]; then
+    sourceScripts "start";
+elif [[ $init_run_flag == "false" ]]; then
+    sourceScripts "cli";
+fi
