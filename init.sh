@@ -160,12 +160,15 @@ setupEasyDockerCommand()
 	echo '# EasyDocker Command Version 1.1' >> $sudo_bashrc
 	echo 'easydocker()' >> $sudo_bashrc
 	echo '{' >> $sudo_bashrc
-	echo "  local command1=\"${1:-empty}\"" >> $sudo_bashrc
-	echo "  local command2=\"${2:-empty}\"" >> $sudo_bashrc
-	echo "  local command3=\"${3:-empty}\"" >> $sudo_bashrc
-	echo "  local command4=\"${4:-empty}\"" >> $sudo_bashrc
-	echo "  local command5=\"${5:-empty}\"" >> $sudo_bashrc
+	echo '  local command1="$1"' >> $sudo_bashrc
+	echo '  local command2="$2' >> $sudo_bashrc
+	echo '  local command3="$3"' >> $sudo_bashrc
+	echo '  local command4="$4"' >> $sudo_bashrc
+	echo '  local command5="$5"' >> $sudo_bashrc
 	echo '  local path="$PWD"' >> $sudo_bashrc
+	echo '  if [[ $command1 == "reset" ]]; then' >> $sudo_bashrc
+	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
+	echo '  fi' >> $sudo_bashrc
 	echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
 	echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
 	echo '  else' >> $sudo_bashrc
