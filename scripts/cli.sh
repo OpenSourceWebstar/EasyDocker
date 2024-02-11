@@ -20,27 +20,28 @@ cliInitilize()
         cliListDockertypeCommands;
     elif [ "$initial_command1" == "" ]; then
         echo "No option given, showing command menu..."
-        echo ""
         cliShowCommands;
     else
         echo "Unknown command: $1"
-        echo ""
         cliShowCommands;
     fi
 }
 
 cliShowCommands() 
 {
+    echo ""
     echo "Available Commands:"
     echo ""
     echo "  easydocker run                          - Run the EasyDocker control panel"
     echo "  easydocker reset                        - Reinstall EasyDocker install files"
     echo "  easydocker app [name] [action]          - Manage apps in EasyDocker"
     echo "  easydocker dockertype [type]            - Set the Docker type"
+    echo ""
 }
 
 cliListAppCommands() 
 {
+    echo ""
     echo "Available App Commands:"
     echo ""
     echo "  easydocker app list - List all installed apps"
@@ -50,6 +51,7 @@ cliListAppCommands()
     echo "  easydocker app stop [name]     - Stop the specified app (Must be installed)"
     echo "  easydocker app up [name]       - Docker-Compose up (Rebuild app)"
     echo "  easydocker app down [name]     - Docker-Compose up (Uninstall app)"
+    echo ""
 }
 
 cliAppRunCommands()
@@ -87,10 +89,12 @@ cliAppRunCommands()
 
 cliListDockertypeCommands() 
 {
+    echo ""
     echo "Available Dockertype Commands:"
     echo ""
     echo "  easydocker dockertype root     - Set Docker to use root privileges"
     echo "  easydocker dockertype rootless - Set Docker to run in rootless mode"
+    echo ""
 }
 
 
