@@ -165,7 +165,7 @@ setupEasyDockerCommand()
 	echo "  local command3=\"${3:-empty}\"" >> $sudo_bashrc
 	echo "  local command4=\"${4:-empty}\"" >> $sudo_bashrc
 	echo "  local command5=\"${5:-empty}\"" >> $sudo_bashrc
-	echo '  local path="$6"' >> $sudo_bashrc
+	echo '  local path="$PWD"' >> $sudo_bashrc
 	echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
 	echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
 	echo '  else' >> $sudo_bashrc
