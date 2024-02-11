@@ -79,7 +79,7 @@ sourceScripts()
     done
 
     if [ ${#missing_files[@]} -eq 0 ]; then
-        if [[ $flag == "start" ]]; then
+        if [[ $flag == "run" ]]; then
             isSuccessful "All files found and loaded for startup."
             checkUpdates;
         elif [[ $flag == "cli" ]]; then
@@ -155,7 +155,7 @@ loadFiles()
 }
 
 if [[ $init_run_flag == "true" ]]; then
-    sourceScripts "start";
+    sourceScripts "run";
 elif [[ $init_run_flag == "false" ]]; then
     sourceScripts "cli";
 fi
