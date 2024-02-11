@@ -4,6 +4,12 @@ cliListCommands()
 {
     if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
+    # This is handled in the initEasyDocker function
+    #elif [ "$initial_command1" == "run" ]; then
+    elif [ "$initial_command1" == "update" ]; then
+        checkUpdates cli;
+    elif [ "$initial_command1" == "reset" ]; then
+        reinstallEasyDocker;
     elif [ "$initial_command1" == "app" ]; then
         if [[ "$initial_command2" == "" ]] && [[ "$initial_command3" == "" ]]; then
             cliListAppCommands;
@@ -22,8 +28,9 @@ cliShowCommands()
 {
     echo "Available Commands:"
     echo ""
-    echo "  easydocker start                        - Start the EasyDocker control panel"
-    echo "  easydocker app [name] [action]  - Manage apps in EasyDocker"
+    echo "  easydocker run                          - Run the EasyDocker control panel"
+    echo "  easydocker reset                        - Reinstall EasyDocker install files"
+    echo "  easydocker app [name] [action]          - Manage apps in EasyDocker"
     echo "  easydocker dockertype [type]            - Set the Docker type"
 }
 

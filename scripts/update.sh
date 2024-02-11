@@ -2,7 +2,8 @@
 
 checkUpdates()
 {
-
+    local param1="$1"
+    
     gitCheckEasyDockerConfigFilesExist;
 	sourceScripts "update";
 
@@ -47,8 +48,10 @@ checkUpdates()
 						fixPermissionsBeforeStart "" "update";
 						sourceScripts "update";
 
-						isSuccessful "Starting/Restarting EasyDocker"
-						detectOS;
+                        if [[ $param1 != "cli" ]]; then
+                            isSuccessful "Starting/Restarting EasyDocker"
+                            detectOS;
+                        fi
 						
 						;;
 					[nN])
@@ -59,8 +62,10 @@ checkUpdates()
                         gitCheckConfigs;
 						fixPermissionsBeforeStart "" "update";
 						sourceScripts "update";
-                        
-                        detectOS;
+
+                        if [[ $param1 != "cli" ]]; then
+                            detectOS;
+                        fi
 						
 						;;
 					*)
@@ -78,11 +83,15 @@ checkUpdates()
 			fixPermissionsBeforeStart "" "update";
 			sourceScripts "update";
 
-			isSuccessful "Starting/Restarting EasyDocker"
-			detectOS;
+            if [[ $param1 != "cli" ]]; then
+                isSuccessful "Starting/Restarting EasyDocker"
+                detectOS;
+            fi
 		fi
 	else
-		detectOS;
+        if [[ $param1 != "cli" ]]; then
+            detectOS;
+        fi
 	fi
 }
 

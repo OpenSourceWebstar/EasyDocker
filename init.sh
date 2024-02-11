@@ -170,7 +170,7 @@ setupEasyDockerCommand()
 		echo '  if [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
 		echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
 		echo '  else' >> $sudo_bashrc
-		echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
+		echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
 		echo '  fi' >> $sudo_bashrc
 		echo '}' >> $sudo_bashrc
 		echo '# EasyDocker Command End' >> $sudo_bashrc
@@ -178,6 +178,11 @@ setupEasyDockerCommand()
 	else
 		echo "SUCCESS: easydocker command already installed."
 	fi
+}
+
+reinstallEasyDocker()
+{
+	sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"
 }
 
 virtualminInstall()
