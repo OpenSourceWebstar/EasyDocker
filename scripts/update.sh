@@ -14,7 +14,7 @@ checkUpdates()
 		echo "#####################################"
 		echo ""
 
-		databasePathInsert $initial_path;
+		databasePathInsert $initial_path_save;
 
         # DNS Query Test with Quad9
         isNotice "Testing internet DNS, please wait..."
