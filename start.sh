@@ -363,12 +363,13 @@ exitScript()
 
 initEasyDocker()
 {
-	if [[ "$initial_command1" == "" ]]; then
-        cliListCommands;
-    elif [[ "$initial_command1" == "run" ]]; then
+    if [[ "$initial_command1" == "run" ]]; then
         init_run_flag="true"
         displayEasyDockerLogo;
+	elif [[ "$initial_command1" == "" ]]; then
+        init_run_flag="false"
         source "scripts/sources.sh"
+        cliListCommands;
     elif [[ "$initial_command1" != "" ]]; then
         init_run_flag="false"
         source "scripts/sources.sh"
