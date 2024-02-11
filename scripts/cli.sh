@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cliListCommands() 
+cliInitilize() 
 {
     if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
