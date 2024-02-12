@@ -160,11 +160,11 @@ setupEasyDockerCommand()
 	echo '# EasyDocker Command Version 1.1' >> $sudo_bashrc
 	echo 'easydocker()' >> $sudo_bashrc
 	echo '{' >> $sudo_bashrc
-	echo '  local command1="$1" if [[ $command1 == "" ]]; then local command1="empty" fi' >> $sudo_bashrc
-	echo '  local command2="$2" if [[ $command2 == "" ]]; then local command2="empty" fi' >> $sudo_bashrc
-	echo '  local command3="$3" if [[ $command3 == "" ]]; then local command3="empty" fi' >> $sudo_bashrc
-	echo '  local command4="$4" if [[ $command4 == "" ]]; then local command4="empty" fi' >> $sudo_bashrc
-	echo '  local command5="$5" if [[ $command5 == "" ]]; then local command5="empty" fi' >> $sudo_bashrc
+	echo '  local command1="$1"; if [[ "$command1" == "" ]]; then command1="empty"; fi' >> $sudo_bashrc
+	echo '  local command2="$2"; if [[ "$command2" == "" ]]; then command2="empty"; fi' >> $sudo_bashrc
+	echo '  local command3="$3"; if [[ "$command3" == "" ]]; then command3="empty"; fi' >> $sudo_bashrc
+	echo '  local command4="$4"; if [[ "$command4" == "" ]]; then command4="empty"; fi' >> $sudo_bashrc
+	echo '  local command5="$5"; if [[ "$command5" == "" ]]; then command5="empty"; fi' >> $sudo_bashrc
 	echo '  local path="$PWD"' >> $sudo_bashrc
 	echo '  if [[ $command1 == "reset" ]]; then' >> $sudo_bashrc
 	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
