@@ -369,6 +369,7 @@ initEasyDocker()
         source "scripts/sources.sh"
 	else
         init_run_flag="false"
+        displayEasyDockerLogo;
         source "scripts/sources.sh"
     fi
 }

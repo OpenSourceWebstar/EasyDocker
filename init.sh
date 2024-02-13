@@ -169,7 +169,7 @@ setupEasyDockerCommand()
 	echo '  if [[ $command1 == "reset" ]]; then' >> $sudo_bashrc
 	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
 	echo '  elif [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
-	echo '    sudo chmod 0755 /docker/install/* && /docker/install/start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
+	echo '    sudo chmod 0755 /docker/install/* && cd /docker/install && ./start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
 	echo '  else' >> $sudo_bashrc
 	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
 	echo '  fi' >> $sudo_bashrc
