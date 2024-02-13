@@ -2,6 +2,7 @@
 
 param1="$1"
 
+install_param="init"
 sudo_user_name=easydocker
 repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
 sshd_config="/etc/ssh/sshd_config"
@@ -70,7 +71,7 @@ initializeScript()
 	sudo apt-get install git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
 	echo "SUCCESS: Prerequisite apps installed."
 
-	if [[ "$param1" == "run" ]]; then
+	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
 		echo "###           Creating User Accounts             ###"
@@ -87,7 +88,7 @@ initializeScript()
 		fi
 	fi
 
-	if [[ "$param1" == "run" ]]; then
+	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
 		echo "###        EasyDocker Folder Creation            ###"
@@ -108,7 +109,7 @@ initializeScript()
 		echo "SUCCESS: All folders have been created."
 	fi
 
-	if [[ "$param1" == "run" ]]; then
+	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
 		echo "###      	       Git Clone / Update              ###"
@@ -127,7 +128,7 @@ initializeScript()
 		fi
 	fi
 
-	if [[ "$param1" == "run" ]]; then
+	if [[ "$param1" == "$install_param" ]]; then
 		setupEasyDockerCommand;
 	fi
 
@@ -167,11 +168,11 @@ setupEasyDockerCommand()
 	echo '  local command5="$5"; if [[ "$command5" == "" ]]; then command5="empty"; fi' >> $sudo_bashrc
 	echo '  local path="$PWD"' >> $sudo_bashrc
 	echo '  if [[ $command1 == "reset" ]]; then' >> $sudo_bashrc
-	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
+	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh '"$install_param"'"' >> $sudo_bashrc
 	echo '  elif [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
 	echo '    sudo chmod 0755 /docker/install/* && cd /docker/install && ./start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
 	echo '  else' >> $sudo_bashrc
-	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"' >> $sudo_bashrc
+	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh '"$install_param"'"' >> $sudo_bashrc
 	echo '  fi' >> $sudo_bashrc
 	echo '}' >> $sudo_bashrc
 	echo '# EasyDocker Command End' >> $sudo_bashrc
@@ -180,7 +181,7 @@ setupEasyDockerCommand()
 
 reinstallEasyDocker()
 {
-	sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh run"
+	sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh install"
 }
 
 virtualminInstall()
@@ -381,6 +382,6 @@ completeInitMessage()
 	exit
 }
 
-if [ "$param1" == "run" ] || [ "$param1" == "virtualmin" ]; then
+if [ "$param1" == "$install_param" ] || [ "$param1" == "virtualmin" ]; then
 	initializeScript;
 fi

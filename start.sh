@@ -363,7 +363,7 @@ exitScript()
 
 initEasyDocker()
 {
-    if [[ "$initial_command1" == "start" ]]; then
+    if [[ "$initial_command1" == "run" ]]; then
         init_run_flag="true"
         displayEasyDockerLogo;
         source "scripts/sources.sh"
