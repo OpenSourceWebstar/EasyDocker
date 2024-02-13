@@ -1,7 +1,18 @@
 #!/bin/bash
 
+cliUpdateCommands() 
+{
+    if [[ "$initial_command1" == "empty" ]]; then initial_command1="" fi
+    if [[ "$initial_command2" == "empty" ]]; then initial_command2="" fi
+    if [[ "$initial_command3" == "empty" ]]; then initial_command3="" fi
+    if [[ "$initial_command4" == "empty" ]]; then initial_command4="" fi
+    if [[ "$initial_command5" == "empty" ]]; then initial_command5="" fi
+}
+
 cliInitilize() 
 {
+    cliUpdateCommands;
+
     if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
     # This is handled in the initEasyDocker function
