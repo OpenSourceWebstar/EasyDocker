@@ -366,10 +366,10 @@ initEasyDocker()
     if [[ "$initial_command1" == "run" ]]; then
         init_run_flag="true"
         displayEasyDockerLogo;
-        sourceSources;
+        source "scripts/sources.sh"
 	else
         init_run_flag="false"
-        sourceSources;
+        source "scripts/sources.sh"
     fi
 }
 
