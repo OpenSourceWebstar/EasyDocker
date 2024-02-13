@@ -83,7 +83,7 @@ sourceScripts()
             isSuccessful "All files found and loaded for startup."
             checkUpdates;
         elif [[ $flag == "cli" ]]; then
-            cliInitilize;
+            cliInitialize;
         fi
     else
         echo ""
