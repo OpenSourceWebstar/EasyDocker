@@ -49,7 +49,7 @@ sourceFiles()
         echo "####################################################"
         echo ""
         echo "${YELLOW}NOTICE:${NC} If you are experiencing loading issues..."
-        echo "${YELLOW}NOTICE:${NC} Please run the following : 'rm -rf /docker/install && easydocker'"
+        echo "${YELLOW}NOTICE:${NC} Please run the following : 'easydocker reset'"
         echo ""
     fi
     for file_to_source in "${files_to_source[@]}"; do
@@ -81,7 +81,7 @@ sourceScripts()
     if [ ${#missing_files[@]} -eq 0 ]; then
         if [[ $flag == "run" ]]; then
             isSuccessful "All files found and loaded for startup."
-            checkUpdates;
+            checkUpdates run;
         elif [[ $flag == "cli" ]]; then
             cliInitilize;
         fi

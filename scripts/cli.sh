@@ -4,8 +4,6 @@ cliInitilize()
 {
     if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
-    # This is handled in the initEasyDocker function
-    #elif [ "$initial_command1" == "run" ]; then
     elif [ "$initial_command1" == "update" ]; then
         checkUpdates cli;
     elif [ "$initial_command1" == "reset" ]; then
