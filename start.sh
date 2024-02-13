@@ -15,6 +15,7 @@ displayEasyDockerLogo()
 ____ ____ ____ _   _    ___  ____ ____ _  _ ____ ____ 
 |___ |__| [__   \_/     |  \ |  | |    |_/  |___ |__/ 
 |___ |  | ___]   |      |__/ |__| |___ | \_ |___ |  \ "
+    echo ""
 }
 
 # Used to load any functions after update
