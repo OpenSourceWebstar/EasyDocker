@@ -3,8 +3,8 @@
 initial_command1="$1"
 initial_command2="$2"
 initial_command3="$3"
-initial_command2="$4"
-initial_command3="$5"
+initial_command4="$4"
+initial_command5="$5"
 # Used for saving directory path
 initial_path="$6"
 initial_path_save=$initial_path
