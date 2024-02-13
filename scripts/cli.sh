@@ -9,7 +9,7 @@ cliInitilize()
     elif [ "$initial_command1" == "update" ]; then
         checkUpdates cli;
     elif [ "$initial_command1" == "reset" ]; then
-        reinstallEasyDocker;
+        runInitReinstall;
     elif [ "$initial_command1" == "app" ]; then
         if [[ "$initial_command2" == "" ]] && [[ "$initial_command3" == "" ]]; then
             cliListAppCommands;

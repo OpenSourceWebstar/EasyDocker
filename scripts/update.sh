@@ -5,7 +5,7 @@ checkUpdates()
     local param1="$1"
     
     gitCheckEasyDockerConfigFilesExist;
-	sourceScripts "update";
+	sourceScripts;
 
 	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
 		echo ""
@@ -46,9 +46,9 @@ checkUpdates()
                         gitCheckEasyDockerConfigFilesExist;
                         gitCheckConfigs;
 						fixPermissionsBeforeStart "" "update";
-						sourceScripts "update";
+						sourceScripts;
 
-                        if [[ $param1 != "cli" ]]; then
+                        if [[ $param1 == "run" ]]; then
                             isSuccessful "Starting/Restarting EasyDocker"
                             detectOS;
                         fi
@@ -61,9 +61,9 @@ checkUpdates()
                         gitCheckEasyDockerConfigFilesExist;
                         gitCheckConfigs;
 						fixPermissionsBeforeStart "" "update";
-						sourceScripts "update";
+						sourceScripts;
 
-                        if [[ $param1 != "cli" ]]; then
+                        if [[ $param1 == "run" ]]; then
                             detectOS;
                         fi
 						
@@ -81,15 +81,15 @@ checkUpdates()
             gitCheckEasyDockerConfigFilesExist;
             gitCheckConfigs;
 			fixPermissionsBeforeStart "" "update";
-			sourceScripts "update";
+			sourceScripts;
 
-            if [[ $param1 != "cli" ]]; then
+            if [[ $param1 == "run" ]]; then
                 isSuccessful "Starting/Restarting EasyDocker"
                 detectOS;
             fi
 		fi
 	else
-        if [[ $param1 != "cli" ]]; then
+        if [[ $param1 == "run" ]]; then
             detectOS;
         fi
 	fi

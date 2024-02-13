@@ -42,7 +42,7 @@ files_to_source=(
 sourceFiles()
 {
     local flag="$1"
-    if [[ $flag == "start" ]]; then
+    if [[ $flag == "run" ]]; then
         echo ""
         echo "####################################################"
         echo "###       Loading EasyDocker Startup Files       ###"
@@ -154,8 +154,11 @@ loadFiles()
     done < <(sudo find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
 }
 
+# For starting the script
 if [[ $init_run_flag == "true" ]]; then
+    # For loading EasyDocker
     sourceScripts "run";
 elif [[ $init_run_flag == "false" ]]; then
+    # For using the CLI
     sourceScripts "cli";
 fi

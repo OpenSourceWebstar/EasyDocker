@@ -179,11 +179,6 @@ setupEasyDockerCommand()
 	source $sudo_bashrc
 }
 
-reinstallEasyDocker()
-{
-	sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh install"
-}
-
 virtualminInstall()
 {
 	echo ""
