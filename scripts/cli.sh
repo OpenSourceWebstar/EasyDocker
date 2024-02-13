@@ -44,13 +44,13 @@ cliInitialize()
         # First param given
         elif [ "$initial_command2" = "list" ]; then
             databaseListInstalledApps
-        elif [ "$initial_command3" = "start" ]; then
+        elif [ "$initial_command2" = "start" ]; then
             dockerStartApp "$initial_command2"
-        elif [ "$initial_command3" = "stop" ]; then
+        elif [ "$initial_command2" = "stop" ]; then
             dockerStopApp "$initial_command2"
-        elif [ "$initial_command3" = "up" ]; then
+        elif [ "$initial_command2" = "up" ]; then
             dockerAppUp "$initial_command2"
-        elif [ "$initial_command3" = "down" ]; then
+        elif [ "$initial_command2" = "down" ]; then
             dockerAppDown "$initial_command2"
         fi
 
@@ -64,7 +64,7 @@ cliInitialize()
         # First param given
         elif [ "$initial_command2" = "root" ]; then
             dockerSwitchBetweenRootAndRootless
-        elif [ "$initial_command3" = "rootless" ]; then
+        elif [ "$initial_command2" = "rootless" ]; then
             databaseListInstalledApps
         fi
 
