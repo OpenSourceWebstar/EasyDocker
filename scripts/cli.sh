@@ -23,61 +23,63 @@ cliUpdateCommands()
     fi
 }
 
-cliInitilize() 
+cliInitialize() 
 {
-    cliUpdateCommands;
+    cliUpdateCommands
 
-    if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
-        cliShowCommands;
+    if [ "$initial_command1" = "help" ] || [ -z "$initial_command1" ]; then
+        cliShowCommands
 
-    elif [ "$initial_command1" == "update" ]; then
-        checkUpdates;
+    elif [ "$initial_command1" = "update" ]; then
+        checkUpdates
 
-    elif [ "$initial_command1" == "reset" ]; then
-        runInitReinstall;
+    elif [ "$initial_command1" = "reset" ]; then
+        runInitReinstall
 
-    elif [ "$initial_command1" == "app" ]; then
+    elif [ "$initial_command1" = "app" ]; then
         # No commands given for app
-        if [[ "$initial_command2" == "" ]]; then
-            cliListAppCommands;
+        if [[ -z "$initial_command2" ]]; then
+            cliListAppCommands
 
         # First param given
         elif [[ "$initial_command2" != "" ]]; then
-            if [[ "$initial_command2" == "list" ]]; then
-                databaseListInstalledApps;
-            elif [[ "$initial_command3" == "start" ]]; then
-                dockerStartApp "$param2";
-            elif [[ "$initial_command3" == "stop" ]]; then
-                dockerStopApp "$param2";
-            elif [[ "$initial_command3" == "up" ]]; then
-                dockerAppUp "$param2";
-            elif [[ "$initial_command3" == "down" ]]; then
-                dockerAppDown "$param2";
+            if [ "$initial_command2" = "list" ]; then
+                databaseListInstalledApps
+            elif [ "$initial_command3" = "start" ]; then
+                dockerStartApp "$initial_command2"
+            elif [ "$initial_command3" = "stop" ]; then
+                dockerStopApp "$initial_command2"
+            elif [ "$initial_command3" = "up" ]; then
+                dockerAppUp "$initial_command2"
+            elif [ "$initial_command3" = "down" ]; then
+                dockerAppDown "$initial_command2"
+            fi
         fi
 
-    elif [ "$initial_command1" == "dockertype" ]; then
-        cliListDockertypeCommands;
+    elif [ "$initial_command1" = "dockertype" ]; then
+        cliListDockertypeCommands
 
         # No commands given for app
-        if [[ "$initial_command2" == "" ]]; then
-            cliListAppCommands;
+        if [[ -z "$initial_command2" ]]; then
+            cliListAppCommands
 
         # First param given
         elif [[ "$initial_command2" != "" ]]; then
-            if [[ "$initial_command2" == "root" ]]; then
-                dockerSwitchBetweenRootAndRootless;
-            elif [[ "$initial_command3" == "rootless" ]]; then
-                databaseListInstalledApps;
+            if [ "$initial_command2" = "root" ]; then
+                dockerSwitchBetweenRootAndRootless
+            elif [ "$initial_command3" = "rootless" ]; then
+                databaseListInstalledApps
+            fi
         fi
 
-    elif [ "$initial_command1" == "" ]; then
+    elif [ -z "$initial_command1" ]; then
         echo ""
         echo "No option given, showing command menu..."
-        cliShowCommands;
+        cliShowCommands
 
     else
         echo "Unknown command: $initial_command1"
-        cliShowCommands;
+        cliShowCommands
     fi
 }
 
