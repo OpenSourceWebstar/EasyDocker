@@ -2,11 +2,25 @@
 
 cliUpdateCommands() 
 {
-    if [[ "$initial_command1" == "empty" ]]; then initial_command1="" fi
-    if [[ "$initial_command2" == "empty" ]]; then initial_command2="" fi
-    if [[ "$initial_command3" == "empty" ]]; then initial_command3="" fi
-    if [[ "$initial_command4" == "empty" ]]; then initial_command4="" fi
-    if [[ "$initial_command5" == "empty" ]]; then initial_command5="" fi
+    if [[ "$initial_command1" == "empty" ]]; then 
+        initial_command1=""
+    fi
+    
+    if [[ "$initial_command2" == "empty" ]]; then 
+        initial_command2=""
+    fi
+    
+    if [[ "$initial_command3" == "empty" ]]; then 
+        initial_command3=""
+    fi
+    
+    if [[ "$initial_command4" == "empty" ]]; then 
+        initial_command4=""
+    fi
+    
+    if [[ "$initial_command5" == "empty" ]]; then 
+        initial_command5=""
+    fi
 }
 
 cliInitilize() 
