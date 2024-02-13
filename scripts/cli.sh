@@ -38,15 +38,37 @@ cliInitilize()
 
     elif [ "$initial_command1" == "app" ]; then
         # No commands given for app
-        if [[ "$initial_command2" == "" ]] && [[ "$initial_command3" == "" ]]; then
+        if [[ "$initial_command2" == "" ]]; then
             cliListAppCommands;
+
         # First param given
         elif [[ "$initial_command2" != "" ]]; then
-            cliAppRunCommands $initial_command2 $initial_command3;
+            if [[ "$initial_command2" == "list" ]]; then
+                databaseListInstalledApps;
+            elif [[ "$initial_command3" == "start" ]]; then
+                dockerStartApp "$param2";
+            elif [[ "$initial_command3" == "stop" ]]; then
+                dockerStopApp "$param2";
+            elif [[ "$initial_command3" == "up" ]]; then
+                dockerAppUp "$param2";
+            elif [[ "$initial_command3" == "down" ]]; then
+                dockerAppDown "$param2";
         fi
 
     elif [ "$initial_command1" == "dockertype" ]; then
         cliListDockertypeCommands;
+
+        # No commands given for app
+        if [[ "$initial_command2" == "" ]]; then
+            cliListAppCommands;
+
+        # First param given
+        elif [[ "$initial_command2" != "" ]]; then
+            if [[ "$initial_command2" == "root" ]]; then
+                dockerSwitchBetweenRootAndRootless;
+            elif [[ "$initial_command3" == "rootless" ]]; then
+                databaseListInstalledApps;
+        fi
 
     elif [ "$initial_command1" == "" ]; then
         echo ""
@@ -87,39 +109,6 @@ cliListAppCommands()
     echo ""
 }
 
-cliAppRunCommands()
-{
-    local param1="$1"
-    local param2="$2"
-
-    # Database Check
-    if [ -f "$docker_dir/$db_file" ] ; then
-        echo "EasyDocker has not been setup, please run the easydocker start command first."
-        return
-    fi
-
-    case "$param1" in
-        list)
-            databaseListInstalledApps;
-            ;;
-        start | stop | up | down)
-            if [ -n "$param2" ]; then
-                case "$param1" in
-                    start) dockerStartApp "$param2" ;;
-                    stop) dockerStopApp "$param2" ;;
-                    up) dockerAppUp "$param2" ;;
-                    down) dockerAppDown "$param2" ;;
-                esac
-            else
-                echo "No app name supplied"
-            fi
-            ;;
-        *)
-            echo "Invalid command"
-            ;;
-    esac
-}
-
 cliListDockertypeCommands() 
 {
     echo ""
@@ -128,30 +117,4 @@ cliListDockertypeCommands()
     echo "  easydocker dockertype root     - Set Docker to use root privileges"
     echo "  easydocker dockertype rootless - Set Docker to run in rootless mode"
     echo ""
-}
-
-
-cliAppRunCommands()
-{
-    local param1="$1"
-    local param2="$2"
-
-    # Database Check
-    if [ -f "$docker_dir/$db_file" ] ; then
-        echo "EasyDocker has not been setup, please run the easydocker start command first."
-        return
-    fi
-
-    case "$param1" in
-        root)
-            dockerSwitchBetweenRootAndRootless;
-            ;;
-        rootless)
-            databaseListInstalledApps;
-            ;;
-
-        *)
-            echo "Invalid command"
-            ;;
-    esac
 }
