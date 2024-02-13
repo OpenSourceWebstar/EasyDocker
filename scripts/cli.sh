@@ -29,28 +29,30 @@ cliInitilize()
 
     if [ "$initial_command1" == "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
-    # This is handled in the initEasyDocker function
-    #elif [ "$initial_command1" == "run" ]; then
+
     elif [ "$initial_command1" == "update" ]; then
         checkUpdates;
+
     elif [ "$initial_command1" == "reset" ]; then
         runInitReinstall;
+
     elif [ "$initial_command1" == "app" ]; then
+        # No commands given for app
         if [[ "$initial_command2" == "" ]] && [[ "$initial_command3" == "" ]]; then
             cliListAppCommands;
-        elif [[ "$initial_command2" != "" ]] && [[ "$initial_command3" == "" ]]; then
+        # First param given
+        elif [[ "$initial_command2" != "" ]]; then
             cliAppRunCommands $initial_command2 $initial_command3;
         fi
+
     elif [ "$initial_command1" == "dockertype" ]; then
         cliListDockertypeCommands;
-    elif [ "$initial_command1" == "empty" ]; then
-        echo ""
-        echo "No option given, showing command menu..."
-        cliShowCommands;
+
     elif [ "$initial_command1" == "" ]; then
         echo ""
         echo "No option given, showing command menu..."
         cliShowCommands;
+
     else
         echo "Unknown command: $initial_command1"
         cliShowCommands;
