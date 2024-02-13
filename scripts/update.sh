@@ -48,7 +48,7 @@ checkUpdates()
 						fixPermissionsBeforeStart "" "update";
 						sourceScripts;
 
-                        if [[ $param1 == "run" ]]; then
+                        if [[ $init_run_flag == "true" ]]; then
                             isSuccessful "Starting/Restarting EasyDocker"
                             detectOS;
                         fi
@@ -63,7 +63,7 @@ checkUpdates()
 						fixPermissionsBeforeStart "" "update";
 						sourceScripts;
 
-                        if [[ $param1 == "run" ]]; then
+                        if [[ $init_run_flag == "true" ]]; then
                             detectOS;
                         fi
 						
@@ -83,13 +83,13 @@ checkUpdates()
 			fixPermissionsBeforeStart "" "update";
 			sourceScripts;
 
-            if [[ $param1 == "run" ]]; then
+            if [[ $init_run_flag == "true" ]]; then
                 isSuccessful "Starting/Restarting EasyDocker"
                 detectOS;
             fi
 		fi
 	else
-        if [[ $param1 == "run" ]]; then
+        if [[ $init_run_flag == "true" ]]; then
             detectOS;
         fi
 	fi

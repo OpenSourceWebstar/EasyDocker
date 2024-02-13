@@ -7,7 +7,7 @@ cliInitilize()
     # This is handled in the initEasyDocker function
     #elif [ "$initial_command1" == "run" ]; then
     elif [ "$initial_command1" == "update" ]; then
-        checkUpdates cli;
+        checkUpdates;
     elif [ "$initial_command1" == "reset" ]; then
         runInitReinstall;
     elif [ "$initial_command1" == "app" ]; then
