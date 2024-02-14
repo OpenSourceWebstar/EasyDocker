@@ -1064,7 +1064,7 @@ dockerSwitchBetweenRootAndRootless()
                     isNotice "Please provide a valid input."
                 done
             else 
-                $switch_rooted_choice="y"
+                switch_rooted_choice="y"
             fi
             if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the Rooted Docker now..."
@@ -1118,7 +1118,7 @@ dockerSwitchBetweenRootAndRootless()
                     isNotice "Please provide a valid input."
                 done
             else 
-                $switch_rootless_choice="y"
+                switch_rootless_choice="y"
             fi
             if [[ "$switch_rootless_choice" == [yY] ]]; then
                 isNotice "Switching to the Rootless Docker now..."
