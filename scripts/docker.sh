@@ -1051,17 +1051,21 @@ dockerSwitchBetweenRootAndRootless()
         echo ""
 
         if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
-            isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
-            echo ""
-            while true; do
-                isQuestion "Would you like to switch to Rooted Docker? (y/n): "
+            if [[ $flag != "cli" ]]; then
+                isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
                 echo ""
-                read -p "" switch_rooted_choice
-                if [[ -n "$switch_rooted_choice" ]]; then
-                    break
-                fi
-                isNotice "Please provide a valid input."
-            done
+                while true; do
+                    isQuestion "Would you like to switch to Rooted Docker? (y/n): "
+                    echo ""
+                    read -p "" switch_rooted_choice
+                    if [[ -n "$switch_rooted_choice" ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input."
+                done
+            else 
+                $switch_rooted_choice="y"
+            fi
             if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the Rooted Docker now..."
                 if [[ $docker_rootless_found == "true" ]]; then
@@ -1101,17 +1105,21 @@ dockerSwitchBetweenRootAndRootless()
         fi
 
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-            isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
-            echo ""
-            while true; do
-                isQuestion "Would you like to switch to Rootless Docker? (y/n): "
+            if [[ $flag != "cli" ]]; then
+                isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
                 echo ""
-                read -p "" switch_rootless_choice
-                if [[ -n "$switch_rootless_choice" ]]; then
-                    break
-                fi
-                isNotice "Please provide a valid input."
-            done
+                while true; do
+                    isQuestion "Would you like to switch to Rootless Docker? (y/n): "
+                    echo ""
+                    read -p "" switch_rootless_choice
+                    if [[ -n "$switch_rootless_choice" ]]; then
+                        break
+                    fi
+                    isNotice "Please provide a valid input."
+                done
+            else 
+                $switch_rootless_choice="y"
+            fi
             if [[ "$switch_rootless_choice" == [yY] ]]; then
                 isNotice "Switching to the Rootless Docker now..."
                 if [[ $docker_rooted_found == "true" ]]; then
