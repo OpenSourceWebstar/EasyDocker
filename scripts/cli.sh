@@ -22,11 +22,11 @@ cliUpdateCommands()
         initial_command5=""
     fi
 
-    echo "initial_command1 $initial_command1"
-    echo "initial_command2 $initial_command2"
-    echo "initial_command3 $initial_command3"
-    echo "initial_command4 $initial_command4"
-    echo "initial_command5 $initial_command5"
+    #echo "initial_command1 $initial_command1"
+    #echo "initial_command2 $initial_command2"
+    #echo "initial_command3 $initial_command3"
+    #echo "initial_command4 $initial_command4"
+    #echo "initial_command5 $initial_command5"
 }
 
 cliInitialize() 
@@ -34,44 +34,49 @@ cliInitialize()
     cliUpdateCommands
 
     if [ "$initial_command1" = "help" ] || [ -z "$initial_command1" ]; then
-        cliShowCommands
+        cliShowCommands;
 
     elif [ "$initial_command1" = "update" ]; then
-        checkUpdates
+        checkUpdates;
 
     elif [ "$initial_command1" = "reset" ]; then
-        runInitReinstall
+        runInitReinstall;
 
     elif [ "$initial_command1" = "app" ]; then
         # No commands given for app
         if [[ -z "$initial_command2" ]]; then
-            cliListAppCommands
+            cliListAppCommands;
 
         # First param given
         elif [ "$initial_command2" = "list" ]; then
-            databaseListInstalledApps
+            databaseListInstalledApps;
+            echo ""
         elif [ "$initial_command2" = "start" ]; then
-            dockerStartApp "$initial_command2"
+            dockerStartApp "$initial_command3";
         elif [ "$initial_command2" = "stop" ]; then
-            dockerStopApp "$initial_command2"
+            dockerStopApp "$initial_command3";
         elif [ "$initial_command2" = "up" ]; then
-            dockerAppUp "$initial_command2"
+            dockerAppUp "$initial_command3";
         elif [ "$initial_command2" = "down" ]; then
-            dockerAppDown "$initial_command2"
+            dockerAppDown "$initial_command3";
         fi
 
     elif [ "$initial_command1" = "dockertype" ]; then
-        cliListDockertypeCommands
+        cliListDockertypeCommands;
 
         # No commands given for app
         if [[ -z "$initial_command2" ]]; then
-            cliListAppCommands
+            cliListDockertypeCommands;
 
         # First param given
         elif [ "$initial_command2" = "root" ]; then
-            dockerSwitchBetweenRootAndRootless
+            result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=rootless|CFG_DOCKER_INSTALL_TYPE=root|" "$general_config_file")
+            checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to root in the $config_file_general config."
+            dockerSwitchBetweenRootAndRootless;
         elif [ "$initial_command2" = "rootless" ]; then
-            databaseListInstalledApps
+            result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=root|CFG_DOCKER_INSTALL_TYPE=rootless|" "$general_config_file")
+            checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to rootless in the $config_file_general config."
+            dockerSwitchBetweenRootAndRootless;
         fi
 
     elif [ -z "$initial_command1" ]; then
