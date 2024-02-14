@@ -62,8 +62,6 @@ cliInitialize()
         fi
 
     elif [ "$initial_command1" = "dockertype" ]; then
-        cliListDockertypeCommands;
-
         # No commands given for app
         if [[ -z "$initial_command2" ]]; then
             cliListDockertypeCommands;
@@ -72,11 +70,11 @@ cliInitialize()
         elif [ "$initial_command2" = "root" ]; then
             result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=rootless|CFG_DOCKER_INSTALL_TYPE=root|" "$configs_dir$config_file_general")
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to root in the $configs_dir$config_file_general config."
-            dockerSwitchBetweenRootAndRootless;
+            dockerSwitchBetweenRootAndRootless cli;
         elif [ "$initial_command2" = "rootless" ]; then
             result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=root|CFG_DOCKER_INSTALL_TYPE=rootless|" "$configs_dir$config_file_general")
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to rootless in the $configs_dir$config_file_general config."
-            dockerSwitchBetweenRootAndRootless;
+            dockerSwitchBetweenRootAndRootless cli;
         fi
 
     elif [ -z "$initial_command1" ]; then

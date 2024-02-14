@@ -1021,6 +1021,7 @@ dockerSetSocketPermissions()
 
 dockerSwitchBetweenRootAndRootless()
 {
+    local flag="$1"
     local run_switcher="false"
     local docker_install_done="false"
     local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
@@ -1144,6 +1145,8 @@ dockerSwitchBetweenRootAndRootless()
                 fi
             fi
         fi
+    elif [[ $flag == "cli" ]]; then
+        isSuccessful "Docker type is already setup for "$CFG_DOCKER_INSTALL_TYPE" no changes needed..."
     fi
 }
 
