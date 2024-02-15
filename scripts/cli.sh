@@ -69,10 +69,12 @@ cliInitialize()
         elif [ "$initial_command2" = "root" ]; then
             result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=rootless|CFG_DOCKER_INSTALL_TYPE=root|" "$configs_dir$config_file_general")
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to root in the $configs_dir$config_file_general config."
+            source $configs_dir$config_file_general
             dockerSwitchBetweenRootAndRootless cli;
         elif [ "$initial_command2" = "rootless" ]; then
             result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=root|CFG_DOCKER_INSTALL_TYPE=rootless|" "$configs_dir$config_file_general")
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to rootless in the $configs_dir$config_file_general config."
+            source $configs_dir$config_file_general
             dockerSwitchBetweenRootAndRootless cli;
         fi
 
