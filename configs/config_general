@@ -9,7 +9,7 @@ CFG_DOMAIN_2=
 CFG_DOMAIN_3=
 
 # Docker Install
-CFG_DOCKER_INSTALL_TYPE=root # Root or Rootless
+CFG_DOCKER_INSTALL_TYPE=rooted # rooted or rootless
 CFG_DOCKER_INSTALL_USER=dockerinstall
 CFG_DOCKER_INSTALL_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
 
