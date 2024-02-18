@@ -121,6 +121,17 @@ cliListAppCommands()
 
 cliListDockertypeCommands() 
 {
+    # Select preexisting docker_type
+    if [ -f "$docker_dir/$db_file" ]; then
+        local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "docker_type";')
+        # Insert into DB if something doesnt exist
+        if [[ $docker_type == "" ]]; then
+            databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
+            local docker_type=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "docker_type";')
+        fi
+    fi
+    echo ""
+    isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}" 
     echo ""
     echo "Available Dockertype Commands:"
     echo ""

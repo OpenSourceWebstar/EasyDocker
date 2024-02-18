@@ -25,7 +25,7 @@ dockerDownShutdown()
     local app_name="$1"
     local type="$2"
 
-    if [ -e $containers_dir$app_name/docker-compose.yml ]; then
+    #if [ -e $containers_dir$app_name/docker-compose.yml ]; then
         if [[ "$OS" == [1234567] ]]; then
             if [[ "$type" == "" ]]; then
                 # Used for standard app shutdown
@@ -48,7 +48,7 @@ dockerDownShutdown()
             fi
         fi
         dockerDownShutdownSuccessMessage $app_name;
-    fi
+    #fi
 }
 
 dockerDownShutdownSuccessMessage()
