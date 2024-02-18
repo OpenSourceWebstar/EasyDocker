@@ -58,6 +58,11 @@ cliInitialize()
             dockerAppUp "$initial_command3";
         elif [ "$initial_command2" = "down" ]; then
             dockerAppDown "$initial_command3";
+        else
+            isNotice "Invalid app command used : ${RED}$initial_command3${NC}"
+            isNotice "Please use one of the following options below :"
+            echo ""
+            cliListAppCommands;
         fi
 
     elif [ "$initial_command1" = "dockertype" ]; then
@@ -76,6 +81,11 @@ cliInitialize()
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to rootless in the $configs_dir$config_file_general config."
             source $configs_dir$config_file_general
             dockerSwitchBetweenRootAndRootless cli;
+        else
+            isNotice "Invalid dockertype used : ${RED}$initial_command2${NC}"
+            isNotice "Please use one of the following options below :"
+            echo ""
+            cliListDockertypeCommands;
         fi
 
     elif [ -z "$initial_command1" ]; then
