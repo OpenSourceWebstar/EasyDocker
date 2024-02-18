@@ -103,7 +103,7 @@ installTiledesk()
 					local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
-			elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+			elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
 				local result=$(sudo docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down)
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then

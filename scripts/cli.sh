@@ -66,13 +66,13 @@ cliInitialize()
             cliListDockertypeCommands;
 
         # First param given
-        elif [ "$initial_command2" = "root" ]; then
-            result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=rootless|CFG_DOCKER_INSTALL_TYPE=root|" "$configs_dir$config_file_general")
+        elif [ "$initial_command2" = "rooted" ]; then
+            result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=rootless|CFG_DOCKER_INSTALL_TYPE=rooted|" "$configs_dir$config_file_general")
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to root in the $configs_dir$config_file_general config."
             source $configs_dir$config_file_general
             dockerSwitchBetweenRootAndRootless cli;
         elif [ "$initial_command2" = "rootless" ]; then
-            result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=root|CFG_DOCKER_INSTALL_TYPE=rootless|" "$configs_dir$config_file_general")
+            result=$(sudo sed -i "s|CFG_DOCKER_INSTALL_TYPE=rooted|CFG_DOCKER_INSTALL_TYPE=rootless|" "$configs_dir$config_file_general")
             checkSuccess "Updating CFG_DOCKER_INSTALL_TYPE to rootless in the $configs_dir$config_file_general config."
             source $configs_dir$config_file_general
             dockerSwitchBetweenRootAndRootless cli;
@@ -111,11 +111,11 @@ cliListAppCommands()
     echo ""
     echo "  easydocker app list - List all installed apps"
     echo ""
-    echo "  easydocker app install [name]  - Install the specified app"
-    echo "  easydocker app start [name]    - Start the specified app (Must be installed)"
-    echo "  easydocker app stop [name]     - Stop the specified app (Must be installed)"
-    echo "  easydocker app up [name]       - Docker-Compose up (Rebuild app)"
-    echo "  easydocker app down [name]     - Docker-Compose up (Uninstall app)"
+    echo "  easydocker app install [name]          - Install the specified app"
+    echo "  easydocker app start [name]            - Start the specified app (Must be installed)"
+    echo "  easydocker app stop [name]             - Stop the specified app (Must be installed)"
+    echo "  easydocker app up [name]               - Docker-Compose up (Rebuild app)"
+    echo "  easydocker app down [name]             - Docker-Compose up (Uninstall app)"
     echo ""
 }
 
@@ -135,7 +135,7 @@ cliListDockertypeCommands()
     echo ""
     echo "Available Dockertype Commands:"
     echo ""
-    echo "  easydocker dockertype root     - Set Docker to use root privileges"
-    echo "  easydocker dockertype rootless - Set Docker to run in rootless mode"
+    echo "  easydocker dockertype rooted          - Set Docker to use rooted privileges"
+    echo "  easydocker dockertype rootless        - Set Docker to run in rootless mode"
     echo ""
 }

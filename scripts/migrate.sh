@@ -662,7 +662,7 @@ migrateUpdateFiles()
         checkSuccess "Updating Compose file for $app_name"
     fi
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /run/user/${docker_install_user_id}/docker.sock|- /var/run/docker.sock|g" \

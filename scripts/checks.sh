@@ -57,7 +57,7 @@ checkRequirements()
 			if [[ "$ISUSER" == *"no such user"* ]]; then
 				ISACT=$(command -v docker &> /dev/null)
 			fi
-		elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+		elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
 			ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
 		fi
 	fi
@@ -145,7 +145,7 @@ checkRequirements()
 				isNotice "Docker does not appear to be installed. Setup will start soon."
 				((preinstallneeded++)) 
 			fi
-		elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+		elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
 			if [[ "$ISACT" == "active" ]]; then
 				isSuccessful "Docker appears to be installed and running."
 			else
@@ -183,7 +183,7 @@ checkRequirements()
 				isNotice "Docker Network $CFG_NETWORK_NAME not found. Setup will start soon."
 				((preinstallneeded++)) 
 			fi
-		elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+		elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
 			if docker network ls | grep -q $CFG_NETWORK_NAME; then
 				isSuccessful "Docker Network $CFG_NETWORK_NAME appears to be installed."
 			else
@@ -204,7 +204,7 @@ checkRequirements()
 	fi
 
 	if [[ $CFG_REQUIREMENT_UFWD == "true" ]]; then
-		if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+		if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
 			### UFW Docker
 			if [[ "$ISUFWD" != *"command not found"* ]]; then
 				isSuccessful "UFW-Docker Fix appears to be installed."

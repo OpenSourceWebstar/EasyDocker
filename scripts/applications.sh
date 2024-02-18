@@ -279,7 +279,7 @@ invidiousResetUserPassword()
 runCommandForDockerInstallUser "docker exec invidious-db /bin/bash -c \"psql -U kemal -d $database_name <<EOF
 $sql_query
 EOF\" && exit"
-            elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
 docker exec invidious-db /bin/bash -c "psql -U kemal -d $database_name <<EOF $sql_query EOF" && exit
             fi
 
@@ -328,7 +328,7 @@ mattermostResetUserPassword()
         # Update Password
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
             runCommandForDockerInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit
         fi
         # Disable local mode

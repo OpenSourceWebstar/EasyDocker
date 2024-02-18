@@ -19,7 +19,7 @@ installDocker()
 
 startDocker()
 {
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local result=$(sudo systemctl start docker)
         checkSuccess "Starting Docker Service"
 
@@ -37,7 +37,7 @@ stopDocker()
 {
     local type="$1"
 
-    if [[ "$type" == "root" ]]; then
+    if [[ "$type" == "rooted" ]]; then
         if [[ "$docker_rooted_found" == "true" ]]; then
             isNotice "Stopping rooted Docker service...this may take a moment..."
         
@@ -167,7 +167,7 @@ installDockerCheck()
     ##########################################
     #### Test if Docker Service is Running ###
     ##########################################
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         ISACT=$( (sudo systemctl is-active docker ) 2>&1 )
         if [[ "$ISACT" != "active" ]]; then
             isNotice "Checking Docker service status. Waiting if not found."

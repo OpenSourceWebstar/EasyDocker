@@ -264,7 +264,7 @@ openPort()
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
                     local result=$(sudo ufw allow "$port/$type")
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
-                elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+                elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
                     local result=$(sudo ufw-docker allow "$app_name" "$port/$type")
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW-Docker Firewall"
                 fi
@@ -342,7 +342,7 @@ closePort()
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
                     local result=$(sudo ufw delete allow "$port/$type")
                     checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
-                elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+                elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
                     local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type")
                     checkSuccess "Closing port $port and type $type for $app_name in the UFW-Docker Firewall"
                 fi
@@ -634,7 +634,7 @@ removePortsFromDatabase()
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
             local result=$(sudo ufw delete allow "$port")
             checkSuccess "Closing port $port for $app_name in the UFW Firewall"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             local result=$(sudo ufw-docker deny "$app_name" "$port")
             checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
         fi

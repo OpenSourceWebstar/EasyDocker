@@ -7,7 +7,7 @@ runCommandForDocker()
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         runCommandForDockerInstallUser "$command"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         if [[ $type == "sudo" ]]; then
             sudo $command
         else
@@ -430,7 +430,7 @@ dockerDown()
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
@@ -438,7 +438,7 @@ dockerDown()
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
@@ -464,7 +464,7 @@ dockerUp()
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
             checkSuccess "Started container for $app_name"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(cd $containers_dir$app_name && sudo docker-compose up -d)
             checkSuccess "Started container for $app_name"
@@ -474,7 +474,7 @@ dockerUp()
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose up -d")
             checkSuccess "Started container for $app_name"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             isNotice "Starting container for $app_name, this may take a while..."
             local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose up -d)
             checkSuccess "Started container for $app_name"
@@ -730,7 +730,7 @@ setupFileWithConfigData()
             -e "s|GIDHERE|$docker_install_user_id|g" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "s|- /run/user/${docker_install_user_id}/docker.sock|- /var/run/docker.sock|g" \
@@ -821,7 +821,7 @@ dockerStopAllApps()
         fi
     fi
 
-    if [[ $type == "root" ]]; then
+    if [[ $type == "rooted" ]]; then
         local result=$(sudo docker ps -q 2>/dev/null)
         if [[ -n "$result" ]]; then
             local result=$(sudo docker stop $(docker ps -a -q))
@@ -836,7 +836,7 @@ dockerStartAllApps()
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser 'docker restart $(docker ps -a -q)')
         checkSuccess "Starting up all docker containers"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local result=$(sudo docker restart $(docker ps -a -q))
         checkSuccess "Starting up all docker containers"
     fi
@@ -855,7 +855,7 @@ dockerAppDown()
         else
             isNotice "Directory $containers_dir$app_name does not exist. Container not found."
         fi
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         if [ -d "$containers_dir$app_name" ]; then
             local result=$(cd "$containers_dir$app_name" && docker-compose down)
             checkSuccess "Shutting down $app_name container"
@@ -874,7 +874,7 @@ dockerAppUp()
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose up -d")
         checkSuccess "Starting up $app_name container"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local result=$(cd $containers_dir$app_name && docker-compose up -d)
         checkSuccess "Starting up $app_name container"
     fi
@@ -944,7 +944,7 @@ isDockerRunningForUser()
     if [[ $type == "rootless" ]]; then
         local docker_command='docker ps 2>&1'
         local result=$(runCommandForDockerInstallUser "$docker_command")
-    elif [[ $type == "root" ]]; then
+    elif [[ $type == "rooted" ]]; then
         local docker_command='sudo docker ps 2>&1'
         local result=$(eval "$docker_command")
     else
@@ -974,7 +974,7 @@ dockerSetSocketPermissions()
     echo "##########################################"
     echo ""
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         # if File exists
         if sudo test -e "$docker_rootless_socket"; then
             local result=$(sudo chmod o-r "$docker_rootless_socket")
@@ -1050,7 +1050,7 @@ dockerSwitchBetweenRootAndRootless()
         echo "##########################################"
         echo ""
 
-        if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
             if [[ $flag != "cli" ]]; then
                 isNotice "The current Docker Setup Type is currently : ${RED}$docker_type${NC}"
                 echo ""
@@ -1184,7 +1184,7 @@ scanContainersForDockerSocket()
                     checkSuccess "Updated socket in file: $file"
                     docker_socket_file_updated="true"
                 fi
-            elif [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
                 if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
                     if [[ $header_sent == "false" ]]; then
                         echo ""
@@ -1208,7 +1208,7 @@ dockerFileUserToDockerType()
 {
     local directory="$1"
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         #update_permissions $CFG_DOCKER_INSTALL_USER $sudo_user_name $containers_dir
         echo "#update_permissions $CFG_DOCKER_INSTALL_USER $sudo_user_name $directory"
     fi
@@ -1221,7 +1221,7 @@ dockerFileUserToDockerType()
 
 dockerUpdateAppsToDockerType()
 {
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "root" ]]; then
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         # Scannning the containers folder
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
