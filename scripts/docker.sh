@@ -1068,15 +1068,16 @@ dockerSwitchBetweenRootAndRootless()
             fi
             if [[ "$switch_rooted_choice" == [yY] ]]; then
                 isNotice "Switching to the Rooted Docker now..."
+                # Looking at the Rootless Install
                 if [[ $docker_rootless_found == "true" ]]; then
                     downAllDockerApps rootless;
                     stopDocker rootless;
+                fi
+                # Looking for Root install
+                if [[ $docker_root_found == "false" ]]; then
                     installDocker;
-                    local docker_install_done="true"
                 fi
-                if [[ $docker_install_done == "true" ]]; then
-                    startDocker root;
-                fi
+                startDocker root;
                 dockerUpdateAppsToDockerType;
                 dockerStartAllApps;
                 databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
@@ -1122,6 +1123,7 @@ dockerSwitchBetweenRootAndRootless()
             fi
             if [[ "$switch_rootless_choice" == [yY] ]]; then
                 isNotice "Switching to the Rootless Docker now..."
+                # Looking at the Rooted Install
                 if [[ $docker_rooted_found == "true" ]]; then
                     downAllDockerApps root;
                     stopDocker root;
@@ -1224,7 +1226,6 @@ dockerUpdateAppsToDockerType()
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
-            #dockerFileUserToDockerType "$dir";
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $(basename $dir);
             fi
@@ -1237,7 +1238,6 @@ dockerUpdateAppsToDockerType()
         local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
         for dir in "${subdirectories[@]}"; do
             scanContainersForDockerSocket "$dir"
-            #dockerFileUserToDockerType "$dir";
             if [[ $docker_socket_file_updated == "true" ]]; then
                 restartApp $(basename $dir);
             fi
