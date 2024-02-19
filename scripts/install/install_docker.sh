@@ -53,8 +53,35 @@ stopDocker()
         if [[ "$docker_rootless_found" == "true" ]]; then
             isNotice "Stopping rootless Docker service...this may take a moment..."
 
-            local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
-            checkSuccess "Stop the systemd user Docker service"
+            #local result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
+            #checkSuccess "Stop the systemd user Docker service"
+
+            local result
+            local retries=3
+            while [ $retries -gt 0 ]; do
+                # Check if Docker is running for the specified user
+                if isDockerRunningForUser "$type"; then
+                    # Docker is running, attempt to stop it
+                    result=$(runCommandForDockerInstallUser "systemctl --user stop docker")
+                    if [ $? -eq 0 ]; then
+                        checkSuccess "Stop the systemd user Docker service"
+                        break
+                    else
+                        ((retries--))
+                        echo "Retrying to stop Docker service. Retries left: $retries"
+                        sleep 5
+                    fi
+                else
+                    isNotice "Docker is already stopped for the rootless user."
+                    break
+                fi
+            done
+
+            if [ $retries -eq 0 ]; then
+                isError "Failed to stop Docker service after multiple attempts."
+                rootless_docker_failed_stop="true"
+            fi
+
         fi
     fi
 

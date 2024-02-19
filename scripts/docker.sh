@@ -1073,33 +1073,35 @@ dockerSwitchBetweenRootAndRootless()
                     downAllDockerApps rootless;
                     stopDocker rootless;
                 fi
-                # Looking for Root install
-                if [[ $docker_root_found == "false" ]]; then
-                    installDocker;
-                fi
-                startDocker root;
-                dockerUpdateAppsToDockerType;
-                dockerStartAllApps;
-                databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
+                if [[ $rootless_docker_failed_stop != "true" ]]; then
+                    # Looking for Root install
+                    if [[ $docker_root_found == "false" ]]; then
+                        installDocker;
+                    fi
+                    startDocker root;
+                    dockerUpdateAppsToDockerType;
+                    dockerStartAllApps;
+                    databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
-                if [[ "$CFG_REQUIREMENT_RESTART_PROMPT" == "false" ]]; then
-                    isNotice "Restarting server now..."
-                    sudo reboot
-                elif [[ "$CFG_REQUIREMENT_RESTART_PROMPT" == "true" ]]; then
-                    isNotice "*** A restart is highly recommended after changing the Docker type ***"
-                    echo ""
-                    while true; do
-                        isQuestion "Would you like to restart the server? (y/n): "
-                        echo ""
-                        read -p "" switch_rooted_restart_choice
-                        if [[ -n "$switch_rooted_restart_choice" ]]; then
-                            break
-                        fi
-                        isNotice "Please provide a valid input."
-                    done
-                    if [[ "$switch_rooted_restart_choice" == [yY] ]]; then
+                    if [[ "$CFG_REQUIREMENT_RESTART_PROMPT" == "false" ]]; then
                         isNotice "Restarting server now..."
                         sudo reboot
+                    elif [[ "$CFG_REQUIREMENT_RESTART_PROMPT" == "true" ]]; then
+                        isNotice "*** A restart is highly recommended after changing the Docker type ***"
+                        echo ""
+                        while true; do
+                            isQuestion "Would you like to restart the server? (y/n): "
+                            echo ""
+                            read -p "" switch_rooted_restart_choice
+                            if [[ -n "$switch_rooted_restart_choice" ]]; then
+                                break
+                            fi
+                            isNotice "Please provide a valid input."
+                        done
+                        if [[ "$switch_rooted_restart_choice" == [yY] ]]; then
+                            isNotice "Restarting server now..."
+                            sudo reboot
+                        fi
                     fi
                 fi
             fi
