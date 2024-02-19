@@ -50,7 +50,7 @@ checkUpdates()
 
                         if [[ $init_run_flag == "true" ]]; then
                             isSuccessful "Starting/Restarting EasyDocker"
-                            detectOS;
+                            startUp;
                         fi
 						
 						;;
@@ -62,9 +62,9 @@ checkUpdates()
                         gitCheckConfigs;
 						fixPermissionsBeforeStart "" "update";
 						sourceScripts;
-
+                        
                         if [[ $init_run_flag == "true" ]]; then
-                            detectOS;
+                            startUp;
                         fi
 						
 						;;
@@ -85,12 +85,12 @@ checkUpdates()
 
             if [[ $init_run_flag == "true" ]]; then
                 isSuccessful "Starting/Restarting EasyDocker"
-                detectOS;
+                startUp;
             fi
 		fi
 	else
         if [[ $init_run_flag == "true" ]]; then
-            detectOS;
+            startUp;
         fi
 	fi
 }

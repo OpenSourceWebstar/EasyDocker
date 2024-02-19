@@ -79,10 +79,14 @@ sourceScripts()
     done
 
     if [ ${#missing_files[@]} -eq 0 ]; then
+        # This is where the run command starts
         if [[ $flag == "run" ]]; then
             isSuccessful "All files found and loaded for startup."
+            detectOS;
             checkUpdates;
+        # This is where the CLI command starts
         elif [[ $flag == "cli" ]]; then
+            detectOS;
             cliInitialize;
         fi
     else

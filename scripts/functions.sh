@@ -92,6 +92,8 @@ function isOption()
 
 detectOS()
 {
+    local flag="$1"
+
     if [ -f /etc/os-release ]; then
         source /etc/os-release
         case "$NAME" in
@@ -155,8 +157,6 @@ detectOS()
                 isNotice "Please provide a valid input."
             done
         fi
-        
-        startUp;
     else
         checkSuccess "Unable to detect OS."
         exit 1
