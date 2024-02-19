@@ -93,7 +93,7 @@ downAllDockerApps()
     local subdirectories=($(find "$containers_dir" -mindepth 1 -maxdepth 1 -type d))
 
     for dir in "${subdirectories[@]}"; do
-        shutdownApp $(basename $dir) $type;
+        dockerDown $(basename $dir) "" $type;
     done
 }
 

@@ -416,6 +416,7 @@ dockerDown()
 {
     local app_name="$1"
     local custom_compose="$2"
+    local type="$3"
     # Compose file public variable for restarting etc
     if [[ $compose_setup == "default" ]]; then
         local setup_compose="-f docker-compose.yml"
@@ -426,19 +427,29 @@ dockerDown()
         local setup_compose="-f docker-compose.yml -f $custom_compose"
     fi
 
-    if [[ "$OS" == [1234567] ]]; then
-        if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
-            checkSuccess "Shutting down container for $app_name"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-            local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
-            checkSuccess "Shutting down container for $app_name"
+    if [[ "$type" == "" ]]; then
+        if [[ "$OS" == [1234567] ]]; then
+            if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+                local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
+                checkSuccess "Shutting down container for $app_name"
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
+                local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
+                checkSuccess "Shutting down container for $app_name"
+            fi
+        else
+            if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+                local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
+                checkSuccess "Shutting down container for $app_name"
+            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
+                local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
+                checkSuccess "Shutting down container for $app_name"
+            fi
         fi
     else
-        if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        if [[ $type == "rootless" ]]; then
             local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
             checkSuccess "Shutting down container for $app_name"
-        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
+        elif [[ $type == "rooted" ]]; then
             local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
             checkSuccess "Shutting down container for $app_name"
         fi
