@@ -93,7 +93,9 @@ downAllDockerApps()
     local subdirectories=($(find "$containers_dir" -mindepth 1 -maxdepth 1 -type d))
 
     for dir in "${subdirectories[@]}"; do
-        dockerDown $(basename $dir) "" $type;
+        local app_name=$(basename $dir)
+        setupScanVariables $app_name;
+        dockerDown $app_name $type;
     done
 }
 
