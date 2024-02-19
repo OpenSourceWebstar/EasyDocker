@@ -792,18 +792,26 @@ dockerStartApp()
 {
     local app_name="$1"
 
-    isNotice "Please wait for docker container to start"
-    local result=$(runCommandForDocker "docker ps -a --format '{{.Names}}' | grep '$app_name' | awk '{print \"docker start \" \$1}' | sh")
-    checkSuccess "Starting all docker containers with the name $app_name"
+    if [[ "$app_name" != "" ]]; then
+        isNotice "Please wait for docker container to start"
+        local result=$(runCommandForDocker "docker ps -a --format '{{.Names}}' | grep '$app_name' | awk '{print \"docker start \" \$1}' | sh")
+        checkSuccess "Starting all docker containers with the name $app_name"
+    else
+        isNotice "No app name provided, unable to start app."
+    fi
 }
 
 dockerStopApp() 
 {
     local app_name="$1"
 
-    isNotice "Please wait for docker container to stop"
-    local result=$(runCommandForDocker "docker ps -a --format '{{.Names}}' | grep '$app_name' | awk '{print \"docker stop \" \$1}' | sh")
-    checkSuccess "Stopping all docker containers with the name $app_name"
+    if [[ "$app_name" != "" ]]; then
+        isNotice "Please wait for docker container to stop"
+        local result=$(runCommandForDocker "docker ps -a --format '{{.Names}}' | grep '$app_name' | awk '{print \"docker stop \" \$1}' | sh")
+        checkSuccess "Stopping all docker containers with the name $app_name"
+    else
+        isNotice "No app name provided, unable to stop app."
+    fi
 }
 
 
@@ -846,22 +854,26 @@ dockerAppDown()
 {
     local app_name="$1"
 
-    isNotice "Please wait for $app_name container to stop"
+    if [[ "$app_name" != "" ]]; then
+        isNotice "Please wait for $app_name container to stop"
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        if [ -d "$containers_dir$app_name" ]; then
-            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
-            checkSuccess "Shutting down $app_name container"
-        else
-            isNotice "Directory $containers_dir$app_name does not exist. Container not found."
-        fi
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+            if [ -d "$containers_dir$app_name" ]; then
+                local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose down")
+                checkSuccess "Shutting down $app_name container"
+            else
+                isNotice "Directory $containers_dir$app_name does not exist. Container not found."
+            fi
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-        if [ -d "$containers_dir$app_name" ]; then
-            local result=$(cd "$containers_dir$app_name" && docker-compose down)
-            checkSuccess "Shutting down $app_name container"
-        else
-            isNotice "Directory $containers_dir$app_name does not exist. Container not found."
+            if [ -d "$containers_dir$app_name" ]; then
+                local result=$(cd "$containers_dir$app_name" && docker-compose down)
+                checkSuccess "Shutting down $app_name container"
+            else
+                isNotice "Directory $containers_dir$app_name does not exist. Container not found."
+            fi
         fi
+    else
+        isNotice "No app name provided, unable to down app."
     fi
 }
 
@@ -869,15 +881,20 @@ dockerAppUp()
 {
     local app_name="$1"
 
-    isNotice "Please wait for $app_name container to start"
+    if [[ "$app_name" != "" ]]; then
+        isNotice "Please wait for $app_name container to start"
 
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose up -d")
-        checkSuccess "Starting up $app_name container"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-        local result=$(cd $containers_dir$app_name && docker-compose up -d)
-        checkSuccess "Starting up $app_name container"
+        if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+            local result=$(runCommandForDockerInstallUser "cd $containers_dir$app_name && docker-compose up -d")
+            checkSuccess "Starting up $app_name container"
+        elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
+            local result=$(cd $containers_dir$app_name && docker-compose up -d)
+            checkSuccess "Starting up $app_name container"
+        fi
+    else
+        isNotice "No app name provided, unable to up the app."
     fi
+
 }
 
 dockerScanForShouldRestart()
