@@ -6,7 +6,7 @@
 installMailcow()
 {
     if [[ "$mailcow" == *[cCtTuUsSrRiI]* ]]; then
-    	setupConfigToContainer silent mailcow;
+    	dockerConfigSetupToContainer silent mailcow;
 		local app_name=$CFG_MAILCOW_APP_NAME
 		local easy_setup=$CFG_MAILCOW_EASY_SETUP
 		setupInstallVariables $app_name;
@@ -17,15 +17,15 @@ installMailcow()
     fi
 
 	if [[ "$mailcow" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$mailcow" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
 	if [[ "$mailcow" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
 	fi
 
     if [[ "$mailcow" == *[iI]* ]]; then
@@ -40,14 +40,14 @@ installMailcow()
         echo "---- $menu_number. Checking if $app_name can be installed."
         echo ""
 
-        checkAllowedInstall "$app_name" || return 1
+        dockerCheckAllowedInstall "$app_name" || return 1
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -124,7 +124,7 @@ installMailcow()
         echo "---- $menu_number. Pulling a $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		local result=$(cd $containers_dir$app_name && sudo -u $CFG_DOCKER_INSTALL_USER ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
@@ -183,14 +183,14 @@ installMailcow()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

@@ -6,7 +6,7 @@
 installWireguard()
 {
     if [[ "$wireguard" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent wireguard;
+        dockerConfigSetupToContainer silent wireguard;
         local app_name=$CFG_WIREGUARD_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installWireguard()
     fi
 
     if [[ "$wireguard" == *[uU]* ]]; then
-        uninstallApp $app_name;
+        dockerUninstallApp $app_name;
     fi
 
     if [[ "$wireguard" == *[sS]* ]]; then
-        shutdownApp $app_name;
+        dockerComposeDown $app_name;
     fi
 
     if [[ "$wireguard" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$wireguard" == *[iI]* ]]; then
@@ -39,14 +39,14 @@ installWireguard()
         echo "---- $menu_number. Checking if $app_name can be installed."
         echo ""
 
-        checkAllowedInstall "$app_name" || return 1
+        dockerCheckAllowedInstall "$app_name" || return 1
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -75,7 +75,7 @@ installWireguard()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
 		echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
 		echo ""
@@ -119,21 +119,21 @@ installWireguard()
         echo "---- $menu_number. Running the docker-compose.yml to Install $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
 		((menu_number++))
 		echo ""
         echo "---- $menu_number. Restarting $app_name after firewall changes"
         echo ""
 
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

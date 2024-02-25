@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Used for the CLI
+files_easydocker_cli=(
+    "${files_app[@]}"
+    "${files_backup[@]}"
+    "${files_checks[@]}"
+    "${files_cli[@]}"
+    "${files_config[@]}"
+    "${files_crontab[@]}"
+    "${files_database[@]}"
+    "${files_docker[@]}"
+    "${files_function[@]}"
+    "${files_logs[@]}"
+    "${files_menu[@]}"
+    "${files_migrate[@]}"
+    "${files_network[@]}"
+    "${files_os[@]}"
+    "${files_restore[@]}"
+    "${files_source[@]}"
+    "${files_ssh[@]}"
+    "${files_ssl[@]}"
+    "${files_swapfile[@]}"
+    "${files_ufw[@]}"
+    "${files_ufwd[@]}"
+    "${files_update[@]}"
+    "${files_variables[@]}"
+    "${files_wireguard[@]}"
+)

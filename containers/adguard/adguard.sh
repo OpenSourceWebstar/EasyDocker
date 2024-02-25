@@ -6,7 +6,7 @@
 installAdguard()
 {
     if [[ "$adguard" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent adguard;
+        dockerConfigSetupToContainer silent adguard;
         local app_name=$CFG_ADGUARD_APP_NAME
     	setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installAdguard()
     fi
 
     if [[ "$adguard" == *[uU]* ]]; then
-        uninstallApp $app_name;
+        dockerUninstallApp $app_name;
     fi
 
     if [[ "$adguard" == *[sS]* ]]; then
-        shutdownApp $app_name;
+        dockerComposeDown $app_name;
     fi
 
     if [[ "$adguard" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$adguard" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installAdguard()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installAdguard()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		local result=$(copyResource "$app_name" "unbound.conf" "etc" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying unbound.conf to containers folder."
@@ -85,7 +85,7 @@ installAdguard()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
 		((menu_number++))
         echo ""
@@ -134,14 +134,14 @@ installAdguard()
         result=$(sudo sed -i "s|anonymize_client_ip: false: false|anonymize_client_ip: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Setting anonymize_client_ip to true for privacy reasons"
 
-        dockerDownUp "$app_name";
+        dockerComposeRestart "$app_name";
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

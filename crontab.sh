@@ -12,7 +12,7 @@ source scripts/permissions.sh
 source scripts/variables.sh
 source scripts/network.sh
 
-loadFiles() 
+sourceScanFiles() 
 {
     local load_type="$1"
     local file_pattern
@@ -40,15 +40,11 @@ crontabInitilize()
         return
     fi
 
-    if [[ "$app_name" == "sshscan" ]]; then
-        yes "y" | databaseSSHScanForKeys | tee $logs_dir/$docker_log_file
-    fi
-
-    if [[ "$app_name" != "sshscan" ]]; then
+    if [[ "$app_name" != "" ]]; then
         yes "y" | backupInitialize "$app_name" | tee $logs_dir/$backup_log_file
     fi
 
 }
 
-loadFiles "easydocker_configs";
+sourceScanFiles "easydocker_configs";
 crontabInitilize;

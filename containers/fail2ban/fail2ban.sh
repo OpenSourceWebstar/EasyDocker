@@ -6,7 +6,7 @@
 installFail2ban()
 {
     if [[ "$fail2ban" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent fail2ban;
+        dockerConfigSetupToContainer silent fail2ban;
         local app_name=$CFG_FAIL2BAN_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installFail2ban()
     fi
 
     if [[ "$fail2ban" == *[uU]* ]]; then
-        uninstallApp $app_name;
+        dockerUninstallApp $app_name;
     fi
 
     if [[ "$fail2ban" == *[sS]* ]]; then
-        shutdownApp $app_name;
+        dockerComposeDown $app_name;
     fi
 
     if [[ "$fail2ban" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$fail2ban" == *[iI]* ]]; then
@@ -39,14 +39,14 @@ installFail2ban()
         echo "---- $menu_number. Checking if $app_name can be installed."
         echo ""
 
-        checkAllowedInstall "$app_name" || return 1
+        dockerCheckAllowedInstall "$app_name" || return 1
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -75,7 +75,7 @@ installFail2ban()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -85,13 +85,13 @@ installFail2ban()
         if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
-            local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/logs)
+            local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/logs)
             checkSuccess "Creating logs folder"
 
             local result=$(cd $containers_dir$app_name && createTouch $containers_dir$app_name/logs/auth.log $CFG_DOCKER_INSTALL_USER)
             checkSuccess "Creating Auth.log file"
 
-            local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name $containers_dir$app_name/config/$app_name/action.d)
+            local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name $containers_dir$app_name/config/$app_name/action.d)
             checkSuccess "Creating config and action.d folders"
 
             # AbuseIPDB
@@ -102,7 +102,7 @@ installFail2ban()
             checkSuccess "Setting up abuseipdb_apikey"
 
             # Jail.local
-            local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name/)
+            local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name/)
             checkSuccess "Creating $app_name folder"
 
 		    local result=$(copyResource "$app_name" "jail.local" "config/$app_name" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
@@ -126,14 +126,14 @@ installFail2ban()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
         
 		((menu_number++))
 		echo ""

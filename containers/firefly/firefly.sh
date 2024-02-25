@@ -6,7 +6,7 @@
 installFirefly()
 {
     if [[ "$firefly" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent firefly;
+        dockerConfigSetupToContainer silent firefly;
         local app_name=$CFG_FIREFLY_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installFirefly()
     fi
 
 	if [[ "$firefly" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$firefly" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
     if [[ "$firefly" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$firefly" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installFirefly()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installFirefly()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
         result=$(rm -rf "$containers_dir$app_name/resources/.env")
         checkSuccess "Removing old .env file"
@@ -80,8 +80,8 @@ installFirefly()
         local result=$(copyResource "$app_name" ".db.env" "")
         checkSuccess "Copying the .db.env for $app_name"
 
-        setupFileWithConfigData $app_name ".env";
-        setupFileWithConfigData $app_name ".db.env";
+        dockerConfigSetupFileWithData $app_name ".env";
+        dockerConfigSetupFileWithData $app_name ".db.env";
 
         local APP_KEY=$(head /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9' | head -c 32 && echo)
         result=$(sudo sed -i "s|SomeRandomStringOf32CharsExactly|${APP_KEY}|" "$containers_dir$app_name/.db.env")
@@ -112,14 +112,14 @@ installFirefly()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
 		echo ""

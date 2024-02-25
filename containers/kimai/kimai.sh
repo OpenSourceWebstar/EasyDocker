@@ -6,7 +6,7 @@
 installKimai()
 {
     if [[ "$kimai" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent kimai;
+        dockerConfigSetupToContainer silent kimai;
         local app_name=$CFG_KIMAI_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installKimai()
     fi
 
 	if [[ "$kimai" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$kimai" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
     if [[ "$kimai" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$kimai" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installKimai()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installKimai()
         echo "---- $menu_number. Pulling a default Kimai docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -82,14 +82,14 @@ installKimai()
         echo "---- $menu_number. Running the docker-compose.yml to install and start Kimai"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
         ((menu_number++))
         echo ""
@@ -101,7 +101,7 @@ installKimai()
 
         # If container is healthy
         if dockerCheckContainerHealth "kimai"; then
-            runCommandForDocker "docker exec kimai /bin/bash -c "php -d memory_limit=1G /opt/kimai/bin/console kimai:reload --env=prod" && exit"
+            dockerCommandRun "docker exec kimai /bin/bash -c "php -d memory_limit=1G /opt/kimai/bin/console kimai:reload --env=prod" && exit"
         else
             isNotice "It has not been possible to change the memory limit, this may cause issues"
         fi

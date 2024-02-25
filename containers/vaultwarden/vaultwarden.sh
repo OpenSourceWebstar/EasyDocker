@@ -6,7 +6,7 @@
 installVaultwarden()
 {
     if [[ "$vaultwarden" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent vaultwarden;
+        dockerConfigSetupToContainer silent vaultwarden;
         local app_name=$CFG_VAULTWARDEN_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installVaultwarden()
     fi
 
 	if [[ "$vaultwarden" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$vaultwarden" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
 	if [[ "$vaultwarden" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
 	fi
 
     if [[ "$vaultwarden" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installVaultwarden()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installVaultwarden()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -82,14 +82,14 @@ installVaultwarden()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

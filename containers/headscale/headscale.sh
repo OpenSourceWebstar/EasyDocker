@@ -6,7 +6,7 @@
 installHeadscale()
 {
     if [[ "$headscale" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent headscale;
+        dockerConfigSetupToContainer silent headscale;
         local app_name=$CFG_HEADSCALE_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installHeadscale()
     fi
 
     if [[ "$headscale" == *[uU]* ]]; then
-        uninstallApp $app_name;
+        dockerUninstallApp $app_name;
     fi
 
     if [[ "$headscale" == *[sS]* ]]; then
-        shutdownApp $app_name;
+        dockerComposeDown $app_name;
     fi
 
     if [[ "$headscale" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$headscale" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installHeadscale()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,15 +68,15 @@ installHeadscale()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
-        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config)
+        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config)
         checkSuccess "Create config folder"
 
 		local result=$(copyResource "$app_name" "config.yaml" "config" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
 		checkSuccess "Copying config.yaml to config folder."
 
-        setupFileWithConfigData $app_name "config.yaml" "config";
+        dockerConfigSetupFileWithData $app_name "config.yaml" "config";
 
 		((menu_number++))
         echo ""
@@ -90,14 +90,14 @@ installHeadscale()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

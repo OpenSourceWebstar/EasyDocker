@@ -6,7 +6,7 @@
 installJellyfin()
 {
     if [[ "$jellyfin" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent jellyfin;
+        dockerConfigSetupToContainer silent jellyfin;
         local app_name=$CFG_JELLYFIN_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installJellyfin()
     fi
 
 	if [[ "$jellyfin" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$jellyfin" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
     if [[ "$jellyfin" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$jellyfin" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installJellyfin()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installJellyfin()
         echo "---- $menu_number. Pulling a default Jellyfin docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -82,14 +82,14 @@ installJellyfin()
         echo "---- $menu_number. Running the docker-compose.yml to install and start Jellyfin"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

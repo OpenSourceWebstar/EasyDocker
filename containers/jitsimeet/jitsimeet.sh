@@ -6,7 +6,7 @@
 installJitsimeet()
 {
     if [[ "$jitsimeet" == *[cCtTuUsSrRiI]* ]]; then
-    	setupConfigToContainer silent jitsimeet;
+    	dockerConfigSetupToContainer silent jitsimeet;
 		local app_name=$CFG_JITSIMEET_APP_NAME
 		git_url=$CFG_JITSIMEET_GIT
 		setupInstallVariables $app_name;
@@ -17,15 +17,15 @@ installJitsimeet()
     fi
 
 	if [[ "$jitsimeet" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$jitsimeet" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
     if [[ "$jitsimeet" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$jitsimeet" == *[iI]* ]]; then
@@ -40,7 +40,7 @@ installJitsimeet()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -72,7 +72,7 @@ installJitsimeet()
 		latest_tag=$(git ls-remote --refs --sort="version:refname" --tags $git_url | cut -d/ -f3- | tail -n1)
 		echo "The latest tag is: $latest_tag"
 
-		local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name)
+		local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name)
 		checkSuccess "Creating $app_name container installation folder"
 		local result=$(cd $containers_dir$app_name && sudo rm -rf $containers_dir$app_name/$latest_tag.zip)
 		checkSuccess "Deleting zip file to prevent conflicts"
@@ -95,7 +95,7 @@ installJitsimeet()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -109,7 +109,7 @@ installJitsimeet()
         echo "---- $menu_number. Setting up .env file for setup"
         echo ""
 
-		setupEnvFile;
+		dockerSetupEnvFile;
 
 		# Updating custom .env values
 		local result=$(sudo sed -i "s|CONFIG=~/.jitsi-meet-cfg|CONFIG=$containers_dir$app_name/.jitsi-meet-cfg|g" $containers_dir$app_name/.env)
@@ -152,14 +152,14 @@ installJitsimeet()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Adjusting $app_name docker system files for port changes."
         echo ""
 
-        #runCommandForDocker "docker exec -it $app_name /bin/bash && cd /"
+        #dockerCommandRun "docker exec -it $app_name /bin/bash && cd /"
 
 		#local result=$(sudo sed -i "s|80|$usedport1|g" $containers_dir$app_nameweb/default)
 		#checkSuccess "Updating Docker NGINX default site port 80 to $usedport1"
@@ -173,15 +173,15 @@ installJitsimeet()
 		local result=$(sudo sed -i "s|443|$usedport2|g" $containers_dir$app_name/web/rootfs/defaults/default)
 		checkSuccess "Updating NGINX default site port 443 to $usedport2"
 
-        #runCommandForDocker "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
-		dockerDownUp $app_name;
+        #dockerCommandRun "docker cp '$containers_dir$app_name' '$app_name:/etc/nginx/sites-available/default'"
+		dockerComposeRestart $app_name;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

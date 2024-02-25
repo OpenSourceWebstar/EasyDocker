@@ -6,7 +6,7 @@
 installOwncloud()
 {
     if [[ "$owncloud" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent owncloud;
+        dockerConfigSetupToContainer silent owncloud;
         local app_name=$CFG_OWNCLOUD_APP_NAME
         owncloud_version=$CFG_OWNCLOUD_VERSION
 		setupInstallVariables $app_name;
@@ -17,15 +17,15 @@ installOwncloud()
     fi
 
 	if [[ "$owncloud" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$owncloud" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
     if [[ "$owncloud" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$owncloud" == *[iI]* ]]; then
@@ -40,7 +40,7 @@ installOwncloud()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -69,7 +69,7 @@ installOwncloud()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -101,7 +101,7 @@ installOwncloud()
         fi
 
 if [[ "$public" == "true" ]]; then	
-runCommandForDocker "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
+dockerCommandRun "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=$host_setup
 OWNCLOUD_TRUSTED_DOMAINS=$host_setup,$ip_setup,$public_ip_v4
@@ -112,7 +112,7 @@ EOF"
 fi
 
 if [[ "$public" == "false" ]]; then	
-runCommandForDocker "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
+dockerCommandRun "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
 OWNCLOUD_VERSION=$owncloud_version
 OWNCLOUD_DOMAIN=IPADDRESSHERE
 OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
@@ -121,7 +121,7 @@ ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
 HTTP_PORT=$usedport1
 EOF"
 fi
-		setupFileWithConfigData $app_name ".env";
+		dockerConfigSetupFileWithData $app_name ".env";
 
 		((menu_number++))
         echo ""
@@ -135,14 +135,14 @@ fi
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

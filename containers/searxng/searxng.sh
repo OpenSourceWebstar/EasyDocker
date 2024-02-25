@@ -6,7 +6,7 @@
 installSearxng()
 {
     if [[ "$searxng" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent searxng;
+        dockerConfigSetupToContainer silent searxng;
 		local app_name=$CFG_SEARXNG_APP_NAME
 		setupInstallVariables $app_name;
 	fi
@@ -16,15 +16,15 @@ installSearxng()
     fi
 
 	if [[ "$searxng" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$searxng" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
 	if [[ "$searxng" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
 	fi
 
 	if [[ "$searxng" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installSearxng()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installSearxng()
 		echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -82,7 +82,7 @@ installSearxng()
 		echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
 		echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
         local searxng_timeout=10
         local searxng_counter=0
@@ -106,7 +106,7 @@ installSearxng()
             local result=$(sudo sed -i "s/simple_style: auto/simple_style: $CFG_SEARXNG_THEME/" "$containers_dir$app_name/searxng-data/settings.yml")
             checkSuccess "Changing from light mode to dark mode to avoid eye strain installs"
 
-            dockerDownUp $app_name;
+            dockerComposeRestart $app_name;
         fi
 
         ((menu_number++))
@@ -114,7 +114,7 @@ installSearxng()
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

@@ -6,7 +6,7 @@
 installTraefik()
 {
     if [[ "$traefik" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent traefik;
+        dockerConfigSetupToContainer silent traefik;
         local app_name=$CFG_TRAEFIK_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installTraefik()
     fi
 
     if [[ "$traefik" == *[uU]* ]]; then
-        uninstallApp $app_name;
+        dockerUninstallApp $app_name;
     fi
 
     if [[ "$traefik" == *[sS]* ]]; then
-        shutdownApp $app_name;
+        dockerComposeDown $app_name;
     fi
 
     if [[ "$traefik" == *[rR]* ]]; then   
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$traefik" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installTraefik()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,10 +68,10 @@ installTraefik()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 		
         # Create necessary directories and set permissions
-        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic" "$containers_dir$app_name/etc/dynamic/middlewears")
+        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic" "$containers_dir$app_name/etc/dynamic/middlewears")
         checkSuccess "Created etc and certs & dynamic Directories"
 
         # Create and secure the acme.json file
@@ -87,7 +87,7 @@ installTraefik()
         local result=$(sudo sed -i "s|DEBUGLEVEL|$CFG_TRAEFIK_LOGGING|g" "$containers_dir$app_name/etc/traefik.yml")
         checkSuccess "Configured Traefik debug level with: $CFG_TRAEFIK_LOGGING for $app_name"
 
-        setupFileWithConfigData $app_name "traefik.yml" "etc";
+        dockerConfigSetupFileWithData $app_name "traefik.yml" "etc";
 
         # Dynamic config.yml File
         # Copy the Traefik configuration file and customize it
@@ -98,7 +98,7 @@ installTraefik()
         local result=$(sudo sed -i "s|ERRORWEBSITE|$CFG_TRAEFIK_404_SITE|g" "$containers_dir$app_name/etc/dynamic/config.yml")
         checkSuccess "Configured Traefik error website with URL: $CFG_TRAEFIK_404_SITE for $app_name"
 
-        setupFileWithConfigData $app_name "config.yml" "etc/dynamic";
+        dockerConfigSetupFileWithData $app_name "config.yml" "etc/dynamic";
 
         # Dynamic whitelist.yml File
         local result=$(copyResource "$app_name" "whitelist.yml" "etc/dynamic")
@@ -109,7 +109,7 @@ installTraefik()
         local result=$(copyResource "$app_name" "protectionauth.yml" "etc/dynamic/middlewears")
         checkSuccess "Copy Traefik Dynamic protectionauth.yml configuration file for $app_name"
 
-        dockerUpdateTraefikWhitelist;
+        traefikUpdateWhitelist;
 
         # Dynamic tls.yml File
         local result=$(copyResource "$app_name" "tls.yml" "etc/dynamic")
@@ -122,7 +122,7 @@ installTraefik()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
 		((menu_number++))
         echo ""
@@ -136,7 +136,7 @@ installTraefik()
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

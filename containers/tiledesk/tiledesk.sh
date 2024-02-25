@@ -6,7 +6,7 @@
 installTiledesk()
 {
     if [[ "$tiledesk" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent tiledesk;
+        dockerConfigSetupToContainer silent tiledesk;
 		local app_name=$CFG_TILEDESK_APP_NAME
 		setupInstallVariables $app_name;
 	fi
@@ -16,15 +16,15 @@ installTiledesk()
     fi
 
 	if [[ "$tiledesk" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$tiledesk" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
     if [[ "$tiledesk" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$tiledesk" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installTiledesk()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installTiledesk()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		local result=$(cd $containers_dir$app_name && sudo curl https://raw.githubusercontent.com/Tiledesk/tiledesk-deployment/master/docker-compose/docker-compose.yml --output docker-compose.yml)
 		checkSuccess "Downloading docker-compose.yml from $app_name GitHub"		
@@ -85,7 +85,7 @@ installTiledesk()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
 		((menu_number++))
         echo ""
@@ -94,13 +94,13 @@ installTiledesk()
 
 		if [[ "$OS" == [1234567] ]]; then
 			if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-				local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
+				local result=$(dockerCommandRunInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
 				checkSuccess "Shutting down docker-compose.$app_name.yml"
 				if [[ "$public" == "true" ]]; then
-					local result=$(runCommandForDockerInstallUser "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+					local result=$(dockerCommandRunInstallUser "EXTERNAL_BASE_URL="https://$domain_full" EXTERNAL_MQTT_BASE_URL="wss://$domain_full" docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
 					checkSuccess "Starting public docker-compose.$app_name.yml"
 				else
-					local result=$(runCommandForDockerInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
+					local result=$(dockerCommandRunInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml up -d")
 					checkSuccess "Starting standard docker-compose.$app_name.yml"
 				fi
 			elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
@@ -121,7 +121,7 @@ installTiledesk()
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

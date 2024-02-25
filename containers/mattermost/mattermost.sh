@@ -8,7 +8,7 @@ installMattermost()
     if [[ "$mattermost" == *[cCtTuUsSrRiI]* ]]; then
     	local DCN=docker-compose.nginx.yml
 		local DCWN=docker-compose.without-nginx.yml
-    	setupConfigToContainer silent mattermost;
+    	dockerConfigSetupToContainer silent mattermost;
 		local app_name=$CFG_MATTERMOST_APP_NAME
 		local easy_setup=$CFG_MATTERMOST_EASY_SETUP
 		setupInstallVariables $app_name;
@@ -23,19 +23,19 @@ installMattermost()
     fi
 
 	if [[ "$mattermost" == *[uU]* ]]; then
-		uninstallApp $app_name;
+		dockerUninstallApp $app_name;
 	fi
 
 	if [[ "$mattermost" == *[sS]* ]]; then
-		shutdownApp $app_name;
+		dockerComposeDown $app_name;
 	fi
 
 	if [[ "$mattermost" == *[rR]* ]]; then
-        status=$(checkAppInstalled "traefik" "docker")
+        status=$(dockerCheckAppInstalled "traefik" "docker")
         if [ "$status" == "installed" ]; then
-            dockerDown "$app_name" "$DCN";		
-            dockerDown "$app_name" "$DCWN";
-            dockerUp "$app_name" "$DCWN";
+            dockerComposeDown "$app_name" "$DCN";		
+            dockerComposeDown "$app_name" "$DCWN";
+            dockerComposeUp "$app_name" "$DCWN";
         fi
 
         if [ "$status" == "not_installed" ]; then
@@ -51,14 +51,14 @@ installMattermost()
                 isNotice "Please provide a valid input (y/n)."
             done
             if [[ "$MATN" == [nN] ]]; then
-                dockerDown "$app_name" "$DCWN";
-                dockerDown "$app_name" "$DCN";
-                dockerUp "$app_name" "$DCN";
+                dockerComposeDown "$app_name" "$DCWN";
+                dockerComposeDown "$app_name" "$DCN";
+                dockerComposeUp "$app_name" "$DCN";
             fi
             if [[ "$MATN" == [yY] ]]; then
-                dockerDown "$app_name" "$DCN";		
-                dockerDown "$app_name" "$DCWN";
-                dockerUp "$app_name" "$DCWN";
+                dockerComposeDown "$app_name" "$DCN";		
+                dockerComposeDown "$app_name" "$DCWN";
+                dockerComposeUp "$app_name" "$DCWN";
             fi
         fi
 	fi
@@ -75,7 +75,7 @@ installMattermost()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -115,7 +115,7 @@ installMattermost()
         local result=$(copyFile "loud" $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
 		checkSuccess "Copying example .env file for setup"
 
-        local result=$(mkdirFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
+        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
 
@@ -140,7 +140,7 @@ installMattermost()
         local result=$(sudo sed -i 's/HTTPS_PORT=443/HTTPS_PORT='$usedport2'/' $containers_dir$app_name/.env)
 		checkSuccess "Updating .env file HTTPS_PORT to $usedport2"	
 		
-		setupFileWithConfigData $app_name ".env";
+		dockerConfigSetupFileWithData $app_name ".env";
 
 		((menu_number++))
         echo ""
@@ -181,7 +181,7 @@ networks:
 EOF
 }
 
-        status=$(checkAppInstalled "traefik" "docker")
+        status=$(dockerCheckAppInstalled "traefik" "docker")
         if [ "$status" == "installed" ]; then
             if [[ "$OS" == [1234567] ]]; then
                 if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
@@ -189,9 +189,9 @@ EOF
                 else			
                     removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
                     mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
-                    setupFileWithConfigData "$app_name" "$DCWN";
-                    dockerDown "$app_name" "$DCWN";
-                    dockerUp "$app_name" "$DCWN";
+                    dockerConfigSetupFileWithData "$app_name" "$DCWN";
+                    dockerComposeDown "$app_name" "$DCWN";
+                    dockerComposeUp "$app_name" "$DCWN";
                 fi
             fi
         fi
@@ -204,9 +204,9 @@ EOF
             read -rp "" MATN
 
             if [[ "$MATN" == [nN] ]]; then
-                dockerDown "$app_name" "$DCWN";
-                dockerDown "$app_name" "$DCN";
-                dockerUp "$app_name" "$DCN";
+                dockerComposeDown "$app_name" "$DCWN";
+                dockerComposeDown "$app_name" "$DCN";
+                dockerComposeUp "$app_name" "$DCN";
             fi
 
             if [[ "$MATN" == [yY] ]]; then
@@ -216,9 +216,9 @@ EOF
                     else			
                         removeEmptyLineAtFileEnd "$containers_dir$app_name/$DCWN";
                         mattermostAddToYMLFile "$containers_dir$app_name/$DCWN";
-                        setupFileWithConfigData "$app_name" "$DCWN";
-                        dockerDown "$app_name" "$DCWN";
-                        dockerUp "$app_name" "$DCWN";
+                        dockerConfigSetupFileWithData "$app_name" "$DCWN";
+                        dockerComposeDown "$app_name" "$DCWN";
+                        dockerComposeUp "$app_name" "$DCWN";
                     fi
                 fi
             fi
@@ -229,7 +229,7 @@ EOF
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""

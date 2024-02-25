@@ -6,7 +6,7 @@
 installTrilium()
 {
     if [[ "$trilium" == *[cCtTuUsSrRiI]* ]]; then
-        setupConfigToContainer silent trilium;
+        dockerConfigSetupToContainer silent trilium;
         local app_name=$CFG_TRILIUM_APP_NAME
 		setupInstallVariables $app_name;
     fi
@@ -16,15 +16,15 @@ installTrilium()
     fi
 
     if [[ "$trilium" == *[uU]* ]]; then
-        uninstallApp $app_name;
+        dockerUninstallApp $app_name;
     fi
 
     if [[ "$trilium" == *[sS]* ]]; then
-        shutdownApp $app_name;
+        dockerComposeDown $app_name;
     fi
 
     if [[ "$trilium" == *[rR]* ]]; then
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
     fi
 
     if [[ "$trilium" == *[iI]* ]]; then
@@ -39,7 +39,7 @@ installTrilium()
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
 
-        setupConfigToContainer "loud" "$app_name" "install";
+        dockerConfigSetupToContainer "loud" "$app_name" "install";
         isSuccessful "Install folders and Config files have been setup for $app_name."
 
         ((menu_number++))
@@ -68,7 +68,7 @@ installTrilium()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        setupComposeFile $app_name;
+        dockerComposeRestartFile $app_name;
 
 		((menu_number++))
         echo ""
@@ -82,7 +82,7 @@ installTrilium()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerUpdateAndStartApp $app_name install;
+		dockerComposeUpdateAndStartApp $app_name install;
 
 		((menu_number++))
 		echo ""
@@ -108,14 +108,14 @@ installTrilium()
         result=$(sudo sed -i "s|port=8080|port=$usedport1|g" "$containers_dir$app_name/trilium-data/config.ini")
         checkSuccess "Configured $app_name from default 8080 to $usedport1"
 
-        dockerDownUp $app_name;
+        dockerComposeRestart $app_name;
 
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
         echo ""
 
-        updateApplicationSpecifics $app_name;
+        appUpdateSpecifics $app_name;
 
 		((menu_number++))
         echo ""
