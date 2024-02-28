@@ -5,7 +5,7 @@
 source "init.sh"
 source "variables.sh"
 source "${install_scripts_dir}source/loading/check.sh"
-source "${install_scripts_dir}loading/initilize.sh"
+source "${install_scripts_dir}source/loading/initilize.sh"
 source "${install_scripts_dir}source/loading/scan.sh"
 
 # For starting the script
