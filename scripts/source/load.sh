@@ -2,6 +2,8 @@
 
 # This is used for initial loading
 # The starting point and is the only code that doesnt contain logic requirements
+source "scripts/init.sh"
+source "scripts/variables.sh"
 source "scripts/source/loading/check.sh"
 source "scripts/source/loading/initilize.sh"
 source "scripts/source/loading/scan.sh"

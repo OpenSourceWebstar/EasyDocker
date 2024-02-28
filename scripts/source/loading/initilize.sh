@@ -16,21 +16,22 @@ sourceInitilize()
         echo ""
     fi
 
-    # Loading the full file list
-    local file_list_directory="files"
+    # Directory containing the files to source recursively
+    local file_list_directory="${install_scripts_dir}source/files"
+
     # Check if the directory exists
     if [ -d "$file_list_directory" ]; then
-        # Loop through each file in the directory
-        for file in "$file_list_directory"/*; do
-            # Check if the file is readable and is not a directory
-            if [ -f "$file" ] && [ -r "$file" ]; then
-                # Source the file
-                source "$file"
-            fi
-        done
+        # Use find to get a list of all files (excluding directories) in the directory and its subdirectories
+        localfile_list=$(find "$file_list_directory" -type f)
+
+        # Loop through each file in the file list
+        while IFS= read -r file; do
+            # Source the file
+            source "$file"
+        done <<< "$file_list"
     else
-        echo "Directory $directory does not exist. Unable to start!"
-        return
+        echo "Directory $file_list_directory does not exist. Unable to start!"
+        return 1
     fi
 
     # For loading files needed for the full app or CLI
