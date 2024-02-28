@@ -22,7 +22,7 @@ sourceInitilize()
     # Check if the directory exists
     if [ -d "$file_list_directory" ]; then
         # Use find to get a list of all files (excluding directories) in the directory and its subdirectories
-        localfile_list=$(find "$file_list_directory" -type f)
+        local file_list=$(find "$file_list_directory" -type f)
 
         # Loop through each file in the file list
         while IFS= read -r file; do
