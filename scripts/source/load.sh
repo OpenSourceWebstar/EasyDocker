@@ -21,6 +21,7 @@ else
     [ ! -f "${install_scripts_dir}source/loading/check.sh" ] && echo "Error: File '${install_scripts_dir}source/loading/check.sh' does not exist. Unable to source."
     [ ! -f "${install_scripts_dir}source/loading/initilize.sh" ] && echo "Error: File '${install_scripts_dir}source/loading/initilize.sh' does not exist. Unable to source."
     [ ! -f "${install_scripts_dir}source/loading/scan.sh" ] && echo "Error: File '${install_scripts_dir}source/loading/scan.sh' does not exist. Unable to source."
+    echo "Files are missing, please run 'easydocker reset'"
     return 1
 fi
 

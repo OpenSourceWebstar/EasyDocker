@@ -23,7 +23,6 @@ source_scripts=(
     "source/files/arrays/ufw.sh"
     "source/files/arrays/ufwd.sh"
     "source/files/arrays/update.sh"
-    "source/files/arrays/variables.sh"
     "source/files/arrays/wireguard.sh"
     "source/files/app.sh"
     "source/files/cli.sh"
