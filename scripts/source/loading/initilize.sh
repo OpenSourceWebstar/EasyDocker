@@ -43,11 +43,11 @@ sourceInitilize()
 
     # Checking for missing files
     for file_to_source in "${files_to_source[@]}"; do
-        if [ ! -f "$file_to_source" ]; then
-            echo "NOTICE: Missing file: $file_to_source"
+        if [ ! -f "${install_scripts_dir}${file_to_source}" ]; then
+            echo "NOTICE: Missing file: ${install_scripts_dir}${file_to_source}"
         else
-            source "$file_to_source"
-            #echo "Sourced file: $file_to_source"
+            source "${install_scripts_dir}${file_to_source}"
+            echo "Sourced file: ${install_scripts_dir}${file_to_source}"
         fi
     done
 

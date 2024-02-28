@@ -31,7 +31,6 @@ else
     return 1
 fi
 
-
 # For starting the script
 if [[ $init_run_flag == "true" ]]; then
     # For loading EasyDocker

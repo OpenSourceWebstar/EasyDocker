@@ -35,7 +35,7 @@ sourceCheckFiles()
         echo "####################################################"
         echo ""
         for missing_file in "${missing_files[@]}"; do
-            echo "NOTICE : It seems that $missing_file is missing from your EasyDocker Installation."
+            echo "NOTICE : It seems that ${install_scripts_dir}${missing_file} is missing from your EasyDocker Installation."
         done
         echo ""
         echo "OPTION : 1. Reinstall EasyDocker"
