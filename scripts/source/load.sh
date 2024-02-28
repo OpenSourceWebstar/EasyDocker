@@ -2,11 +2,11 @@
 
 # This is used for initial loading
 # The starting point and is the only code that doesnt contain logic requirements
-source "scripts/init.sh"
-source "scripts/variables.sh"
-source "scripts/source/loading/check.sh"
-source "scripts/source/loading/initilize.sh"
-source "scripts/source/loading/scan.sh"
+source "init.sh"
+source "variables.sh"
+source "${install_scripts_dir}source/loading/check.sh"
+source "${install_scripts_dir}loading/initilize.sh"
+source "${install_scripts_dir}source/loading/scan.sh"
 
 # For starting the script
 if [[ $init_run_flag == "true" ]]; then
