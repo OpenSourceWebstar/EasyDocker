@@ -47,7 +47,7 @@ sourceInitilize()
             echo "NOTICE: Missing file: ${install_scripts_dir}${file_to_source}"
         else
             source "${install_scripts_dir}${file_to_source}"
-            echo "Sourced file: ${install_scripts_dir}${file_to_source}"
+            #echo "Sourced file: ${install_scripts_dir}${file_to_source}"
         fi
     done
 

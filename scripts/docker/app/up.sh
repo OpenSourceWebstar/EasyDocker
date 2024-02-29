@@ -19,7 +19,7 @@ dockerComposeUp()
 
     # Make sure we are able to get the compose file
     if [[ $compose_setup == "" ]]; then
-        setupScanVariables $app_name;
+        setupScanVariables "$app_name"
     fi
     
     # Compose file public variable for restarting etc
@@ -42,7 +42,7 @@ dockerComposeUp()
                     checkSuccess "Started container for $app_name"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
                     isNotice "Starting container for $app_name, this may take a while..."
-                    local result=$(cd $containers_dir$app_name && sudo docker-compose up -d)
+                    local result=$(cd "$containers_dir$app_name" && sudo docker-compose $setup_compose up -d)
                     checkSuccess "Started container for $app_name"
                 fi
             # Used for the CLI dockertype switcher.
@@ -51,12 +51,13 @@ dockerComposeUp()
                     local result=$(dockerCommandRunInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
                     checkSuccess "Shutting down container for $app_name"
                 elif [[ $type == "rooted" ]]; then
-                    local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
+                    local result=$(cd "$containers_dir$app_name" && sudo docker-compose $setup_compose down)
                     checkSuccess "Shutting down container for $app_name"
                 fi
             fi
         else
-        isNotice "Unable to find the compose file to docker-compose up this application."
+            isNotice "Unable to find the compose file to docker-compose up this application."
+        fi
     fi
 }
 
@@ -67,7 +68,7 @@ dockerComposeUpAllApps()
     local subdirectories=($(find "$containers_dir" -mindepth 1 -maxdepth 1 -type d))
 
     for dir in "${subdirectories[@]}"; do
-        local app_name=$(basename $dir)
-        dockerComposeUp $app_name "" $type;
+        local app_name=$(basename "$dir")
+        dockerComposeUp "$app_name" "" "$type"
     done
 }
