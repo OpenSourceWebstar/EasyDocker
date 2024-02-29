@@ -8,9 +8,9 @@ sourceCheckFiles()
     # Checking for mising files
     local missing_files=()
     for file_to_source in "${files_to_source[@]}"; do
-        if [ ! -f "$file_to_source" ]; then
-            missing_files+=("$file_to_source")
-            #echo "file_to_source $file_to_source"
+        if [ ! -f "${install_scripts_dir}${file_to_source}" ]; then
+            missing_files+=("${install_scripts_dir}${file_to_source}")
+            #echo "file_to_source ${install_scripts_dir}${file_to_source}"
         fi
     done
 
