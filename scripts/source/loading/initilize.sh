@@ -11,8 +11,8 @@ sourceInitilize()
         echo "###       Loading EasyDocker Startup Files       ###"
         echo "####################################################"
         echo ""
-        echo "${YELLOW}NOTICE:${NC} If you are experiencing loading issues..."
-        echo "${YELLOW}NOTICE:${NC} Please run the following : 'easydocker reset'"
+        echo -e "${YELLOW}NOTICE:${NC} If you are experiencing loading issues..."
+        echo -e "${YELLOW}NOTICE:${NC} Please run the following : 'easydocker reset'"
         echo ""
     fi
 
