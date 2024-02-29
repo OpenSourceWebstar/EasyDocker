@@ -25,8 +25,8 @@ source_scripts=(
     "source/files/arrays/update.sh"
     "source/files/arrays/wireguard.sh"
     "source/files/combined.sh"
-    "source/load/check.sh"
-    "source/load/initilize.sh"
-    "source/load/scan.sh"
-    "source/load.sh"
+    #"source/load/check.sh"
+    #"source/load/initilize.sh"
+    #"source/load/scan.sh"
+    #"source/load.sh"
 )
