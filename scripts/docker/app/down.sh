@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dockerComposeDown()
+dockerComposeDown() 
 {
     local app_name="$1"
     local custom_compose="$2"
@@ -19,7 +19,7 @@ dockerComposeDown()
 
     # Make sure we are able to get the compose file
     if [[ $compose_setup == "" ]]; then
-        setupScanVariables $app_name;
+        setupScanVariables "$app_name"
     fi
 
     # Compose file public variable for restarting etc
@@ -40,7 +40,7 @@ dockerComposeDown()
                     local result=$(dockerCommandRunInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
                     checkSuccess "Shutting down container for $app_name"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-                    local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
+                    local result=$(cd "$containers_dir$app_name" && sudo docker-compose $setup_compose down)
                     checkSuccess "Shutting down container for $app_name"
                 fi
             # Used for the CLI dockertype switcher.
@@ -49,22 +49,23 @@ dockerComposeDown()
                     local result=$(dockerCommandRunInstallUser "cd $containers_dir$app_name && docker-compose $setup_compose down")
                     checkSuccess "Shutting down container for $app_name"
                 elif [[ $type == "rooted" ]]; then
-                    local result=$(cd $containers_dir$app_name && sudo docker-compose $setup_compose down)
+                    local result=$(cd "$containers_dir$app_name" && sudo docker-compose $setup_compose down)
                     checkSuccess "Shutting down container for $app_name"
                 fi
             fi
         else
-        isNotice "Unable to find the compose file to docker-compose down this application."
+            isNotice "Unable to find the compose file to docker-compose down this application."
+        fi
     fi
 }
 
-dockerComposeDownAllApps()
+dockerComposeDownAllApps() 
 {
     local type="$1"
     local subdirectories=($(find "$containers_dir" -mindepth 1 -maxdepth 1 -type d))
 
     for dir in "${subdirectories[@]}"; do
-        local app_name=$(basename $dir)
-        dockerComposeDown $app_name "" $type;
+        local app_name=$(basename "$dir")
+        dockerComposeDown "$app_name" "" "$type"
     done
 }
