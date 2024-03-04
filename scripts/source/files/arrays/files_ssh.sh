@@ -9,6 +9,6 @@ ssh_scripts=(
     "ssh/keys/generate_key_pair.sh"
     "ssh/keys/install_key_pair.sh"
     "ssh/keys/regenerate_key_pair.sh"
-    "ssh/keys/setup_auth_pair.sh"
+    "ssh/keys/setup_auth_key.sh"
     "ssh/keys/setup_key_pair.sh"
 )

@@ -5,7 +5,7 @@ migrate_scripts=(
     "migrate/file/restore/file_from_migrate.sh"
     "migrate/file/restore/file_to_migrate.sh"
     "migrate/file/check_migrate.sh"
-    "migrate/file/update_migrate.sh.sh"
+    "migrate/file/update_migrate.sh"
 
     "migrate/list/full_migrate_files.sh"
     "migrate/list/single_migrate_files.sh"
