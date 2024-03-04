@@ -28,7 +28,7 @@ startPreInstall()
 
     # Rootless
     installDockerRootlessUser;
-	installDockerRootlessSetup;
+	installDockerRootlessStartSetup;
 
     # Rooted
 	installDockerRooted;

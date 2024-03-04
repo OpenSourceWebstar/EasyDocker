@@ -31,14 +31,20 @@ docker_scripts=(
     "docker/compose/update_and_start.sh"
     "docker/compose/update_compose_yml.sh"
 
-    "docker/install/setup_network.sh"
-    "docker/install/setup_rooted.sh"
-    "docker/install/setup_rootless.sh"
+    "docker/install/rooted/rooted_docker_check.sh"
+    "docker/install/rooted/rooted_docker_compose.sh"
+    "docker/install/rooted/rooted_docker.sh"
+    "docker/install/rootless/rootless_docker.sh"
+    "docker/install/rootless/rootless_start_setup.sh"
+    "docker/install/rootless/rootless_uninstall.sh"
+    "docker/install/rootless/rootless_user.sh"
+
+    "docker/network/setup_network.sh"
+    "docker/network/prune_networks.sh"
 
     "docker/service/start_docker.sh"
     "docker/service/stop_docker.sh"
 
-    "docker/prune_networks.sh"
     "docker/setup_env.sh"
     "docker/switch_docker_type.sh"
     "docker/whitelist_port_updater.sh"
