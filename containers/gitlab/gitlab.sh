@@ -47,7 +47,7 @@ installGitlab()
         echo "---- $menu_number. Checking & Opening ports if required"
         echo ""
 
-        checkAppPorts $app_name install;
+        portsCheckApp $app_name install;
         if [[ $disallow_used_port == "true" ]]; then
             isError "A used port conflict has occured, setup is cancelling..."
             disallow_used_port=""

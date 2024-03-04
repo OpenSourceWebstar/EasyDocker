@@ -25,12 +25,12 @@ initEasyDocker()
     if [[ "$initial_command1" == "run" ]]; then
         init_run_flag="true"
         displayEasyDockerLogo;
-        source "scripts/source/load.sh"
+        source "scripts/source/load_sources.sh"
 	else
     # For the CLI loading
         init_run_flag="false"
         displayEasyDockerLogo;
-        source "scripts/source/load.sh"
+        source "scripts/source/load_sources.sh"
     fi
 }
 

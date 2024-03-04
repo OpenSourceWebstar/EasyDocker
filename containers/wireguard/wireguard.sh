@@ -54,7 +54,7 @@ installWireguard()
         echo "---- $menu_number. Checking & Opening ports if required"
         echo ""
 
-        checkAppPorts $app_name install;
+        portsCheckApp $app_name install;
         if [[ $disallow_used_port == "true" ]]; then
             isError "A used port conflict has occured, setup is cancelling..."
             disallow_used_port=""
@@ -154,7 +154,7 @@ installWireguard()
         echo "---- $menu_number. Opening port $usedport2 to the public for setup reasons."
         echo ""
 
-		openPort $app_name $usedport2/tcp install;
+		portOpen$app_name $usedport2/tcp install;
 
 		((menu_number++))
         if [[ $compose_setup == "default" ]]; then
@@ -193,7 +193,7 @@ installWireguard()
         echo "---- $menu_number. Closing port $usedport2 to the public as initial setup completed."
         echo ""
 
-		closePort $app_name $usedport2/tcp install;
+		portClose $app_name $usedport2/tcp install;
 
 		((menu_number++))
         echo ""

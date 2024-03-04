@@ -1,0 +1,26 @@
+#!/bin/bash
+
+checks_scripts=(
+    "checks/requirements/check_command.sh"
+    "checks/requirements/check_config.sh"
+    "checks/requirements/check_crontab.sh"
+    "checks/requirements/check_database.sh"
+    "checks/requirements/check_docker.sh"
+    "checks/requirements/check_docker_compose.sh"
+    "checks/requirements/check_docker_network.sh"
+    "checks/requirements/check_docker_rootless.sh"
+    "checks/requirements/check_install_type.sh"
+    "checks/requirements/check_manager.sh"
+    "checks/requirements/check_passwords.sh"
+    "checks/requirements/check_root.sh"
+    "checks/requirements/check_sshkeys.sh"
+    "checks/requirements/check_sshremote.sh"
+    "checks/requirements/check_sslcerts.sh"
+    "checks/requirements/check_suggest_installs.sh"
+    "checks/requirements/check_swapfile.sh"
+    "checks/requirements/check_ufw.sh"
+    "checks/requirements/check_ufwd.sh"
+    "checks/requirements/check_wireguard.sh"
+    "checks/first_install.sh"
+    "checks/check_requirements.sh"
+)

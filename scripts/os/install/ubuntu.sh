@@ -3,7 +3,7 @@
 installDebianUbuntu()
 {
     if [[ "$OS" == [1234567] ]]; then
-        if checkIfUpdateShouldRun; then
+        if checkIfOSUpdateShouldRun; then
             isNotice "Installing System Updates... this may take a while...be patient."
             if [[ "$OS" == "1" ]]; then
                 export DEBIAN_FRONTEND="noninteractive"
