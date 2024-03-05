@@ -24,7 +24,7 @@ portsCheckApp()
         if [[ $open_port_value != "" ]]; then
             # Convert to lowercase to avoid bad port issues
             local open_port_value=$(tr '[:upper:]' '[:lower:]' <<< "$open_port_value")
-            portOpen"$app_name" "$open_port_value" "$flag"
+            portOpen "$app_name" "$open_port_value" "$flag"
         fi
     done
 

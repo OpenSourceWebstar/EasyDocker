@@ -154,7 +154,7 @@ installWireguard()
         echo "---- $menu_number. Opening port $usedport2 to the public for setup reasons."
         echo ""
 
-		portOpen$app_name $usedport2/tcp install;
+		portOpen $app_name $usedport2/tcp install;
 
 		((menu_number++))
         if [[ $compose_setup == "default" ]]; then
