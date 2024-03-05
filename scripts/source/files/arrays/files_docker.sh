@@ -47,6 +47,7 @@ docker_scripts=(
 
     "docker/setup_env.sh"
     "docker/switch_docker_type.sh"
+    "docker/update_docker_user_pass.sh"
     "docker/whitelist_port_updater.sh"
 
 )
