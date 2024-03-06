@@ -10,7 +10,7 @@ headscale_scripts=(
     "headscale/remote/headscale_setup_remote.sh"
 
     "headscale/tailscale/tailscale_install.sh"
-    "headscale/tailscale/tailscale.sh"
+    #"headscale/tailscale/tailscale.sh" Used for install on containers only
 
     "headscale/headscale_commands.sh"
     "headscale/headscale_edit_config.sh"
