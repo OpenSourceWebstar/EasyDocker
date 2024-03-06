@@ -23,6 +23,7 @@ network_scripts=(
 
     "network/variables/basic_app.sh"
     "network/variables/basic_scan.sh"
+    "network/variables/headscale_variables.sh"
     "network/variables/install_variables.sh"
     "network/variables/ips_hostnames.sh"
 

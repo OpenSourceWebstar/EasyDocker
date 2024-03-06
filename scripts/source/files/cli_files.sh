@@ -12,6 +12,7 @@ files_easydocker_cli=(
     "${database_scripts[@]}"
     "${docker_scripts[@]}"
     "${function_scripts[@]}"
+    "${headscale_scripts[@]}"
     "${logs_scripts[@]}"
     "${menu_scripts[@]}"
     "${migrate_scripts[@]}"
