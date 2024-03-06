@@ -25,15 +25,18 @@ dockerComposeDown()
     # Compose file public variable for restarting etc
     if [[ $compose_setup == "default" ]]; then
         local setup_compose="-f docker-compose.yml"
+        local compose_file="docker-compose.yml"
     elif [[ $compose_setup == "app" ]]; then
         local setup_compose="-f docker-compose.yml -f docker-compose.$app_name.yml"
+        local compose_file="docker-compose.$app_name.yml"
     fi
     if [[ $custom_compose != "" ]]; then
         local setup_compose="-f docker-compose.yml -f $custom_compose"
+        local compose_file="$custom_compose"
     fi
 
     if [[ "$OS" == [1234567] ]]; then
-        if [ -f "$containers_dir$app_name/$setup_compose" ]; then
+        if [ -f "$containers_dir$app_name/$compose_file" ]; then
             # Used for the standard EasyDocker app
             if [[ "$type" == "" ]]; then
                 if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
