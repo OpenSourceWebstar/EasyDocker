@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Currently unused
 uninstallDockerRootless()
 {
     echo ""
