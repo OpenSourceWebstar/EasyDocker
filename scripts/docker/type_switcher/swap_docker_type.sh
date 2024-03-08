@@ -61,7 +61,7 @@ dockerSwitcherSwap()
                         installDocker;
                     fi
                     dockerServiceStart root;
-                    dockerSwitcherUpdateAppsToDockerType;
+                    dockerSwitcherUpdateContainersToDockerType;
                     dockerStartAllApps;
                     databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
                 fi
@@ -92,7 +92,7 @@ dockerSwitcherSwap()
                     dockerServiceStop root;
                 fi
                 dockerServiceStart rootless;
-                dockerSwitcherUpdateAppsToDockerType;
+                dockerSwitcherUpdateContainersToDockerType;
                 dockerStartAllApps;
                 databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
             fi
