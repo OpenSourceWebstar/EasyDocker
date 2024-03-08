@@ -1,62 +1,5 @@
 #!/bin/bash
 
-dockerSwitcherSetSocketPermissions()
-{
-    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-    local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
-    local docker_rooted_socket="/var/run/docker.sock"
-
-    echo ""
-    echo "##########################################"
-    echo "###        Docker Socket Checker       ###"
-    echo "##########################################"
-    echo ""
-
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-        # if File exists
-        if sudo test -e "$docker_rootless_socket"; then
-            local result=$(sudo chmod o-r "$docker_rootless_socket")
-            checkSuccess "Removing read permissions from Rootless docker socket."
-            docker_rootless_found="true"
-        else
-            #isSuccessful "Rootless socket not found, no need to do anything with rootless setup."
-            docker_rootless_found="false"
-        fi
-
-        # if File exists
-        if sudo test -e "$docker_rooted_socket"; then
-            local result=$(sudo chmod +r "$docker_rooted_socket")
-            checkSuccess "Adding read permissions to Rooted docker socket."
-            docker_rooted_found="true"
-        else
-            isNotice "Rooted socket not found, installation needed..."
-            docker_rooted_found="false"
-        fi
-    fi
-
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        # if File exists
-        if sudo test -e "$docker_rooted_socket"; then
-            local result=$(sudo chmod o-r "$docker_rooted_socket")
-            checkSuccess "Removing read permissions from Rooted docker socket."
-            docker_rooted_found="true"
-        else
-            #isSuccessful "Rooted socket not found, no need to do anything with rooted setup."
-            docker_rooted_found="false"
-        fi
-
-        # if File exists
-        if sudo test -e "$docker_rootless_socket"; then
-            local result=$(sudo chmod +r "$docker_rootless_socket")
-            checkSuccess "Adding read permissions to Rootless docker socket."
-            docker_rootless_found="true"
-        else
-            isNotice "Rootless socket not found, installation needed..."
-            docker_rootless_found="false"
-        fi
-    fi
-}
-
 dockerSwitcherSwap()
 {
     local flag="$1"
@@ -117,7 +60,7 @@ dockerSwitcherSwap()
                         installDocker;
                     fi
                     dockerServiceStart root;
-                    dockerSwitcherUpdateAppsToDockerType;
+                    dockerSwitcherUpdateContainersToDockerType;
                     dockerStartAllApps;
                     databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
@@ -169,7 +112,7 @@ dockerSwitcherSwap()
                     dockerServiceStop root;
                 fi
                 dockerServiceStart rootless;
-                dockerSwitcherUpdateAppsToDockerType;
+                dockerSwitcherUpdateContainersToDockerType;
                 dockerStartAllApps;
                 databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
@@ -197,76 +140,5 @@ dockerSwitcherSwap()
         fi
     elif [[ $flag == "cli" ]]; then
         isSuccessful "Docker type is already setup for "$CFG_DOCKER_INSTALL_TYPE" no changes needed..."
-    fi
-}
-
-dockerSwitcherScanContainersForSocket() 
-{
-    local directory="$1"
-    local type="$2"
-    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-    local header_sent="false"
-
-    for file in "$directory"/*; do
-        if [ -f "$file" ]; then
-            if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-                if grep -q "/var/run/docker.sock" "$file"; then
-                    if [[ $header_sent == "false" ]]; then
-                        echo ""
-                        echo "##########################################"
-                        echo "###      Docker App Type Switcher      ###"
-                        echo "##########################################"
-                        echo ""
-                        local header_sent="true"
-                    fi
-                    isSuccessful "Found Docker socket to change in file: $file"
-                    result=$(sudo sed -i -e "s|/var/run/docker.sock|/run/user/${docker_install_user_id}/docker.sock|g" "$file")
-                    checkSuccess "Updated socket in file: $file"
-                    docker_socket_file_updated="true"
-                fi
-            elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-                if grep -q "/run/user/${docker_install_user_id}/docker.sock" "$file"; then
-                    if [[ $header_sent == "false" ]]; then
-                        echo ""
-                        echo "##########################################"
-                        echo "###      Docker App Type Switcher      ###"
-                        echo "##########################################"
-                        echo ""
-                        local header_sent="true"
-                    fi
-                    isSuccessful "Found Docker socket to change in file: $file"
-                    result=$(sudo sed -i -e "s|/run/user/${docker_install_user_id}/docker.sock|/var/run/docker.sock|g" "$file")
-                    checkSuccess "Updated file: $file"
-                    docker_socket_file_updated="true"
-                fi
-            fi
-        fi
-    done
-}
-
-dockerSwitcherUpdateAppsToDockerType()
-{
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-        # Scannning the containers folder
-        local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
-        for dir in "${subdirectories[@]}"; do
-            dockerSwitcherScanContainersForSocket "$dir"
-            if [[ $docker_socket_file_updated == "true" ]]; then
-                dockerRestartApp $(basename $dir);
-            fi
-            docker_socket_file_updated="false"
-        done
-    fi
-
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        # Scannning the containers folder
-        local subdirectories=($(find "$containers_dir" -maxdepth 1 -type d))
-        for dir in "${subdirectories[@]}"; do
-            dockerSwitcherScanContainersForSocket "$dir"
-            if [[ $docker_socket_file_updated == "true" ]]; then
-                dockerRestartApp $(basename $dir);
-            fi
-            docker_socket_file_updated="false"
-        done
     fi
 }

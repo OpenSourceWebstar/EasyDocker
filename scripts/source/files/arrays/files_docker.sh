@@ -45,8 +45,12 @@ docker_scripts=(
     "docker/service/start_docker.sh"
     "docker/service/stop_docker.sh"
 
+    "docker/type_switcher/scan_container_socket.sh"
+    "docker/type_switcher/set_socket_permissions.sh"
+    "docker/type_switcher/swap_docker_type.sh"
+    "docker/type_switcher/switch_containers_type.sh"
+
     "docker/setup_env.sh"
-    "docker/switch_docker_type.sh"
     "docker/update_docker_user_pass.sh"
     "docker/whitelist_port_updater.sh"
 
