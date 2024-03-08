@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 dockerSwitcherSwap()
 {
     local flag="$1"
@@ -60,7 +61,7 @@ dockerSwitcherSwap()
                         installDocker;
                     fi
                     dockerServiceStart root;
-                    dockerSwitcherUpdateContainersToDockerType;
+                    dockerSwitcherUpdateAppsToDockerType;
                     dockerStartAllApps;
                     databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
@@ -112,7 +113,7 @@ dockerSwitcherSwap()
                     dockerServiceStop root;
                 fi
                 dockerServiceStart rootless;
-                dockerSwitcherUpdateContainersToDockerType;
+                dockerSwitcherUpdateAppsToDockerType;
                 dockerStartAllApps;
                 databaseOptionInsert "docker_type" $CFG_DOCKER_INSTALL_TYPE;
 
