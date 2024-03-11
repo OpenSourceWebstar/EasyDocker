@@ -2,9 +2,9 @@
 
 appScanAvailable()
 {
-    if [ -d "$containers_dir" ]; then
-        echo "Folders in $containers_dir:"
-        for folder in "$containers_dir"/*/; do
+    if [ -d "$install_containers_dir" ]; then
+        echo "Folders in $install_containers_dir:"
+        for folder in "$install_containers_dir"/*/; do
             local folder_name=$(basename "$folder")
             local script_file="$folder/${folder_name}.sh"
             if [ -f "$script_file" ]; then
@@ -16,6 +16,6 @@ appScanAvailable()
             fi
         done
     else
-        isError "$containers_dir is not a valid application."
+        isError "$folder_name is not a valid application."
     fi
 }
