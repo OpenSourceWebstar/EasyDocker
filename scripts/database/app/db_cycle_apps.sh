@@ -10,24 +10,24 @@ databaseCycleThroughListApps()
         # Backup
         if [[ "$backupfull" == [yY] ]]; then
             local name=full
-            isQuestion "Do you want a $name Backup? (y/n) "
+            isQuestion "Do you want to backup : $name? (y/n) "
             read -rp "" BACKUPACCEPT
 
             if [[ $BACKUPACCEPT == [yY] ]]; then
                 isNotice "Starting a $name backup."
-                backupInitialize $name
+                backupStart $name;
             fi
         fi
 
         # Migrate
         if [[ "$migratefull" == [yY] ]]; then
             local name=full
-            isQuestion "Do you want a $name Migration  (y/n)? "
+            isQuestion "Do you want to migrate $name? (y/n)? "
             read -rp "" MIGRATEACCEPT
 
             if [[ $MIGRATEACCEPT == [yY] ]]; then
                 isNotice "Starting a $name migrate."
-                migrateStart $name
+                migrateStart $name;
             fi
         fi
 
@@ -52,12 +52,12 @@ databaseCycleThroughListApps()
         # Backup
         if [[ "$backupsingle" == [yY] ]]; then
             for name in "${app_names[@]}"; do
-                isQuestion "Do you want a $name Backup? (y/n) "
+                isQuestion "Do you want to backup $name? (y/n) "
                 read -rp "" BACKUPACCEPT
 
                 if [[ $BACKUPACCEPT == [yY] ]]; then
                     isNotice "Starting a $name backup."
-                    backupInitialize $name  
+                    backupStart $name;
                 fi
             done
         fi
@@ -65,13 +65,13 @@ databaseCycleThroughListApps()
         # Migrate
         if [[ "$migratesingle" == [yY] ]]; then
             for name in "${app_names[@]}"; do
-                isQuestion "Do you want a $name Migration  (y/n)? "
+                isQuestion "Do you want to migrate $name? (y/n)? "
                 read -rp "" MIGRATEACCEPT
 
 
                 if [[ $MIGRATEACCEPT == [yY] ]]; then
                     isNotice "Starting a $name migration."
-                    migrateStart $name
+                    migrateStart $name;
                 fi
             done
         fi
