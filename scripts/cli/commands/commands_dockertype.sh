@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cliListDockertypeCommands() 
+cliDockertypeCommands() 
 {
     # Select preexisting docker_type
     if [ -f "$docker_dir/$db_file" ]; then

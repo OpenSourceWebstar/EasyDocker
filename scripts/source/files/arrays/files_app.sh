@@ -9,5 +9,6 @@ app_scripts=(
     "app/containers/traefik/traefik_login_credentials.sh"
     "app/containers/traefik/traefik_middlewares.sh"
     "app/containers/traefik/traefik_whitelist.sh"
-    "app/update.sh"
+    "app/app_scan_available.sh"
+    "app/app_update_specifics.sh"
 )

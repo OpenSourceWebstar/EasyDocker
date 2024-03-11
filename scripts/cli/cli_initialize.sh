@@ -14,13 +14,23 @@ cliInitialize()
         runReinstall;
 
     elif [ "$initial_command1" = "app" ]; then
-        # No commands given for app
         if [[ -z "$initial_command2" ]]; then
-            cliListAppCommands;
+            cliAppCommands;
 
-        # First param given
         elif [ "$initial_command2" = "list" ]; then
-            databaseListInstalledApps;
+            if [[ -z "$initial_command3" ]]; then
+                cliAppListCommands;
+            elif [ "$initial_command3" = "available" ]; then
+                appScanAvailable;
+            elif [ "$initial_command3" = "installed" ]; then
+                databaseListInstalledApps;
+            else
+                isNotice "Invalid app command used : ${RED}$initial_command3${NC}"
+                isNotice "Please use one of the following options below :"
+                echo ""
+                cliAppListCommands;
+            fi
+
         elif [ "$initial_command2" = "start" ]; then
             dockerStartApp "$initial_command3";
         elif [ "$initial_command2" = "stop" ]; then
@@ -30,16 +40,16 @@ cliInitialize()
         elif [ "$initial_command2" = "down" ]; then
             dockerComposeDown "$initial_command3";
         else
-            isNotice "Invalid app command used : ${RED}$initial_command3${NC}"
+            isNotice "Invalid app command used : ${RED}$initial_command2${NC}"
             isNotice "Please use one of the following options below :"
             echo ""
-            cliListAppCommands;
+            cliAppCommands;
         fi
 
     elif [ "$initial_command1" = "dockertype" ]; then
-        # No commands given for app
+
         if [[ -z "$initial_command2" ]]; then
-            cliListDockertypeCommands;
+            cliDockertypeCommands;
 
         # First param given
         elif [ "$initial_command2" = "rooted" ]; then
@@ -56,7 +66,7 @@ cliInitialize()
             isNotice "Invalid dockertype used : ${RED}$initial_command2${NC}"
             isNotice "Please use one of the following options below :"
             echo ""
-            cliListDockertypeCommands;
+            cliDockertypeCommands;
         fi
 
     elif [ -z "$initial_command1" ]; then
