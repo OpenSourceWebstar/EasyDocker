@@ -41,9 +41,9 @@ cliInitialize()
             dockerComposeDown "$initial_command3";
         elif [ "$initial_command2" = "backup" ]; then
             if [[ -z "$initial_command3" ]]; then
-                isNotice "No app provided : ${RED}$initial_command3${NC}"
+                isNotice "No app provided."
                 isNotice "Please provide an application name to backup."
-                cliAppListCommands;
+                cliAppCommands;
             else
                 backupStart "$initial_command3";
             fi
