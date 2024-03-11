@@ -39,6 +39,8 @@ cliInitialize()
             dockerComposeUp "$initial_command3";
         elif [ "$initial_command2" = "down" ]; then
             dockerComposeDown "$initial_command3";
+        elif [ "$initial_command2" = "backup" ]; then
+            backupStart "$initial_command3";
         else
             isNotice "Invalid app command used : ${RED}$initial_command2${NC}"
             isNotice "Please use one of the following options below :"

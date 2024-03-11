@@ -3,7 +3,9 @@
 appScanAvailable()
 {
     if [ -d "$install_containers_dir" ]; then
+        echo ""
         echo "Folders in $install_containers_dir:"
+        echo ""
         for folder in "$install_containers_dir"/*/; do
             local folder_name=$(basename "$folder")
             local script_file="$folder/${folder_name}.sh"
