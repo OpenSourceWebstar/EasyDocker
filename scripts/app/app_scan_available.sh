@@ -2,7 +2,6 @@
 
 appScanAvailable()
 {
-    local containers_dir="$1"
     if [ -d "$containers_dir" ]; then
         echo "Folders in $containers_dir:"
         for folder in "$containers_dir"/*/; do
