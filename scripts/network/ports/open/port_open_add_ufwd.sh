@@ -2,9 +2,8 @@
 
 portOpenUfwd()
 {
-    local app_name="$1"
-    local port="$2"
-    local type="$3"
+    local port="$1"
+    local type="$2"
     
     # Check if ufwd_port_array is unset or null
     if [[ -z "${ufwd_port_array[@]}" ]]; then

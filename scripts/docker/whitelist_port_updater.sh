@@ -20,11 +20,15 @@ dockerScan()
 
             # Update ports for the app
             portsCheckApp $app_name scan;
+
+            # If there is any UFWD Ports to open
+            portOpenAllUfwdPorts $app_name;
         fi
     done
 
     traefikUpdateWhitelist;
     portHandleAllConflicts;
+
     isSuccessful "All application whitelists are up to date."
 }
 
