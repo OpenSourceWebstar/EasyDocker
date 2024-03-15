@@ -20,8 +20,8 @@ portOpen()
                     local result=$(sudo ufw allow "$port/$type")
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-                    local result=$(sudo ufw-docker allow "$app_name" "$port/$type")
-                    checkSuccess "Opening port $port and type $type for $app_name in the UFW-Docker Firewall"
+                    isSuccess "Adding port $port/$type to be opened in the UFW-Docker Firewall after install."
+                    portOpenUfwd "$app_name" "$port" "$type"
                 fi
             fi
         fi

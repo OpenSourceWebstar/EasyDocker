@@ -6,6 +6,8 @@ network_scripts=(
 
     "network/ports/open/port_close.sh"
     "network/ports/open/port_open_add_conflict.sh"
+    "network/ports/open/port_open_add_ufwd.sh"
+    "network/ports/open/port_open_all_ufwd.sh"
     "network/ports/open/port_open_conflict_found.sh"
     "network/ports/open/port_open.sh"
 

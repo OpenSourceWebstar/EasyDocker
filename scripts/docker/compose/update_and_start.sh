@@ -12,4 +12,7 @@ dockerComposeUpdateAndStartApp()
 
     # Always keep YML updated
     dockerComposeUpdate $app_name $flags $norestart;
+
+    # If there is any UFWD Ports to open
+    portOpenAllUfwdPorts $app_name;
 }
