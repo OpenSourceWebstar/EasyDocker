@@ -12,5 +12,5 @@ portOpenUfwd()
         declare -a ufwd_port_array=()
     fi
     
-    ufwd_port_array+=("$port/$type")
+    ufwd_port_array+=("$app_name:$port/$type")
 }
