@@ -21,7 +21,7 @@ portOpen()
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
                     isSuccessful "Adding port $port/$type to be opened in the UFW-Docker Firewall after install."
-                    portOpenUfwd "$port" "$type"
+                    portOpenUfwd "$app_name" "$port" "$type"
                 fi
             fi
         fi

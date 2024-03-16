@@ -28,7 +28,7 @@ dockerScan()
     portHandleAllConflicts;
 
     # If there is any UFWD Ports to open
-    portOpenAllUfwdPorts $app_name;
+    portOpenAllUfwdPorts;
 
     isSuccessful "All application whitelists are up to date."
 }
