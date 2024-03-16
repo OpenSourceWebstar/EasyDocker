@@ -40,4 +40,7 @@ config_files_all=("$ip_file" "$config_file_backup" "$config_file_general" "$conf
 # Menu
 menu_number=0
 
+# Arrays
+declare -a ufwd_port_array=()
+
 #Secondary IP available : 10.8.1.126
