@@ -18,6 +18,9 @@ traefikUpdateWhitelist()
             YAML_CONTENT+="\n          - \"$IP\""
         done
 
+        # Add CFG_NETWORK_SUBNET to the YAML content
+        YAML_CONTENT+="\n          - \"$CFG_NETWORK_SUBNET\""
+
         # Now update the YAML file with the new content using sudo
         echo -e "$YAML_CONTENT" | sudo tee "$whitelist_file" > /dev/null
         isSuccessful "Traefik has been updated with the latest whitelist IPs."
