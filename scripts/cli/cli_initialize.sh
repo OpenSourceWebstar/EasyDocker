@@ -35,15 +35,19 @@ cliInitialize()
             dockerStartApp "$initial_command3";
         elif [ "$initial_command2" = "stop" ]; then
             dockerStopApp "$initial_command3";
+        elif [ "$initial_command2" = "restart" ]; then
+            dockerRestartApp "$initial_command3";
         elif [ "$initial_command2" = "up" ]; then
             dockerComposeUp "$initial_command3";
         elif [ "$initial_command2" = "down" ]; then
             dockerComposeDown "$initial_command3";
+        elif [ "$initial_command2" = "reload" ]; then
+            dockerComposeRestart "$initial_command3";
         elif [ "$initial_command2" = "backup" ]; then
             if [[ -z "$initial_command3" ]]; then
                 isNotice "No app provided."
                 isNotice "Please provide an application name to backup."
-                cliAppCommands;
+                cliAppListCommands;
             else
                 backupStart "$initial_command3";
             fi
