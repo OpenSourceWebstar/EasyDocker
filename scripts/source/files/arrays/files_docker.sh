@@ -8,7 +8,6 @@ docker_scripts=(
 
     "docker/app/compose/down_all.sh"
     "docker/app/compose/down_app.sh"
-    "docker/app/compose/restart_app.sh"
     "docker/app/compose/up_all.sh"
     "docker/app/compose/up_app.sh"
 
