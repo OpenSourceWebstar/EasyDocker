@@ -40,9 +40,9 @@ cliInitialize()
         elif [ "$initial_command2" = "up" ]; then
             dockerComposeUp "$initial_command3";
         elif [ "$initial_command2" = "down" ]; then
-            dockerRestartAppViaInstall "$initial_command3";
+            dockerComposeDown "$initial_command3";
         elif [ "$initial_command2" = "reload" ]; then
-            dockerComposeRestart "$initial_command3";
+            dockerRestartAppViaInstall "$initial_command3";
         elif [ "$initial_command2" = "backup" ]; then
             if [[ -z "$initial_command3" ]]; then
                 isNotice "No app provided."
