@@ -31,7 +31,7 @@ appMattermostResetUserPassword()
         # Enable local mode
         result=$(sudo sed -i "s|\"EnableLocalMode\": false|\"EnableLocalMode\": true|" "$config_json")
         checkSuccess "EnableLocalMode set to true for password update."
-        dockerRestartApp mattermost;
+        dockerRestartAppViaInstall mattermost;
         
         isNotice "Waiting 10 seconds for mattermost to load the local socket"
         sleep 10
@@ -44,7 +44,7 @@ appMattermostResetUserPassword()
         # Disable local mode
         result=$(sudo sed -i "s|\"EnableLocalMode\": true|\"EnableLocalMode\": false|" "$config_json")
         checkSuccess "EnableLocalMode set to false for password update."
-        dockerRestartApp mattermost;
+        dockerRestartAppViaInstall mattermost;
 
         isSuccessful "Password for username $mattermostusername has been changed to $mattermostpassword if the user exists."
         sleep 5

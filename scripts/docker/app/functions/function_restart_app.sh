@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dockerRestartApp() 
+dockerRestartAppViaInstall() 
 {
     local app_name="$1"
     local app_name_ucfirst="$(tr '[:lower:]' '[:upper:]' <<< ${app_name:0:1})${app_name:1}"

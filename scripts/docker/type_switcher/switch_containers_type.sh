@@ -8,7 +8,7 @@ dockerSwitcherUpdateContainersToDockerType()
         for dir in "${subdirectories[@]}"; do
             dockerSwitcherScanContainersForSocket "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
-                dockerRestartApp $(basename $dir);
+                dockerRestartAppViaInstall $(basename $dir);
             fi
             docker_socket_file_updated="false"
         done
@@ -20,7 +20,7 @@ dockerSwitcherUpdateContainersToDockerType()
         for dir in "${subdirectories[@]}"; do
             dockerSwitcherScanContainersForSocket "$dir"
             if [[ $docker_socket_file_updated == "true" ]]; then
-                dockerRestartApp $(basename $dir);
+                dockerRestartAppViaInstall $(basename $dir);
             fi
             docker_socket_file_updated="false"
         done

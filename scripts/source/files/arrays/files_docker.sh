@@ -8,10 +8,11 @@ docker_scripts=(
 
     "docker/app/compose/down_all.sh"
     "docker/app/compose/down_app.sh"
-    "docker/app/compose/restart_app.sh"
     "docker/app/compose/up_all.sh"
     "docker/app/compose/up_app.sh"
+    "docker/app/compose/up_down_app.sh"
 
+    "docker/app/compose/restart_app.sh"
     "docker/app/docker/start_all.sh"
     "docker/app/docker/start_app.sh"
     "docker/app/docker/stop_all.sh"
