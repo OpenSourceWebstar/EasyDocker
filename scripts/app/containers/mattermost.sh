@@ -37,9 +37,9 @@ appMattermostResetUserPassword()
         sleep 10
         # Update Password
         if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-            dockerCommandRunInstallUser "docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit"
+            dockerCommandRunInstallUser "docker exec mattermost /bin/bash -c 'mmctl --local user change-password $mattermostusername --password $mattermostpassword && exit'"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-            docker exec mattermost /bin/bash -c \"mmctl --local user change-password $mattermostusername --password $mattermostpassword\" && exit
+            docker exec mattermost /bin/bash -c 'mmctl --local user change-password $mattermostusername --password $mattermostpassword && exit'
         fi
         # Disable local mode
         result=$(sudo sed -i "s|\"EnableLocalMode\": true|\"EnableLocalMode\": false|" "$config_json")
