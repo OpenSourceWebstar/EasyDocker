@@ -1,5 +1,9 @@
 version: '3'
 
+networks:
+  vpn:
+    external: true
+    
 services:
   linkding:
     container_name: "${LD_CONTAINER_NAME:-linkding}"
