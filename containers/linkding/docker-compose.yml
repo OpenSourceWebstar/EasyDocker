@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  linkding:
+    container_name: "${LD_CONTAINER_NAME:-linkding}"
+    image: sissbruecker/linkding:latest
+    ports:
+      - "PORT1:9090"
+    volumes:
+      - "${LD_HOST_DATA_DIR:-./data}:/etc/linkding/data"
+    env_file:
+      - .env
+    restart: unless-stopped
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.linkding.entrypoints: web,websecure
+      #traefik.http.routers.linkding.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.linkding.tls: true
+      #traefik.http.routers.linkding.tls.certresolver: production
+      #traefik.http.routers.linkding.middlewares:
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE
