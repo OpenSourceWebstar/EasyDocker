@@ -68,7 +68,7 @@ installTraefik()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 		
         # Create necessary directories and set permissions
         local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic" "$containers_dir$app_name/etc/dynamic/middlewears")

@@ -124,7 +124,7 @@ installMailcow()
         echo "---- $menu_number. Pulling a $app_name docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
 		local result=$(cd $containers_dir$app_name && sudo -u $CFG_DOCKER_INSTALL_USER ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"

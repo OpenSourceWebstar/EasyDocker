@@ -68,7 +68,7 @@ installJellyfin()
         echo "---- $menu_number. Pulling a default Jellyfin docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
 		((menu_number++))
         echo ""

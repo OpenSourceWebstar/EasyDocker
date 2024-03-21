@@ -99,7 +99,7 @@ installSshdownload()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
         result=$(sudo cp -r $install_containers_dir$app_name/resources/index.html "${ssh_dir}private/index.html")
         checkSuccess "Copying over index.html file for SSH Downloader."

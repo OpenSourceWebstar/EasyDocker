@@ -68,7 +68,7 @@ installAuthelia()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
         local result=$(sudo sed -i "s/theme: light/theme: $CFG_AUTHELIA_THEME/" "$containers_dir$app_name/config/config.template.yml")
         checkSuccess "Changing theme for $app_name to $CFG_AUTHELIA_THEME"

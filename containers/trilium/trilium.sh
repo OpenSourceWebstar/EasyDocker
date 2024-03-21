@@ -68,7 +68,7 @@ installTrilium()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
 		((menu_number++))
         echo ""

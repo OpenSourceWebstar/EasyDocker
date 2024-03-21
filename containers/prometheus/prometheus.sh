@@ -68,7 +68,7 @@ installPrometheus()
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
         local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/$app_name")
         checkSuccess "Created $app_name folder in $app_name"

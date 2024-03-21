@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dockerComposeRestartFile()
+dockerComposeSetupFile()
 {
     local app_name="$1"
     local custom_file="$2"

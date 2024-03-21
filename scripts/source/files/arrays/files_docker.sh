@@ -28,7 +28,7 @@ docker_scripts=(
     "docker/checks/running_for_user.sh"
 
     "docker/compose/restart_after_update.sh"
-    "docker/compose/restart_compose_yml.sh"
+    "docker/compose/setup_compose_yml.sh"
     "docker/compose/update_and_start.sh"
     "docker/compose/update_compose_yml.sh"
 

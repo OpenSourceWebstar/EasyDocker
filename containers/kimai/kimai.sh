@@ -68,7 +68,7 @@ installKimai()
         echo "---- $menu_number. Pulling a default Kimai docker-compose.yml file."
         echo ""
 
-        dockerComposeRestartFile $app_name;
+        dockerComposeSetupFile $app_name;
 
 		((menu_number++))
         echo ""
