@@ -32,6 +32,9 @@ docker_scripts=(
     "docker/compose/update_and_start.sh"
     "docker/compose/update_compose_yml.sh"
 
+    "docker/command/docker_run_install.sh"
+    "docker/command/docker_run.sh"
+
     "docker/install/rooted/rooted_docker_check.sh"
     "docker/install/rooted/rooted_docker_compose.sh"
     "docker/install/rooted/rooted_docker.sh"
