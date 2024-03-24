@@ -12,6 +12,7 @@ menu_scripts=(
     "menu/tools/manage_dashy.sh"
     "menu/tools/manage_docker.sh"
     "menu/tools/manage_invidious.sh"
+    "menu/tools/manage_linkding.sh"
     "menu/tools/manage_main.sh"
     "menu/tools/manage_mattermost.sh"
     "menu/tools/manage_ssh.sh"
