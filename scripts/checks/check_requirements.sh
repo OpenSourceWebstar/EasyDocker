@@ -15,7 +15,7 @@ checkRequirements()
 	checkCommandRequirement;
 	checkWireguardRequirement;
 	checkInstallTypeRequirement;
-	checkConfigRequirement;
+	checkConfigRequirement; 
 	checkPasswordsRequirement;
 	checkDatabaseRequirement;
 	checkSSHKeysRequirement;
@@ -30,6 +30,9 @@ checkRequirements()
 	checkCrontabRequirement;
 	checkSSHRemoteRequirement;
 	checkSuggestInstallsRequirement;
+	checkSSHDownloadRequirement;
+	checkTraefikRequirement;
+	checkDockerSwitcherRequirement;
 
 	if [[ "$preinstallneeded" -ne 0 ]]; then
 		startPreInstall;

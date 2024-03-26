@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function_scripts=(
+    "function/checks/check_first_install.sh"
     "function/checks/check_success.sh"
     "function/checks/detect_os.sh"
     "function/checks/user_exists.sh"

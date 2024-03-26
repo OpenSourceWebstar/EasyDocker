@@ -10,7 +10,7 @@ checkCommandRequirement()
 			checkSuccess "No custom command installed, did you run the init.sh first?"
 			echo ""
 			isNotice "Please run the following command:"
-			isNotice "cd ~ && chmod 0755 init.sh && ./init.sh run && source ~/.bashrc && easydocker"
+			isNotice "cd ~ && chmod 0755 init.sh && ./init.sh init && source ~/.bashrc && easydocker"
 			echo ""
 			isNotice "Exiting...."
 			exit
