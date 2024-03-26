@@ -20,7 +20,7 @@ gitCheckConfigs()
             isNotice "It looks like this is first time installing EasyDocker on this system."
             echo ""
             isNotice "If this is a fresh install, continue on..."
-            isNotice "If you were trying to restore any config backups, they were not found."
+            isNotice "If you were trying to restore any config backups, nothing was found."
             echo ""
             while true; do
                 isQuestion "Do you want to continue? (y/n): "
@@ -92,7 +92,7 @@ gitCheckConfigs()
                 isNotice "It looks like this is first time installing EasyDocker on this system."
                 echo ""
                 isNotice "If this is a fresh install, continue on..."
-                isNotice "If you were trying to restore any config backups, they were not found."
+                isNotice "If you were trying to restore any config backups, nothing was found."
                 echo ""
                 while true; do
                     isQuestion "Do you want to continue with the install? (y/n): "
