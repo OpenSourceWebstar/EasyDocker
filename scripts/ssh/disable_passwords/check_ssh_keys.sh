@@ -51,8 +51,8 @@ disableSSHPasswords()
         echo ""
         while true; do
             isQuestion "Do you want to install (i) the missing SSH keys or (c) continue or (x) to exit? (i/c/x): "
-            read -rp "" disable_ssh_passwords
-            case "$disable_ssh_passwords" in
+            read -p "" ssh_keys_missing
+            case "$ssh_keys_missing" in
                 [iI]*)
                     installSSHKeysForDownload install;
                     break
