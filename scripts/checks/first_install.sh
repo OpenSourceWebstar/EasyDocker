@@ -45,18 +45,6 @@ checkConfigFirstInstall()
                         result=$(sudo sed -i "s|CFG_INSTALL_NAME=Change-Me|CFG_INSTALL_NAME=$setup_install_name|" "$general_config_file")
                         checkSuccess "Updating CFG_INSTALL_NAME to $setup_install_name in the $config_file_general config."
 
-                        # Email address
-                        while true; do
-                            isQuestion "Please input an email address (Used for LetsEncrypt Certificates) : "
-                            read -p "" setup_email
-                            emailValidation "$setup_email"
-                            if [[ $? -eq 0 ]]; then
-                                break
-                            fi
-                            isNotice "Please provide a valid email address."
-                        done
-                        result=$(sudo sed -i "s|CFG_EMAIL=change@me.com|CFG_EMAIL=$setup_email|" "$general_config_file")
-                        checkSuccess "Updating CFG_EMAIL to $setup_email in the $config_file_general config."
 
                         # LetsEncrypte
                         while true; do
@@ -65,6 +53,21 @@ checkConfigFirstInstall()
                             echo ""
                             case $setup_certificate_letsencrypt in
                                 [yY])
+
+                                    # Email address
+                                    while true; do
+                                        isQuestion "Please input an email address (Used for LetsEncrypt Certificates) : "
+                                        read -p "" setup_email
+                                        emailValidation "$setup_email"
+                                        if [[ $? -eq 0 ]]; then
+                                            break
+                                        fi
+                                        isNotice "Please provide a valid email address."
+                                    done
+                                    result=$(sudo sed -i "s|CFG_EMAIL=change@me.com|CFG_EMAIL=$setup_email|" "$general_config_file")
+                                    checkSuccess "Updating CFG_EMAIL to $setup_email in the $config_file_general config."
+
+                                    # Domain validation
                                     while true; do
                                         isQuestion "Please input a domain that is pointed towards this server - e.g (example.org) : "
                                         read -p "" setup_domain_name
