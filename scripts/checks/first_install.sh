@@ -90,30 +90,10 @@ checkConfigFirstInstall()
                         # Timezones
                         while true; do
                             # Create a list of commonly used timezones
-                            local common_timezones=("America/New_York" "America/Chicago" "America/Los_Angeles" "Europe/London" "Europe/Paris" "Asia/Tokyo" "Australia/Sydney")
-
-                            # Get a list of all available timezones
-                            local all_timezones=$(sudo timedatectl list-timezones)
-
-                            # Merge the common timezones with all timezones and remove duplicates
-                            local timezones=($(echo "${common_timezones[@]}" "${all_timezones[@]}" | tr ' ' '\n' | sort -u))
-
-                            # Create a temporary file to store the menu choices
-                            local tempfile=$(sudo mktemp /tmp/timezone_menu.XXXXXX) || exit 1
-
-                            # Populate the tempfile with timezone options
-                            for tz in "${timezones[@]}"; do
-                                echo "$tz" | sudo tee -a "$tempfile" > /dev/null
-                            done
+                            local common_timezones=("Europe/London" "Europe/Paris" "America/New_York" "America/Chicago" "America/Los_Angeles" "Asia/Tokyo" "Australia/Sydney" "America/Denver" "America/Phoenix" "Europe/Berlin")
 
                             # Show the menu using dialog
-                            LC_COLLATE=C sudo dialog --menu "Select a timezone:" 20 60 15 $(cat "$tempfile") 2> "$tempfile"
-
-                            # Get the selected timezone from the tempfile
-                            local setup_timezone=$(sudo cat "$tempfile")
-
-                            # Cleanup the temporary file
-                            sudo rm -f "$tempfile"
+                            setup_timezone=$(sudo dialog --menu "Select a timezone:" 20 60 10 "${common_timezones[@]}" 2>&1 >/dev/tty)
 
                             # Break the loop if a timezone is selected
                             if [ -n "$setup_timezone" ]; then
