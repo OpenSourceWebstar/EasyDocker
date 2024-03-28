@@ -58,31 +58,34 @@ checkConfigFirstInstall()
                         result=$(sudo sed -i "s|CFG_EMAIL=change@me.com|CFG_EMAIL=$setup_email|" "$general_config_file")
                         checkSuccess "Updating CFG_EMAIL to $setup_email in the $config_file_general config."
 
-                        # Domain Name
+                        # LetsEncrypte
                         while true; do
-                            isQuestion "Are you wanting to use public SSL LetsEncrypt Certified applications? (y/n): "
-                            read -p "" setup_certificate_letsencrypt
-                            # Check if the input is a valid domain name using regex
-                            if [[ "$setup_certificate_letsencrypt" != [yYnN] ]]; then
-                                break
-                            fi
-                            isNotice "Please provide a valid input."
+                            isQuestion "Are you wanting to use public SSL certificates via LetsEncrypt? (y/n): "
+                            read -rp "" setup_certificate_letsencrypt
+                            echo ""
+                            case $setup_certificate_letsencrypt in
+                                [yY])
+                                    while true; do
+                                        isQuestion "Please input a domain that is pointed towards this server - e.g (example.org) : "
+                                        read -p "" setup_domain_name
+                                        # Check if the input is a valid domain name using regex
+                                        if [[ "$setup_domain_name" =~ ^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$ ]]; then
+                                            break
+                                        fi
+                                        isNotice "Please provide a valid domain name."
+                                    done
+                                    result=$(sudo sed -i "s|CFG_DOMAIN_1=changeme.co.uk|CFG_DOMAIN_1=$setup_domain_name|" "$general_config_file")
+                                    checkSuccess "Updating CFG_DOMAIN_1 to $setup_domain_name in the $config_file_general config."
+                                    break  # Exit the loop
+                                    ;;
+                                [nN])
+                                    break  # Exit the loop
+                                    ;;
+                                *)
+                                    isNotice "Please provide a valid input (y or n)."
+                                    ;;
+                            esac
                         done
-
-                        if [[ "$setup_certificate_letsencrypt" == [yY] ]]; then
-                            # Domain Name
-                            while true; do
-                                isQuestion "Please input a domain that is pointed towards this server - e.g (example.org) : "
-                                read -p "" setup_domain_name
-                                # Check if the input is a valid domain name using regex
-                                if [[ "$setup_domain_name" =~ ^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$ ]]; then
-                                    break
-                                fi
-                                isNotice "Please provide a valid domain name."
-                            done
-                            result=$(sudo sed -i "s|CFG_DOMAIN_1=changeme.co.uk|CFG_DOMAIN_1=$setup_domain_name|" "$general_config_file")
-                            checkSuccess "Updating CFG_DOMAIN_1 to $setup_domain_name in the $config_file_general config."
-                        fi
 
                         # Timezones
                         while true; do
