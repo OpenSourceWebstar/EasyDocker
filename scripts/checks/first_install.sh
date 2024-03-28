@@ -96,18 +96,18 @@ checkConfigFirstInstall()
                             local common_timezones=("Europe/London" "Europe/Paris" "America/New_York" "America/Chicago" "America/Los_Angeles" "Asia/Tokyo" "Australia/Sydney" "America/Denver" "America/Phoenix" "Europe/Berlin")
 
                             # Display the numbered list of timezones
-                            echo "Select a timezone:"
+                            isNotice "Select a timezone:"
                             for ((i=0; i<${#common_timezones[@]}; i++)); do
-                                echo "$((i+1)). ${common_timezones[i]}"
+                                isOption "$((i+1)). ${common_timezones[i]}"
                             done
 
-                            echo "If you want to setup a custom timezone, please edit the general config after selecting one here."
+                            isNotice "If you want to setup a custom timezone, please edit the general config after selecting one here."
                             # Prompt for user input
-                            read -p "Enter the number corresponding to your timezone selection: " choice
-
+                            isQuestion "Enter the number corresponding to your timezone selection: "
+                            read -p "" timezone_choice
                             # Validate the user input
-                            if [[ "$choice" =~ ^[0-9]+$ && "$choice" -ge 1 && "$choice" -le "${#common_timezones[@]}" ]]; then
-                                setup_timezone="${common_timezones[choice-1]}"
+                            if [[ "$timezone_choice" =~ ^[0-9]+$ && "$timezone_choice" -ge 1 && "$choice" -le "${#common_timezones[@]}" ]]; then
+                                setup_timezone="${common_timezones[timezone_choice-1]}"
                                 isSuccessful "You selected: $setup_timezone"
                                 break
                             else
