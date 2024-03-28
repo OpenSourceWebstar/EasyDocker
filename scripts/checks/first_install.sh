@@ -95,8 +95,11 @@ checkConfigFirstInstall()
                             # Create a list of commonly used timezones
                             local common_timezones=("Europe/London" "Europe/Paris" "America/New_York" "America/Chicago" "America/Los_Angeles" "Asia/Tokyo" "Australia/Sydney" "America/Denver" "America/Phoenix" "Europe/Berlin")
 
+                            # Calculate the number of timezones
+                            local num_timezones=${#common_timezones[@]}
+
                             # Show the menu using dialog
-                            setup_timezone=$(sudo dialog --menu "Select a timezone:" 20 60 10 "${common_timezones[@]}" 2>&1 >/dev/tty)
+                            setup_timezone=$(sudo dialog --menu "Select a timezone:" $((num_timezones + 5)) 120 $num_timezones "${common_timezones[@]/%/  }" 2>&1 >/dev/tty --single-quoted)
 
                             # Break the loop if a timezone is selected
                             if [ -n "$setup_timezone" ]; then
