@@ -22,10 +22,10 @@ installSSHKeysForDownload()
         if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
             generateSSHSetupKeyPair "root" $flag
         fi
-        if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
+        if [[ "$CFG_REQUIREMENT_SSHKEY_EASYDOCKER" == "true" ]]; then
             generateSSHSetupKeyPair "$sudo_user_name" $flag
         fi
-        if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
+        if [[ "$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL" == "true" ]]; then
             generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER" $flag
         fi
 
