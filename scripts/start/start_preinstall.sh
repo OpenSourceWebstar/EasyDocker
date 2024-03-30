@@ -19,7 +19,6 @@ startPreInstall()
 
     installDebianUbuntu;
     installArch;
-    installSSHKeysForDownload install;
     installStandaloneWireGuard;
     
     #######################################################
@@ -29,6 +28,8 @@ startPreInstall()
     # Rootless
     installDockerRootlessUser;
 	installDockerRootlessStartSetup;
+
+    installSSHKeysForDownload install;
 
     # Rooted
 	installDockerRooted;
