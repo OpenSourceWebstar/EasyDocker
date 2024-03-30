@@ -3,7 +3,7 @@
 startPreInstall()
 {
 	# Disable Input
-	stty -echo
+	# stty -echo
 	
     echo ""
     echo "#######################################################"
