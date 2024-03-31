@@ -75,7 +75,7 @@ fixAppFolderPermissions()
                         if [ "$silent_flag" == "loud" ]; then
                             checkSuccess "Updating $file with $sudo_user_name ownership"
                         fi
-                    else
+                    if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
                         local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file_path")
                         if [ "$silent_flag" == "loud" ]; then
                             checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
