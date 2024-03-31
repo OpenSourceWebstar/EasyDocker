@@ -31,9 +31,5 @@ installSSHKeysForDownload()
                 generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER" $flag
             fi
         fi
-
-        if [[ "$CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS" == "true" ]]; then
-            disableSSHPasswords;
-        fi
     fi
 }

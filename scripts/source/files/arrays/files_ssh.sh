@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ssh_scripts=(
-    "ssh/disable_passwords/check_ssh_keys.sh"
     "ssh/disable_passwords/disable_ssh_auth.sh"
     "ssh/disable_passwords/update_ssh_html.sh"
     

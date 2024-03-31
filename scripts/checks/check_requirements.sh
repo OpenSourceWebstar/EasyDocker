@@ -31,6 +31,7 @@ checkRequirements()
 	checkSSHRemoteRequirement;
 	checkSuggestInstallsRequirement;
 	checkSSHDownloadRequirement;
+	checkSSHPasswordRequirement;
 	checkTraefikRequirement;
 	checkDockerSwitcherRequirement;
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-disableSSHPasswordFunction()
+installDisableSSHPassword()
 {
     if [[ $CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS == "true" ]]; then
         # Check if already disabled

@@ -63,6 +63,7 @@ startPreInstall()
     #######################################################
 
     installRecommendedApps;
+    installDisableSSHPassword;
 
 	resetToMenu;
 }

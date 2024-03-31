@@ -16,6 +16,7 @@ checks_scripts=(
     "checks/requirements/check_root.sh"
     "checks/requirements/check_sshdownload.sh"
     "checks/requirements/check_sshkeys.sh"
+    "checks/requirements/check_sshpassword.sh"
     "checks/requirements/check_sshremote.sh"
     "checks/requirements/check_sslcerts.sh"
     "checks/requirements/check_suggest_installs.sh"
