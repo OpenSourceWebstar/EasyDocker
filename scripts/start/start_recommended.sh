@@ -2,6 +2,17 @@
 
 installRecommendedApps()
 {
+    # Install if keys have been setup
+    if [[ "$ssh_new_key" == "true" ]]; then
+        echo ""
+        echo "####################################################"
+        echo "###              SSH Key Downloader              ###"
+        echo "####################################################"
+        echo ""
+        isNotice "As new SSH Keys have been setup, the key download app will be installed now..."
+        echo ""
+        dockerInstallApp sshdownload;
+    fi
     local traefik_status=$(dockerCheckAppInstalled "traefik" "docker")
     if [[ "$traefik_status" != "installed" ]]; then
         echo ""

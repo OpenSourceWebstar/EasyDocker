@@ -32,11 +32,6 @@ installSSHKeysForDownload()
             fi
         fi
 
-        # Install if keys have been setup
-        if [[ "$ssh_new_key" == "true" ]]; then
-            dockerInstallApp sshdownload;
-        fi
-
         if [[ "$CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS" == "true" ]]; then
             disableSSHPasswords;
         fi

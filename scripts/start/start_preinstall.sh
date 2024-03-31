@@ -20,8 +20,6 @@ startPreInstall()
     installDebianUbuntu;
     installArch;
     installStandaloneWireGuard;
-
-    installSQLiteDatabase;
     
     #######################################################
     ###                   Install Docker                ###
@@ -52,6 +50,7 @@ startPreInstall()
     ###                    Install Misc                 ###
     #######################################################
 
+    installSQLiteDatabase;
     installCrontab;
 
     installSSLCertificate;
