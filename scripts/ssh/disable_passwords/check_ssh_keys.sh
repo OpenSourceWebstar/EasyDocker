@@ -34,12 +34,14 @@ disableSSHPasswords()
     fi
 
     if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
-        ### For SSH Key Setup
-        if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
-            isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be set up."
-        else
-            isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not found, are you sure you want to disable SSH passwords?"
-            users_without_keys+=("$CFG_DOCKER_INSTALL_USER")
+        if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
+            ### For SSH Key Setup
+            if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
+                isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be set up."
+            else
+                isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not found, are you sure you want to disable SSH passwords?"
+                users_without_keys+=("$CFG_DOCKER_INSTALL_USER")
+            fi
         fi
     fi
 
