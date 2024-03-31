@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ufwd_install_script=(
+ufwd_scripts=(
     "ufwd/install_ufwd.sh"
 )

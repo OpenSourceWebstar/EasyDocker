@@ -3,6 +3,7 @@
 installSSHKeysForDownload()
 {
     local flag="$1"
+    
     if [[ "$SSHKEY_SETUP_NEEDED" == "true" ]]; then
         echo ""
         echo "############################################"

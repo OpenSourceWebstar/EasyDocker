@@ -1,5 +1,5 @@
 #!/bin/bash
 
-swapfile_install_script=(
+swapfile_scripts=(
     "swapfile/install_swapfile.sh.sh"
 )
