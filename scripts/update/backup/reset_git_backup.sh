@@ -10,7 +10,7 @@ gitFolderResetAndBackup()
     update_done=false
 
     if [ ! -d "$backup_install_dir/$backupFolder" ]; then
-        local result=$(createFolders "loud" $docker_install_user "$backup_install_dir/$backupFolder")
+        local result=$(createFolders "loud" $sudo_user_name "$backup_install_dir/$backupFolder")
         checkSuccess "Create the backup folder"
     fi
     local result=$(cd $backup_install_dir)
