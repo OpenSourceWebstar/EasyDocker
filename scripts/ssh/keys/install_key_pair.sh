@@ -18,7 +18,7 @@ installSSHKeysForDownload()
 
         if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rooted" ]]; then
             install_username="$sudo_user_name"
-        elif [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootlesss" ]]; then
+        elif [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
             install_username="$CFG_DOCKER_INSTALL_USER"
         fi
         local result=$(sudo chown $install_username:$install_username "$ssh_dir" > /dev/null 2>&1)
