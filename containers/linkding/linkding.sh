@@ -84,6 +84,14 @@ installLinkding()
 
 		((menu_number++))
         echo ""
+        echo "---- $menu_number. Setup Linkding login username & password."
+        echo ""
+
+		fixPermissionsBeforeStart $app_name;
+        LD_SUPERUSER_NAME
+
+		((menu_number++))
+        echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
