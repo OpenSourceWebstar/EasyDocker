@@ -55,7 +55,7 @@ setupInstallVariables()
     # Docker Type username
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         docker_install_user="$sudo_user_name"
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         docker_install_user="$CFG_DOCKER_INSTALL_USER"
     fi
 }
