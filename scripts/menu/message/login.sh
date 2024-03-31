@@ -2,6 +2,10 @@
 
 menuLoginRequired()
 {
+	local app_name="$1"
+	local username="$2"
+	local password="$3"
+	
 	if [[ "$login_required" == "true" ]]; then
 		echo ""
 		echo "    Website Authentication is setup for $app_name."
