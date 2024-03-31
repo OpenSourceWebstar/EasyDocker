@@ -23,12 +23,13 @@ generateSSHSetupKeyPair()
         checkSuccess "Creating $(basename "$public_key_path") folder"
     fi
 
-    # Check if the private key exist
-    if [ -f "$private_key_full" ]; then
+    # Check if the private key does not exist
+    if [ ! -f "$private_key_full" ]; then
         generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
     fi
-    # Check if the public key exist
-    if [ -f "$public_key_full" ]; then
+
+    # Check if the public key does not exist
+    if [ ! -f "$public_key_full" ]; then
         generateSSHKeyPair "$username" "$private_key_path" "$private_key_full" "$public_key_full" install;
     fi
 }

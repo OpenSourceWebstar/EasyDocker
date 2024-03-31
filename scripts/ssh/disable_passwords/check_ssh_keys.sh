@@ -46,9 +46,6 @@ disableSSHPasswords()
     # Display the list of users without SSH keys
     if [ ${#users_without_keys[@]} -gt 0 ]; then
         echo ""
-        isNotice "SSH Key(s) were missing for the following users:"
-        isNotice "Missing Users: ${users_without_keys[@]}"
-        echo ""
         while true; do
             isQuestion "Do you want to install (i) the missing SSH keys or (c) continue or (x) to exit? (i/c/x): "
             read -p "" ssh_keys_missing
