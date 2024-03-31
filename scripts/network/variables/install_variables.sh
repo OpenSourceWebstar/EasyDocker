@@ -51,11 +51,4 @@ setupInstallVariables()
     if [ "$host_name" != "" ]; then
         setupIPsAndHostnames $app_name;
     fi
-
-    # Docker Type username
-    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        docker_install_user="$sudo_user_name"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        docker_install_user="$CFG_DOCKER_INSTALL_USER"
-    fi
 }
