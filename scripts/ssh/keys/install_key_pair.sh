@@ -26,7 +26,9 @@ installSSHKeysForDownload()
             generateSSHSetupKeyPair "$sudo_user_name" $flag
         fi
         if [[ "$CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL" == "true" ]]; then
-            generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER" $flag
+            if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
+                generateSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER" $flag
+            fi
         fi
 
         # Install if keys have been setup
