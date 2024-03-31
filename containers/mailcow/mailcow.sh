@@ -89,7 +89,7 @@ installMailcow()
 			# Clone the Git repository
 			local result=$(sudo rm -rf "$mailcow_source_dir")
 			checkSuccess "Deleting mailcow directory git."
-			local result=$(sudo -u $CFG_DOCKER_INSTALL_USER git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $CFG_DOCKER_INSTALL_USER git config --global --add safe.directory $containers_dir$app_name)
+			local result=$(sudo -u $docker_install_user git clone https://github.com/mailcow/mailcow-dockerized "$mailcow_source_dir" && sudo -u $docker_install_user git config --global --add safe.directory $containers_dir$app_name)
 			checkSuccess "Cloning Mailcow Dockerized GitHub repo"
 			# Restore the backup content
 			if [ -d "$mailcow_backup_dir" ]; then
@@ -126,7 +126,7 @@ installMailcow()
 
         dockerComposeSetupFile $app_name;
 
-		local result=$(cd $containers_dir$app_name && sudo -u $CFG_DOCKER_INSTALL_USER ./generate_config.sh)
+		local result=$(cd $containers_dir$app_name && sudo -u $docker_install_user ./generate_config.sh)
 		checkSuccess "Running Mailcow config generation script"
 
 		((menu_number++))

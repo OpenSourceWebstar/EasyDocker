@@ -15,11 +15,11 @@ generateSSHSetupKeyPair()
 
     # Check if the directory exists; if not, create it
     if [ ! -d "$private_key_path" ]; then
-        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $private_key_path)
+        local result=$(createFolders "loud" $docker_install_user $private_key_path)
         checkSuccess "Creating $(basename "$private_key_path") folder"
     fi
     if [ ! -d "$public_key_path" ]; then
-        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $public_key_path)
+        local result=$(createFolders "loud" $docker_install_user $public_key_path)
         checkSuccess "Creating $(basename "$public_key_path") folder"
     fi
 

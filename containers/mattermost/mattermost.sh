@@ -108,14 +108,14 @@ installMattermost()
         local result=$(sudo rm -rf $containers_dir$app_name)
 		checkSuccess "Removing $app_name install folder"
 
-        local result=$(sudo -u $CFG_DOCKER_INSTALL_USER git clone https://github.com/mattermost/docker $containers_dir$app_name)
+        local result=$(sudo -u $docker_install_user git clone https://github.com/mattermost/docker $containers_dir$app_name)
 		checkSuccess "Cloning Mattermost GitHub"
         backupContainerFilesRestore $app_name;
 
-        local result=$(copyFile "loud" $containers_dir$app_name/env.example $containers_dir$app_name/.env $CFG_DOCKER_INSTALL_USER)
+        local result=$(copyFile "loud" $containers_dir$app_name/env.example $containers_dir$app_name/.env $docker_install_user)
 		checkSuccess "Copying example .env file for setup"
 
-        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
+        local result=$(createFolders "loud" $docker_install_user $containers_dir$app_name/volumes/app/mattermost/{config,data,logs,plugins,client/plugins,bleve-indexes})
 		checkSuccess "Creating folders needed for $app_name"
 
 

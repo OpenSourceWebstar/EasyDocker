@@ -14,26 +14,22 @@ fixPermissionsBeforeStart()
     fi
 
     fixAppFolderPermissions;
-
-	if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        # Mainly for "full"
-        changeRootOwnedFilesAndFolders $script_dir $CFG_DOCKER_INSTALL_USER
-        changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
-    fi
+    changeRootOwnedFilesAndFolders $script_dir $docker_install_user
+    changeRootOwnedFile $docker_dir/$db_file $sudo_user_name
 
     # App Specific
     if [[ $app_name != "" ]]; then
-        changeRootOwnedFilesAndFolders $containers_dir$app_name $CFG_DOCKER_INSTALL_USER
+        changeRootOwnedFilesAndFolders $containers_dir$app_name $docker_install_user
     fi
 
     # Traefik
     if [ -f "${containers_dir}traefik/etc/certs/acme.json" ]; then
-        updateFileOwnership "${containers_dir}traefik/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership "${containers_dir}traefik/etc/certs/acme.json" $docker_install_user $docker_install_user
         local result=$(sudo chmod 600 "${containers_dir}traefik/etc/certs/acme.json")
         checkSuccess "Set permissions to acme.json file for traefik"
     fi
     if [ -f "${containers_dir}traefik/etc/traefik.yml" ]; then
-        updateFileOwnership "${containers_dir}traefik/etc/traefik.yml" $CFG_DOCKER_INSTALL_USER $CFG_DOCKER_INSTALL_USER
+        updateFileOwnership "${containers_dir}traefik/etc/traefik.yml" $docker_install_user $docker_install_user
         local result=$(sudo chmod 600 "${containers_dir}traefik/etc/traefik.yml")
         checkSuccess "Set permissions to traefik.yml file for traefik"
     fi

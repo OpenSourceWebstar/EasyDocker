@@ -70,7 +70,7 @@ installHeadscale()
 
         dockerComposeSetupFile $app_name;
 
-        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config)
+        local result=$(createFolders "loud" $docker_install_user $containers_dir$app_name/config)
         checkSuccess "Create config folder"
 
 		local result=$(copyResource "$app_name" "config.yaml" "config" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)

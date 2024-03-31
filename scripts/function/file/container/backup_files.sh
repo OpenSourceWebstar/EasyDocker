@@ -7,7 +7,7 @@ backupContainerFilesToTemp()
 
     temp_backup_folder="temp_$(date +%Y%m%d%H%M%S)_$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 6)"
 
-    local result=$(createFolders "loud" $sudo_user_name "$temp_backup_folder")
+    local result=$(createFolders "loud" $docker_install_user "$temp_backup_folder")
     checkSuccess "Creating temp folder for backing up purposes."
 
     if [[ $compose_setup == "default" ]]; then

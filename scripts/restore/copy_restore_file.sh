@@ -26,7 +26,7 @@ restoreCopyFile()
 		if [[ "$redownload_backup_file" == [yY] ]]; then
             # Perform the copy or download
             if [[ "$restorefull" == [lL] ]] || [[ "$restoresingle" == [lL] ]] || [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
-                local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
+                local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$docker_install_user")
                 checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
             elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
                 if [[ "$remote_server" == "1" ]]; then
@@ -41,7 +41,7 @@ restoreCopyFile()
     else
         # Perform the copy or download
         if [[ "$restorefull" == [lL] ]] || [[ "$restoresingle" == [lL] ]] || [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
-            local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$CFG_DOCKER_INSTALL_USER")
+            local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$docker_install_user")
             checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
         elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
             if [[ "$remote_server" == "1" ]]; then

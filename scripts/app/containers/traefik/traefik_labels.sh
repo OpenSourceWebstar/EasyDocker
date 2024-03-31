@@ -34,7 +34,7 @@ traefikSetupLabels()
         fi
     fi
 
-    copyFile "silent" "$temp_file" "$compose_file" $CFG_DOCKER_INSTALL_USER overwrite
+    copyFile "silent" "$temp_file" "$compose_file" $docker_install_user overwrite
     sudo rm "$temp_file"
 
     local indentation="      "

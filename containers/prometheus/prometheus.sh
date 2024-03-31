@@ -70,10 +70,10 @@ installPrometheus()
 
         dockerComposeSetupFile $app_name;
 
-        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/$app_name")
+        local result=$(createFolders "loud" $docker_install_user "$containers_dir$app_name/$app_name")
         checkSuccess "Created $app_name folder in $app_name"
 
-        local result=$(createTouch "$containers_dir$app_name/$app_name/$app_name.yml" $CFG_DOCKER_INSTALL_USER)
+        local result=$(createTouch "$containers_dir$app_name/$app_name/$app_name.yml" $docker_install_user)
         checkSuccess "Created $app_name.yml file for $app_name"
 
 		local result=$(copyResource "$app_name" "$app_name.yml" "$app_name" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
@@ -95,7 +95,7 @@ installPrometheus()
 
         # Prometheus
         if [ -f "${containers_dir}prometheus/prometheus/prometheus.yml" ]; then
-            updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $CFG_DOCKER_INSTALL_USER $CFG_DOCKER_INSTALL_USER
+            updateFileOwnership "${containers_dir}prometheus/prometheus/prometheus.yml" $docker_install_user $docker_install_user
         fi
         if [ -d "${containers_dir}prometheus/prometheus" ]; then
             local result=$(sudo chmod -R 777 "${containers_dir}prometheus/prometheus")

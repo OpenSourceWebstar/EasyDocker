@@ -85,13 +85,13 @@ installFail2ban()
         if [ -n "$CFG_FAIL2BAN_ABUSEIPDB_APIKEY" ]; then
             checkSuccess "API key found, setting up the config file."
 
-            local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/logs)
+            local result=$(createFolders "loud" $docker_install_user $containers_dir$app_name/logs)
             checkSuccess "Creating logs folder"
 
-            local result=$(cd $containers_dir$app_name && createTouch $containers_dir$app_name/logs/auth.log $CFG_DOCKER_INSTALL_USER)
+            local result=$(cd $containers_dir$app_name && createTouch $containers_dir$app_name/logs/auth.log $docker_install_user)
             checkSuccess "Creating Auth.log file"
 
-            local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name $containers_dir$app_name/config/$app_name/action.d)
+            local result=$(createFolders "loud" $docker_install_user $containers_dir$app_name/config/$app_name $containers_dir$app_name/config/$app_name/action.d)
             checkSuccess "Creating config and action.d folders"
 
             # AbuseIPDB
@@ -102,7 +102,7 @@ installFail2ban()
             checkSuccess "Setting up abuseipdb_apikey"
 
             # Jail.local
-            local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER $containers_dir$app_name/config/$app_name/)
+            local result=$(createFolders "loud" $docker_install_user $containers_dir$app_name/config/$app_name/)
             checkSuccess "Creating $app_name folder"
 
 		    local result=$(copyResource "$app_name" "jail.local" "config/$app_name" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)

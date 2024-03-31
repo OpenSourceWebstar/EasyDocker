@@ -16,12 +16,7 @@ installSSHKeysForDownload()
         local result=$(sudo chmod 0775 "$ssh_dir" > /dev/null 2>&1)
         checkSuccess "Updating $ssh_dir with 0775 permissions."
 
-        if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rooted" ]]; then
-            install_username="$sudo_user_name"
-        elif [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
-            install_username="$CFG_DOCKER_INSTALL_USER"
-        fi
-        local result=$(sudo chown $install_username:$install_username "$ssh_dir" > /dev/null 2>&1)
+        local result=$(sudo chown $docker_install_user:$docker_install_user "$ssh_dir" > /dev/null 2>&1)
         checkSuccess "Updating $ssh_dir with $install_username ownership."
 
         # Check if SSH Keys are enabled

@@ -19,7 +19,7 @@ copyResource()
     if [ -n "$save_path" ]; then
         local destination_dir="$destination_dir/$save_path"
         if [ ! -d "$destination_dir" ]; then
-            local result=$(createFolders "loud" $sudo_user_name "$destination_dir")
+            local result=$(createFolders "loud" $docker_install_user "$destination_dir")
             checkSuccess "Creating $save_path folder(s) for $app_name"
         fi
     fi
@@ -29,6 +29,6 @@ copyResource()
 
     local destination_path="$destination_dir/$file_name"
 
-    local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$destination_path")
-    checkSuccess "Updating $file_name with $CFG_DOCKER_INSTALL_USER ownership"
+    local result=$(sudo chown $docker_install_user:$docker_install_user "$destination_path")
+    checkSuccess "Updating $file_name with $docker_install_user ownership"
 }

@@ -71,11 +71,11 @@ installTraefik()
         dockerComposeSetupFile $app_name;
 		
         # Create necessary directories and set permissions
-        local result=$(createFolders "loud" $CFG_DOCKER_INSTALL_USER "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic" "$containers_dir$app_name/etc/dynamic/middlewears")
+        local result=$(createFolders "loud" $docker_install_user "$containers_dir$app_name/etc" "$containers_dir$app_name/etc/certs" "$containers_dir$app_name/etc/dynamic" "$containers_dir$app_name/etc/dynamic/middlewears")
         checkSuccess "Created etc and certs & dynamic Directories"
 
         # Create and secure the acme.json file
-        local result=$(createTouch "$containers_dir$app_name/etc/certs/acme.json" $CFG_DOCKER_INSTALL_USER)
+        local result=$(createTouch "$containers_dir$app_name/etc/certs/acme.json" $docker_install_user)
         checkSuccess "Created acme.json file for $app_name"
 
         # Static traefik.yml File

@@ -11,17 +11,17 @@ createFolders()
 
         if [ ! -d "$dir_path" ]; then
             local result=$(sudo mkdir -p "$dir_path")
-            if [ -z "$silent_flag" ]; then
+            if [ "$silent_flag" == "loud" ]; then
                 checkSuccess "Creating $folder_name directory"
             fi
         else
-            if [ -z "$silent_flag" ]; then
+            if [ "$silent_flag" == "loud" ]; then
                 isNotice "$folder_name directory already exists"
             fi
         fi
 
         local result=$(sudo chown $user_name:$user_name "$dir_path")
-        if [ "$silent_flag" == "silent" ]; then
+        if [ "$silent_flag" == "loud" ]; then
             checkSuccess "Updating $folder_name with $user_name ownership"
         fi
     done

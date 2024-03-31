@@ -42,7 +42,7 @@ dockerComposeSetupFile()
         return 1
     fi
     
-    copyFile "loud" "$source_file" "$target_file" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+    copyFile "loud" "$source_file" "$target_file" $docker_install_user | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
     
     if [ $? -ne 0 ]; then
         isError "Failed to copy the source file to '$target_path'. Check '$docker_log_file' for more details."

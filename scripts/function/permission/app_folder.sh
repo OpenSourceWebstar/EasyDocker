@@ -70,16 +70,9 @@ fixAppFolderPermissions()
                 local file_path="$containers_dir$app_name/$file"
                 # Check if the file exists
                 if [ -e "$file_path" ]; then
-                    if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rooted" ]]; then
-                        local result=$(sudo chown $sudo_user_name:$sudo_user_name "$file_path")
-                        if [ "$silent_flag" == "loud" ]; then
-                            checkSuccess "Updating $file with $sudo_user_name ownership"
-                        fi
-                    if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
-                        local result=$(sudo chown $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$file_path")
-                        if [ "$silent_flag" == "loud" ]; then
-                            checkSuccess "Updating $file with $CFG_DOCKER_INSTALL_USER ownership"
-                        fi
+                    local result=$(sudo chown $docker_install_user:$docker_install_user "$file_path")
+                    if [ "$silent_flag" == "loud" ]; then
+                        checkSuccess "Updating $file with $docker_install_user ownership"
                     fi
                 else
                     if [ "$silent_flag" == "loud" ]; then

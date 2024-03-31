@@ -20,7 +20,7 @@ dockerConfigSetupToContainer()
             isNotice "The directory '$target_path' already exists."
         fi
     else
-        createFolders "$silent_flag" "$CFG_DOCKER_INSTALL_USER" "$target_path"
+        createFolders "$silent_flag" "" "$target_path"
     fi
 
     if [ ! -f "$source_file" ]; then
@@ -98,7 +98,7 @@ dockerConfigSetupToContainer()
                     case $resetconfigaccept in
                         [yY])
                             isNotice "Resetting $app_name config file."
-                            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+                            copyFile "loud" "$source_file" "$target_path/$config_file" $docker_install_user | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
                             source $target_path/$config_file
                             dockerConfigSetupToContainer "loud" $app_name;
                             break
@@ -114,7 +114,7 @@ dockerConfigSetupToContainer()
             fi
         else
             isNotice "Config file for $app_name does not exist. Creating it..."
-            copyFile "loud" "$source_file" "$target_path/$config_file" $CFG_DOCKER_INSTALL_USER | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
+            copyFile "loud" "$source_file" "$target_path/$config_file" $docker_install_user | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
             echo ""
             isNotice "Config file for $app_name contains no edits."
             echo ""

@@ -65,8 +65,8 @@ appOwnCloudSetupConfig()
         local result=$(sudo chmod -R 777 "$tmp_folder")
         checkSuccess "Set permissions to for temp folder & files."
         
-        local result=$(sudo chown -R $CFG_DOCKER_INSTALL_USER:$CFG_DOCKER_INSTALL_USER "$tmp_folder")
-        checkSuccess "Updating ownership on temp folder to $CFG_DOCKER_INSTALL_USER"
+        local result=$(sudo chown -R $docker_install_user:$docker_install_user "$tmp_folder")
+        checkSuccess "Updating ownership on temp folder to $docker_install_user"
         
         # Create another temporary file for awk output
         local tmp_awk_output="$tmp_folder/config_awk_output.tmp"
@@ -120,7 +120,7 @@ fi
         result=$(sudo mv "$tmp_awk_output" "$owncloud_config")
         checkSuccess "Overwrite the original config.php with the updated content"
 
-        result=$(sudo chown 165568:$CFG_DOCKER_INSTALL_USER $owncloud_config)
+        result=$(sudo chown 165568:$docker_install_user $owncloud_config)
         checkSuccess "Update permissions of ownCloud config to reflect container needs."
         
         # Remove the temporary folder in /tmp

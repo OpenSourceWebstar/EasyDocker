@@ -195,7 +195,7 @@ addSSHKeyToAuthorizedKeysAndDatabase()
     if [ -f "$key_file" ]; then
         # Ensure the authorized_keys file is empty or create it if it doesn't exist
         if [ ! -f "$auth_key_file" ]; then
-            createTouch "$auth_key_file" $CFG_DOCKER_INSTALL_USER
+            createTouch "$auth_key_file" $docker_install_user
         fi
 
         # Check if the key already exists in the file
@@ -314,7 +314,7 @@ installDockerManagerUser()
                 if [ -f "$config_file" ]; then
                     isNotice "The config file already exists. Updating the existing file..."
                 else
-                    local result=$(createTouch "$config_file" $CFG_DOCKER_INSTALL_USER)
+                    local result=$(createTouch "$config_file" $docker_install_user)
                     checkSuccess "Creating config file"
                     local result=$(sudo chmod 600 "$config_file")
                     checkSuccess "Changing permissions to config file"

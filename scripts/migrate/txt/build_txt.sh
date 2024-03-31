@@ -9,7 +9,7 @@ migrateBuildTXT()
     # Check if the migrate.txt file exists
     if [ ! -f "$migrate_file_path" ]; then
         # Create a migrate.txt file with IP and InstallName
-        createTouch "$migrate_file_path" $CFG_DOCKER_INSTALL_USER
+        createTouch "$migrate_file_path" $docker_install_user
 
         # Add MIGRATE_IP options to $migrate_file for $app_name
         echo "MIGRATE_IP=$public_ip_v4" | sudo tee -a "$migrate_file_path" >/dev/null
