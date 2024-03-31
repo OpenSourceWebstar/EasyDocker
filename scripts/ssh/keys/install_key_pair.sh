@@ -17,7 +17,7 @@ installSSHKeysForDownload()
         checkSuccess "Updating $ssh_dir with 0775 permissions."
 
         local result=$(sudo chown $docker_install_user:$docker_install_user "$ssh_dir" > /dev/null 2>&1)
-        checkSuccess "Updating $ssh_dir with $install_username ownership."
+        checkSuccess "Updating $ssh_dir with $docker_install_user ownership."
 
         # Check if SSH Keys are enabled
         if [[ "$CFG_REQUIREMENT_SSHKEY_ROOT" == "true" ]]; then
