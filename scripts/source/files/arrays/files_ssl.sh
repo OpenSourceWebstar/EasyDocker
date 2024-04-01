@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ssl_script=(
+ssl_scripts=(
     "ssl/install_certificate.sh"
 )
