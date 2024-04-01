@@ -4,9 +4,7 @@ installDisableSSHPassword()
 {
     if [[ $CFG_REQUIREMENT_SSH_DISABLE_PASSWORDS == "true" ]]; then
         # Check if already disabled
-        if grep -q "PasswordAuthentication no" $sshd_config; then
-            isSuccessful "Password Authentication is already disabled."
-        else
+        if [[ $SSHKEY_DISABLE_PASS_NEEDED == "true" ]]; then
             while true; do
                 echo ""
                 isQuestion "Do you want to disable SSH password logins? (y/n): "

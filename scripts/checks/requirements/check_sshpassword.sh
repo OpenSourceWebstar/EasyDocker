@@ -7,7 +7,7 @@ checkSSHPasswordRequirement()
 			isSuccessful "SSH Password appears to be disabled."
 		else
 			isNotice "Password Authentication has not been disabled."
-			SSHKEY_SETUP_NEEDED="true"
+			SSHKEY_DISABLE_PASS_NEEDED="true"
 			((preinstallneeded++))
 		fi
 	fi
