@@ -22,12 +22,14 @@ checkSSHKeysRequirement()
 		fi
 	fi
 	if [[ $CFG_REQUIREMENT_SSHKEY_DOCKERINSTALL == "true" ]]; then
-		if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
-			isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be setup."
-		else
-			isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not setup."
-			SSHKEY_SETUP_NEEDED="true"
-			((preinstallneeded++))
+		if [[ "$CFG_DOCKER_INSTALL_TYPE" == "rootless" ]]; then
+			if checkSSHSetupKeyPair "$CFG_DOCKER_INSTALL_USER"; then
+				isSuccessful "The SSH Key(s) for $CFG_DOCKER_INSTALL_USER appears to be setup."
+			else
+				isNotice "An SSH Key for $CFG_DOCKER_INSTALL_USER is not setup."
+				SSHKEY_SETUP_NEEDED="true"
+				((preinstallneeded++))
+			fi
 		fi
 	fi
 } 
