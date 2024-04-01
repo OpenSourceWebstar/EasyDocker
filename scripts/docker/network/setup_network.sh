@@ -3,7 +3,7 @@
 installDockerNetwork()
 {
     # Check if the network already exists
-    if ! dockerCommandRun "docker network inspect $CFG_NETWORK_NAME &> /dev/null"; then
+    if ! dockerCommandRun "docker network inspect $CFG_NETWORK_NAME > /dev/null 2>&1"; then
         echo ""
         echo "################################################"
         echo "######      Create a Docker Network    #########"
