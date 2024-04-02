@@ -22,6 +22,7 @@ checkRequirements()
 	checkDockerRequirement;
 	checkDockerComposeRequirement;
 	checkDockerRootlessRequirement;
+	checkDockerNetworkRequirement;
 	checkUFWRequirement;
 	checkUFWDRequirement;
 	checkManagerRequirement;
