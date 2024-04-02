@@ -42,7 +42,7 @@ dockerUninstallApp()
         echo "---- $menu_number. Removing unused Docker networks."
         echo ""
 
-        dockerPruneNetworks;
+        dockerPruneAppNetworks $stored_app_name;
 
         ((menu_number++))
         echo ""

@@ -19,9 +19,7 @@ startScan()
 	if [[ $CFG_REQUIREMENT_DNS_UPDATER == "true" ]]; then
         updateDNS "" scan;
     fi
-	if [[ $CFG_REQUIREMENT_DOCKER_NETWORK_PRUNE == "true" ]]; then
-        dockerPruneNetworks;
-    fi
+    dockerPruneAppNetworks;
 	if [[ $CFG_REQUIREMENT_WHITELIST_PORT_UPDATER == "true" ]]; then
 		dockerScan;
     fi
