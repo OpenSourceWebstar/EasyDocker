@@ -39,7 +39,7 @@ services:
       #traefik.http.services.adguard-admin.loadbalancer.server.port: PORT2
       #traefik.http.routers.adguard-admin.middlewares:
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - "./work:/opt/adguardhome/work"
       - "./conf:/opt/adguardhome/conf"
       - "./tailscale:/usr/local/bin/"

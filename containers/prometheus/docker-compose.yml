@@ -18,7 +18,7 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - ./prom_data:/prometheus
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
     #labels:
       #traefik.enable: true
       #traefik.http.routers.prometheus.entrypoints: web,websecure

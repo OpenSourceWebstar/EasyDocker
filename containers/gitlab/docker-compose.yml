@@ -40,7 +40,7 @@ services:
     image: gitlab/gitlab-runner:latest
     container_name: gitlab-runner
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - ./runner/config/:/etc/gitlab-runner:Z
     networks:
       vpn:

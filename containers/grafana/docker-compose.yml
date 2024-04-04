@@ -17,7 +17,7 @@ services:
      - 'PORT1:3000'
     volumes:
      - ./grafana_storage:/var/lib/grafana
-     - /var/run/docker.sock:/var/run/docker.sock:ro
+     - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
     #labels:
       #traefik.enable: true
       #traefik.http.routers.grafana.entrypoints: web,websecure

@@ -14,7 +14,7 @@ services:
       - TZ=TIMEZONEHERE
       #- CLI_ARGS= #optional
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - ./duplicati-data/:/config
       - ./duplicati-backups/:/backups
       - ./duplicati-source/:/source

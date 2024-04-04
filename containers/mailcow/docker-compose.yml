@@ -25,7 +25,7 @@ services:
       command: --restart-containers ${COMPOSE_PROJECT_NAME}-postfix-mailcow-1,${COMPOSE_PROJECT_NAME}-nginx-mailcow-1,${COMPOSE_PROJECT_NAME}-dovecot-mailcow-1
         #network_mode: none
       volumes:
-          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
           - /docker/containers/traefik/etc/certs:/traefik:ro
           - ./data/assets/ssl/:/output:rw
       restart: always

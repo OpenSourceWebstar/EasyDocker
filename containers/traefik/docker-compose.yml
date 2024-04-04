@@ -13,7 +13,7 @@ services:
       - PORT1:80
       - PORT2:443
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - ./etc:/etc/traefik
     #labels:
       #traefik.docker.network: DOCKERNETWORK

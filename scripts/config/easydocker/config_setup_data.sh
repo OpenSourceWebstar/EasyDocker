@@ -23,6 +23,7 @@ dockerConfigSetupFileWithData()
     fi
 
     local full_file_path="$file_path/$file_name"
+    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
     local result=$(sudo sed -i \
         -e "s|DOMAINNAMEHERE|$domain_full|g" \
@@ -42,19 +43,24 @@ dockerConfigSetupFileWithData()
     checkSuccess "Updating $file_name for $app_name"
     
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
-            -e "s|- /var/run/docker.sock|- /run/user/${docker_install_user_id}/docker.sock|g" \
             -e "s|DOCKERINSTALLUSERID|$docker_install_user_id|g" \
             -e "s|#user:|user:|g" \
             -e "s|UIDHERE|$docker_install_user_id|g" \
             -e "s|GIDHERE|$docker_install_user_id|g" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
-    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+    fi
+    
+    # Socket updater
+    if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(sudo sed -i \
-            -e "s|- /run/user/${docker_install_user_id}/docker.sock|- /var/run/docker.sock|g" \
+            -e "/#SOCKETHERE/s|.*|    - /run/user/${docker_install_user_id}/docker.sock:/run/user/${docker_install_user_id}/docker.sock:ro #SOCKETHERE|" \
+        "$full_file_path")
+        checkSuccess "Updating docker socket for $app_name"
+    elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
+        local result=$(sudo sed -i \
+            -e "/#SOCKETHERE/s|.*|    - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE|" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
     fi

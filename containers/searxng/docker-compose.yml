@@ -12,7 +12,7 @@ services:
      - PORT1:8080
     restart: unless-stopped
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - ./searxng-data/:/etc/searxng:rw
     #environment:
       #- SEARXNG_BASE_URL=https://${SEARXNG_HOSTNAME:-localhost}/

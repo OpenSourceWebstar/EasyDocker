@@ -9,7 +9,7 @@ services:
         container_name: jitsimeet
         image: jitsi/web:stable
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
             - ${CONFIG}/web:/config
             - ${CONFIG}/web/letsencrypt:/etc/letsencrypt
             - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts

@@ -13,7 +13,7 @@ checkPasswordsRequirement()
         done
 
         if [ "$pass_found" -eq 1 ]; then
-            isSuccessful "Passwords found to randomize in config files."
+            isNotice "Passwords found to randomize in config files. Update will start soon."
             ((preinstallneeded++))
         else
             isSuccessful "No passwords found to change."
