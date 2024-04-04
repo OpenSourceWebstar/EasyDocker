@@ -11,8 +11,6 @@ installSSHKeysForDownload()
         echo "############################################"
         echo ""
 
-        ssh_new_key="false"
-
         # Fix permissions for SSH Directory
         local result=$(sudo chmod 0775 "$ssh_dir" > /dev/null 2>&1)
         checkSuccess "Updating $ssh_dir with 0775 permissions."

@@ -32,6 +32,7 @@ installRecommendedApps()
     fi
 
     # Install if keys have been setup
+    ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
     if [[ "$ssh_new_key" == "true" ]]; then
         echo ""
         echo "####################################################"
@@ -41,6 +42,7 @@ installRecommendedApps()
         isNotice "As new SSH Keys have been setup, the key downloader app will be installed now..."
         echo ""
         dockerInstallApp sshdownload;
+        databaseOptionInsert "ssh_new_key" "false";
     fi
 
     local traefik_status=$(dockerCheckAppInstalled "traefik" "docker")
