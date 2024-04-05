@@ -84,6 +84,7 @@ initializeScript()
 			useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
 			echo "Setting password for $sudo_user_name user."
 			passwd $sudo_user_name
+			usermod -aG docker "$sudo_user_name"
 			echo "SUCCESS: User $sudo_user_name created successfully."
 		fi
 	fi
