@@ -101,10 +101,8 @@ initializeScript()
 			echo "Setting password for $sudo_user_name user."
 			passwd $sudo_user_name
 			# Docker user group add
-			if ! command -v docker &> /dev/null; then
-				usermod -aG docker "$sudo_user_name"
-				systemctl restart docker
-			fi
+			usermod -aG docker "$sudo_user_name"
+			systemctl restart docker
 			echo "SUCCESS: User $sudo_user_name created successfully."
 		fi
 	fi

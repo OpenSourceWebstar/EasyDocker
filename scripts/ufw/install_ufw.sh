@@ -56,7 +56,6 @@ installUFW()
             local result=$(yes | sudo ufw logging $CFG_UFW_LOGGING)
             checkSuccess "Disabling UFW Firewall Logging"
 
-            echo ""
             isSuccessful "UFW Firewall has been installed, you can use ufw status to see the status"
 
             menu_number=0   
