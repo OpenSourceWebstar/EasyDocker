@@ -386,16 +386,29 @@ completeInitMessage()
 	echo "###      EasyDocker Initilization Complete       ###"
 	echo "####################################################"
 	echo ""
-	if dpkg -l | grep -q virtualmin; then
-		echo "For Virtualmin, please run 'easydocker' to finalize the setup."
-		echo "Otherwise run 'sudo systemctl start'"
+	while true; do
 		echo ""
+		echo "NOTICE - It is recommended to restart the system upon initial install."
+		echo ""
+		echo "QUESTION : Would you like to restart your system as recommended? (y/n): "
+		read -p "" restart_after_install_choice
+		if [[ -n "$restart_after_install_choice" ]]; then
+			break
+		fi
+		isNotice "Please provide a valid input."
+	done
+	if [[ "$restart_after_install_choice" == [yY] ]]; then
+		if dpkg -l | grep -q virtualmin; then
+			echo "For Virtualmin, please run 'easydocker' to finalize the setup."
+			echo "Otherwise run 'sudo systemctl start'"
+			echo ""
+		fi
+		echo "You can now use the 'easydocker' command under the $sudo_user_name."
+		echo ""
+		echo "Thank you & Enjoy! <3"
+		echo ""
+		reboot
 	fi
-	echo "You can now use the 'easydocker' command under the $sudo_user_name."
-	echo ""
-	echo "Thank you & Enjoy! <3"
-	echo ""
-	exit
 }
 
 if [ "$param1" == "$install_param" ] || [ "$param1" == "virtualmin" ]; then
