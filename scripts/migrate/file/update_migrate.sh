@@ -17,12 +17,12 @@ migrateUpdateFiles()
     # Socket updater
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
         local result=$(sudo sed -i \
-            -e "/#SOCKETHERE/s|.*|    - /run/user/${docker_install_user_id}/docker.sock:/run/user/${docker_install_user_id}/docker.sock:ro #SOCKETHERE|" \
+            -e "/#SOCKETHERE/s|.*|      - /run/user/${docker_install_user_id}/docker.sock:/run/user/${docker_install_user_id}/docker.sock:ro #SOCKETHERE|" \
         "$compose_file")
         checkSuccess "Updating docker socket for $app_name"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local result=$(sudo sed -i \
-            -e "/#SOCKETHERE/s|.*|    - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE|" \
+            -e "/#SOCKETHERE/s|.*|      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE|" \
         "$compose_file")
         checkSuccess "Updating docker socket for $app_name"
     fi
