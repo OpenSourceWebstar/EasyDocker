@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.3'
 
 networks:
   vpn:
@@ -9,9 +9,9 @@ services:
     image: httpd:latest
     container_name: sshdownload
     ports:
-    - 'PORT1:80'
+      - 'PORT1:80'
     volumes:
-    - /docker/ssh/private:/usr/local/apache2/htdocs
+      - /docker/ssh/private:/usr/local/apache2/htdocs
     #labels:
       #traefik.enable: true
       #traefik.http.routers.sshdownload.entrypoints: web,websecure
