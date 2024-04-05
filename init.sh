@@ -74,6 +74,22 @@ initializeScript()
 	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
+		echo "###           Installing Docker             ###"
+		echo "####################################################"
+		echo ""
+		if command -v docker &> /dev/null; then
+		    echo "SUCCESS: Docker is already installed."
+		else
+			curl -fsSL https://get.docker.com | sh
+			systemctl start docker
+			systemctl enable docker
+			echo "SUCCESS: Docker has been installed successfully."
+		fi
+	fi
+
+	if [[ "$param1" == "$install_param" ]]; then
+		echo ""
+		echo "####################################################"
 		echo "###           Creating User Accounts             ###"
 		echo "####################################################"
 		echo ""
@@ -84,7 +100,11 @@ initializeScript()
 			useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
 			echo "Setting password for $sudo_user_name user."
 			passwd $sudo_user_name
-			usermod -aG docker "$sudo_user_name"
+			# Docker user group add
+			if ! command -v docker &> /dev/null; then
+				usermod -aG docker "$sudo_user_name"
+				systemctl restart docker
+			fi
 			echo "SUCCESS: User $sudo_user_name created successfully."
 		fi
 	fi

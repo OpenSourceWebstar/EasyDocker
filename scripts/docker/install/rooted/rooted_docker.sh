@@ -16,6 +16,24 @@ installDockerRooted()
             checkSuccess "Downloading & Installing Docker"
 
             dockerServiceStart;
+
+            while true; do
+                echo ""
+                isNotice "It's recommended to restart your system after installing Docker."
+                echo ""
+                isQuestion "Would you like to restart your system as recommended? (y/n): "
+                read -p "" restart_after_docker_install
+                if [[ -n "$restart_after_docker_install" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+            if [[ "$restart_after_docker_install" == [yY] ]]; then
+                sudo reboot
+            fi
+            if [[ "$restart_after_docker_install" == [nN] ]]; then
+                isNotice "Skipping reboot..."
+            fi
         fi
 
         isSuccessful "Docker has been installed and configured."
