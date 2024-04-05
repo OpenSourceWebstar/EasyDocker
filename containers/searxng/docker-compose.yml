@@ -1,5 +1,3 @@
-version: '3.7'
-
 networks:
   vpn:
     external: true
