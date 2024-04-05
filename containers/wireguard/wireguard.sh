@@ -171,7 +171,7 @@ installWireguard()
         echo "    Please create a WireGuard account and save it to access the system after setup"
         echo "    It may take 10+ seconds to load the panel, please be patient"
         echo ""
-        echo "    URL : http://$public_ip:$usedport2/"
+        echo "    URL : http://$public_ip_v4:$usedport2/"
         echo "    PASS : $wireguard_admin_password"
         echo ""
 
