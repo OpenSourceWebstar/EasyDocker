@@ -7,6 +7,10 @@ installDisableSSHPassword()
         if [[ $SSHKEY_DISABLE_PASS_NEEDED == "true" ]]; then
             while true; do
                 echo ""
+                echo "####################################################"
+                echo "###             SSH Password Disabler            ###"
+                echo "####################################################"
+                echo ""
                 isQuestion "Do you want to disable SSH password logins? (y/n): "
                 read -p "" disable_ssh_passwords
                 case "$disable_ssh_passwords" in
