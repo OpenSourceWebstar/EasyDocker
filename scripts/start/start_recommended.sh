@@ -62,8 +62,6 @@ installRecommendedApps()
             done
             if [[ "$wireguard_recommendation_choice" == [yY] ]]; then
                 dockerInstallApp wireguard;
-            elif [[ "$wireguard_recommendation_choice" == [nN] ]]; then
-                break
             fi
         fi
 
@@ -91,8 +89,6 @@ installRecommendedApps()
                 if [[ "$sshdownload_recommendation_choice" == [yY] ]]; then
                     dockerInstallApp sshdownload;
                     databaseOptionInsert "ssh_new_key" "false";
-                elif [[ "$sshdownload_recommendation_choice" == [nN] ]]; then
-                    break
                 fi
             fi
         fi
@@ -119,8 +115,6 @@ installRecommendedApps()
             done
             if [[ "$traefik_recommendation_choice" == [yY] ]]; then
                 dockerInstallApp traefik;
-            elif [[ "$traefik_recommendation_choice" == [nN] ]]; then
-                break
             fi
         fi
 
