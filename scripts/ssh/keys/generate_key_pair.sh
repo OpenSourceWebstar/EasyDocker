@@ -70,11 +70,11 @@ generateSSHKeyPair()
 
     # Select preexisting docker_type
     if [ -f "$docker_dir/$db_file" ]; then
-        ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
+        local ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
         # Insert into DB if something doesnt exist
         if [[ $docker_type == "" ]]; then
             databaseOptionInsert "ssh_new_key" "true";
-            ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
+            local ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
         fi
     else
         return;
