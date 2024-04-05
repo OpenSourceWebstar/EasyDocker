@@ -35,14 +35,13 @@ sourceInitilize()
     fi
 
     # For loading files needed for the full app or CLI
-    #if [[ $flag == "run" ]]; then
-        #files_to_source=("${files_easydocker_app[@]}")
-    #elif [[ $flag == "cli" ]]; then
-        #files_to_source=("${files_easydocker_cli[@]}")
-    #fi
-
-    # The above needs fixing, the _app is not working for some reason.
-    files_to_source=("${files_easydocker_cli[@]}")
+    if [[ $flag == "run" ]]; then
+        source "${install_scripts_dir}source/files/app_files.sh"
+        files_to_source=("${files_easydocker_app[@]}")
+    elif [[ $flag == "cli" ]]; then
+        source "${install_scripts_dir}source/files/cli_files.sh"
+        files_to_source=("${files_easydocker_cli[@]}")
+    fi
 
     # Checking for missing files
     for file_to_source in "${files_to_source[@]}"; do

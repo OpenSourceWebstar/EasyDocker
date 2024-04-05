@@ -112,7 +112,7 @@ initializeScript()
 	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
-		echo "###      	       Git Clone / Update              ###"
+		echo "###      	      Git Clone / Update               ###"
 		echo "####################################################"
 		echo ""
 		# Git Clone and Update
