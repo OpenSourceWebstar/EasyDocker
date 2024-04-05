@@ -28,8 +28,8 @@ installRecommendedApps()
             isNotice "Please provide a valid input."
         done
         if [[ "$disable_recommended_apps" == [yY] ]]; then
-            local general_config_file="$configs_dir$config_file_general"
-            result=$(sudo sed -i "s|CFG_REQUIREMENT_SUGGEST_INSTALLS=true|CFG_REQUIREMENT_SUGGEST_INSTALLS=false|" "$general_config_file")
+            local requirements_config_file="$configs_dir$config_file_requirements"
+            result=$(sudo sed -i "s|CFG_REQUIREMENT_SUGGEST_INSTALLS=true|CFG_REQUIREMENT_SUGGEST_INSTALLS=false|" "$requirements_config_file")
             checkSuccess "Disabling install recommendations in the requirements config."
             isNotice "You can re-enable this in the requirements config file"
             sourceScanFiles "easydocker_configs";
