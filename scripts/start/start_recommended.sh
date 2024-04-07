@@ -4,15 +4,11 @@ installRecommendedApps()
 {
     if [[ $CFG_REQUIREMENT_SUGGEST_INSTALLS == "true" ]]; then
         local wireguard_status=$(dockerCheckAppInstalled "wireguard" "docker")
-
-        # Used to stop the SSH Downloader not flag to be installed if no keys are setup
-        local ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
-        if [[ "$ssh_new_key" == "true" ]]; then
-            local sshdownload_status="false"
-        else
+        if [[ $CFG_REQUIREMENT_SSHKEY_DOWNLOADER == "true" ]]; then
             local sshdownload_status=$(dockerCheckAppInstalled "sshdownload" "docker")
+        else
+            local sshdownload_status="installed"
         fi
-
         local traefik_status=$(dockerCheckAppInstalled "traefik" "docker")
 
         if [ "$wireguard_status" != "installed" ] || \
@@ -82,6 +78,7 @@ installRecommendedApps()
                 fi
 
                 # SSHdownload
+                local ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
                 if [[ "$sshdownload_status" != "installed" ]]; then
                     if [[ "$ssh_new_key" == "true" ]]; then
                         echo ""
@@ -103,6 +100,46 @@ installRecommendedApps()
                         if [[ "$sshdownload_recommendation_choice" == [yY] ]]; then
                             dockerInstallApp sshdownload;
                             databaseOptionInsert "ssh_new_key" "false";
+                        fi
+                    else
+                        echo ""
+                        echo "####################################################"
+                        echo "###              SSH Key Downloader              ###"
+                        echo "####################################################"
+                        echo ""
+                        isNotice "The SSH Key downloader has not been found on your system."
+                        isNotice "You may not need to install this if you have already downloaded all of your keys."
+                        isNotice "You can disable being asked to install this in the future if you select the 'n' option"
+                        echo ""
+                        while true; do
+                            isQuestion "Would you like to install the SSH Key Downloader as per the recommendation? (y/n): "
+                            read -p "" sshdownload_recommendation_choice
+                            if [[ -n "$sshdownload_recommendation_choice" ]]; then
+                                break
+                            fi
+                            isNotice "Please provide a valid input."
+                        done
+                        if [[ "$sshdownload_recommendation_choice" == [yY] ]]; then
+                            dockerInstallApp sshdownload;
+                            databaseOptionInsert "ssh_new_key" "false";
+                        elif [[ "$sshdownload_recommendation_choice" == [nN] ]]; then
+                            while true; do
+                                isQuestion "Would you like to stop being asked to install the SSH Key Downloader? (y/n): "
+                                read -p "" disable_recommended_apps
+                                if [[ -n "$disable_recommended_apps" ]]; then
+                                    break
+                                fi
+                                isNotice "Please provide a valid input."
+                            done
+                            if [[ "$disable_recommended_apps" == [yY] ]]; then
+                                local requirements_config_file="$configs_dir$config_file_requirements"
+                                result=$(sudo sed -i "s|CFG_REQUIREMENT_SSHKEY_DOWNLOADER=true|CFG_REQUIREMENT_SSHKEY_DOWNLOADER=false|" "$requirements_config_file")
+                                checkSuccess "Disabling SSH Key Downloader in the requirements config."
+                                isNotice "You can re-enable this in the requirements config file"
+                                sourceScanFiles "easydocker_configs";
+                            elif [[ "$disable_recommended_apps" == [nN] ]]; then
+                                isSuccessful "You will be asked to install the recommended applications upon loading EasyDocker again."
+                            fi
                         fi
                     fi
                 fi
