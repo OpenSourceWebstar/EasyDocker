@@ -5,7 +5,7 @@ networks:
 
 services:
   traefik:
-    image: traefik:v2.10.5
+    image: traefik:latest
     container_name: traefik
     ports:
       - PORT1:80
