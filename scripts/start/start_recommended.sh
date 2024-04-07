@@ -2,10 +2,17 @@
 
 installRecommendedApps()
 {
-
     if [[ $CFG_REQUIREMENT_SUGGEST_INSTALLS == "true" ]]; then
         local wireguard_status=$(dockerCheckAppInstalled "wireguard" "docker")
-        local sshdownload_status=$(dockerCheckAppInstalled "sshdownload" "docker")
+
+        # Used to stop the SSH Downloader not flag to be installed if no keys are setup
+        local ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
+        if [[ "$ssh_new_key" == "true" ]]; then
+            local sshdownload_status="false"
+        else
+            local sshdownload_status=$(dockerCheckAppInstalled "sshdownload" "docker")
+        fi
+
         local traefik_status=$(dockerCheckAppInstalled "traefik" "docker")
 
         if [ "$wireguard_status" != "installed" ] || \
@@ -75,7 +82,6 @@ installRecommendedApps()
                 fi
 
                 # SSHdownload
-                local ssh_new_key=$(sudo sqlite3 "$docker_dir/$db_file" 'SELECT content FROM options WHERE option = "ssh_new_key";')
                 if [[ "$sshdownload_status" != "installed" ]]; then
                     if [[ "$ssh_new_key" == "true" ]]; then
                         echo ""
