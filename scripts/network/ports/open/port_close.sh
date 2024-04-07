@@ -22,7 +22,7 @@ portClose()
                     local result=$(sudo ufw delete allow "$port/$type")
                     checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-                    local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type")
+                    local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type" > /dev/null 2>&1)
                     checkSuccess "Closing port $port and type $type for $app_name in the UFW-Docker Firewall"
                 fi
             fi

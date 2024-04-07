@@ -136,7 +136,7 @@ initializeScript()
 		echo ""
 		# Git Clone and Update
 		# Check if it's a Git repository by checking if it's inside a Git working tree
-		if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
 			echo "A Git repository is already cloned in '$script_dir'."
 			echo "NOTICE: Please run the easydocker command to update the repository."
 		else

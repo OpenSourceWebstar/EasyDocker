@@ -7,14 +7,14 @@ changeUserGroupOnFolder()
     local directory="$3"
 
     # Check if the source user exists
-    id "$source_user" >/dev/null 2>&1
+    id "$source_user" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "Error: Source user '$source_user' does not exist."
         return 1
     fi
 
     # Check if the target user exists
-    id "$target_user" >/dev/null 2>&1
+    id "$target_user" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "Error: Target user '$target_user' does not exist."
         return 1

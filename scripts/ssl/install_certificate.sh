@@ -24,7 +24,7 @@ installSSLCertificate()
             # Function to generate SSL certificate for a given domain
             generateSSLCertificate() {
                 local domain_value="$1"
-                local result=$(cd $ssl_dir && openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/CN=$domain_value" -keyout "$ssl_dir/$domain_value.key" -out "$ssl_dir/$domain_value.crt" >/dev/null 2>&1)
+                local result=$(cd $ssl_dir && openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj "/CN=$domain_value" -keyout "$ssl_dir/$domain_value.key" -out "$ssl_dir/$domain_value.crt" > /dev/null 2>&1)
                 checkSuccess "SSL Generation for $domain_value"
             }
 

@@ -23,7 +23,7 @@ portsRemoveFromDatabase()
             local result=$(sudo ufw delete allow "$port")
             checkSuccess "Closing port $port for $app_name in the UFW Firewall"
         elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-            local result=$(sudo ufw-docker deny "$app_name" "$port")
+            local result=$(sudo ufw-docker deny "$app_name" "$port" > /dev/null 2>&1)
             checkSuccess "Closing port $port for $app_name in the UFW-Docker Firewall"
         fi
 
