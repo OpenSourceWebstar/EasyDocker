@@ -1,5 +1,3 @@
-version: "3.8"
-
 volumes:
  nextcloud_aio_mastercontainer:
    name: nextcloud_aio_mastercontainer
@@ -10,7 +8,7 @@ services:
    restart: unless-stopped
    container_name: nextcloud-aio-mastercontainer
    volumes:
-     - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+     - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
      - /var/run/docker.sock:/var/run/docker.sock:ro
    ports:
      - PORT1:8080 # change the port on the left side if it's already in use on your host system.
