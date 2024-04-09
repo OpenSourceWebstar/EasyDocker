@@ -22,6 +22,7 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE 10.8.1.5 # Your domain name + proxy host IP
       - TRUSTED_PROXIES=10.8.1.5 # proxy host IP
       - NEXTCLOUD_DATADIR=/docker/containers/nextcloud/data
+      - SKIP_DOMAIN_VALIDATION=true
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
