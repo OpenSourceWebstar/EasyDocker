@@ -55,6 +55,7 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | User           | <a href="https://github.com/killbill/killbill">Killbill - Payment Processing</a>                    | Tested & Working |
 | User           | <a href="https://github.com/mattermost/mattermost">Mattermost - Collaboration Platform</a>          | Tested & Working |
 | User           | <a href="https://github.com/kimai/kimai">Kimai - Online-Timetracker</a>                             | Tested & Working |
+| User           | <a href="https://github.com/nextcloud/docker">NextCloud - Business Cloud Platform</a>               | Tested & Working |
 | User           | <a href="https://github.com/Tiledesk/tiledesk">Tiledesk - Live Chat Platform</a> *UNFINISHED*       | Needs Finishing  |
 | User           | <a href="https://github.com/rustdesk/rustdesk/">Rustdesk - Remote Desktop Server</a>                | Needs Testing    |
 | User           | <a href="https://gitlab.com/gitlab-org/gitlab">GitLab - DevOps Platform</a> *UNFINISHED*            | Needs Testing    |
