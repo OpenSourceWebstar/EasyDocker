@@ -1,0 +1,34 @@
+http:
+  routers:
+    nextcloud:
+      rule: "Host(`DOMAINSUBNAMEHERE`)"
+      entrypoints:
+        - "https"
+      service: nextcloud
+      middlewares:
+        - nextcloud-chain
+      tls:
+        certresolver: "production"
+
+  services:
+    nextcloud:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:11000" # Use the host's IP address if Traefik runs outside the host network
+
+  middlewares:
+    nextcloud-secure-headers:
+      headers:
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        referrerPolicy: "same-origin"
+
+    https-redirect:
+      redirectscheme:
+        scheme: https 
+
+    nextcloud-chain:
+      chain:
+        middlewares:
+          - https-redirect
+          - nextcloud-secure-headers

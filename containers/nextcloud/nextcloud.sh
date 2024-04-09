@@ -34,7 +34,30 @@ installNextcloud()
         echo "##########################################"
         echo ""
 
-		((menu_number++))
+        local status=$(dockerCheckAppInstalled "traefik" "docker")
+        if [ "$status" == "not_installed" ]; then
+            while true; do
+                echo ""
+                isNotice "Traefik is not installed, it is required."
+                echo ""
+                isQuestion "Would you like to install Traefik? (y/n): "
+                read -p "" nextcloud_traefik_choice
+                if [[ -n "$nextcloud_traefik_choice" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+            if [[ "$nextcloud_traefik_choice" == [yY] ]]; then
+                dockerInstallApp traefik;
+            fi
+            if [[ "$nextcloud_traefik_choice" == [nN] ]]; then
+                isError "Installation is now aborting..."
+                dockerUninstallApp "$app_name"
+                return 1
+            fi
+        fi
+
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up install folder and config file for $app_name."
         echo ""
@@ -63,26 +86,34 @@ installNextcloud()
             isSuccessful "No open port conflicts found, setup is continuing..."
         fi
         
-		((menu_number++))
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
         echo ""
 
         dockerComposeSetupFile $app_name;
 
-		((menu_number++))
+        ((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
+        echo ""
+
+        local result=$(copyResource "traefik" "nextcloud.yml" "etc/dynamic")
+        checkSuccess "Copy Nextcloud Traefik configuration"
+
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
         echo ""
 
-		fixPermissionsBeforeStart $app_name;
+        fixPermissionsBeforeStart $app_name;
 
-		((menu_number++))
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		dockerComposeUpdateAndStartApp $app_name install;
+        dockerComposeUpdateAndStartApp $app_name install;
 
         ((menu_number++))
         echo ""
@@ -91,21 +122,21 @@ installNextcloud()
 
         appUpdateSpecifics $app_name;
 
-		((menu_number++))
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Headscale setup (if required)"
         echo ""
 
-		setupHeadscale $app_name;
+        setupHeadscale $app_name;
 
-		((menu_number++))
-		echo ""
+        ((menu_number++))
+        echo ""
         echo "---- $menu_number. Adding $app_name to the Apps Database table."
         echo ""
 
-		databaseInstallApp $app_name;
+        databaseInstallApp $app_name;
 
-		((menu_number++))
+        ((menu_number++))
         echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
@@ -113,7 +144,8 @@ installNextcloud()
         echo ""
         
         menuShowFinalMessages $app_name;
-		    
+		fi
+        
 		menu_number=0
         sleep 3s
         cd
