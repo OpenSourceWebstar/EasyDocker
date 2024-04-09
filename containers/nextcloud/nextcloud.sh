@@ -34,11 +34,11 @@ installNextcloud()
         echo "##########################################"
         echo ""
 
-        local status=$(dockerCheckAppInstalled "traefik" "docker")
-        if [ "$status" == "not_installed" ]; then
+        local traefik_status=$(dockerCheckAppInstalled "traefik" "docker")
+        if [ "$traefik_status" == "not_installed" ]; then
             while true; do
                 echo ""
-                isNotice "Traefik is not installed, it is required."
+                isNotice "Traefik is not installed, it is recommended..."
                 echo ""
                 isQuestion "Would you like to install Traefik? (y/n): "
                 read -p "" nextcloud_traefik_choice
@@ -51,9 +51,7 @@ installNextcloud()
                 dockerInstallApp traefik;
             fi
             if [[ "$nextcloud_traefik_choice" == [nN] ]]; then
-                isError "Installation is now aborting..."
-                dockerUninstallApp "$app_name"
-                return 1
+                isNotice "Installation is contunuing without Traefik, this may lead to issues..."
             fi
         fi
 
@@ -93,13 +91,15 @@ installNextcloud()
 
         dockerComposeSetupFile $app_name;
 
-        ((menu_number++))
-        echo ""
-        echo "---- $menu_number. Setting up the $app_name docker-compose.yml file."
-        echo ""
+        if [ "$traefik_status" == "installed" ]; then
+            ((menu_number++))
+            echo ""
+            echo "---- $menu_number. Setting up the $app_name Traefik config file."
+            echo ""
 
-        local result=$(copyResource "traefik" "nextcloud.yml" "etc/dynamic")
-        checkSuccess "Copy Nextcloud Traefik configuration"
+            local result=$(copyResource "traefik" "nextcloud.yml" "etc/dynamic")
+            checkSuccess "Copy Nextcloud Traefik configuration"
+        fi
 
         ((menu_number++))
         echo ""
