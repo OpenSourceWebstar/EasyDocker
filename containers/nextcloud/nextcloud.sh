@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Category : system
+# Category : user
 # Description : Nextcloud - Business Cloud Platform (c/t/u/s/r/i):
 
 installNextcloud()
