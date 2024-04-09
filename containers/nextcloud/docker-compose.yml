@@ -1,23 +1,23 @@
 volumes:
- nextcloud_aio_mastercontainer:
-   name: nextcloud_aio_mastercontainer
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer
 
 services:
- nextcloud:
-   image: nextcloud/all-in-one:latest
-   restart: unless-stopped
-   container_name: nextcloud-aio-mastercontainer
-   volumes:
-     - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
-     - /var/run/docker.sock:/var/run/docker.sock:ro
-   ports:
-     - PORT1:8080 # change the port on the left side if it's already in use on your host system.
-   environment:
-     - APACHE_PORT=PORT2
-     - APACHE_DISABLE_REWRITE_IP=1
-     - NEXTCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE 10.8.1.5 # Your domain name + proxy host IP
-     - TRUSTED_PROXIES=10.8.1.5 # proxy host IP
-     - NEXTCLOUD_DATADIR=/docker/containers/nextcloud/data
+  nextcloud:
+    image: nextcloud/all-in-one:latest
+    container_name: nextcloud-aio-mastercontainer
+    restart: unless-stopped
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - PORT1:8080
+    environment:
+      - APACHE_PORT=PORT2
+      - APACHE_DISABLE_REWRITE_IP=1
+      - NEXTCLOUD_TRUSTED_DOMAINS=DOMAINSUBNAMEHERE 10.8.1.5 # Your domain name + proxy host IP
+      - TRUSTED_PROXIES=10.8.1.5 # proxy host IP
+      - NEXTCLOUD_DATADIR=/docker/containers/nextcloud/data
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
