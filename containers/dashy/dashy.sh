@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : system
-# Description : Dashy - Docker Dashboard (c/t/u/s/r/i):
+# Description : Dashy - Docker Dashboard (c/t/u/s/r/i/t):
 
 installDashy()
 {
