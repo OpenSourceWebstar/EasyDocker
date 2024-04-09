@@ -99,6 +99,8 @@ installNextcloud()
 
             local result=$(copyResource "traefik" "nextcloud.yml" "etc/dynamic")
             checkSuccess "Copy Nextcloud Traefik configuration"
+
+            dockerConfigSetupFileWithData traefik "nextcloud.yml" "etc/dynamic";
         fi
 
         ((menu_number++))
