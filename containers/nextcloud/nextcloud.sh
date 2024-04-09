@@ -144,7 +144,6 @@ installNextcloud()
         echo ""
         
         menuShowFinalMessages $app_name;
-		fi
         
 		menu_number=0
         sleep 3s
