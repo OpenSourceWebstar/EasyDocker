@@ -6,17 +6,16 @@ appGetKeyData()
     local file_path="$2"
     local key="$3"
 
-    # Example of usage
-    # password=$(get_password "your_app" "config_file.conf" "LD_SUPERUSER_PASSWORD")
-
     # Check if the file exists
-    if [ -f "/docker/containers/$app_name/$file_path" ]; then
-        # Extract the line containing the password key
-        local password_line=$(grep "^$key=" "/docker/containers/$app_name/$file_path")
+    if [ -f "$containers_dir$app_name/$file_path" ]; then
+        # Extract the line containing the key
+        local key_line=$(grep "^$key=" "$containers_dir$app_name/$file_path")
 
-        # Extract the password value using cut or awk
-        local password=$(echo "$password_line" | cut -d '=' -f 2)
+        # Extract the value using cut or awk
+        local value=$(echo "$key_line" | cut -d '=' -f 2)
+        echo "$value"
     else
-        isNotice "File $(basename "$basefile_path") not found for $app_name"
+        echo "File $file_path not found for $app_name" >&2
+        return 1
     fi
 }
