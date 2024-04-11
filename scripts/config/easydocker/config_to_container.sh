@@ -101,9 +101,71 @@ dockerConfigSetupToContainer()
                             copyFile "loud" "$source_file" "$target_path/$config_file" $docker_install_user | sudo tee -a "$logs_dir/$docker_log_file" 2>&1
                             source $target_path/$config_file
                             dockerConfigSetupToContainer "loud" $app_name;
+                            while true; do
+                                isQuestion "Would you like to make edits to the config file? (y/n): "
+                                read -rp "" editconfigaccept
+                                echo ""
+                                case $editconfigaccept in
+                                    [yY])
+                                        # Calculate the checksum of the original file
+                                        local original_checksum=$(sudo md5sum "$target_path/$config_file")
+
+                                        # Open the file with $CFG_TEXT_EDITOR for editing
+                                        sudo $CFG_TEXT_EDITOR "$target_path/$config_file"
+
+                                        # Calculate the checksum of the edited file
+                                        local edited_checksum=$(sudo md5sum "$target_path/$config_file")
+
+                                        # Compare the checksums to check if changes were made
+                                        if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                                            source $target_path/$config_file
+                                            setupInstallVariables $app_name;
+                                            isSuccessful "Changes have been made to the $config_file."
+                                        fi
+                                        break
+                                        ;;
+                                    [nN])
+                                        break  # Exit the loop without updating
+                                        ;;
+                                    *)
+                                        isNotice "Please provide a valid input (y or n)."
+                                        ;;
+                                esac
+                            done
                             break
                             ;;
                         [nN])
+                            while true; do
+                                isQuestion "Would you like to make edits to the config file? (y/n): "
+                                read -rp "" editconfigaccept
+                                echo ""
+                                case $editconfigaccept in
+                                    [yY])
+                                        # Calculate the checksum of the original file
+                                        local original_checksum=$(sudo md5sum "$target_path/$config_file")
+
+                                        # Open the file with $CFG_TEXT_EDITOR for editing
+                                        sudo $CFG_TEXT_EDITOR "$target_path/$config_file"
+
+                                        # Calculate the checksum of the edited file
+                                        local edited_checksum=$(sudo md5sum "$target_path/$config_file")
+
+                                        # Compare the checksums to check if changes were made
+                                        if [[ "$original_checksum" != "$edited_checksum" ]]; then
+                                            source $target_path/$config_file
+                                            setupInstallVariables $app_name;
+                                            isSuccessful "Changes have been made to the $config_file."
+                                        fi
+                                        break
+                                        ;;
+                                    [nN])
+                                        break  # Exit the loop without updating
+                                        ;;
+                                    *)
+                                        isNotice "Please provide a valid input (y or n)."
+                                        ;;
+                                esac
+                            done
                             break  # Exit the loop without updating
                             ;;
                         *)
