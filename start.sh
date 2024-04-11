@@ -23,12 +23,18 @@ initEasyDocker()
 {
     # For the full application loading
     if [[ "$initial_command1" == "run" ]]; then
-        init_run_flag="true"
+        init_run_flag="run"
         displayEasyDockerLogo;
         source "scripts/source/load_sources.sh"
-	else
+    elif [[ "$initial_command1" == "cli" ]]; then
     # For the CLI loading
-        init_run_flag="false"
+        init_run_flag="cli"
+        displayEasyDockerLogo;
+        source "scripts/source/load_sources.sh"
+    # For crontab specific backups
+    elif [[ "$initial_command1" == "crontab" ]]; then
+    # For the CLI loading
+        init_run_flag="crontab"
         displayEasyDockerLogo;
         source "scripts/source/load_sources.sh"
     fi
