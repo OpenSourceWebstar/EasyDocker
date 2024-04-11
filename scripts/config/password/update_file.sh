@@ -1,6 +1,6 @@
 #!/bin/bash
 
-scanFileForRandomPassword()
+scanFileForRandomPassword() 
 {
     local file="$1"
     
@@ -10,8 +10,11 @@ scanFileForRandomPassword()
             # Generate a unique random password
             local random_password=$(openssl rand -base64 12 | tr -d '+/=')
             
+            # Find the line number of the first occurrence of "RANDOMIZEDPASSWORD"
+            local line_number=$(sudo grep -n "RANDOMIZEDPASSWORD" "$file" | head -n 1 | cut -d ':' -f 1)
+            
             # Capture the content before "RANDOMIZEDPASSWORD"
-            local config_content=$(sudo sed -n "/RANDOMIZEDPASSWORD/ s/^\([^=]*\).*/\1/p" "$file")
+            local config_content=$(sudo sed -n "${line_number}s/^\([^=]*\).*/\1/p" "$file")
 
             # Update the first occurrence of "RANDOMIZEDPASSWORD" with the new password
             sudo sed -i "0,/\(RANDOMIZEDPASSWORD\)/s//${random_password}/" "$file"
@@ -21,3 +24,4 @@ scanFileForRandomPassword()
         done
     fi
 }
+
