@@ -22,7 +22,7 @@ menuLoginRequired()
 		echo "    Your login username is : $username"
 		echo "    Your password is : $password"
 		echo ""
-		echo "    (you always find them in the docker-compose file for $app_name)"
+		echo "    (you always find them in the docker-compose file (YML Editor option) for $app_name)"
 	fi
 	echo ""
 }

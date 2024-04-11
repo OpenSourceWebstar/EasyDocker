@@ -84,14 +84,6 @@ installLinkding()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Setup Linkding login username & password."
-        echo ""
-
-		fixPermissionsBeforeStart $app_name;
-        LD_SUPERUSER_NAME
-
-		((menu_number++))
-        echo ""
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
@@ -124,8 +116,11 @@ installLinkding()
         echo ""
         echo "    You can now navigate to your new service using one of the options below : "
         echo ""
-        
-        menuShowFinalMessages $app_name;
+
+        LD_SUPERUSER_NAME=$(appGetKeyData "$app_name" ".env" "LD_SUPERUSER_NAME")
+        LD_SUPERUSER_PASSWORD=$(appGetKeyData "$app_name" ".env" "LD_SUPERUSER_PASSWORD")
+
+        menuShowFinalMessages $app_name $LD_SUPERUSER_NAME $LD_SUPERUSER_PASSWORD;
 
 		menu_number=0
         sleep 3s
