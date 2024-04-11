@@ -88,8 +88,9 @@ installOwncloud()
                 isSuccessful "Using for installation"
                 owncloud_version="$latest_version"
             else
-                isNotice "Failed to extract the latest version from the webpage."
-                isNotice "Defaulting to config value."
+                isNotice "Failed to extract the latest version from the OwnCloud website."
+                isNotice "Defaulting to config value : $CFG_OWNCLOUD_VERSION."
+                owncloud_version="$CFG_OWNCLOUD_VERSION"
             fi
 
             # Remove the temporary HTML file
@@ -107,6 +108,9 @@ installOwncloud()
         echo ""
         echo "---- $menu_number. Setup .env file for $app_name"
         echo ""
+
+        local result=$(copyResource "$app_name" ".env" "")
+        checkSuccess "Copying the .env for $app_name"
 
         local file_path="$containers_dir$app_name/.env"
 
