@@ -73,17 +73,16 @@ installOwncloud()
 
 		((menu_number++))
         echo ""
-        echo "---- $menu_number. Setup .env file for $app_name"
+        echo "---- $menu_number. Obtain latest version number of $app_name"
         echo ""
+        
+        local webpage_file="/tmp/webpage.html"
 
-        local webpage_file="/tmp/webpage.html" 
         # Download the webpage to the temporary directory
-        result=$(sudo curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > "$webpage_file")
-        checkSuccess "Downloading server_release_notes webpage to extract latest version."
-
+        curl -s "https://doc.owncloud.com/docs/next/server_release_notes.html" > "$webpage_file"
         if [ $? -eq 0 ]; then
             # Extract the latest version from the temporary HTML file
-            local latest_version=$(sudo grep -o 'Changes in [0-9.-]*' "$webpage_file" | sudo awk -F " " '{print $3}' | sudo sort -V | sudo tail -n 1)
+            local latest_version=$(grep -o 'Changes in [0-9.-]*' "$webpage_file" | awk -F " " '{print $3}' | sort -V | tail -n 1)
             if [ -n "$latest_version" ]; then
                 isSuccessful "Latest Retrieved Version: $latest_version"
                 isSuccessful "Using for installation"
@@ -94,34 +93,46 @@ installOwncloud()
             fi
 
             # Remove the temporary HTML file
-            result=$(sudo rm "$webpage_file")
-            checkSuccess "Remove the temporary HTML file"
+            rm "$webpage_file"
+            if [ $? -eq 0 ]; then
+                isSuccessful "Removed the temporary HTML file"
+            else
+                isNotice "Failed to remove the temporary HTML file"
+            fi
         else
             isNotice "Failed to retrieve the web page."
         fi
 
-if [[ "$public" == "true" ]]; then	
-dockerCommandRun "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
-OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=$host_setup
-OWNCLOUD_TRUSTED_DOMAINS=$host_setup,$ip_setup,$public_ip_v4
-ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
-ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
-HTTP_PORT=$usedport1
-EOF"
-fi
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Setup .env file for $app_name"
+        echo ""
 
-if [[ "$public" == "false" ]]; then	
-dockerCommandRun "cd $containers_dir$app_name && cat << EOF > $containers_dir$app_name/.env
-OWNCLOUD_VERSION=$owncloud_version
-OWNCLOUD_DOMAIN=IPADDRESSHERE
-OWNCLOUD_TRUSTED_DOMAINS=IPADDRESSHERE
-ADMIN_USERNAME=$CFG_OWNCLOUD_ADMIN_USERNAME
-ADMIN_PASSWORD=$CFG_OWNCLOUD_ADMIN_PASSWORD
-HTTP_PORT=$usedport1
-EOF"
-fi
-		dockerConfigSetupFileWithData $app_name ".env";
+        local file_path="$containers_dir$app_name/.env"
+
+        local result=$(sudo sed -i \
+            -e "s|OWNCLOUD_SETUP_VERSION|$owncloud_version|g" \
+            -e "s|OWNCLOUD_SETUP_ADMIN_USERNAME|$CFG_OWNCLOUD_ADMIN_USERNAME|g" \
+            -e "s|OWNCLOUD_SETUP_ADMIN_PASSWORD|$CFG_OWNCLOUD_ADMIN_PASSWORD|g" \
+            -e "s|OWNCLOUD_SETUP_HTTP_PORT|$usedport1|g" \
+        "$file_path")
+        checkSuccess "Updating $file_name for $app_name"
+
+        if [[ "$public" == "true" ]]; then
+            local result=$(sudo sed -i \
+                -e "s|OWNCLOUD_SETUP_DOMAIN|$host_setup|g" \
+                -e "s|OWNCLOUD_SETUP_TRUSTED_DOMAINS|$host_setup,$ip_setup,$public_ip_v4|g" \
+            "$file_path")
+            checkSuccess "Updating $file_name for $app_name"
+        fi
+
+        if [[ "$public" == "false" ]]; then
+            local result=$(sudo sed -i \
+                -e "s|OWNCLOUD_SETUP_DOMAIN|$ip_setup|g" \
+                -e "s|OWNCLOUD_SETUP_TRUSTED_DOMAINS|$ip_setup|g" \
+            "$file_path")
+            checkSuccess "Updating $file_name for $app_name"
+        fi
 
 		((menu_number++))
         echo ""
