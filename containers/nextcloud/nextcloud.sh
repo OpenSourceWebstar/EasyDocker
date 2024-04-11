@@ -101,6 +101,8 @@ installNextcloud()
             checkSuccess "Copy Nextcloud Traefik configuration"
 
             dockerConfigSetupFileWithData traefik "nextcloud.yml" "etc/dynamic";
+
+            dockerRestartApp traefik;
         fi
 
         ((menu_number++))
