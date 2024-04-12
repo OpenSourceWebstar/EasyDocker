@@ -32,13 +32,10 @@ else
 fi
 
 # For starting the script
-if [[ $init_run_flag == "run" ]]; then
+if [[ $init_run_flag == "true" ]]; then
     # For loading EasyDocker
     sourceCheckFiles "run";
-elif [[ $init_run_flag == "cli" ]]; then
+elif [[ $init_run_flag == "false" ]]; then
     # For using the CLI
     sourceCheckFiles "cli";
-elif [[ $init_run_flag == "crontab" ]]; then
-    # For using the crontab backup
-    sourceCheckFiles "crontab";
 fi

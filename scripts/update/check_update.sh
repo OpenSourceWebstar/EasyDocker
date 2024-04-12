@@ -48,7 +48,7 @@ checkUpdates()
 						fixPermissionsBeforeStart "" "update";
 						sourceCheckFiles;
 
-                        if [[ $init_run_flag == "run" ]]; then
+                        if [[ $init_run_flag == "true" ]]; then
                             isSuccessful "Starting/Restarting EasyDocker"
                             startLoad;
                         fi
@@ -63,7 +63,7 @@ checkUpdates()
 						fixPermissionsBeforeStart "" "update";
 						sourceCheckFiles;
                         
-                        if [[ $init_run_flag == "run" ]]; then
+                        if [[ $init_run_flag == "true" ]]; then
                             startLoad;
                         fi
 						
@@ -83,13 +83,13 @@ checkUpdates()
 			fixPermissionsBeforeStart "" "update";
 			sourceCheckFiles;
 
-            if [[ $init_run_flag == "run" ]]; then
+            if [[ $init_run_flag == "true" ]]; then
                 isSuccessful "Starting/Restarting EasyDocker"
                 startLoad;
             fi
 		fi
 	else
-        if [[ $init_run_flag == "run" ]]; then
+        if [[ $init_run_flag == "true" ]]; then
             startLoad;
         fi
 	fi

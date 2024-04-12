@@ -25,14 +25,6 @@ sourceCheckFiles()
         elif [[ $flag == "cli" ]]; then
             detectOS;
             cliInitialize;
-        # This is where the crontab command starts
-        elif [[ $flag == "crontab" ]]; then
-            detectOS;
-            if [[ "$initial_command2" != "" ]]; then
-                yes "y" | backupStart "$app_name" | tee $logs_dir/$backup_log_file
-            else
-                echo "No app_name provided, unable to backup"
-            fi
         fi
     
     # Reinstall EasyDocker if there is missing files
