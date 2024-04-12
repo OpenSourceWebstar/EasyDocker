@@ -13,6 +13,7 @@ docker_scripts=(
     "docker/app/compose/up_down_app.sh"
 
     "docker/app/docker/restart_app.sh"
+    "docker/app/docker/remove_app.sh"
     "docker/app/docker/start_all.sh"
     "docker/app/docker/start_app.sh"
     "docker/app/docker/stop_all.sh"
