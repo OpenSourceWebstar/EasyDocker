@@ -111,6 +111,7 @@ initializeScript()
 			# Add the passwordless sudo entry for the user
 			echo "" | sudo tee -a "$sudoers_file" > /dev/null
 			echo "$sudo_user_name ALL=(ALL) NOPASSWD: ALL" | sudo tee -a "$sudoers_file" > /dev/null
+			sudo visudo -c
 			echo "SUCCESS: Added passwordless sudo entry for user $sudo_user_name."
 		else
 			echo "SUCCESS: Passwordless sudo entry already setup."
