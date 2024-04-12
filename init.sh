@@ -108,10 +108,10 @@ initializeScript()
 		local sudoers_file="/etc/sudoers"
 		local sudo_entry="$sudo_user_name ALL=(ALL) NOPASSWD: ALL"
 		# Check if the sudo entry exists for the user
-		if ! sudo grep -qFx "$sudo_entry" "$sudoers_file"; then
+		if ! grep -q "$sudo_entry" $sudoers_file; then
 			# Add the passwordless sudo entry for the user
 			echo "" | sudo tee -a "$sudoers_file" > /dev/null
-			echo "$sudo_user_name ALL=(ALL) NOPASSWD: ALL" | sudo tee -a "$sudoers_file" > /dev/null
+			echo "$sudo_entry" | sudo tee -a "$sudoers_file" > /dev/null
 			sudo visudo -c
 			echo "SUCCESS: Added passwordless sudo entry for user $sudo_user_name."
 		else
