@@ -4,17 +4,20 @@ dockerRemoveApp()
 {
     local app_name="$1"
 
-    if [[ "$app_name" != "" ]]; then
-        local container_count=$(docker ps -a | awk -v name="$app_name" '$0 ~ name {count++} END {print count}')
+    if [[ -n "$app_name" ]]; then
+        local container_ids=$(docker ps -aqf "name=$app_name")
 
-        if [ "$container_count" -gt 0 ]; then
-            isNotice "Additional containers found, Please wait for docker containers to stop and be removed"
+        if [[ -n "$container_ids" ]]; then
+            isNotice "Additional containers found. Please wait for docker containers to stop and be removed."
 
-            local result=$(dockerCommandRun "docker ps -a --format '{{.Names}}' | grep '$app_name' | awk '{print \"docker stop \" \$1}' | sh")
-            checkSuccess "Stopping all docker containers with the name $app_name"
+            # Loop through each container ID
+            for container_id in $container_ids; do
+                local result=$(docker stop $container_id 2>&1)
+                checkSuccess "Stopping docker container $container_id"
 
-            local result=$(dockerCommandRun "docker ps -a --format '{{.Names}}' | grep '$app_name' | awk '{print \"docker rm \" \$1}' | sh")
-            checkSuccess "Removing all docker containers with the name $app_name"
+                local result=$(docker rm $container_id 2>&1)
+                checkSuccess "Removing docker container $container_id"
+            done
         else
             isNotice "No containers found with the name $app_name"
         fi
@@ -22,4 +25,3 @@ dockerRemoveApp()
         isNotice "No app name provided, unable to stop app."
     fi
 }
-
