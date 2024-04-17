@@ -7,7 +7,7 @@ installPiped()
 {
     if [[ "$piped" == *[cCtTuUsSrRiI]* ]]; then
         dockerConfigSetupToContainer silent piped;
-        local app_name=$CFG_INVIDIOUS_APP_NAME
+        local app_name=$CFG_PIPED_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
