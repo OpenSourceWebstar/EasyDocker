@@ -70,7 +70,7 @@ services:
 
     piped-postgres:
         container_name: piped-postgres
-        image: piped-postgres:15
+        image: postgres:15
         restart: unless-stopped
         volumes:
             - ./data/db:/var/lib/piped-postgresql/data
