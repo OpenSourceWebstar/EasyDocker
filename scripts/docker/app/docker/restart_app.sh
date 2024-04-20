@@ -5,14 +5,14 @@ dockerRestartApp()
     local app_name="$1"
 
     if [[ -n "$app_name" ]]; then
-        local container_ids=$(docker ps -aqf "name=$app_name")
+        local container_ids=$(dockerCommandRun "docker ps -aqf \"name=$app_name\"")
 
         if [[ -n "$container_ids" ]]; then
             isNotice "Please wait for docker containers to restart"
 
             # Loop through each container ID to restart
             for container_id in $container_ids; do
-                local result=$(docker restart $container_id 2>&1)
+                local result=$(dockerCommandRun 'docker restart $container_id 2>&1')
                 checkSuccess "Restarting docker container $container_id"
             done
         else
