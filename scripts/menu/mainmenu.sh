@@ -5,7 +5,7 @@ mainMenu()
 	createSuccessfulRunFile;
 
 	# We will not show the menu if we are installing Easydocker via the CLI install command
-    if [ "$install_via_cli" != "true" ];
+    if [ "$install_via_cli" != "true" ]; then
 
 		# Enable input
 		stty echo
