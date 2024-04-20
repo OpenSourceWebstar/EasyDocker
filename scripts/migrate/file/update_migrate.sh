@@ -3,7 +3,6 @@
 migrateUpdateFiles()
 {            
     local app_name="$1"
-    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
 
     if [[ $compose_setup == "default" ]]; then
         local compose_file="docker-compose.yml";
@@ -16,13 +15,14 @@ migrateUpdateFiles()
     
     # Socket updater
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
         local result=$(sudo sed -i \
             -e "/#SOCKETHERE/s|.*|      - /run/user/${docker_install_user_id}/docker.sock:/run/user/${docker_install_user_id}/docker.sock:ro #SOCKETHERE|" \
         "$compose_file")
         checkSuccess "Updating docker socket for $app_name"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local result=$(sudo sed -i \
-            -e "/#SOCKETHERE/s|.*|      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE|" \
+            -e "/#SOCKETHERE/s|.*|      - $docker_rooted_socket:$docker_rooted_socket:ro #SOCKETHERE|" \
         "$compose_file")
         checkSuccess "Updating docker socket for $app_name"
     fi
