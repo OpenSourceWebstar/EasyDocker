@@ -20,6 +20,9 @@ services:
       #traefik.http.routers.linkding.tls: true
       #traefik.http.routers.linkding.tls.certresolver: production
       #traefik.http.routers.linkding.middlewares:
+    healthcheck:
+      test: ["NONE"]
+      disable: true
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE
