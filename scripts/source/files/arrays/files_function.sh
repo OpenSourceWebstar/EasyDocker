@@ -26,6 +26,7 @@ function_scripts=(
     "function/permission/ownership/folder_group.sh"
     "function/permission/ownership/root_file.sh"
     "function/permission/ownership/root_files_folders.sh"
+    "function/run/create_successful_run_file.sh"
     "function/run/reinstall_easydocker.sh"
     "function/validation/element.sh"
     "function/validation/email.sh"

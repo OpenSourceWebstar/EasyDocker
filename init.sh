@@ -68,7 +68,7 @@ initializeScript()
 	echo "###         Installing Prerequired Apps          ###"
 	echo "####################################################"
 	echo ""
-	sudo apt-get install git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap -y
+	sudo apt-get install git zip curl sshpass dos2unix apt-transport-https ca-certificates software-properties-common uidmap jq -y
 	echo "SUCCESS: Prerequisite apps installed."
 
 	if [[ "$param1" == "$install_param" ]]; then

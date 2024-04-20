@@ -6,6 +6,7 @@ cliShowCommands()
     echo "Available Commands:"
     echo ""
     echo "  easydocker run                          - Run the EasyDocker control panel"
+    echo "  easydocker install                      - Install all EasyDocker requirements"
     echo "  easydocker update                       - Updates EasyDocker to the latest version"
     echo "  easydocker reset                        - Reinstall EasyDocker install files"
     echo "  easydocker app [action] [name]          - Manage apps in EasyDocker"

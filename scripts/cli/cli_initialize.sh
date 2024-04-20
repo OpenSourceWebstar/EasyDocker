@@ -7,6 +7,10 @@ cliInitialize()
     if [ "$initial_command1" = "help" ] || [ -z "$initial_command1" ]; then
         cliShowCommands;
 
+    elif [ "$initial_command1" = "install" ]; then
+        install_via_cli="true"
+        startLoad;
+
     elif [ "$initial_command1" = "update" ]; then
         checkUpdates;
 
@@ -14,6 +18,9 @@ cliInitialize()
         runReinstall;
 
     elif [ "$initial_command1" = "app" ]; then
+        checkSuccessfulRun;
+        checkInstallTypeRequirement;
+
         if [[ -z "$initial_command2" ]]; then
             cliAppCommands;
 

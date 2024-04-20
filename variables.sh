@@ -27,6 +27,7 @@ docker_log_file=easydocker.log
 backup_log_file=backup.log
 db_file=database.db
 migrate_file=migrate.txt
+run_file=run.txt
 
 # Configs
 update_done=false
