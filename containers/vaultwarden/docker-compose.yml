@@ -47,6 +47,9 @@ services:
       #traefik.http.routers.vaultwarden.tls.certresolver: production
       #traefik.http.services.vaultwarden.loadbalancer.server.port: PORT1
       #traefik.http.routers.vaultwarden.middlewares:
+    healthcheck:
+      test: ["NONE"]
+      disable: true
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

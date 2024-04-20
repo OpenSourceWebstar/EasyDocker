@@ -46,6 +46,9 @@ services:
       #traefik.http.routers.invidious.middlewares:
     depends_on:
       - invidious-db
+    healthcheck:
+      test: ["NONE"]
+      disable: true
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

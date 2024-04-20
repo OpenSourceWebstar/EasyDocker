@@ -16,6 +16,9 @@ services:
       #traefik.http.routers.ipinfo.tls: true
       #traefik.http.routers.ipinfo.tls.certresolver: production
       #traefik.http.routers.ipinfo.middlewares:
+    healthcheck:
+      test: ["NONE"]
+      disable: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
     networks:
