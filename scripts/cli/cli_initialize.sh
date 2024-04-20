@@ -31,6 +31,10 @@ cliInitialize()
                 cliAppListCommands;
             fi
 
+        elif [ "$initial_command2" = "install" ]; then
+            dockerInstallApp "$initial_command3";
+        elif [ "$initial_command2" = "uninstall" ]; then
+            dockerUninstallApp "$initial_command3";
         elif [ "$initial_command2" = "start" ]; then
             dockerStartApp "$initial_command3";
         elif [ "$initial_command2" = "stop" ]; then
