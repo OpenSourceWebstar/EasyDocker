@@ -5,10 +5,6 @@ dockerSwitcherSwap()
 {
     local flag="$1"
     local run_switcher="false"
-    local docker_install_done="false"
-    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-    local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
-    local docker_rooted_socket="/var/run/docker.sock"
 
     dockerSwitcherSetSocketPermissions;
 

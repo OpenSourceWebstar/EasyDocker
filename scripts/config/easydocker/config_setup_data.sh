@@ -61,7 +61,7 @@ dockerConfigSetupFileWithData()
         checkSuccess "Updating docker socket for $app_name"
     elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
         local result=$(sudo sed -i \
-            -e "/#SOCKETHERE/s|.*|      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE|" \
+            -e "/#SOCKETHERE/s|.*|      - $docker_rooted_socket:$docker_rooted_socket:ro #SOCKETHERE|" \
         "$full_file_path")
         checkSuccess "Updating docker socket for $app_name"
     fi

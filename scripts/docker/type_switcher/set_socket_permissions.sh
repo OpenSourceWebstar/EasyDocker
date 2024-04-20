@@ -2,9 +2,14 @@
 
 dockerSwitcherSetSocketPermissions()
 {
-    local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
-    local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
-    local docker_rooted_socket="/var/run/docker.sock"
+    # Check if rootless isnt needed
+    if id "$CFG_DOCKER_INSTALL_USER" &>/dev/null; then
+        local docker_install_user_id=$(id -u "$CFG_DOCKER_INSTALL_USER")
+        local docker_rootless_socket="/run/user/${docker_install_user_id}/docker.sock"
+        local docker_rootless_exist="true"
+    else
+        local docker_rootless_exist="false"
+    fi
 
     echo ""
     echo "##########################################"
@@ -13,14 +18,16 @@ dockerSwitcherSetSocketPermissions()
     echo ""
 
     if [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-        # if File exists
-        if sudo test -e "$docker_rootless_socket"; then
-            local result=$(sudo chmod o-r "$docker_rootless_socket")
-            checkSuccess "Removing read permissions from Rootless docker socket."
-            docker_rootless_found="true"
-        else
-            #isSuccessful "Rootless socket not found, no need to do anything with rootless setup."
-            docker_rootless_found="false"
+        if [[ $docker_rootless_exist == "false" ]]; then
+            # if File exists
+            if sudo test -e "$docker_rootless_socket"; then
+                local result=$(sudo chmod o-r "$docker_rootless_socket")
+                checkSuccess "Removing read permissions from Rootless docker socket."
+                docker_rootless_found="true"
+            else
+                #isSuccessful "Rootless socket not found, no need to do anything with rootless setup."
+                docker_rootless_found="false"
+            fi
         fi
 
         # if File exists

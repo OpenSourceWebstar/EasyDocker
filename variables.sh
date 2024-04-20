@@ -21,6 +21,7 @@ public_ip_v4=$(curl -s https://api64.ipify.org?format=json | awk -F'"' '/ip/{pri
 server_nic="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
 
 # Files
+docker_rooted_socket="/var/run/docker.sock"
 swap_file=/swapfile
 sysctl="/etc/sysctl.conf"
 docker_log_file=easydocker.log
