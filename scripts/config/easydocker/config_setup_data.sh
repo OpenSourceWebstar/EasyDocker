@@ -81,6 +81,11 @@ dockerConfigSetupFileWithData()
             "$full_file_path")
             checkSuccess "Updating $file_name for $app_name"
         fi
+
+        # Healthcheck updater
+        if [[ "$healthcheck" == "false" ]]; then  
+            sed -i 's/disable: false #HEALTHCHECKHERE/disable: true #HEALTHCHECKHERE/' "$full_file_path"
+        fi
     fi
 
     scanFileForRandomPassword $full_file_path;
