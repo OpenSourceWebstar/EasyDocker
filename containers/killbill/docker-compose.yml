@@ -32,6 +32,8 @@ services:
       #traefik.http.routers.killbill.tls: true
       #traefik.http.routers.killbill.tls.certresolver: production
       #traefik.http.routers.killbill.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE

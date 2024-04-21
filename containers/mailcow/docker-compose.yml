@@ -17,6 +17,8 @@ services:
         #traefik.http.routers.moo.entrypoints: websecure
         #traefik.docker.network: DOCKERNETWORK
         #traefik.http.routers.moo.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
 
     certdumper:
       image: humenius/traefik-certs-dumper

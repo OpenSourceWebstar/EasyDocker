@@ -22,6 +22,8 @@ services:
       #traefik.http.routers.trilium.tls.certresolver: production
       #traefik.http.services.trilium.loadbalancer.server.port: PORT1
       #traefik.http.routers.trilium.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

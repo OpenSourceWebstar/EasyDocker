@@ -30,6 +30,8 @@ services:
       #traefik.http.middlewares.authelia.forwardauth.address: http://authelia:9091/api/authz/forward-auth?authelia-url=https://DOMAINSUBNAMEHERE'  # yamllint disable-line rule:line-length
       #traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
       #traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'  # yamllint disable-line rule:line-length
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
      environment:
       - TZ=TIMEZONEHERE
     networks:

@@ -24,6 +24,8 @@ services:
       #traefik.http.routers.jellyfin.service: jellyfin
       #traefik.http.services.jellyfin.loadbalancer.server.port: PORT1
       #traefik.http.routers.jellyfin.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     restart: 'unless-stopped'
     networks:
       vpn:

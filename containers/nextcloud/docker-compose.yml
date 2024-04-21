@@ -23,6 +23,8 @@ services:
       - TRUSTED_PROXIES=10.8.1.5 # proxy host IP
       - NEXTCLOUD_DATADIR=/docker/containers/nextcloud/data
       - SKIP_DOMAIN_VALIDATION=true
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

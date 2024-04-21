@@ -36,6 +36,8 @@ services:
       #traefik.http.routers.adguard-admin.tls.certresolver: production
       #traefik.http.services.adguard-admin.loadbalancer.server.port: PORT2
       #traefik.http.routers.adguard-admin.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - "./work:/opt/adguardhome/work"

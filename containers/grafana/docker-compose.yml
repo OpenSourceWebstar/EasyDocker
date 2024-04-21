@@ -24,6 +24,8 @@ services:
       #traefik.http.routers.grafana.tls.certresolver: production
       #traefik.http.services.grafana.loadbalancer.server.port: PORT1
       #traefik.http.routers.grafana.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

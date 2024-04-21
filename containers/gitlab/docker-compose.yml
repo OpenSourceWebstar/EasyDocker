@@ -26,6 +26,8 @@ services:
       #traefik.tcp.routers.gitlab-ssh.service: gitlab-ssh-svc
       #traefik.tcp.services.gitlab-ssh-svc.loadbalancer.server.port: PORT2
       #traefik.http.routers.gitlab.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     volumes:
       - ./config:/etc/gitlab
       - ./logs:/var/log/gitlab

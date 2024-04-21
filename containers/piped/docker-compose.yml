@@ -64,6 +64,8 @@ services:
             #traefik.http.routers.piped.tls.certresolver: production
             #traefik.http.services.piped.loadbalancer.server.port: PORT1
             #traefik.http.routers.piped.middlewares:
+        healthcheck:
+            disable: false #HEALTHCHECKHERE
         networks:
             vpn:
                 ipv4_address: IPADDRESSHERE

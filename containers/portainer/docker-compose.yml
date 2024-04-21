@@ -22,6 +22,8 @@ services:
       #traefik.http.routers.portainer.tls.certresolver: production
       #traefik.http.services.portainer.loadbalancer.server.port: 9000
       #traefik.http.routers.portainer.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

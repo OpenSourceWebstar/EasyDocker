@@ -18,6 +18,8 @@ services:
       #traefik.http.routers.sshdownload.tls.certresolver: production
       #traefik.http.services.sshdownload.loadbalancer.server.port: PORT1
       #traefik.http.routers.sshdownload.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

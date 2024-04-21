@@ -26,6 +26,8 @@ services:
       #traefik.http.routers.cozy.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.cozy.tls: true
       #traefik.http.routers.cozy.tls.certresolver: production
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

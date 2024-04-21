@@ -24,6 +24,8 @@ services:
       #traefik.http.routers.firefly.service: firefly
       #traefik.http.services.firefly.loadbalancer.server.port: PORT1
       #traefik.http.routers.firefly.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

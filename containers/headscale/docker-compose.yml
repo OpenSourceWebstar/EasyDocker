@@ -22,6 +22,8 @@ services:
       #traefik.http.routers.headscale.tls.options: intermediate@file
       #traefik.http.services.headscale.loadbalancer.server.port: PORT1
       #traefik.http.routers.headscale.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

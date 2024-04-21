@@ -23,6 +23,8 @@ services:
       #traefik.http.routers.speedtest.middlewares:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

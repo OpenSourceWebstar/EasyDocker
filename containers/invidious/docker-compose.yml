@@ -44,11 +44,10 @@ services:
       #traefik.http.routers.invidious.tls: true
       #traefik.http.routers.invidious.tls.certresolver: production
       #traefik.http.routers.invidious.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     depends_on:
       - invidious-db
-    healthcheck:
-      test: ["NONE"]
-      disable: true
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

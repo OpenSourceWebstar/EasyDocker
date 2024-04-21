@@ -23,6 +23,8 @@ services:
       #traefik.http.routers.traefik.tls.certresolver: production
       #traefik.http.routers.traefik.tls.options: modern@file
       #traefik.http.routers.traefik.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     restart: unless-stopped
     networks:
       vpn:

@@ -21,8 +21,7 @@ services:
       #traefik.http.routers.linkding.tls.certresolver: production
       #traefik.http.routers.linkding.middlewares:
     healthcheck:
-      test: ["NONE"]
-      disable: true
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

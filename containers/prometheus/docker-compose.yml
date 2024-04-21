@@ -25,6 +25,8 @@ services:
       #traefik.http.routers.prometheus.tls.certresolver: production
       #traefik.http.services.prometheus.loadbalancer.server.port: PORT1
       #traefik.http.routers.prometheus.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

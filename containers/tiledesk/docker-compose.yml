@@ -13,6 +13,8 @@ services:
       #traefik.http.routers.tiledesk.tls: true
       #traefik.http.routers.tiledesk.tls.certresolver: production
       #traefik.http.routers.tiledesk.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

@@ -32,6 +32,8 @@ services:
       #traefik.http.routers.searxng.tls: true
       #traefik.http.routers.searxng.tls.certresolver: production
       #traefik.http.routers.searxng.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
          ipv4_address: IPADDRESSHERE

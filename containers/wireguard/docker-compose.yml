@@ -44,6 +44,8 @@ services:
       #traefik.http.routers.wireguard.tls.certresolver: production
       #traefik.http.services.wireguard.loadbalancer.server.port: PORT2
       #traefik.http.routers.wireguard.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE

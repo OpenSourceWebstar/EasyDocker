@@ -114,6 +114,8 @@ services:
             #traefik.http.services.jitismeet.loadbalancer.server.port: PORT2
             #traefik.http.routers.jitismeet.middlewares:
             #traefik.docker.network: DOCKERNETWORK
+        healthcheck:
+            disable: false #HEALTHCHECKHERE
 
     # XMPP server
     prosody:

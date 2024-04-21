@@ -33,3 +33,5 @@ services:
       #- ./logs/unificontroller/log:/remotelogs/unificontroller:ro #optional
       #- ./logs/vaultwarden/log:/remotelogs/vaultwarden:ro #optional
     restart: unless-stopped
+    healthcheck:
+      disable: false #HEALTHCHECKHERE

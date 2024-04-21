@@ -90,6 +90,7 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 3
+      disable: false #HEALTHCHECKHERE
     #labels:
       #traefik.enable: true
       #traefik.http.routers.kimai-nginx.entrypoints: web,websecure
