@@ -31,6 +31,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 2
+      disable: false #HEALTHCHECKHERE
     logging:
       options:
         max-size: "1G"
@@ -44,8 +45,6 @@ services:
       #traefik.http.routers.invidious.tls: true
       #traefik.http.routers.invidious.tls.certresolver: production
       #traefik.http.routers.invidious.middlewares:
-    healthcheck:
-      disable: false #HEALTHCHECKHERE
     depends_on:
       - invidious-db
     networks:
