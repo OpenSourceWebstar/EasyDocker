@@ -1,0 +1,26 @@
+networks:
+  vpn:
+    external: true
+    name: vpn
+
+services:
+  baikal:
+    container_name: baikal
+    image: ckulka/baikal:nginx
+    restart: always
+    ports:
+      - "PORT1:80"
+    volumes:
+      - ./config:/var/www/baikal/config
+      - ./data:/var/www/baikal/Specific
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.baikal.entrypoints: web,websecure
+      #traefik.http.routers.baikal.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.baikal.tls: true
+      #traefik.http.routers.baikal.tls.certresolver: production
+      #traefik.http.services.baikal.loadbalancer.server.port: PORT1
+      #traefik.http.routers.baikal.middlewares:
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
