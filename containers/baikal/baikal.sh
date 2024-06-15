@@ -84,6 +84,14 @@ installBaikal()
 
 		dockerComposeUpdateAndStartApp $app_name install;
 
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Adjusting $app_name Nginx docker system files for port changes."
+        echo ""
+
+        dockerCommandRun "docker exec -it $app_name /bin/bash -c \"sed -i '/^ *listen/s/[0-9]\+/$usedport1/g' /etc/nginx/conf.d/default.conf\""
+		dockerComposeRestart $app_name;
+
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
