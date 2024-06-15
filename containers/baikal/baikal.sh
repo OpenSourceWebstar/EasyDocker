@@ -89,7 +89,7 @@ installBaikal()
         echo "---- $menu_number. Adjusting $app_name Nginx docker system files for port changes."
         echo ""
 
-        dockerCommandRun "docker exec -it $app_name /bin/bash -c \"sed -i '/^ *listen/s/[0-9]\\+/12223/g' /etc/nginx/conf.d/default.conf\""
+        dockerCommandRun "docker exec -it $app_name /bin/bash -c 'sed -i "/^ *listen/s/[0-9]\\+/$usedport1/g" /etc/nginx/conf.d/default.conf'"
 		dockerComposeRestart $app_name;
 
         ((menu_number++))
