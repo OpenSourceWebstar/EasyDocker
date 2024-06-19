@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Category : Privacy
+# Category : privacy
 # Description : Anysync - Personal Knowledge Base (c/u/s/r/i):
 
 installAnysync()
