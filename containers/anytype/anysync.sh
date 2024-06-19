@@ -3,7 +3,7 @@
 # Category : Privacy
 # Description : Anysync - Personal Knowledge Base (c/u/s/r/i):
 
-install()
+installAnysync()
 {
     if [[ "$anysync" == *[cCtTuUsSrRiI]* ]]; then
         dockerConfigSetupToContainer silent anysync;
