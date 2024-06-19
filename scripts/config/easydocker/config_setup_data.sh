@@ -34,6 +34,11 @@ dockerConfigSetupFileWithData()
         -e "s|PORT2|$usedport2|g" \
         -e "s|PORT3|$usedport3|g" \
         -e "s|PORT4|$usedport4|g" \
+        -e "s|PORT5|$usedport5|g" \
+        -e "s|PORT6|$usedport6|g" \
+        -e "s|PORT7|$usedport7|g" \
+        -e "s|PORT8|$usedport8|g" \
+        -e "s|PORT9|$usedport9|g" \
         -e "s|TIMEZONEHERE|$CFG_TIMEZONE|g" \
         -e "s|EMAILHERE|$CFG_EMAIL|g" \
         -e "s|DOCKERNETWORK|$CFG_NETWORK_NAME|g" \
