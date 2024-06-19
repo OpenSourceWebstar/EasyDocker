@@ -1,0 +1,75 @@
+# https://github.com/anyproto/any-sync-dockercompose
+services:
+  any-sync-coordinator:
+    ports:
+      - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
+      - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}/udp"
+      - PORT5:8000
+
+  any-sync-filenode:
+    ports:
+      - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
+      - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}/udp"
+      - PORT4:8000
+
+  any-sync-node-1:
+    ports:
+      - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
+      - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}/udp"
+      - PORT7:8080
+      - PORT1:8000
+
+  any-sync-node-2:
+    ports:
+      - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
+      - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}/udp"
+      - PORT8:8080
+      - PORT2:8000
+
+  any-sync-node-3:
+    ports:
+      - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
+      - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}/udp"
+      - 8083:8080
+      - PORT3:8000
+
+  any-sync-consensusnode:
+    ports:
+      - "${ANY_SYNC_CONSENSUSNODE_PORT}:${ANY_SYNC_CONSENSUSNODE_PORT}"
+      - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}/udp"
+      - PORT6:8000
+
+  mongo-1:
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_1_PORT}
+    ports:
+      - "${MONGO_1_PORT}:${MONGO_1_PORT}"
+    volumes:
+      - ./storage/mongo-1/:/data/db
+    healthcheck:
+      test: test $$(mongosh --port ${MONGO_1_PORT} --quiet --eval "try {rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"}]})} catch(e) {rs.status().ok}") -eq 1
+
+  redis:
+    command: redis-server --port ${REDIS_PORT} --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "-p", "${REDIS_PORT}", "incr", "ping" ]
+
+  minio:
+    command: server /data --console-address ":${MINIO_WEB_PORT}" --address ":${MINIO_PORT}"
+    ports:
+      - "${EXTERNAL_MINIO_PORT}:${MINIO_PORT}"
+      - "${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
+    volumes:
+      - ./storage/minio:/data
+    healthcheck:
+      test: bash -c ':> /dev/tcp/127.0.0.1/${MINIO_PORT}' || exit 1
+    networks:
+      default:
+        aliases:
+          - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
+
+  create-bucket:
+    environment:
+      MC_HOST_minio: http://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio:${MINIO_PORT}
+
