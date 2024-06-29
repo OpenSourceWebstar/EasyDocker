@@ -13,4 +13,5 @@ app_scripts=(
     "app/app_get_key_data.sh"
     "app/app_scan_available.sh"
     "app/app_update_specifics.sh"
+    "app/app_generate.sh"
 )

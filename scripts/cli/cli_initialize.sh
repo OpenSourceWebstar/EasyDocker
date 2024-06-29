@@ -62,6 +62,14 @@ cliInitialize()
             else
                 backupStart "$initial_command3";
             fi
+        elif [ "$initial_command2" = "generate" ]; then
+            if [[ -z "$initial_command3" ]]; then
+                isNotice "No app provided."
+                isNotice "Please provide an application name to backup."
+                cliAppListCommands;
+            else
+                appGenerate "$initial_command3";
+            fi
         else
             isNotice "Invalid app command used : ${RED}$initial_command2${NC}"
             isNotice "Please use one of the following options below :"

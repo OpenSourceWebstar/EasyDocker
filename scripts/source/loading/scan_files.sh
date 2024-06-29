@@ -31,4 +31,9 @@ sourceScanFiles()
             # echo "$load_type FILE $file"
         fi
     done < <(sudo find "$folder_dir" -maxdepth 3 -type d \( -name 'resources' \) -prune -o -type f -name "$file_pattern" -print0)
+
+    # Load the categories from the file into an array
+    if [ "$load_type" = "easydocker_configs" ]; then
+        mapfile -t app_categories < $configs_dir/app_categories
+    fi
 }

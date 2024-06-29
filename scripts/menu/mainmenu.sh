@@ -16,10 +16,8 @@ mainMenu()
 			echo "###         Install Menu          ###"
 			echo "#####################################"
 			echo ""
-			isOption "s. System Apps"
-			isOption "p. Privacy Apps"
-			isOption "u. User Apps"
-			isOption "o. Old/Unfinished"
+			isOption "i. Install Apps"
+			isOption "u. Uninstall Apps"
 			echo ""
 			echo "#####################################"
 			echo "###    Backup/Restore/Migrate     ###"
@@ -48,63 +46,50 @@ mainMenu()
 			isOption "t. Tools"
 			isOption "y. YML Editor"
 			echo ""
-			isOption "i. Initialize"
 			isOption "x. Exit"
 			echo ""
 			isQuestion "What is your choice: "
 			read -rp "" choice
 
 			case $choice in
-				s)
-					showInstructions;
+				i)
+					while true; do
+						showInstructions
+						echo ""
+						echo "#####################################"
+						echo "###         App Categories        ###"
+						echo "#####################################"
+						echo ""
+						for i in "${!app_categories[@]}"; do
+							local capitalized_category=$(capitalize "${app_categories[$i]}")
+							echo "$((i + 1)). ${capitalized_category} Apps"
+						done
+						echo ""
+						echo "x. Exit"
+						echo ""
+						isQuestion "Please select an option (1-${#app_categories[@]} or 'x' to exit): "
+						read -p "" choice
 
-					echo ""				
-					echo "#####################################"
-					echo "###          System Apps          ###"
-					echo "#####################################"
-					echo ""
+						# Validate input
+						if [[ "$choice" =~ ^[1-9][0-9]*$ ]] && [ "$choice" -le "${#app_categories[@]}" ]; then
+							local selected_category="${app_categories[$((choice - 1))]}"
+							local capitalized_category=$(capitalize "$selected_category")
+							echo ""
+							echo "#####################################"
+							echo "###     ${capitalized_category} Apps"
+							echo "#####################################"
+							echo ""
 
-					scanCategory "system"
-					startInstall;
-					;;
-				p)
-					showInstructions;
-
-					echo ""
-					echo "#####################################"
-					echo "###          Privacy Apps         ###"
-					echo "#####################################"
-					echo ""
-
-					scanCategory "privacy"
-					startInstall;
-					;;
-				u)
-					showInstructions;
-
-					echo ""
-					echo "#####################################"
-					echo "###           User Apps           ###"
-					echo "#####################################"
-					echo ""
-
-					scanCategory "user"
-					startInstall;
-					;;
-				o)
-					showInstructions;
-
-					echo ""
-					echo "#####################################"
-					echo "###         Old/Unfinished        ###"
-					echo "#####################################"
-					echo ""
-
-					scanCategory "old"
-					startInstall;
-					;;
+							scanCategory "$selected_category"
+							startInstall
+						elif [[ "$choice" == "x" ]]; then
+							isNotice "Exiting..."
+							return
+						else
+							isNotice "Invalid selection. Please choose a valid category or 'x' to exit."
+						fi
+					done
 				b)
-
 					echo ""
 					echo "#####################################"
 					echo "###             Backup            ###"
