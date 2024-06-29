@@ -34,6 +34,8 @@ sourceScanFiles()
 
     # Load the categories from the file into an array
     if [ "$load_type" = "easydocker_configs" ]; then
-        mapfile -t app_categories < $configs_dir/app_categories
+        if [ -f "$configs_dir/app_categories" ]; then
+            mapfile -t app_categories < $configs_dir/app_categories
+        fi
     fi
 }
