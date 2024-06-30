@@ -17,7 +17,7 @@ current_date=$(date +%Y-%m-%d)
 current_time=$(date +%H:%M:%S)
 
 # Domain/Network
-public_ip_v4=$(curl -s https://api64.ipify.org?format=json | awk -F'"' '/ip/{print $4}')
+public_ip_v4=$(dig +short myip.opendns.com @resolver1.opendns.com)
 server_nic="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
 
 # Files
