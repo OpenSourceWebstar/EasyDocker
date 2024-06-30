@@ -1,0 +1,46 @@
+networks:
+  vpn:
+    external: true
+    ipam:
+      config:
+        - subnet: SUBNETHERE
+          gateway: IPADDRESSHERE
+  dolibarr:
+    name: dolibarr
+    internal: true
+
+services:
+  dolibarr:
+    image: tuxgasy/dolibarr:latest
+    environment:
+      DOLI_DB_HOST: "mysql"
+      DOLI_DB_USER: "dolibarr"
+      DOLI_DB_PASSWORD: "RANDOMIZEDPASSWORD"
+      DOLI_DB_NAME: "dolibarr"
+      DOLI_ADMIN_LOGIN: "admin"
+      DOLI_ADMIN_PASSWORD: "RANDOMIZEDPASSWORD1"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dolibarr.entrypoints: web,websecure
+      traefik.http.routers.dolibarr.rule: Host(`DOMAINSUBNAMEHERE`)
+      traefik.http.routers.dolibarr.tls: true
+      traefik.http.routers.dolibarr.tls.certresolver: production
+      traefik.http.services.dolibarr.loadbalancer.server.port: PORT1
+      traefik.http.routers.dolibarr.middlewares:
+    volumes:
+      - ./dolibarr-docs:/var/www/documents
+      - ./dolibarr-custom:/var/www/html/custom
+    networks:
+      - dolibarr
+      - vpn
+
+  mysql:
+    image: library/mariadb:latest
+    environment:
+      MYSQL_DATABASE: "dolibarr"
+      MYSQL_USER: "dolibarr"
+      MYSQL_PASSWORD: "RANDOMIZEDPASSWORD1"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - dolibarr
