@@ -18,6 +18,7 @@ mainMenu()
 			echo ""
 			isOption "i. Install Apps"
 			isOption "u. Uninstall Apps"
+			isOption "g. Generate App"
 			echo ""
 			echo "#####################################"
 			echo "###    Backup/Restore/Migrate     ###"
@@ -89,6 +90,10 @@ mainMenu()
 							isNotice "Invalid selection. Please choose a valid category or 'x' to exit."
 						fi
 					done
+
+					;;
+				g)
+					appGenerate;
 
 					;;
 				b)
