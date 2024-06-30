@@ -62,10 +62,11 @@ appGenerate()
                 esac
             done
         else
-            if [[ $? -eq 0 ]]; then
-                break
+            if [[ -n "$host_name" ]]; then
+                break  # Exit the loop if host_name is valid and not found in the file
+            else
+                echo "Please provide a valid hostname"
             fi
-            echo "Please provide a valid hostname"
         fi
     done
 
