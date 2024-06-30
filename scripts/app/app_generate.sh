@@ -140,12 +140,12 @@ appGenerate()
         checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
 
         # Hostfile addition
-        local hostfile_last_ip=$(tail -n 1 "$install_configs_dir$ip_file" | awk '{print $2}')
-        local hostfile_IFS
-        read -r -a ip_parts <<< "$hostfile_last_ip"
-        hostfile_IFS='.'
-        local hostfile_new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$((ip_parts[3] + 1))"
-        local result=$(echo "$host_name $hostfile_new_ip" >> "$install_configs_dir$ip_file")
+        hostfile_last_ip=$(tail -n 1 "$configs_dir$ip_file" | awk '{print $2}')
+        # Increment the last octet of the IP address
+        IFS='.' read -r -a ip_parts <<< "$hostfile_last_ip"
+        hostfile_new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$((ip_parts[3] + 1))"
+        # Append the new entry to the file
+        echo "$host_name $hostfile_new_ip" >> "$install_configs_dir$ip_file"
         checkSuccess "Add the new entry to ips_hostname file."
         checkEasyDockerConfigFilesMissingVariables;
 
