@@ -74,22 +74,18 @@ appGenerate()
     done
 
     if [[ ! -d "$install_containers_dir$app_name" ]]; then
-        local result=$(createFolders "loud" $docker_install_user $install_containers_dir$app_name)
-        checkSuccess "Creating new folder named $app_name"
-
-        local result=$(cp -r $install_containers_dir/template/* $install_containers_dir$app_name)
-        checkSuccess "Copying template files to the $app_name folder"
-
-        local result=$(mv $install_containers_dir$app_name/template.sh "$install_containers_dir$app_name/$app_name.sh")
-        checkSuccess "Renaming script file for $app_name"
-
-        local result=$(mv $install_containers_dir$app_name/template.config "$install_containers_dir$app_name/$app_name.config")
-        checkSuccess "Renaming config file for $app_name"
-
-        echo "Renaming of files completed successfully."
 
         local app_script_file="$install_containers_dir$app_name/$app_name.sh"
         local app_config_file="$install_containers_dir$app_name/$app_name.config"
+
+        local result=$(createFolders "loud" $docker_install_user $install_containers_dir$app_name)
+        checkSuccess "Creating new folder named $app_name"
+        local result=$(cp -r $install_containers_dir/template/* $install_containers_dir$app_name)
+        checkSuccess "Copying template files to the $app_name folder"
+        local result=$(mv $install_containers_dir$app_name/template.sh "$app_script_file")
+        checkSuccess "Renaming script file for $app_name"
+        local result=$(mv $install_containers_dir$app_name/template.config "$app_config_file")
+        checkSuccess "Renaming config file for $app_name"
 
         # Script updates
         local result=$(sed -i '' -e 's/Template/'"$cap_first_app_name"'/g' "$app_script_file")
@@ -120,6 +116,32 @@ appGenerate()
         done
         if [[ "$app_docker_compose" == [yY] ]]; then
             sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/docker-compose.yml"
+        fi
+
+        while true; do
+            echo ""
+            isQuestion "Would you like to edit the $app_name.config? (y/n): "
+            read -p "" app_config
+            if [[ -n "$app_config" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$app_config" == [yY] ]]; then
+            sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/$app_name.config"
+        fi
+
+        while true; do
+            echo ""
+            isQuestion "Would you like to edit the $app_name.sh install script? (y/n): "
+            read -p "" app_script
+            if [[ -n "$app_script" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$app_config" == [yY] ]]; then
+            sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/$app_name.sh"
         fi
     fi
 }
