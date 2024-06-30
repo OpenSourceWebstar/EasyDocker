@@ -43,6 +43,7 @@ viewEasyDockerConfigs()
             isOption "$first_letter. ${config_name,,} (Last modified: $formatted_last_modified)"
         done
         
+        echo ""
         isOption "x. Exit"
         echo ""
         isQuestion "Enter the first letter of the config (or x to exit): "

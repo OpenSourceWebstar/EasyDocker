@@ -145,35 +145,27 @@ appGenerate()
 
         # Check if last_ip is not empty
         if [ -z "$last_ip" ]; then
-        echo "Error: Unable to fetch last IP from $configs_dir$ip_file"
-        exit 1
+            isError "Unable to fetch last IP from $configs_dir$ip_file"
+            hostname_failed=true
+        else
+            # Split the IP address into parts and increment the last octet
+            IFS='.' read -r -a ip_parts <<< "$last_ip"
+            # Ensure the IP parts array has four elements before attempting to increment
+            if [ ${#ip_parts[@]} -ne 4 ]; then
+                isError "Invalid IP address format"
+                hostname_failed=true
+            else
+                # Increment the last octet
+                new_last_octet=$((ip_parts[3] + 1))
+                new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$new_last_octet"
+                # Append the new entry to the file
+                echo "$host_name $new_ip" >> "$install_configs_dir$ip_file"
+                checkSuccess "Add the new entry to ips_hostname file."
+
+                sourceScanFiles "containers";
+                checkEasyDockerConfigFilesMissingVariables;
+            fi
         fi
-
-        # Debugging: Print the last IP to ensure it's read correctly
-        echo "Last IP: '$last_ip'"
-
-        # Split the IP address into parts and increment the last octet
-        IFS='.' read -r -a ip_parts <<< "$last_ip"
-
-        # Debugging: Print the IP parts to ensure they are split correctly
-        echo "IP Parts: ${ip_parts[*]}"
-
-        # Ensure the IP parts array has four elements before attempting to increment
-        if [ ${#ip_parts[@]} -ne 4 ]; then
-        echo "Error: Invalid IP address format"
-        exit 1
-        fi
-
-        # Increment the last octet
-        new_last_octet=$((ip_parts[3] + 1))
-        new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$new_last_octet"
-
-        # Debugging: Print the new IP to ensure it's constructed correctly
-        echo "New IP: $new_ip"
-
-        # Append the new entry to the file
-        echo "$host_name $new_ip" >> "$install_configs_dir$ip_file"
-        checkSuccess "Add the new entry to ips_hostname file."
 
         while true; do
             echo ""
@@ -213,6 +205,22 @@ appGenerate()
         if [[ "$app_script" == [yY] ]]; then
             sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/$app_name.sh"
         fi
+
+        if [[ "$hostname_failed" == "true" ]]; then
+            while true; do
+                echo ""
+                isQuestion "Would you like to edit the ips_hostname file to set the IP of $app_name? (y/n): "
+                read -p "" app_hostname
+                if [[ -n "$app_hostname" ]]; then
+                    break
+                fi
+                isNotice "Please provide a valid input."
+            done
+            if [[ "$app_hostname" == [yY] ]]; then
+                sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/$app_name.sh"
+            fi
+        fi
+
 
         while true; do
             echo ""
