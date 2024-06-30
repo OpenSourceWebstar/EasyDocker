@@ -34,7 +34,8 @@ viewAppCategoryConfigs()
     done
 
     if [[ ${#installed_apps[@]} -eq 0 && ${#other_apps[@]} -eq 0 ]]; then
-        echo "No app_name folders found in category '$category'."
+        echo ""
+        isNotice "No application folders found in category '$category'."
         return 1
     fi
 
