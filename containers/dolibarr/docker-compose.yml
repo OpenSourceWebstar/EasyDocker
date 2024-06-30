@@ -11,6 +11,7 @@ networks:
 
 services:
   dolibarr:
+    container_name: dolibarr
     image: tuxgasy/dolibarr:latest
     environment:
       DOLI_DB_HOST: "mysql"
