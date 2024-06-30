@@ -140,10 +140,14 @@ appGenerate()
         checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
 
         # Hostfile addition
+        # Get the last IP from the file
         hostfile_last_ip=$(tail -n 1 "$configs_dir$ip_file" | awk '{print $2}')
+
         # Increment the last octet of the IP address
         IFS='.' read -r -a ip_parts <<< "$hostfile_last_ip"
-        hostfile_new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$((ip_parts[3] + 1))"
+        new_last_octet=$(( ${ip_parts[3]} + 1 ))
+        hostfile_new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$new_last_octet"
+
         # Append the new entry to the file
         echo "$host_name $hostfile_new_ip" >> "$install_configs_dir$ip_file"
         checkSuccess "Add the new entry to ips_hostname file."
