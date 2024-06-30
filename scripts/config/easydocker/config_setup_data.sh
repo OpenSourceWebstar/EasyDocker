@@ -30,6 +30,7 @@ dockerConfigSetupFileWithData()
         -e "s|DOMAINPREFIXHERE|$domain_prefix|g" \
         -e "s|PUBLICIPHERE|$public_ip_v4|g" \
         -e "s|IPADDRESSHERE|$ip_setup|g" \
+        -e "s|SUBNETHERE|$CFG_NETWORK_SUBNET|g" \
         -e "s|PORT1|$usedport1|g" \
         -e "s|PORT2|$usedport2|g" \
         -e "s|PORT3|$usedport3|g" \
