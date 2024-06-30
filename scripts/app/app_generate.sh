@@ -79,10 +79,10 @@ appGenerate()
         local result=$(cp -r $install_containers_dir/template/* $install_containers_dir$app_name)
         checkSuccess "Copying template files to the $app_name folder"
 
-        local result=$(mv template.sh "$app_name.sh")
+        local result=$(mv $install_containers_dir/template.sh "$install_containers_dir/$app_name.sh")
         checkSuccess "Renaming script file for $app_name"
 
-        local result=$(mv template.config "$app_name.config")
+        local result=$(mv $install_containers_dir/template.config "$install_containers_dir/$app_name.config")
         checkSuccess "Renaming config file for $app_name"
 
         echo "Renaming of files completed successfully."
