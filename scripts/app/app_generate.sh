@@ -55,7 +55,7 @@ appGenerate()
         echo ""
         for i in "${!app_categories[@]}"; do
             local capitalized_category=$(echo "${app_categories[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
-            isOption "$((i + 1)). ${capitalized_category[$i]^} App"
+            isOption "$((i + 1)). ${capitalized_category} App"
         done
         echo ""
         isQuestion "Enter your choice (1-${#app_categories[@]}): "
@@ -66,7 +66,7 @@ appGenerate()
         if [[ "$app_selection" =~ ^[1-9][0-9]*$ ]] && [ "$app_selection" -le "${#app_categories[@]}" ]; then
             local selected_category="${app_categories[$((app_selection - 1))]}"
             isNotice "Application will be set to a ${selected_category^} App"
-            local app_category=$selected_category
+            app_category=$selected_category
             break
         else
             isNotice "Invalid choice. Please enter a number between '1' and '${#app_categories[@]}'."
