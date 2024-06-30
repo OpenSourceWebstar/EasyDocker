@@ -15,6 +15,33 @@ else
     return 1
 fi
 
+# Source config check
+if [ -f "${install_scripts_dir}config/check_configs.sh" ]; then
+    source "${install_scripts_dir}config/check_configs.sh"
+    checkConfigFilesMissingFiles;
+else
+    # Print an error message for any missing files
+    [ ! -f "${install_scripts_dir}config/check_configs.sh" ] && echo "Error: File '${install_scripts_dir}config/check_configs.sh' does not exist. Unable to source."
+    echo "Files are missing, please run 'easydocker reset'"
+    return 1
+fi
+
+# Source the remaining files if they all exist
+if [ -f "${install_scripts_dir}source/loading/check_files.sh" ] && \
+   [ -f "${install_scripts_dir}source/loading/initilize_files.sh" ] && \
+   [ -f "${install_scripts_dir}source/loading/scan_files.sh" ]; then
+    source "${install_scripts_dir}source/loading/check_files.sh"
+    source "${install_scripts_dir}source/loading/initilize_files.sh"
+    source "${install_scripts_dir}source/loading/scan_files.sh"
+else
+    # Print an error message for any missing files
+    [ ! -f "${install_scripts_dir}source/loading/check_files.sh" ] && echo "Error: File '${install_scripts_dir}source/loading/check_files.sh' does not exist. Unable to source."
+    [ ! -f "${install_scripts_dir}source/loading/initilize_files.sh" ] && echo "Error: File '${install_scripts_dir}source/loading/initilize_files.sh' does not exist. Unable to source."
+    [ ! -f "${install_scripts_dir}source/loading/scan_files.sh" ] && echo "Error: File '${install_scripts_dir}source/loading/scan_files.sh' does not exist. Unable to source."
+    echo "Files are missing, please run 'easydocker reset'"
+    return 1
+fi
+
 # Source the remaining files if they all exist
 if [ -f "${install_scripts_dir}source/loading/check_files.sh" ] && \
    [ -f "${install_scripts_dir}source/loading/initilize_files.sh" ] && \

@@ -92,21 +92,21 @@ appGenerate()
 
         # Script updates
         local result=$(sed -i '' -e 's/Template/'"$cap_first_app_name"'/g' "$app_script_file")
-        checkSuccess "Update all cases of Template to $cap_first_app_name"
+        checkSuccess "Update $app_name.sh - all cases of Template to $cap_first_app_name"
         local result=$(sed -i '' -e 's/template/'"$app_name"'/g' "$app_script_file")
-        checkSuccess "Update all cases of template to $app_name"
+        checkSuccess "Update $app_name.sh - all cases of template to $app_name"
         local result=$(sed -i '' -e 's/TEMPLATE/'"$full_caps_app_name"'/g' "$app_script_file")
-        checkSuccess "Update all cases of TEMPLATE to $full_caps_app_name"
+        checkSuccess "Update $app_name.sh - all cases of TEMPLATE to $full_caps_app_name"
         local result=$(sed -i '' -e 's/old/'"$app_category"'/g' "$app_script_file")
-        checkSuccess "Updating category to $app_category"
+        checkSuccess "Updating $app_name.sh - category to $app_category"
         local result=$(sed -i '' -e 's/It just works!/'"$app_description"'/g' "$app_script_file")
-        checkSuccess "Updating description to $app_description"
+        checkSuccess "Updating $app_name.sh - description to $app_description"
 
         # Config updates
-        local result=$(sed -i '' -e 's/template/'"$app_name"'/g' "$app_name.config")
-        checkSuccess ""
-        local result=$(sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_name.config")
-        checkSuccess ""
+        local result=$(sed -i '' -e 's/template/'"$app_name"'/g' "$app_config_file")
+        checkSuccess "Updating Config - template to $app_name"
+        local result=$(sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_config_file")
+        checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
 
         while true; do
             echo ""
@@ -118,7 +118,7 @@ appGenerate()
             isNotice "Please provide a valid input."
         done
         if [[ "$app_docker_compose" == [yY] ]]; then
-            sudo $CFG_TEXT_EDITOR docker-compose.yml
+            sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/docker-compose.yml"
         fi
     fi
 }

@@ -89,6 +89,8 @@ mainMenu()
 							isNotice "Invalid selection. Please choose a valid category or 'x' to exit."
 						fi
 					done
+
+					;;
 				b)
 					echo ""
 					echo "#####################################"

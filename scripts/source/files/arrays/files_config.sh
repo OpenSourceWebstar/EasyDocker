@@ -18,6 +18,7 @@ config_scripts=(
     "config/password/update_all.sh"
     "config/password/update_file.sh"
 
+    "config/check_configs.sh"
     "config/main_menu.sh"
     "config/scan_variables.sh"
     "config/update_whitelist.sh"

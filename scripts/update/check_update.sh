@@ -3,8 +3,7 @@
 checkUpdates()
 {
     local param1="$1"
-    
-    gitCheckEasyDockerConfigFilesExist;
+
 	sourceCheckFiles;
 
 	if [[ $CFG_REQUIREMENT_UPDATES == "true" ]]; then
@@ -43,7 +42,6 @@ checkUpdates()
 					[yY])
                         remove_changes=true
                         gitCheckForUpdate;
-                        gitCheckEasyDockerConfigFilesExist;
                         gitCheckConfigs;
 						fixPermissionsBeforeStart "" "update";
 						sourceCheckFiles;
@@ -58,7 +56,6 @@ checkUpdates()
 						isNotice "Custom changes will be kept, continuing..."
                         remove_changes=false
                         gitCheckForUpdate;
-                        gitCheckEasyDockerConfigFilesExist;
                         gitCheckConfigs;
 						fixPermissionsBeforeStart "" "update";
 						sourceCheckFiles;
@@ -78,7 +75,7 @@ checkUpdates()
 		# Make sure an update happens after custom code check
 		if [[ $update_done != "true" ]]; then
             gitCheckForUpdate;
-            gitCheckEasyDockerConfigFilesExist;
+
             gitCheckConfigs;
 			fixPermissionsBeforeStart "" "update";
 			sourceCheckFiles;
