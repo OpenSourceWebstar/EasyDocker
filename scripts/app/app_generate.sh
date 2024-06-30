@@ -80,29 +80,29 @@ appGenerate()
 
         local result=$(createFolders "loud" $docker_install_user $install_containers_dir$app_name)
         checkSuccess "Creating new folder named $app_name"
-        local result=$(cp -r $install_containers_dir/template/* $install_containers_dir$app_name)
+        local result=$(sudo cp -r $install_containers_dir/template/* $install_containers_dir$app_name)
         checkSuccess "Copying template files to the $app_name folder"
-        local result=$(mv $install_containers_dir$app_name/template.sh "$app_script_file")
+        local result=$(sudo mv $install_containers_dir$app_name/template.sh "$app_script_file")
         checkSuccess "Renaming script file for $app_name"
-        local result=$(mv $install_containers_dir$app_name/template.config "$app_config_file")
+        local result=$(sudo mv $install_containers_dir$app_name/template.config "$app_config_file")
         checkSuccess "Renaming config file for $app_name"
 
         # Script updates
-        local result=$(sed -i '' -e 's/Template/'"$cap_first_app_name"'/g' "$app_script_file")
+        local result=$(sudo sed -i '' -e 's/Template/'"$cap_first_app_name"'/g' "$app_script_file" > /dev/null 2>&1)
         checkSuccess "Update $app_name.sh - all cases of Template to $cap_first_app_name"
-        local result=$(sed -i '' -e 's/template/'"$app_name"'/g' "$app_script_file")
+        local result=$(sudo sed -i '' -e 's/template/'"$app_name"'/g' "$app_script_file" > /dev/null 2>&1)
         checkSuccess "Update $app_name.sh - all cases of template to $app_name"
-        local result=$(sed -i '' -e 's/TEMPLATE/'"$full_caps_app_name"'/g' "$app_script_file")
+        local result=$(sudo sed -i '' -e 's/TEMPLATE/'"$full_caps_app_name"'/g' "$app_script_file" > /dev/null 2>&1)
         checkSuccess "Update $app_name.sh - all cases of TEMPLATE to $full_caps_app_name"
-        local result=$(sed -i '' -e 's/old/'"$app_category"'/g' "$app_script_file")
+        local result=$(sudo sed -i '' -e 's/old/'"$app_category"'/g' "$app_script_file" > /dev/null 2>&1)
         checkSuccess "Updating $app_name.sh - category to $app_category"
-        local result=$(sed -i '' -e 's/It just works!/'"$app_description"'/g' "$app_script_file")
+        local result=$(sudo sed -i '' -e 's/It just works!/'"$app_description"'/g' "$app_script_file" > /dev/null 2>&1)
         checkSuccess "Updating $app_name.sh - description to $app_description"
 
         # Config updates
-        local result=$(sed -i '' -e 's/template/'"$app_name"'/g' "$app_config_file")
+        local result=$(sudo sed -i '' -e 's/template/'"$app_name"'/g' "$app_config_file" > /dev/null 2>&1)
         checkSuccess "Updating Config - template to $app_name"
-        local result=$(sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_config_file")
+        local result=$(sudo sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_config_file" > /dev/null 2>&1)
         checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
 
         while true; do
