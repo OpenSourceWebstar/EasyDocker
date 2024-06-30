@@ -23,7 +23,8 @@ viewAppCategoryConfigs()
                     # Check if the app_name is installed based on the database query
                     results=$(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1 AND name = '$app_name';")
                     if [[ -n "$results" ]]; then
-                        installed_apps+=("$app_name *INSTALLED")
+                    	local app_description="\e[32m*INSTALLED*\e[0m - $app_name"
+                        installed_apps+=("$app_description")
                     else
                         other_apps+=("$app_name")
                     fi
