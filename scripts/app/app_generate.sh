@@ -136,8 +136,8 @@ appGenerate()
         checkSuccess "Update $app_name.config - all cases of template to $app_name"
         local result=$(sudo sed -i '' -e 's/TEMPLATE/'"$full_caps_app_name"'/g' "$app_config_file" > /dev/null 2>&1)
         checkSuccess "Update $app_name.config - all cases of TEMPLATE to $full_caps_app_name"
-        local result=$(sudo sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_config_file" > /dev/null 2>&1)
-        checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
+        local result=$(sudo sed -i '' -e 's/HOST_NAME=test/HOST_NAME='"$host_name"'/g' "$app_config_file" > /dev/null 2>&1)
+        checkSuccess "Updating Config - HOST_NAME to $app_name"
 
 
         # Get the last non-empty line from the file and extract the IP address
