@@ -143,15 +143,28 @@ appGenerate()
         # Get the last IP from the file
         hostfile_last_ip=$(tail -n 1 "$configs_dir$ip_file" | awk '{print $2}')
 
-        # Increment the last octet of the IP address
-        IFS='.' read -r -a ip_parts <<< "$hostfile_last_ip"
-        new_last_octet=$(( ${ip_parts[3]} + 1 ))
-        hostfile_new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$new_last_octet"
+        # Check if hostfile_last_ip is not empty or not correctly fetched
+        if [ -z "$hostfile_last_ip" ]; then
+        echo "Error: Unable to fetch last IP from $configs_dir$ip_file"
+        exit 1
+        fi
+
+        # Get the last IP from the file
+        last_ip=$(awk '{print $2}' "$configs_dir$ip_file" | tail -n 1)
+
+        # Check if last_ip is not empty
+        if [ -z "$last_ip" ]; then
+            echo "Error: Unable to fetch last IP from $configs_dir$ip_file"
+            exit 1
+        fi
+
+        # Split the IP address into parts and increment the last octet
+        IFS='.' read -r a b c d <<< "$last_ip"
+        new_ip="$a.$b.$c.$((d + 1))"
 
         # Append the new entry to the file
-        echo "$host_name $hostfile_new_ip" >> "$install_configs_dir$ip_file"
+        echo "$host_name $new_ip" >> "$install_configs_dir$ip_file"
         checkSuccess "Add the new entry to ips_hostname file."
-        checkEasyDockerConfigFilesMissingVariables;
 
         while true; do
             echo ""
