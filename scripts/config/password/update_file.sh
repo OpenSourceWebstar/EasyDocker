@@ -16,7 +16,7 @@ scanFileForRandomPassword()
             if sudo grep -q "$placeholder" "$file"; then
                 # Generate a unique random password if it has not been generated yet
                 if [ -z "${passwords[$i]}" ]; then
-                    passwords[$i]=$(generate_random_password)
+                    passwords[$i]=$(generateRandomPassword)
                 fi
                 
                 # Update all occurrences of the current placeholder with the new password
@@ -33,7 +33,7 @@ scanFileForRandomPassword()
         # Check if the file contains the placeholder
         if sudo grep -q "$placeholder" "$file"; then
             # Generate a unique random password
-            local random_password=$(generate_random_password)
+            local random_password=$(generateRandomPassword)
             
             # Update all occurrences of the placeholder with the new password
             sudo sed -i "s/${placeholder}/${random_password}/g" "$file"

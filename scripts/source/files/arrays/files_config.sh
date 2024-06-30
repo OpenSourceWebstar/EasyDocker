@@ -15,6 +15,7 @@ config_scripts=(
     "config/easydocker/missing_docker_variables.sh"
     "config/easydocker/missing_ips_hostname.sh"
 
+    "config/password/generate_random_password.sh"
     "config/password/update_all.sh"
     "config/password/update_file.sh"
 
