@@ -187,7 +187,7 @@ checkApplicationsConfigFilesMissingVariables()
                             # User chose to skip
                             ;;
                         *)
-                            echo "Invalid choice. Skipping."
+                            isNotice "Invalid choice. Skipping."
                             ;;
                     esac
                 fi

@@ -52,7 +52,7 @@ sourceCheckFiles()
                 exit 1
             ;;
             *)
-                echo "Invalid choice. Please enter 1, 2, or 'x'."
+                isNotice "Invalid choice. Please enter 1, 2, or 'x'."
             ;;
         esac
     fi

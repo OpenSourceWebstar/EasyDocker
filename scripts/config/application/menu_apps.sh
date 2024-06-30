@@ -10,9 +10,8 @@ viewAppConfigs()
         echo ""
 
         for i in "${!app_categories[@]}"; do
-            # Capitalize the first letter of each category for better viewing
             local capitalized_category=$(echo "${app_categories[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
-            isOption "$((i + 1)). ${capitalized_category[$i]^} Apps"
+            isOption "$((i + 1)). ${capitalized_category} App"
         done
         echo ""
         isQuestion "Please select an option (1-${#app_categories[@]} or 'x' to exit): "

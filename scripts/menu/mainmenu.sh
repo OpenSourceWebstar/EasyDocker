@@ -256,7 +256,7 @@ mainMenu()
 
 					;;
 				*)
-					echo "Invalid choice. Please select a valid option."
+					isNotice "Invalid choice. Please select a valid option."
 					;;
 			esac
 		done
