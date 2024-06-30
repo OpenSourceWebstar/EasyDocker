@@ -12,14 +12,15 @@ checkConfigFilesMissingFiles()
         fi
         ((file_found_count++))
     done
-    
+
     if [ "$file_found_count" -eq "${#config_files_all[@]}" ]; then
         if [ "$missing_files_count" -gt 0 ]; then
-            echo "${GREEN}SUCCESS:${NC}$missing_files_count config files were missing and have been added to the configs folder."
+            echo -e "${GREEN}SUCCESS:${NC} $missing_files_count config files were missing and have been added to the configs folder."
         else
-            echo "${GREEN}SUCCESS:${NC}All config files are successfully set up in the configs folder."
+            echo -e "${GREEN}SUCCESS:${NC} All config files are successfully set up in the configs folder."
         fi
     else
-        echo "${RED}ERROR:${NC} Not all config files were found in $install_configs_dir."
+        echo -e "${RED}ERROR:${NC} Not all config files were found in $install_configs_dir."
     fi
+
 }
