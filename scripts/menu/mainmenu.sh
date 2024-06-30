@@ -61,11 +61,11 @@ mainMenu()
 						echo "#####################################"
 						echo ""
 						for i in "${!app_categories[@]}"; do
-							local capitalized_category=$(capitalize "${app_categories[$i]}")
-							echo "$((i + 1)). ${capitalized_category} Apps"
+        					local capitalized_category=$(echo "${app_categories[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
+							isOption "$((i + 1)). ${capitalized_category} Apps"
 						done
 						echo ""
-						echo "x. Exit"
+						isOption "x. Exit"
 						echo ""
 						isQuestion "Please select an option (1-${#app_categories[@]} or 'x' to exit): "
 						read -p "" choice
@@ -73,7 +73,7 @@ mainMenu()
 						# Validate input
 						if [[ "$choice" =~ ^[1-9][0-9]*$ ]] && [ "$choice" -le "${#app_categories[@]}" ]; then
 							local selected_category="${app_categories[$((choice - 1))]}"
-							local capitalized_category=$(capitalize "$selected_category")
+							local capitalized_category=$(echo "${app_categories[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
 							echo ""
 							echo "#####################################"
 							echo "###     ${capitalized_category} Apps"
