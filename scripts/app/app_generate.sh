@@ -14,12 +14,13 @@ appGenerate()
 
     while true; do
         if [[ "$app_name" == "" ]]; then
-            read -p "Please enter the name of the application you would like to create a script for: " app_name
+            isQuestion "Please enter the name of the application you would like to create a script for: "
+            read -p "" app_name
         fi
 
         if [[ -d "$install_containers_dir$app_name" ]]
         then
-            isError "Error: A folder with that name already exists. Please choose another name."
+            isError "A folder with that name already exists. Please choose another name."
             echo ""
         else
             isSuccessful "Valid application name given."
@@ -49,12 +50,12 @@ appGenerate()
     done
 
     while true; do
-        isQuestion "Please select the application category:"
         echo ""
-        # Capitalize the first letter of each category for better viewing
-        local capitalized_category=$(echo "${app_categories[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
+        isNotice "Please select the application category:"
+        echo ""
         for i in "${!app_categories[@]}"; do
-            echo "$((i + 1)). ${capitalized_category[$i]^} App"
+            local capitalized_category=$(echo "${app_categories[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
+            isOption "$((i + 1)). ${capitalized_category[$i]^} App"
         done
         echo ""
         isQuestion "Enter your choice (1-${#app_categories[@]}): "
@@ -64,7 +65,7 @@ appGenerate()
         # Validate input
         if [[ "$app_selection" =~ ^[1-9][0-9]*$ ]] && [ "$app_selection" -le "${#app_categories[@]}" ]; then
             local selected_category="${app_categories[$((app_selection - 1))]}"
-            echo "Application will be set to a ${selected_category^} App"
+            isNotice "Application will be set to a ${selected_category^} App"
             local app_category=$selected_category
             break
         else
@@ -79,10 +80,10 @@ appGenerate()
         local result=$(cp -r $install_containers_dir/template/* $install_containers_dir$app_name)
         checkSuccess "Copying template files to the $app_name folder"
 
-        local result=$(mv $install_containers_dir/template.sh "$install_containers_dir/$app_name.sh")
+        local result=$(mv $install_containers_dir$app_name/template.sh "$install_containers_dir$app_name/$app_name.sh")
         checkSuccess "Renaming script file for $app_name"
 
-        local result=$(mv $install_containers_dir/template.config "$install_containers_dir/$app_name.config")
+        local result=$(mv $install_containers_dir$app_name/template.config "$install_containers_dir$app_name/$app_name.config")
         checkSuccess "Renaming config file for $app_name"
 
         echo "Renaming of files completed successfully."
