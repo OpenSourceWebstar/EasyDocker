@@ -18,26 +18,55 @@ appGenerate()
             read -p "" app_name
         fi
 
-        if [[ -d "$install_containers_dir$app_name" ]]
-        then
+        if [[ -d "$install_containers_dir$app_name" ]]; then
             isError "A folder with that name already exists. Please choose another name."
-            echo ""
+            app_name=""  # Reset app_name to prompt for a new input
+        elif echo "$app_name" | grep -q '[0-9\s]'; then
+            isError "The application name cannot contain any numbers or spaces. Please choose another name."
+            app_name=""  # Reset app_name to prompt for a new input
         else
             isSuccessful "Valid application name given."
-            local cap_first_app_name=$(echo "$app_name" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')
-            local full_caps_app_name=$(echo "$app_name" | awk '{print toupper($0)}')
+            cap_first_app_name=$(echo "$app_name" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')
+            full_caps_app_name=$(echo "$app_name" | awk '{print toupper($0)}')
             echo ""
             break
         fi
+        echo "Please provide a valid app name."
     done
 
     while true; do
-        isQuestion "Please enter the hostname (e.g a hostname 'test' would be setup the domain : test.yourdomain.com): "
+        isQuestion "Please enter the hostname (e.g., a hostname 'test' would set up the domain: test.yourdomain.com): "
         read -p "" host_name
-        if [[ $? -eq 0 ]]; then
-            break
+
+        # Check if host_name is contained in the file
+        if grep -q "^${host_name}$" "$configs_dir$ip_file"; then
+            isError "A hostname with that name already exists. Please choose another name."
+            while true; do
+                echo "Do you want to (c)ontinue with this hostname, (e)nter a new one, or (x) exit? (c/e/x):"
+                read -p "" choice
+                case $choice in
+                    [Cc]* ) 
+                        break 2  # Break out of both loops to continue with the existing hostname
+                        ;;
+                    [Ee]* ) 
+                        host_name=""  # Reset host_name to prompt for a new input
+                        break  # Break out of the inner loop to prompt for a new hostname
+                        ;;
+                    [Xx]* ) 
+                        isNotice "Exiting..."
+                        resetToMenu;
+                        ;;
+                    * ) 
+                        echo "Please answer c, e, or x."
+                        ;;
+                esac
+            done
+        else
+            if [[ $? -eq 0 ]]; then
+                break
+            fi
+            echo "Please provide a valid hostname"
         fi
-        echo "Please provide a valid hostname"
     done
 
     while true; do
@@ -104,6 +133,13 @@ appGenerate()
         checkSuccess "Updating Config - template to $app_name"
         local result=$(sudo sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_config_file" > /dev/null 2>&1)
         checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
+
+        # Hostfile addition
+        local last_ip=$(tail -n 1 "$configs_dir$ip_file" | awk '{print $2}')
+        local IFS='.' read -r -a ip_parts <<< "$last_ip"
+        local new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$((ip_parts[3] + 1))"
+        local result=$(echo "$host_name $new_ip" >> "$configs_dir$ip_file")
+        checkSuccess "Add the new entry to ips_hostname file."
 
         while true; do
             echo ""
