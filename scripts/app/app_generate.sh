@@ -140,8 +140,8 @@ appGenerate()
         checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
 
 
-        # Get the last IP from the file
-        last_ip=$(awk '{print $2}' "$configs_dir$ip_file" | tail -n 1)
+        # Get the last non-empty line from the file and extract the IP address
+        last_ip=$(grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' "$configs_dir$ip_file" | tail -n 1)
 
         # Check if last_ip is not empty
         if [ -z "$last_ip" ]; then
@@ -150,7 +150,7 @@ appGenerate()
         fi
 
         # Debugging: Print the last IP to ensure it's read correctly
-        echo "Last IP: $last_ip"
+        echo "Last IP: '$last_ip'"
 
         # Split the IP address into parts and increment the last octet
         IFS='.' read -r -a ip_parts <<< "$last_ip"
