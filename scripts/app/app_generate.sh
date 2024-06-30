@@ -65,7 +65,7 @@ appGenerate()
             if [[ -n "$host_name" ]]; then
                 break  # Exit the loop if host_name is valid and not found in the file
             else
-                echo "Please provide a valid hostname"
+                isNotice "Please provide a valid hostname"
             fi
         fi
     done
@@ -130,17 +130,22 @@ appGenerate()
         checkSuccess "Updating $app_name.sh - description to $app_description"
 
         # Config updates
+        local result=$(sudo sed -i '' -e 's/Template/'"$cap_first_app_name"'/g' "$app_config_file" > /dev/null 2>&1)
+        checkSuccess "Update $app_name.config - all cases of Template to $cap_first_app_name"
         local result=$(sudo sed -i '' -e 's/template/'"$app_name"'/g' "$app_config_file" > /dev/null 2>&1)
-        checkSuccess "Updating Config - template to $app_name"
+        checkSuccess "Update $app_name.config - all cases of template to $app_name"
+        local result=$(sudo sed -i '' -e 's/TEMPLATE/'"$full_caps_app_name"'/g' "$app_config_file" > /dev/null 2>&1)
+        checkSuccess "Update $app_name.config - all cases of TEMPLATE to $full_caps_app_name"
         local result=$(sudo sed -i '' -e 's/CFG_TEMPLATE_HOST_NAME=test/CFG_TEMPLATE_HOST_NAME='"$host_name"'/g' "$app_config_file" > /dev/null 2>&1)
         checkSuccess "Updating Config - CFG_TEMPLATE_HOST_NAME to $app_name"
 
         # Hostfile addition
-        local last_ip=$(tail -n 1 "$configs_dir$ip_file" | awk '{print $2}')
-        local IFS='.' read -r -a ip_parts <<< "$last_ip"
-        local new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$((ip_parts[3] + 1))"
-        local result=$(echo "$host_name $new_ip" >> "$configs_dir$ip_file")
+        local hostfile_last_ip=$(tail -n 1 "$configs_dir$ip_file" | awk '{print $2}')
+        local hostfile_IFS='.' read -r -a ip_parts <<< "$last_ip"
+        local hostfile_new_ip="${ip_parts[0]}.${ip_parts[1]}.${ip_parts[2]}.$((ip_parts[3] + 1))"
+        local result=$(echo "$host_name $new_ip" >> "$install_configs_dir$ip_file")
         checkSuccess "Add the new entry to ips_hostname file."
+        checkEasyDockerConfigFilesMissingVariables;
 
         while true; do
             echo ""
@@ -177,8 +182,21 @@ appGenerate()
             fi
             isNotice "Please provide a valid input."
         done
-        if [[ "$app_config" == [yY] ]]; then
+        if [[ "$app_script" == [yY] ]]; then
             sudo $CFG_TEXT_EDITOR "$install_containers_dir$app_name/$app_name.sh"
+        fi
+
+        while true; do
+            echo ""
+            isQuestion "Would you like to install $app_name? (y/n): "
+            read -p "" app_install
+            if [[ -n "$app_install" ]]; then
+                break
+            fi
+            isNotice "Please provide a valid input."
+        done
+        if [[ "$app_install" == [yY] ]]; then
+            dockerInstallApp $app_name
         fi
     fi
 }
