@@ -73,7 +73,7 @@ mainMenu()
 						# Validate input
 						if [[ "$choice" =~ ^[1-9][0-9]*$ ]] && [ "$choice" -le "${#app_categories[@]}" ]; then
 							local selected_category="${app_categories[$((choice - 1))]}"
-							local capitalized_category=$(echo "${selected_category[$i]}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
+							local capitalized_category=$(echo "${selected_category}" | awk '{print toupper(substr($0, 1, 1)) tolower(substr($0, 2))}')
 							echo ""
 							echo "#####################################"
 							echo "###        ${capitalized_category} Apps"
