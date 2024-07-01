@@ -16,10 +16,10 @@ services:
     environment:
       DOLI_DB_HOST: "mysql"
       DOLI_DB_USER: "dolibarr"
-      DOLI_DB_PASSWORD: "RANDOMIZEDPASSWORD"
+      DOLI_DB_PASSWORD: "RANDOMIZEDPASSWORD1"
       DOLI_DB_NAME: "dolibarr"
       DOLI_ADMIN_LOGIN: "admin"
-      DOLI_ADMIN_PASSWORD: "RANDOMIZEDPASSWORD1"
+      DOLI_ADMIN_PASSWORD: "RANDOMIZEDPASSWORD"
     labels:
       traefik.enable: true
       traefik.http.routers.dolibarr.entrypoints: web,websecure
