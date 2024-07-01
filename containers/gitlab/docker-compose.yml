@@ -20,7 +20,7 @@ services:
       #traefik.http.routers.gitlab.entrypoints: web,websecure
       #traefik.http.routers.gitlab.tls.certresolver: production
       #traefik.http.services.gitlab.loadbalancer.server.port: PORT1
-      #traefik.docker.network: DOCKERNETWORK
+      #traefik.docker.network: DOCKERNETWORKHERE
       #traefik.tcp.routers.gitlab-ssh.rule: HostSNI(DOMAINSUBNAMEHERE)
       #traefik.tcp.routers.gitlab-ssh.entrypoints: ssh
       #traefik.tcp.routers.gitlab-ssh.service: gitlab-ssh-svc

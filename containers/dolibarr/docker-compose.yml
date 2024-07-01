@@ -1,5 +1,5 @@
 networks:
-  DOCKERNETWORK:
+  DOCKERNETWORKHERE:
     external: true
     ipam:
       config:
@@ -20,21 +20,21 @@ services:
       - DOLI_DB_NAME=dolibarr
       - DOLI_ADMIN_LOGIN=admin
       - DOLI_ADMIN_PASSWORD=RANDOMIZEDPASSWORD
-    labels:
-      traefik.enable: true
-      traefik.http.routers.dolibarr.entrypoints: web,websecure
-      traefik.http.routers.dolibarr.rule: Host(`DOMAINSUBNAMEHERE`)
-      traefik.http.routers.dolibarr.tls: true
-      traefik.http.routers.dolibarr.tls.certresolver: production
-      traefik.http.services.dolibarr.loadbalancer.server.port: PORT1
-      traefik.http.routers.dolibarr.middlewares:
-      traefik.docker.network: DOCKERNETWORK
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.dolibarr.entrypoints: web,websecure
+      #traefik.http.routers.dolibarr.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.dolibarr.tls: true
+      #traefik.http.routers.dolibarr.tls.certresolver: production
+      #traefik.http.services.dolibarr.loadbalancer.server.port: PORT1
+      #traefik.http.routers.dolibarr.middlewares:
+      #traefik.docker.network: DOCKERNETWORKHERE
     volumes:
       - ./dolibarr-docs:/var/www/documents
       - ./dolibarr-custom:/var/www/html/custom
     networks:
       dolibarr:
-      DOCKERNETWORK:
+      DOCKERNETWORKHERE:
         ipv4_address: IPADDRESSHERE
 
   mysql:

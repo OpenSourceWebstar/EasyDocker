@@ -15,7 +15,7 @@ services:
         #traefik.http.routers.moo.tls.certresolver: production
         #traefik.http.services.moo.loadbalancer.server.port: PORT1
         #traefik.http.routers.moo.entrypoints: websecure
-        #traefik.docker.network: DOCKERNETWORK
+        #traefik.docker.network: DOCKERNETWORKHERE
         #traefik.http.routers.moo.middlewares:
     healthcheck:
       disable: false #HEALTHCHECKHERE

@@ -113,7 +113,7 @@ services:
             #traefik.http.routers.jitismeet.tls.certresolver: production
             #traefik.http.services.jitismeet.loadbalancer.server.port: PORT2
             #traefik.http.routers.jitismeet.middlewares:
-            #traefik.docker.network: DOCKERNETWORK
+            #traefik.docker.network: DOCKERNETWORKHERE
         healthcheck:
             disable: false #HEALTHCHECKHERE
 
@@ -272,7 +272,7 @@ services:
             #traefik.udp.routers.jvb.entrypoints: video
             #traefik.udp.routers.jvb.service: jvb
             #traefik.udp.services.jvb.loadbalancer.server.port: PORT3
-            #traefik.docker.network: DOCKERNETWORK
+            #traefik.docker.network: DOCKERNETWORKHERE
 
 # Custom network so all services can communicate using a FQDN
 networks:
