@@ -93,7 +93,7 @@ viewAppCategoryConfigs()
                 fi
 
                 # Remove the "*INSTALLED" suffix if it's present
-                local app_name="${app_option%% *INSTALLED}"
+                local app_name="${app_option//\\e[32m*INSTALLED*\\e[0m - /}"
                 editAppConfig "$app_name"
                 local select_app="$app_name"
             else
