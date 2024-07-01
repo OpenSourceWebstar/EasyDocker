@@ -14,12 +14,12 @@ services:
     container_name: dolibarr
     image: tuxgasy/dolibarr:latest
     environment:
-      DOLI_DB_HOST: "mysql"
-      DOLI_DB_USER: "dolibarr"
-      DOLI_DB_PASSWORD: "RANDOMIZEDPASSWORD1"
-      DOLI_DB_NAME: "dolibarr"
-      DOLI_ADMIN_LOGIN: "admin"
-      DOLI_ADMIN_PASSWORD: "RANDOMIZEDPASSWORD"
+      - DOLI_DB_HOST=mysql
+      - DOLI_DB_USER=dolibarr
+      - DOLI_DB_PASSWORD=RANDOMIZEDPASSWORD1
+      - DOLI_DB_NAME=dolibarr
+      - DOLI_ADMIN_LOGIN=admin
+      - DOLI_ADMIN_PASSWORD=RANDOMIZEDPASSWORD
     labels:
       traefik.enable: true
       traefik.http.routers.dolibarr.entrypoints: web,websecure
@@ -38,9 +38,9 @@ services:
   mysql:
     image: library/mariadb:latest
     environment:
-      MYSQL_DATABASE: "dolibarr"
-      MYSQL_USER: "dolibarr"
-      MYSQL_PASSWORD: "RANDOMIZEDPASSWORD1"
+      - MYSQL_DATABASE=dolibarr
+      - MYSQL_USER=dolibarr
+      - MYSQL_PASSWORD=RANDOMIZEDPASSWORD1
     volumes:
       - ./mysql-data:/var/lib/mysql
     networks:
