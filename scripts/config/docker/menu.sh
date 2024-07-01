@@ -67,6 +67,7 @@ viewComposeFiles()
 
           while true; do
             # List numbered options for Docker Compose files
+            echo ""
             isNotice "Select Docker Compose files to edit (space-separated numbers, or 'x' to exit):"
             echo ""
             for i in "${!selected_compose_files[@]}"; do
