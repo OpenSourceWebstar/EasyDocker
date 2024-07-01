@@ -1,10 +1,10 @@
 networks:
-  vpn:
+  DOCKERNETWORK:
     external: true
     ipam:
       config:
         - subnet: SUBNETHERE
-          gateway: IPADDRESSHERE
+          gateway: GATEWAYHERE
   dolibarr:
     name: dolibarr
     internal: true
@@ -28,12 +28,14 @@ services:
       traefik.http.routers.dolibarr.tls.certresolver: production
       traefik.http.services.dolibarr.loadbalancer.server.port: PORT1
       traefik.http.routers.dolibarr.middlewares:
+      traefik.docker.network: DOCKERNETWORK
     volumes:
       - ./dolibarr-docs:/var/www/documents
       - ./dolibarr-custom:/var/www/html/custom
     networks:
-      - dolibarr
-      - vpn
+      dolibarr:
+      DOCKERNETWORK:
+        ipv4_address: IPADDRESSHERE
 
   mysql:
     image: library/mariadb:latest
