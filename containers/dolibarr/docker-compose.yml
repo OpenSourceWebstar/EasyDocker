@@ -41,6 +41,7 @@ services:
       - MYSQL_DATABASE=dolibarr
       - MYSQL_USER=dolibarr
       - MYSQL_PASSWORD=RANDOMIZEDPASSWORD1
+      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD
     volumes:
       - ./mysql-data:/var/lib/mysql
     networks:
