@@ -1,3 +1,5 @@
+# https://github.com/tuxgasy/docker-dolibarr/blob/master/README.md
+
 networks:
   DOCKERNETWORKHERE:
     external: true
@@ -16,6 +18,7 @@ services:
       - DOLI_DB_NAME=dolibarr
       - DOLI_ADMIN_LOGIN=admin
       - DOLI_ADMIN_PASSWORD=RANDOMIZEDPASSWORD
+      - DOLI_URL_ROOT=https://DOMAINSUBNAMEHERE
     #labels:
       #traefik.enable: true
       #traefik.http.routers.dolibarr.entrypoints: web,websecure
