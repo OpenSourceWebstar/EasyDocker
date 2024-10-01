@@ -10,7 +10,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=TIMEZONEHERE
       - APP_URL=https://DOMAINSUBNAMEHERE
       - DB_HOST=bookstack_db
       - DB_PORT=3306
@@ -18,12 +18,15 @@ services:
       - DB_PASS=RANDOMIZEDPASSWORD1
       - DB_DATABASE=bookstackapp
     volumes:
-      - /path/to/bookstack_app_data:/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
+      - ./data:/config
     ports:
       - 6875:80
     restart: unless-stopped
     depends_on:
       - bookstack_db
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
@@ -34,14 +37,14 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=TIMEZONEHERE
       - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD1
       - MYSQL_DATABASE=bookstackapp
       - MYSQL_USER=bookstack
       - MYSQL_PASSWORD=RANDOMIZEDPASSWORD1
     volumes:
-      - /path/to/bookstack_db_data:/config
+      - ./db:/config
     restart: unless-stopped
     networks:
       vpn:
-        ipv4_address: IPADDRESSHERE
+        ipv4_address: 10.8.1.130
