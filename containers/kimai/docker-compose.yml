@@ -10,7 +10,7 @@ services:
     container_name: kimai
     environment:
       - ADMINMAIL=EMAILHERE
-      - ADMINPASS=RANDOMIZEDPASSWORD
+      - ADMINPASS=RANDOMIZEDPASSWORD1
       - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
       - TRUSTED_HOSTS=IPADDRESSHERE,DOMAINSUBNAMEHERE
       - memory_limit=500
@@ -32,7 +32,7 @@ services:
       - MYSQL_DATABASE=kimai
       - MYSQL_USER=kimaiuser
       - MYSQL_PASSWORD=kimaipassword
-      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD
+      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD2
     ports:
       - 3336:3306
     volumes:

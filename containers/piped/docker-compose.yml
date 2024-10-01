@@ -79,7 +79,7 @@ services:
         environment:
             - postgres_DB=piped
             - postgres_USER=piped
-            - postgres_PASSWORD=RANDOMIZEDPASSWORD
+            - postgres_PASSWORD=RANDOMIZEDPASSWORD1
         networks:
             vpn:
                 ipv4_address: 10.8.1.129

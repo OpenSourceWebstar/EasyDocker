@@ -11,11 +11,11 @@ CFG_DOMAIN_3=
 # Docker Install
 CFG_DOCKER_INSTALL_TYPE=rooted # rooted or rootless
 CFG_DOCKER_INSTALL_USER=dockerinstall
-CFG_DOCKER_INSTALL_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_DOCKER_INSTALL_PASS=RANDOMIZEDPASSWORD1 # This will be generated, no need to edit!
 
 # User/Pass for Logging into an application if LOGIN_REQUIRED=true
-CFG_LOGIN_USER=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
-CFG_LOGIN_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_LOGIN_USER=RANDOMIZEDPASSWORD2 # This will be generated, no need to edit!
+CFG_LOGIN_PASS=RANDOMIZEDPASSWORD3 # This will be generated, no need to edit!
 
 # Network
 CFG_NETWORK_NAME=vpn
@@ -28,9 +28,9 @@ CFG_DNS_SERVER_2=9.9.9.11
 CFG_IPS_WHITELIST=HOSTIPHERE
 
 # SSH Keys
-CFG_SSHKEY_PASSPHRASE_ROOT=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
-CFG_SSHKEY_PASSPHRASE_EASYDOCKER=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
-CFG_SSHKEY_PASSPHRASE_DOCKERINSTALL=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_SSHKEY_PASSPHRASE_ROOT=RANDOMIZEDPASSWORD4 # This will be generated, no need to edit!
+CFG_SSHKEY_PASSPHRASE_EASYDOCKER=RANDOMIZEDPASSWORD5 # This will be generated, no need to edit!
+CFG_SSHKEY_PASSPHRASE_DOCKERINSTALL=RANDOMIZEDPASSWORD6 # This will be generated, no need to edit!
 
 
 # Only edit below if you know what you are doing
@@ -44,7 +44,7 @@ CFG_TEXT_EDITOR=nano
 # Docker Manager (Used for remote access)
 # Not recommended to change the dockermanager username as it may cause issues with ssh transfer
 CFG_DOCKER_MANAGER_USER=dockermanager
-CFG_DOCKER_MANAGER_PASS=RANDOMIZEDPASSWORD # This will be generated, no need to edit!
+CFG_DOCKER_MANAGER_PASS=RANDOMIZEDPASSWORD7 # This will be generated, no need to edit!
 
 CFG_IPS_SSH_SETUP=
 

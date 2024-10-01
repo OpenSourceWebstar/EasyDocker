@@ -17,7 +17,7 @@ services:
       - DOLI_DB_PASSWORD=RANDOMIZEDPASSWORD1
       - DOLI_DB_NAME=dolibarr
       - DOLI_ADMIN_LOGIN=admin
-      - DOLI_ADMIN_PASSWORD=RANDOMIZEDPASSWORD
+      - DOLI_ADMIN_PASSWORD=RANDOMIZEDPASSWORD2
       - DOLI_URL_ROOT=https://DOMAINSUBNAMEHERE
     #labels:
       #traefik.enable: true
@@ -42,7 +42,7 @@ services:
       - MYSQL_DATABASE=dolibarr
       - MYSQL_USER=dolibarr
       - MYSQL_PASSWORD=RANDOMIZEDPASSWORD1
-      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD
+      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD2
     volumes:
       - ./mysql-data:/var/lib/mysql
     networks:
