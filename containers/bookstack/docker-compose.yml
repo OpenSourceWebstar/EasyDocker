@@ -21,7 +21,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - ./data:/config
     ports:
-      - 6875:80
+      - PORT1:80
     restart: unless-stopped
     depends_on:
       - bookstack_db
