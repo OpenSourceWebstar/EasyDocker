@@ -27,6 +27,14 @@ services:
       - bookstack_db
     healthcheck:
       disable: false #HEALTHCHECKHERE
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.bookstack.entrypoints: web,websecure
+      #traefik.http.routers.bookstack.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.bookstack.tls: true
+      #traefik.http.routers.bookstack.tls.certresolver: production
+      #traefik.http.services.bookstack.loadbalancer.server.port: PORT1
+      #traefik.http.routers.bookstack.middlewares:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
