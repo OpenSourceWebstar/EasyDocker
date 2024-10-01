@@ -12,29 +12,32 @@ appGenerate()
     isNotice "USAGE : This is for generating new container installation scripts for EasyDocker"
     echo ""
 
-    while true; do
-        if [[ -z "$app_name" ]]; then
-            isQuestion "Please enter the name of the application you would like to create a script for: "
-            read -p "" app_name
-            app_name=$(echo "$app_name" | sed 's/^[ \t]*//;s/[ \t]*$//')  # Trim leading/trailing whitespace
-        fi
+	while true; do
+		if [[ -z "$app_name" ]]; then
+			isQuestion "Please enter the name of the application you would like to create a script for: "
+			read -p "" app_name
+			app_name=$(echo "$app_name" | sed 's/^[ \t]*//;s/[ \t]*$//')  # Trim leading/trailing whitespace
+		fi
 
-        if [[ -d "$install_containers_dir$app_name" ]]; then
-            isError "A folder with that name already exists. Please choose another name."
-            app_name=""  # Reset app_name to prompt for a new input
-        elif echo "$app_name" | grep -q '[0-9\s]'; then
-            isError "The application name cannot contain any numbers or spaces. Please choose another name."
-            app_name=""  # Reset app_name to prompt for a new input
-        else
-            isSuccessful "Valid application name given."
-            cap_first_app_name=$(echo "$app_name" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')
-            full_caps_app_name=$(echo "$app_name" | awk '{print toupper($0)}')
-            echo ""
-            break
-        fi
-        isNotice "Please provide a valid app name."
-        echo ""
-    done
+		# Debug output to see the actual input
+		# echo "DEBUG: app_name = '$app_name'"
+
+		if [[ -d "$install_containers_dir$app_name" ]]; then
+			isError "A folder with that name already exists. Please choose another name."
+			app_name=""  # Reset app_name to prompt for a new input
+		elif echo "$app_name" | grep -q '[[:space:]]\|[0-9]'; then
+			isError "The application name cannot contain any numbers or spaces. Please choose another name."
+			app_name=""  # Reset app_name to prompt for a new input
+		else
+			isSuccessful "Valid application name given."
+			cap_first_app_name=$(echo "$app_name" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')
+			full_caps_app_name=$(echo "$app_name" | awk '{print toupper($0)}')
+			echo ""
+			break
+		fi
+		isNotice "Please provide a valid app name."
+		echo ""
+	done
 
     while true; do
         isQuestion "Please enter the hostname (e.g., a hostname 'test' would set up the domain: test.yourdomain.com): "
