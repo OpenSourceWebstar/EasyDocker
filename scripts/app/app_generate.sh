@@ -13,9 +13,10 @@ appGenerate()
     echo ""
 
     while true; do
-        if [[ "$app_name" == "" ]]; then
+        if [[ -z "$app_name" ]]; then
             isQuestion "Please enter the name of the application you would like to create a script for: "
             read -p "" app_name
+            app_name=$(echo "$app_name" | sed 's/^[ \t]*//;s/[ \t]*$//')  # Trim leading/trailing whitespace
         fi
 
         if [[ -d "$install_containers_dir$app_name" ]]; then
@@ -31,7 +32,8 @@ appGenerate()
             echo ""
             break
         fi
-        echo "Please provide a valid app name."
+        isNotice "Please provide a valid app name."
+        echo ""
     done
 
     while true; do
