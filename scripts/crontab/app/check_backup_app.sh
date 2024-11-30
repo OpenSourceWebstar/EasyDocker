@@ -78,4 +78,19 @@ checkBackupCrontabApp()
             fi
         fi
     fi
+
+    result=$(crontab -l > ~/my_crontab_backup.txt)
+    checkSuccess "Backup the current crontab."
+    result=$(crontab -l | grep -v ' >> /docker/logs/backup.log 2>&1' > ~/new_crontab.txt)
+    checkSuccess "Remove any lines containing old Crontab data"
+    
+    if ! cmp -s ~/my_crontab_backup.txt ~/new_crontab.txt; then
+        result=$(crontab ~/new_crontab.txt)
+        checkSuccess "Crontab entries has been updated."
+    else
+        isSuccessful "No crontab entries changs needed."
+    fi
+
+    result=$(rm ~/new_crontab.txt)
+    checkSuccess "Clean up temporary crontab files."
 }

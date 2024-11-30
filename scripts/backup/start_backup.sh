@@ -85,7 +85,7 @@ backupStart()
 
 	((menu_number++))
     echo ""
-    echo "    A backup of the $stored_app_name docker folder has been taken!"
+    echo "A backup of the $stored_app_name docker folder has been taken on $current_date at $current_time!" >> $logs_dir$backup_log_file
     echo ""
 
 	menu_number=0
