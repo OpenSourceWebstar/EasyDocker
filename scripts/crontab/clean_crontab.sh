@@ -9,6 +9,6 @@ crontabClean()
     if crontab -l | grep -q "$data_to_remove"; then
         # If found, remove occurrences of the string from the crontab
         crontab -l | sed "s|$data_to_remove||g" | crontab -
-        echo "Removed old data from crontab entries."
+        isSuccessful "Removed old data from crontab entries."
     fi
 }
