@@ -56,6 +56,7 @@ databaseCycleThroughListAppsCrontab()
     done
 
     echo ""
+    crontabClean;
     isSuccessful "Setting up Crontab backups for application(s) completed."
 }
 
