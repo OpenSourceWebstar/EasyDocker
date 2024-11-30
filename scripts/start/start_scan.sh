@@ -23,7 +23,6 @@ startScan()
 		dockerScan;
     fi
     databaseAppScan;
-    databaseListInstalledApps;
     databaseCycleThroughListAppsCrontab "false";
-
+    databaseListInstalledApps;
 }
