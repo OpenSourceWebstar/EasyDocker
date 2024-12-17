@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # Category : user
-# Description : GitLab - DevOps Platform *UNFINISHED* (c/u/s/r/i):
+# Description : Gitea - DevOps Platform *UNFINISHED* (c/u/s/r/i):
 
-installGitlab()
+installGitea()
 {
-    if [[ "$gitlab" == *[cCtTuUsSrRiI]* ]]; then
-        dockerConfigSetupToContainer silent gitlab;
+    if [[ "$gitea" == *[cCtTuUsSrRiI]* ]]; then
+        dockerConfigSetupToContainer silent gitea;
         local app_name=$CFG_GITLAB_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
-    if [[ "$gitlab" == *[cC]* ]]; then
+    if [[ "$gitea" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-	if [[ "$gitlab" == *[uU]* ]]; then
+	if [[ "$gitea" == *[uU]* ]]; then
 		dockerUninstallApp $app_name;
 	fi
 
-	if [[ "$gitlab" == *[sS]* ]]; then
+	if [[ "$gitea" == *[sS]* ]]; then
 		dockerComposeDown $app_name;
 	fi
 
-    if [[ "$gitlab" == *[rR]* ]]; then
+    if [[ "$gitea" == *[rR]* ]]; then
         dockerComposeRestart $app_name;
     fi
 
-    if [[ "$gitlab" == *[iI]* ]]; then
+    if [[ "$gitea" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###           Install $app_name"
@@ -118,5 +118,5 @@ installGitlab()
         sleep 3s
         cd
 	fi
-	gitlab=n
+	gitea=n
 }
