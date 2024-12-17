@@ -1,0 +1,34 @@
+networks:
+  vpn:
+    external: true
+
+services:
+  server:
+    image: gitea/gitea:nightly
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: always
+    networks:
+      - gitea
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "PORT1:3000"
+      - "PORT2:22"
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.gitea.entrypoints: web,websecure
+      #traefik.http.routers.gitea.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.gitea.tls: true
+      #traefik.http.routers.gitea.tls.certresolver: production
+      #traefik.http.routers.gitea.middlewares:
