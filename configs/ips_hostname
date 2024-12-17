@@ -20,7 +20,7 @@ budget 10.8.1.20
 payment 10.8.1.21
 meet 10.8.1.22
 cloud 10.8.1.23
-gitea 10.8.1.24
+gitlab 10.8.1.24
 livechat 10.8.1.25
 authelia 10.8.1.26
 invidious 10.8.1.27
@@ -41,3 +41,4 @@ calendar 10.8.1.41
 space 10.8.1.42
 crm 10.8.1.43
 bookstack 10.8.1.44
+gitea 10.8.1.45
