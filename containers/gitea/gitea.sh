@@ -7,7 +7,7 @@ installGitea()
 {
     if [[ "$gitea" == *[cCtTuUsSrRiI]* ]]; then
         dockerConfigSetupToContainer silent gitea;
-        local app_name=$CFG_GITLAB_APP_NAME
+        local app_name=$CFG_GITEA_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
