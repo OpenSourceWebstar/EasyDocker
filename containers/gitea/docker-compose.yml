@@ -10,8 +10,6 @@ services:
       - USER_UID=1000
       - USER_GID=1000
     restart: always
-    networks:
-      - gitea
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
       - ./gitea:/data
