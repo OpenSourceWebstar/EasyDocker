@@ -49,8 +49,8 @@ networks:
       #traefik.http.routers.gitea.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.gitea.tls: true
       #traefik.http.routers.gitea.tls.certresolver: production
-      #traefik.http.routers.gitea.service=gitea-service
-      #traefik.http.services.gitea-service.loadbalancer.server.port=PORT1
+      #traefik.http.routers.gitea.service: gitea-service
+      #traefik.http.services.gitea-service.loadbalancer.server.port: PORT1
       #traefik.http.routers.gitea.middlewares:
 
   gitea-cache:
