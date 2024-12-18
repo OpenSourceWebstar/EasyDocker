@@ -2,6 +2,7 @@ networks:
   vpn:
     external: true
 
+services:
   gitea:
     container_name: gitea
     image: gitea/gitea:nightly
