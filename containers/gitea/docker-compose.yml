@@ -2,19 +2,30 @@ networks:
   vpn:
     external: true
 
-services:
-  server:
-    image: gitea/gitea:nightly
+  gitea:
     container_name: gitea
+    image: gitea/gitea:nightly
+    restart: unless-stopped
+    depends_on:
+      gitea-cache:
+        condition: service_healthy
     environment:
+      - APP_NAME="Gitea"
       - USER_UID=1000
       - USER_GID=1000
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
-      - ./gitea:/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+      - USER=git
+      - RUN_MODE=prod
+      - DOMAIN=DOMAINSUBNAMEHERE
+      - SSH_DOMAIN=DOMAINSUBNAMEHERE
+      - HTTP_PORT=PORT1
+      - ROOT_URL=https://DOMAINSUBNAMEHERE
+      - SSH_PORT=PORT2
+      - SSH_LISTEN_PORT=22
+      - DB_TYPE=sqlite3
+      - GITEA__cache__ENABLED=true
+      - GITEA__cache__ADAPTER=redis
+      - GITEA__cache__HOST=redis://gitea-cache:6379/0?pool_size=100&idle_timeout=180s
+      - GITEA__cache__ITEM_TTL=24h
     ports:
       - "PORT1:3000"
       - "PORT2:22"
@@ -23,10 +34,37 @@ services:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
+      - ./data/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
     #labels:
       #traefik.enable: true
       #traefik.http.routers.gitea.entrypoints: web,websecure
       #traefik.http.routers.gitea.rule: Host(`DOMAINSUBNAMEHERE`)
       #traefik.http.routers.gitea.tls: true
       #traefik.http.routers.gitea.tls.certresolver: production
+      #traefik.http.routers.gitea.service=gitea-service
+      #traefik.http.services.gitea-service.loadbalancer.server.port=PORT1
       #traefik.http.routers.gitea.middlewares:
+
+  gitea-cache:
+    container_name: gitea-cache
+    image: redis:6-alpine
+    restart: unless-stopped
+    networks:
+      - public
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 30
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
