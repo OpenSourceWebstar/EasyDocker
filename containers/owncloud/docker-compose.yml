@@ -44,6 +44,10 @@ services:
     networks:
       vpn:
         ipv4_address: IPADDRESSHERE
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
 
   mariadb:
     image: mariadb:10.6 # minimum required ownCloud version is 10.9
