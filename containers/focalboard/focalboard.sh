@@ -1,33 +1,33 @@
 #!/bin/bash
 
 # Category : user
-# Description : Gitea - DevOps Platform *UNFINISHED* (c/u/s/r/i):
+# Description : Focalboard - Project Management (c/u/s/r/i):
 
-installGitea()
+installFocalboard()
 {
-    if [[ "$gitea" == *[cCtTuUsSrRiI]* ]]; then
-        dockerConfigSetupToContainer silent gitea;
-        local app_name=$CFG_GITEA_APP_NAME
+    if [[ "$focalboard" == *[cCtTuUsSrRiI]* ]]; then
+        dockerConfigSetupToContainer silent focalboard;
+        local app_name=$CFG_FOCALBOARD_APP_NAME
 		setupInstallVariables $app_name;
     fi
     
-    if [[ "$gitea" == *[cC]* ]]; then
+    if [[ "$focalboard" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-	if [[ "$gitea" == *[uU]* ]]; then
+	if [[ "$focalboard" == *[uU]* ]]; then
 		dockerUninstallApp $app_name;
 	fi
 
-	if [[ "$gitea" == *[sS]* ]]; then
+	if [[ "$focalboard" == *[sS]* ]]; then
 		dockerComposeDown $app_name;
 	fi
 
-    if [[ "$gitea" == *[rR]* ]]; then
+    if [[ "$focalboard" == *[rR]* ]]; then
         dockerComposeRestart $app_name;
     fi
 
-    if [[ "$gitea" == *[iI]* ]]; then
+    if [[ "$focalboard" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
         echo "###           Install $app_name"
@@ -118,5 +118,5 @@ installGitea()
         sleep 3s
         cd
 	fi
-	gitea=n
+	focalboard=n
 }
