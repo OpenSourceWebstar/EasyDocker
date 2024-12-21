@@ -1,0 +1,32 @@
+networks:
+  vpn:
+    external: true
+    
+services:
+  focalboard:
+    image: mattermost/focalboard
+    container_name: focalboard-live
+    ports:
+      - PORT1:8000
+    volumes:
+      - ./data:/data
+    environment:
+      - VIRTUAL_HOST=DOMAINSUBNAMEHERE
+      - VIRTUAL_PORT=8000
+    restart: unless-stopped
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.focalboard.entrypoints: web,websecure
+      #traefik.http.routers.focalboard.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.focalboard.tls: true
+      #traefik.http.routers.focalboard.tls.certresolver: production
+      #traefik.http.routers.focalboard.middlewares:

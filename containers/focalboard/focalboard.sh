@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : user
-# Description : Gitea - DevOps Platform (c/u/s/r/i):
+# Description : Gitea - DevOps Platform *UNFINISHED* (c/u/s/r/i):
 
 installGitea()
 {
