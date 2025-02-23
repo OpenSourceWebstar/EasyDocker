@@ -103,8 +103,8 @@ installNginx()
 		setupHeadscale $app_name;
         
 		((menu_number++))
-		echo ""
-        echo "---- $menu_number. Adding $app_name to the Apps Database table."
+        echo ""
+        echo "---- $menu_number. Setting up database records"
         echo ""
 
 		databaseInstallApp $app_name;
@@ -113,40 +113,12 @@ installNginx()
         echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
-        isNotice "Your SSH Key(s) are available to download using the link below."
+        echo "    You can now navigate to your $app_name service using any of the options below : "
         echo ""
-        echo "    URL : http://$ip_setup/"
-        echo ""
-        isNotice "TIP - Public SSH Keys are stored at /docker/ssh/public/"
-        echo ""
-        while true; do
-            isQuestion "Have you followed the instructions above? (y/n): "
-            read -p "" nginx_instructions
-            if [[ "$nginx_instructions" == 'y' || "$nginx_instructions" == 'Y' ]]; then
-                break
-            else
-                isNotice "Please confirm the setup or provide a valid input."
-            fi
-        done
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Destroying $app_name service as SSH keys have been downloaded."
+        echo "    NOTE - The password to login in defined in the yml install file that was installed"
         echo ""
 
-        dockerUninstallApp $app_name;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Outro Message."
-        echo ""
-        isNotice "The service has been destroyed for safety reasons"
-        isNotice "You can reinstall this service at anytime in the System install menu under the sshinstall option."
-        echo ""
-
-        if [[ "$CFG_REQUIREMENT_CONTINUE_PROMPT" == "true" ]]; then
-            read -p "Press Enter to continue."
-        fi
+        menuShowFinalMessages $app_name;
 
 		menu_number=0
         sleep 3s
