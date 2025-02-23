@@ -84,10 +84,6 @@ installNginx()
 
 		dockerComposeUpdateAndStartApp $app_name install;
 
-        # Copy index file
-        result=$(sudo cp -r $install_containers_dir$app_name/resources/index.html "$containers_dir$app_name/html/index.html")
-        checkSuccess "Copying over index.html file for NGINX."
-
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running Application specific updates (if required)"
