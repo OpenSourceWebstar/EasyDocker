@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : user
-# Description : Nextcloud - Business Cloud Platform (c/t/u/s/r/i):
+# Description : Nextcloud - Cloud Platform *UNFINISHED* (c/t/u/s/r/i):
 
 installNextcloud()
 {

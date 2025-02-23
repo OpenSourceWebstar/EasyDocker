@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : privacy
-# Description : Mailcow - Mail Server (c/u/s/r/i):
+# Description : Mailcow - Mail Server *UNFINISHED* (c/u/s/r/i):
 
 installMailcow()
 {

@@ -50,17 +50,18 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | Privacy        | <a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden - Password Manager</a>             | Tested & Working |
 | Privacy        | <a href="https://github.com/firefly-iii/firefly-iii/">Firefly - Money Budgetting</a>                | Tested & Working |
 | Privacy        | <a href="https://github.com/TeamPiped/Piped">Piped - Alternative Youtube Frontend</a>               | Tested & Working |
-| Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*      | Needs Testing    |
-| User           | <a href="https://github.com/jitsi/docker-jitsi-meet">Jitsi Meet - Video Conferencing</a>            | Tested & Working |
+| Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*      | Needs Finishing  |
+| User           | <a href="https://github.com/nginx/nginx">NGINX - Web Server & Load Balancer</a>                     | Tested & Working |
 | User           | <a href="https://github.com/owncloud-docker/server">OwnCloud - File & Document Cloud</a>            | Tested & Working |
 | User           | <a href="https://github.com/killbill/killbill">Killbill - Payment Processing</a>                    | Tested & Working |
 | User           | <a href="https://github.com/mattermost/mattermost">Mattermost - Collaboration Platform</a>          | Tested & Working |
 | User           | <a href="https://github.com/kimai/kimai">Kimai - Online-Timetracker</a>                             | Tested & Working |
 | User           | <a href="https://github.com/go-gitea/gitea">Gitea - DevOps Platform</a>                             | Tested & Working |
 | User           | <a href="https://github.com/mattermost-community/focalboard">Focalboard - Project Management</a>    | Tested & Working |
-| User           | <a href="https://github.com/nextcloud/docker">NextCloud - Business Cloud Platform</a>               | Needs Finishing  |
+| User           | <a href="https://github.com/jitsi/docker-jitsi-meet">Jitsi Meet - Video Conferencing</a>            | Needs Finishing  |
+| User           | <a href="https://github.com/nextcloud/docker">NextCloud - Business Cloud Platform</a> *UNFINISHED   | Needs Finishing  |
 | User           | <a href="https://github.com/Tiledesk/tiledesk">Tiledesk - Live Chat Platform</a> *UNFINISHED*       | Needs Finishing  |
-| User           | <a href="https://github.com/rustdesk/rustdesk/">Rustdesk - Remote Desktop Server</a>                | Needs Testing    |
+| User           | <a href="https://github.com/rustdesk/rustdesk/">Rustdesk - Remote Desktop Server</a> *UNFINISHED*   | Needs Finishing  |
 | Old            | <a href="https://github.com/duplicati/duplicati">Duplicati - Backups</a>                            | Tested & Working |
 
 

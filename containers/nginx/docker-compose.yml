@@ -1,0 +1,25 @@
+networks:
+  vpn:
+    external: true
+
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "PORT1:80"
+    volumes:
+      - ./html:/usr/share/nginx/html 
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.nginx.entrypoints: web,websecure
+      #traefik.http.routers.nginx.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.nginx.tls: true
+      #traefik.http.routers.nginx.tls.certresolver: production
+      #traefik.http.services.nginx.loadbalancer.server.port: PORT1
+      #traefik.http.routers.nginx.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE

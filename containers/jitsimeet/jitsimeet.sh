@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : user
-# Description : Jitsi Meet - Video Conferencing (c/u/s/r/i):
+# Description : Jitsi Meet - Video Conferencing *UNFINISHED* (c/u/s/r/i):
 
 installJitsimeet()
 {

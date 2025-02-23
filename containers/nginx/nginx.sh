@@ -1,36 +1,36 @@
 #!/bin/bash
 
 # Category : user
-# Description : Rustdesk - Remote Desktop Server *UNFINISHED* (c/u/s/r/i):
+# Description : NGINX - Web Server (c/u/s/r/i):
 
-installRustdesk()
+installNginx()
 {
-    if [[ "$rustdesk" == *[cCtTuUsSrRiI]* ]]; then
-        dockerConfigSetupToContainer silent rustdesk;
-        local app_name=$CFG_RUSTDESK_APP_NAME
+    if [[ "$nginx" == *[cCtTuUsSrRiI]* ]]; then
+        dockerConfigSetupToContainer silent nginx;
+        local app_name=$CFG_NGINX_APP_NAME
 		setupInstallVariables $app_name;
     fi
 
-    if [[ "$rustdesk" == *[cC]* ]]; then
+    if [[ "$nginx" == *[cC]* ]]; then
         editAppConfig $app_name;
     fi
 
-    if [[ "$rustdesk" == *[uU]* ]]; then
+    if [[ "$nginx" == *[uU]* ]]; then
         dockerUninstallApp $app_name;
     fi
 
-    if [[ "$rustdesk" == *[sS]* ]]; then
+    if [[ "$nginx" == *[sS]* ]]; then
         dockerComposeDown $app_name;
     fi
 
-    if [[ "$rustdesk" == *[rR]* ]]; then
+    if [[ "$nginx" == *[rR]* ]]; then
         dockerComposeRestart $app_name;
     fi
 
-    if [[ "$rustdesk" == *[iI]* ]]; then
+    if [[ "$nginx" == *[iI]* ]]; then
         echo ""
         echo "##########################################"
-        echo "###           Install $app_name"
+        echo "###      Installing $app_name"
         echo "##########################################"
         echo ""
 
@@ -70,6 +70,9 @@ installRustdesk()
 
         dockerComposeSetupFile $app_name;
 
+        result=$(sudo cp -r $install_containers_dir$app_name/resources/index.html "$containers_dir$app_name/html/index.html")
+        checkSuccess "Copying over index.html file for NGINX."
+
 		((menu_number++))
         echo ""
         echo "---- $menu_number. Updating file permissions before starting."
@@ -83,48 +86,6 @@ installRustdesk()
         echo ""
 
 		dockerComposeUpdateAndStartApp $app_name install;
-
-		((menu_number++))
-        echo ""
-        echo "---- $menu_number. Updating $app_name with an encryption key."
-        echo ""
-
-        local rustdesk_timeout=10
-        local rustdesk_counter=0
-        local public_key_file="$containers_dir$app_name/hbbs/id_ed25519.pub"
-
-        # Loop to check for the existence of the file every second
-        while [ ! -f "$public_key_file" ]; do
-            if [ "$rustdesk_counter" -ge "$rustdesk_timeout" ]; then
-                isNotice "File not found after 10 seconds. Exiting..."
-                break
-            fi
-
-            isNotice "Waiting for the file to appear..."
-            read -t 1 # Wait for 1 second
-
-            # Increment the counter
-            local rustdesk_counter=$((rustdesk_counter + 1))
-        done
-
-        # Extract the public key from the specified file
-        local public_key=$(cat "$public_key_file")
-        if [[ $compose_setup == "default" ]]; then
-            local compose_file="$containers_dir$app_name/docker-compose.yml"
-        elif [[ $compose_setup == "app" ]]; then
-            local compose_file="$containers_dir$app_name/docker-compose.$app_name.yml"
-        fi
-
-        # Check if the desired public key is already set in the Docker Compose file
-        if sudo grep -q "$public_key" "$compose_file"; then
-            isNotice "Docker Compose file is already set up with the public key."
-        else
-            # Update the Docker Compose file using `sed`
-            result=$(sudo sed -i "s|${host_setup}:${usedport3}|${host_setup}:${usedport3} -k $public_key|" "$compose_file")
-            checkSuccess "Update Docker Compose file with the public key."
-        fi
-
-        dockerComposeRestart $app_name;
 
         ((menu_number++))
         echo ""
@@ -151,16 +112,44 @@ installRustdesk()
         echo ""
         echo "---- $menu_number. You can find $app_name files at $containers_dir$app_name"
         echo ""
-        echo "    You can now navigate to your new service using one of the options below : "
+        isNotice "Your SSH Key(s) are available to download using the link below."
         echo ""
-        echo "    Your Rustdesk Key is : $public_key"
+        echo "    URL : http://$ip_setup/"
+        echo ""
+        isNotice "TIP - Public SSH Keys are stored at /docker/ssh/public/"
+        echo ""
+        while true; do
+            isQuestion "Have you followed the instructions above? (y/n): "
+            read -p "" nginx_instructions
+            if [[ "$nginx_instructions" == 'y' || "$nginx_instructions" == 'Y' ]]; then
+                break
+            else
+                isNotice "Please confirm the setup or provide a valid input."
+            fi
+        done
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Destroying $app_name service as SSH keys have been downloaded."
         echo ""
 
-        menuShowFinalMessages $app_name;
+        dockerUninstallApp $app_name;
+
+		((menu_number++))
+        echo ""
+        echo "---- $menu_number. Outro Message."
+        echo ""
+        isNotice "The service has been destroyed for safety reasons"
+        isNotice "You can reinstall this service at anytime in the System install menu under the sshinstall option."
+        echo ""
+
+        if [[ "$CFG_REQUIREMENT_CONTINUE_PROMPT" == "true" ]]; then
+            read -p "Press Enter to continue."
+        fi
 
 		menu_number=0
         sleep 3s
         cd
     fi
-    rustdesk=n
+    nginx=n
 }
