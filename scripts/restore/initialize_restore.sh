@@ -18,11 +18,11 @@ restoreInitialize()
             migrateEnableConfig;
             backup_save_directory="$backup_single_dir"
             RESTORE_SAVE_DIRECTORY="$restore_single_dir"
-            restoreSingleBackupList $backup_save_directory;
+            restoreSingleBackupList;
         elif [[ "$CFG_REQUIREMENT_MIGRATE" == "true" ]]; then
             backup_save_directory="$backup_single_dir"
             RESTORE_SAVE_DIRECTORY="$restore_single_dir"
-            restoreSingleBackupList $backup_save_directory;
+            restoreSingleBackupList;
         fi
     fi
 }

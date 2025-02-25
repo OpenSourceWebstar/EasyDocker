@@ -2,8 +2,6 @@
 
 restoreSingleBackupList() 
 {
-    local backup_save_directory="$1"
-
     if [[ "$restorefull" == [lL] ]]; then
         local app_list=()
         local backup_list=()
