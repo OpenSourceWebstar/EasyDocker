@@ -4,21 +4,14 @@ dockerStopApp()
 {
     local app_name="$1"
 
-    if [[ "$app_name" != "" ]]; then
-        local container_ids=$(dockerCommandRun "docker ps -aqf \"name=$app_name\"")
-
-        if [[ -n "$container_ids" ]]; then
-            isNotice "Please wait for docker containers to stop"
-
-            # Loop through each container ID to stop
-            for container_id in $container_ids; do
-                local result=$(dockerCommandRun "docker stop $container_id 2>&1")
-                checkSuccess "Stopping docker container $container_id"
-            done
-        else
-            isNotice "No containers found with the name $app_name"
-        fi
-    else
-        isNotice "No app name provided, unable to stop app."
+    if [[ -z "$app_name" ]]; then
+        isNotice "No app name provided. Unable to stop containers."
+        return 1
     fi
+
+    isNotice "Stopping Docker containers for '$app_name'. Please wait..."
+
+    # Stop containers in one go
+    local result=$(dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker stop" >/dev/null 2>&1)
+    checkSuccess "Stopped Docker containers matching '$app_name'"
 }

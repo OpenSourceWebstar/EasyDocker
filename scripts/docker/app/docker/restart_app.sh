@@ -4,21 +4,14 @@ dockerRestartApp()
 {
     local app_name="$1"
 
-    if [[ -n "$app_name" ]]; then
-        local container_ids=$(dockerCommandRun "docker ps -aqf \"name=$app_name\"")
-
-        if [[ -n "$container_ids" ]]; then
-            isNotice "Please wait for docker containers to restart"
-
-            # Loop through each container ID to restart
-            for container_id in $container_ids; do
-                local result=$(dockerCommandRun 'docker restart $container_id 2>&1')
-                checkSuccess "Restarting docker container $container_id"
-            done
-        else
-            isNotice "No containers found with the name $app_name"
-        fi
-    else
-        isNotice "No app name provided, unable to restart app."
+    if [[ -z "$app_name" ]]; then
+        isNotice "No app name provided. Unable to restart containers."
+        return 1
     fi
+
+    isNotice "Restarting Docker containers for '$app_name'. Please wait..."
+
+    # Restart containers in one go
+    local result=$(dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker restart" >/dev/null 2>&1)
+    checkSuccess "Restarted Docker containers matching '$app_name'"
 }
