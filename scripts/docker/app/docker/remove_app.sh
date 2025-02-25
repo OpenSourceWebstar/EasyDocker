@@ -12,9 +12,9 @@ dockerRemoveApp()
     isNotice "Stopping and removing Docker containers for '$app_name'. Please wait..."
 
     # Stop and remove containers in one go
-    dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker stop" >/dev/null 2>&1
+    local result=$(dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker stop" >/dev/null 2>&1)
     checkSuccess "Stopped Docker containers matching '$app_name'"
 
-    dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker rm" >/dev/null 2>&1
+    local result=$(dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker rm" >/dev/null 2>&1)
     checkSuccess "Removed Docker containers matching '$app_name'"
 }
