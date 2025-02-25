@@ -1,14 +1,11 @@
 #!/bin/bash
 
-dockerStopAllApps()
+dockerStopAllApps() 
 {
-    local type="$1"
+    isNotice "Stopping all running Docker containers. Please wait..."
 
-    isNotice "Please wait for docker containers to stop"
-    
-    local result=$(dockerCommandRun "docker ps -q 2>/dev/null")
-    if [[ -n "$result" ]]; then
-        local result=$(dockerCommandRun "docker stop $(docker ps -a -q)")
-        checkSuccess "Stopping all docker containers (Rootless if installed)"
-    fi
+    # Stop all running containers using a single pipeline
+    dockerCommandRun "docker ps -q | xargs -r docker stop" >/dev/null 2>&1
+
+    checkSuccess "Stopped all running Docker containers."
 }
