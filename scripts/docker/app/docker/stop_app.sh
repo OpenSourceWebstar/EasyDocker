@@ -12,6 +12,7 @@ dockerStopApp()
     isNotice "Stopping Docker containers for '$app_name'. Please wait..."
 
     # Stop containers in one go
-    local result=$(dockerCommandRun "docker ps -aqf name=$app_name | xargs -r docker stop" >/dev/null 2>&1)
+    local result=$(dockerCommandRun "docker ps -aq --filter \"name=$app_name\" | xargs -r docker stop" >/dev/null 2>&1)
     checkSuccess "Stopped Docker containers matching '$app_name'"
+
 }
