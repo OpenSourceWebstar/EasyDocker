@@ -38,7 +38,7 @@ backupStart()
     if [ "$stored_app_name" == "full" ]; then
         dockerStopAllApps;
     else
-        dockerStopApp $stored_app_name;
+        dockerComposeDown $stored_app_name;
     fi
 
 	((menu_number++))
