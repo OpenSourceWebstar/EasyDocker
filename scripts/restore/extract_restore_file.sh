@@ -29,8 +29,7 @@ restoreExtractFile()
         local success_message_posted=false
 
         while [[ "$decryption_success" != "false" ]]; do
-            # Use pv with the file size for progress monitoring
-            local result=$(sudo unzip -o -P "$passphrase" -d "$unzip_path" 2>&1)
+            local result=$(sudo unzip -o -P "$passphrase" "$chosen_backup_file" -d "$unzip_path" 2>&1)
 
             if [[ $result == *"incorrect password"* ]]; then
                 if [[ $success_message_posted == "false" ]]; then
@@ -40,7 +39,7 @@ restoreExtractFile()
                     local success_message_posted=true
                 fi
                 decryption_success=false
-                break  # Break on failure due to incorrect password
+                break  # Successful unzip
             fi
             
             if [[ $result == *"inflating"* ]]; then
@@ -52,6 +51,7 @@ restoreExtractFile()
                 break  # Successful unzip
             fi
         done
+
     }
 
     # Function to prompt for passphrase
