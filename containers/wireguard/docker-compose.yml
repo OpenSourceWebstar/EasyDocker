@@ -21,7 +21,7 @@ services:
       - WG_POST_UP=iptables -w -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
       - WG_POST_DOWN=iptables -w -t nat -D POSTROUTING -o eth0 -j MASQUERADE; ; iptables -t mangle -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
       - WG_ALLOWED_IPS=0.0.0.0/0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-    image: weejewel/wg-easy
+    image: ghcr.io/wg-easy/wg-easy
     container_name: wireguard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
