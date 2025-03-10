@@ -41,7 +41,7 @@ scanFileForRandomPassword()
                 fi
                 
                 escaped_bcrypt_password=$(echo "${bcrypt_passwords[$i]}" | sed 's/[\/&]/\\&/g')
-                sudo sed -i -E "s/${placeholder}/\"${escaped_bcrypt_password}\"/g" "$file"
+                sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file"
                 isSuccessful "Updated ${placeholder} with Bcrypt in $(basename "$file")."
             fi
         done
@@ -51,7 +51,7 @@ scanFileForRandomPassword()
         if sudo grep -q "$placeholder" "$file"; then
             local bcrypt_password=$(generateRandomPassword | hashPassword)
             escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
-            sudo sed -i -E "s/${placeholder}/\"${escaped_bcrypt_password}\"/g" "$file"
+            sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file"
             isSuccessful "Updated ${placeholder} with Bcrypt in $(basename "$file")."
         fi
     fi
