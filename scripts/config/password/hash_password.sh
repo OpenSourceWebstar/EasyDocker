@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Function to hash a password using bcrypt
-hashPassword() {
+hashPassword() 
+{
     local password
     read -r password
-    echo -n "$password" | openssl passwd -6 -stdin
+    htpasswd -bnBC 10 "" "$password" | tr -d ':\n'
 }
