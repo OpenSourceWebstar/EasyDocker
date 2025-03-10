@@ -14,7 +14,7 @@ scanFileForRandomPassword() {
                 if sudo grep -q "${placeholder} --bcrypt" "$file"; then
                     passwords[$i]=$(generateRandomPassword | hashPassword)
                     sudo sed -i "s/${placeholder} --bcrypt/${passwords[$i]}/g" "$file"
-                    isSuccessful "Updated ${placeholder} with Bcrypt in $(basename "$file")."
+                    isSuccessful "Updated ${placeholder} with Bcrypt and removed --bcrypt in $(basename "$file")."
                 else
                     if [ -z "${passwords[$i]}" ]; then
                         passwords[$i]=$(generateRandomPassword)
@@ -31,7 +31,7 @@ scanFileForRandomPassword() {
             if sudo grep -q "${placeholder} --bcrypt" "$file"; then
                 local random_password=$(generateRandomPassword | hashPassword)
                 sudo sed -i "s/${placeholder} --bcrypt/${random_password}/g" "$file"
-                isSuccessful "Updated ${placeholder} with Bcrypt in $(basename "$file")."
+                isSuccessful "Updated ${placeholder} with Bcrypt and removed --bcrypt in $(basename "$file")."
             else
                 local random_password=$(generateRandomPassword)
                 sudo sed -i "s/${placeholder}/${random_password}/g" "$file"
