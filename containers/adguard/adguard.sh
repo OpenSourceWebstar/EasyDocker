@@ -124,6 +124,12 @@ installAdguard()
         result=$(sudo sed -i "s/port: 443/port:${usedport4}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Changing port 443 to $usedport4 for DNS Port"
 
+        result=$(sudo sed -i "s/port_dns_over_tls: 853/port_dns_over_tls: ${usedport5}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Changing port 853 to $usedport5 for port_dns_over_tls"
+
+        result=$(sudo sed -i "s/port_dns_over_quic: 853/port_dns_over_quic: ${usedport5}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Changing port 853 to $usedport5 for port_dns_over_quic"
+
         # Find the line number containing "tls:"
         local tls_line_number=$(sudo awk '/tls:/ {print NR; exit}' "$containers_dir$app_name/conf/AdGuardHome.yaml")
         # Check if "tls:" was found

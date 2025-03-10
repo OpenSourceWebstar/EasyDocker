@@ -21,13 +21,13 @@ services:
     restart: unless-stopped
     hostname: adguard
     ports:
-      #- 53:53/tcp
-      #- 53:53/udp
+      - PORT3:53/tcp
+      - PORT3:53/udp
       #- 3784:784/udp
-      #- 853:853/tcp
+      - PORT5:853/tcp
       - PORT1:3000/tcp # Setup
       - PORT2:80/tcp # Admin
-      #- 3443:443/tcp
+      - PORT4:443/tcp
     #labels:
       #traefik.enable: true
       #traefik.http.routers.adguard-admin.entrypoints: web,websecure
