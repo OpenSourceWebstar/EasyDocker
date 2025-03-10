@@ -9,7 +9,7 @@ scanFileForRandomPassword()
     local bcrypt_passwords=()
     
     if [ -f "$file" ]; then
-        # First, handle placeholders RANDOMIZEDPASSWORD1 to RANDOMIZEDPASSWORD9
+        # Handle RANDOMIZEDPASSWORD1 to RANDOMIZEDPASSWORD9
         for i in {1..9}; do
             local placeholder="RANDOMIZEDPASSWORD${i}"
             
@@ -23,7 +23,7 @@ scanFileForRandomPassword()
             fi
         done
 
-        # Next, handle the generic placeholder RANDOMIZEDPASSWORD
+        # Handle generic RANDOMIZEDPASSWORD
         local placeholder="RANDOMIZEDPASSWORD"
         if sudo grep -q "$placeholder" "$file"; then
             local random_password=$(generateRandomPassword)
@@ -31,7 +31,7 @@ scanFileForRandomPassword()
             isSuccessful "Updated ${placeholder} in $(basename "$file") with a new password."
         fi
 
-        # Now, handle RANDOMIZEDBCRYPTPASSWORD1 to RANDOMIZEDBCRYPTPASSWORD9
+        # Handle RANDOMIZEDBCRYPTPASSWORD1 to RANDOMIZEDBCRYPTPASSWORD9
         for i in {1..9}; do
             local placeholder="RANDOMIZEDBCRYPTPASSWORD${i}"
             
@@ -40,16 +40,18 @@ scanFileForRandomPassword()
                     bcrypt_passwords[$i]=$(generateRandomPassword | hashPassword)
                 fi
                 
-                sudo sed -i -E "s/${placeholder}/\"$(echo "${bcrypt_passwords[$i]}" | sed 's/["]/\\"/g')\"/g" "$file"
+                escaped_bcrypt_password=$(echo "${bcrypt_passwords[$i]}" | sed 's/[\/&]/\\&/g')
+                sudo sed -i -E "s/${placeholder}/\"${escaped_bcrypt_password}\"/g" "$file"
                 isSuccessful "Updated ${placeholder} with Bcrypt in $(basename "$file")."
             fi
         done
 
-        # Finally, handle the generic placeholder RANDOMIZEDBCRYPTPASSWORD
+        # Handle generic RANDOMIZEDBCRYPTPASSWORD
         local placeholder="RANDOMIZEDBCRYPTPASSWORD"
         if sudo grep -q "$placeholder" "$file"; then
             local bcrypt_password=$(generateRandomPassword | hashPassword)
-            sudo sed -i -E "s/${placeholder}/\"$(echo "${bcrypt_password}" | sed 's/["]/\\"/g')\"/g" "$file"
+            escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
+            sudo sed -i -E "s/${placeholder}/\"${escaped_bcrypt_password}\"/g" "$file"
             isSuccessful "Updated ${placeholder} with Bcrypt in $(basename "$file")."
         fi
     fi
