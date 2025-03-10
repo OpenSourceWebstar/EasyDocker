@@ -118,8 +118,14 @@ installAdguard()
         result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
 
+        result=$(sudo sed -i "s/port: 53/port:${usedport3}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Changing port 53 to $usedport3 for DNS Port"
+
+        result=$(sudo sed -i "s/port: 443/port:${usedport4}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        checkSuccess "Changing port 443 to $usedport4 for DNS Port"
+
         # Find the line number containing "tls:"
-        local tls_line_number=$(awk '/tls:/ {print NR; exit}' "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        local tls_line_number=$(sudo awk '/tls:/ {print NR; exit}' "$containers_dir$app_name/conf/AdGuardHome.yaml")
         # Check if "tls:" was found
         if [ -n "$tls_line_number" ]; then
             # Replace the next two lines
@@ -128,8 +134,10 @@ installAdguard()
         fi
         checkSuccess "Enabling tls config options for encrypted DNS"
 
-        result=$(sudo sed -i "s|allow_unencrypted_doh: false|allow_unencrypted_doh: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-        checkSuccess "Setting allow_unencrypted_doh to false for Traefik"
+        if [[ $public == "true" ]]; then
+            result=$(sudo sed -i "s|allow_unencrypted_doh: false|allow_unencrypted_doh: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+            checkSuccess "Setting allow_unencrypted_doh to false for Traefik"
+        fi
 
         result=$(sudo sed -i "s|anonymize_client_ip: false: false|anonymize_client_ip: true|g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
         checkSuccess "Setting anonymize_client_ip to true for privacy reasons"
