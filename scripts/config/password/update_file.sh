@@ -10,11 +10,10 @@ scanFileForRandomPassword() {
             local placeholder="RANDOMIZEDPASSWORD${i}"
 
             if sudo grep -q "$placeholder" "$file"; then
-                # Check if the placeholder has --bcrypt after it
-                if sudo grep -q "${placeholder} --bcrypt" "$file"; then
+                if sudo grep -q "${placeholder}[[:space:]]+--bcrypt" "$file"; then
                     passwords[$i]=$(generateRandomPassword | hashPassword)
-                    sudo sed -i "s/${placeholder} --bcrypt/${passwords[$i]}/g" "$file"
-                    isSuccessful "Updated ${placeholder} with Bcrypt and removed --bcrypt in $(basename "$file")."
+                    sudo sed -i -E "s/${placeholder}[[:space:]]+--bcrypt/${passwords[$i]}/g" "$file"
+                    isSuccessful "Updated ${placeholder} with Bcrypt and removed marker in $(basename "$file")."
                 else
                     if [ -z "${passwords[$i]}" ]; then
                         passwords[$i]=$(generateRandomPassword)
@@ -28,10 +27,10 @@ scanFileForRandomPassword() {
         # Handle the generic placeholder RANDOMIZEDPASSWORD
         local placeholder="RANDOMIZEDPASSWORD"
         if sudo grep -q "$placeholder" "$file"; then
-            if sudo grep -q "${placeholder} --bcrypt" "$file"; then
+            if sudo grep -q "${placeholder}[[:space:]]+--bcrypt" "$file"; then
                 local random_password=$(generateRandomPassword | hashPassword)
-                sudo sed -i "s/${placeholder} --bcrypt/${random_password}/g" "$file"
-                isSuccessful "Updated ${placeholder} with Bcrypt and removed --bcrypt in $(basename "$file")."
+                sudo sed -i -E "s/${placeholder}[[:space:]]+--bcrypt/${random_password}/g" "$file"
+                isSuccessful "Updated ${placeholder} with Bcrypt and removed marker in $(basename "$file")."
             else
                 local random_password=$(generateRandomPassword)
                 sudo sed -i "s/${placeholder}/${random_password}/g" "$file"
