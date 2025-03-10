@@ -17,11 +17,19 @@ portOpen()
                     local result=$(sudo ufw allow "$port/$type")
                     checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
+                    if [[ $CFG_REQUIREMENT_UFW == "true" ]]; then
                     local result=$(sudo ufw allow "$port/$type")
-                    checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
+                        checkSuccess "Opening port $port and type $type for $app_name in the UFW Firewall"
+                    else
+                        isNotice "No need to open UFW port as UFW is disabled, skipping..."
+                    fi
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-                    isSuccessful "Adding port $port/$type to be opened in the UFW-Docker Firewall after install."
-                    portOpenUfwd "$app_name" "$port" "$type"
+                    if [[ $CFG_REQUIREMENT_UFWD == "true" ]]; then
+                        isSuccessful "Adding port $port/$type to be opened in the UFW-Docker Firewall after install."
+                        portOpenUfwd "$app_name" "$port" "$type"
+                    else
+                        isNotice "No need to open UFWD as not enabled, skipping..."
+                    fi
                 fi
             fi
         fi

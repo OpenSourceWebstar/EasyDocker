@@ -16,14 +16,26 @@ portClose()
             if [[ $disallow_open_port == "false" ]]; then
                 databasePortOpenDelete "$app_name" "$portdata"
                 if [[ $app_name == "standalonewireguard" ]]; then
-                    local result=$(sudo ufw delete allow "$port/$type")
-                    checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
+                    if [[ $CFG_REQUIREMENT_UFW == "true" ]]; then
+                        local result=$(sudo ufw delete allow "$port/$type")
+                        checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
+                    else
+                        isNotice "UFW is not enabled, skipping..."
+                    fi
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
-                    local result=$(sudo ufw delete allow "$port/$type")
+                    if [[ $CFG_REQUIREMENT_UFW == "true" ]]; then
+                        local result=$(sudo ufw delete allow "$port/$type")
+                    else
+                        isNotice "UFW is not enabled, skipping..."
+                    fi
                     checkSuccess "Closing port $port and type $type for $app_name in the UFW Firewall"
                 elif [[ $CFG_DOCKER_INSTALL_TYPE == "rooted" ]]; then
-                    local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type" > /dev/null 2>&1)
-                    checkSuccess "Closing port $port and type $type for $app_name in the UFW-Docker Firewall"
+                    if [[ $CFG_REQUIREMENT_UFWD == "true" ]]; then
+                        local result=$(sudo ufw-docker delete allow "$app_name" "$port/$type" > /dev/null 2>&1)
+                        checkSuccess "Closing port $port and type $type for $app_name in the UFW-Docker Firewall"
+                    else
+                        isNotice "UFW-Docker is not enabled, skipping..."
+                    fi
                 fi
             fi
         fi
