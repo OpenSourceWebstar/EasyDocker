@@ -162,7 +162,7 @@ installWireguard()
         elif [[ $compose_setup == "app" ]]; then
             local compose_file="docker-compose.$app_name.yml"
         fi
-        local wireguard_admin_password=$(awk -F'=' '/PASSWORD/ {print $2}' $containers_dir$app_name/$compose_file)
+
         echo ""
         echo "    A WireGuard user must now be created to allow access into the system"
         echo "    Port $usedport2 has been opened publically to allow you to create a user : "
@@ -172,7 +172,7 @@ installWireguard()
         echo "    It may take 10+ seconds to load the panel, please be patient"
         echo ""
         echo "    URL : http://$public_ip_v4:$usedport2/"
-        echo "    PASS : $wireguard_admin_password"
+        echo "    PASS : $password"
         echo ""
 
         while true; do
