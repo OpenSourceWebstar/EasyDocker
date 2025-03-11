@@ -56,9 +56,9 @@ scanFileForRandomPassword()
 
                     local bcrypt_password
                     bcrypt_password=$(echo "$raw_password" | hashPassword)
-                    escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
+                    #escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
 
-                    local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
+                    local result=$(sudo sed -i -E "s/${placeholder}/'${bcrypt_password}'/g" "$file")
                     checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
                 fi
             fi
@@ -83,9 +83,9 @@ scanFileForRandomPassword()
 
                 local bcrypt_password
                 bcrypt_password=$(echo "$raw_password" | hashPassword)
-                escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
+                #escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
 
-                local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
+                local result=$(sudo sed -i -E "s/${placeholder}/'${bcrypt_password}'/g" "$file")
                 checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
             fi
         fi
