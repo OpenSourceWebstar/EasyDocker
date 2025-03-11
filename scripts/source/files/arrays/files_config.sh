@@ -17,10 +17,13 @@ config_scripts=(
 
     "config/password/generate_random_password.sh"
     "config/password/export_bcrypt_password.sh"
-    "config/password/retreive_bcrypt_password.sh"
     "config/password/hash_password.sh"
+    "config/password/process_bcrypt_password.sh"
+    "config/password/replace_bcrypt_passwords.sh"
+    "config/password/replace_plain_passwords.sh"
+    "config/password/retreive_bcrypt_password.sh"
+    "config/password/scan_file_for_random_pass.sh"
     "config/password/update_all.sh"
-    "config/password/update_file.sh"
 
     "config/check_configs.sh"
     "config/main_menu.sh"
