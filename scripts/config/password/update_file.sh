@@ -50,15 +50,15 @@ scanFileForRandomPassword()
                     raw_password=$(getStoredPassword "$app_name" "$variable_name")
 
                     if [ -z "$raw_password" ]; then
-                        raw_password=$(generateRandomPassword)  # Generate unencrypted password
+                        raw_password=$(generateRandomPassword)
                         exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
                     fi
 
                     local bcrypt_password
                     bcrypt_password=$(echo "$raw_password" | hashPassword)
-                    escaped_bcrypt_password=$(echo "$bcrypt_password" | sed -E 's/\$/\$\$/g')  # Properly escape $
+                    local escaped_bcrypt_password=$(echo "$bcrypt_password" | sed -E 's/\$/\$\$/g')
 
-                    local result=$(sudo sed -i -E "s/${placeholder}/${escaped_bcrypt_password}/g" "$file")
+                    local result=$(sudo sed -i -E "s#${placeholder}#${escaped_bcrypt_password}#g" "$file")
                     checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
                 fi
             fi
@@ -83,9 +83,9 @@ scanFileForRandomPassword()
 
                 local bcrypt_password
                 bcrypt_password=$(echo "$raw_password" | hashPassword)
-                escaped_bcrypt_password=$(echo "$bcrypt_password" | sed -E 's/\$/\$\$/g')  # Properly escape $
+                local escaped_bcrypt_password=$(echo "$bcrypt_password" | sed -E 's/\$/\$\$/g')
 
-                local result=$(sudo sed -i -E "s/${placeholder}/${escaped_bcrypt_password}/g" "$file")
+                local result=$(sudo sed -i -E "s#${placeholder}#${escaped_bcrypt_password}#g" "$file")
                 checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
             fi
         fi
