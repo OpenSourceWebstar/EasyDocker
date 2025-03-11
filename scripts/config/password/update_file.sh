@@ -54,12 +54,21 @@ scanFileForRandomPassword()
                         exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
                     fi
 
+                    # Generate bcrypt hash
                     local bcrypt_password
                     bcrypt_password=$(echo "$raw_password" | hashPassword)
 
-                    # Use bcrypt_password **directly** without extra escaping
+                    # Verify the hash isn't empty
+                    if [ -z "$bcrypt_password" ]; then
+                        isError "Failed to generate bcrypt hash for $variable_name."
+                        return 1
+                    fi
+
+                    # Update the placeholder with the generated bcrypt hash
                     local result=$(sudo sed -i -E "s/${placeholder}/${bcrypt_password}/g" "$file")
                     checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
+                else
+                    isError "Could not extract variable name before $placeholder."
                 fi
             fi
         done
@@ -81,12 +90,21 @@ scanFileForRandomPassword()
                     exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
                 fi
 
+                # Generate bcrypt hash
                 local bcrypt_password
                 bcrypt_password=$(echo "$raw_password" | hashPassword)
 
-                # Use bcrypt_password **directly** without extra escaping
+                # Verify the hash isn't empty
+                if [ -z "$bcrypt_password" ]; then
+                    isError "Failed to generate bcrypt hash for $variable_name."
+                    return 1
+                fi
+
+                # Update the placeholder with the generated bcrypt hash
                 local result=$(sudo sed -i -E "s/${placeholder}/${bcrypt_password}/g" "$file")
                 checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
+            else
+                isError "Could not extract variable name before $placeholder."
             fi
         fi
     fi
