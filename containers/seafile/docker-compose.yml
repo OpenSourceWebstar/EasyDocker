@@ -1,0 +1,61 @@
+networks:
+  vpn:
+    external: true
+
+services:
+  seafile:
+    image: seafileltd/seafile-mc:12.0-latest
+    container_name: seafile
+    ports:
+      - "PORT1:80"
+#     - "443:443"  # If https is enabled, cancel the comment.
+    volumes:
+      - ./seafile-data:/shared   # Requested, specifies the path to Seafile data persistent store.
+    environment:
+      - DB_HOST=seafile-mysql
+      - DB_ROOT_PASSWD=RANDOMIZEDPASSWORD1  # Requested, the value should be root's password of MySQL service.
+      - TIME_ZONE=TIMEZONEHERE  # Optional, default is UTC. Should be uncommented and set to your local time zone.
+      - SEAFILE_ADMIN_EMAIL=EMAILHERE # Specifies Seafile admin user, default is 'me@example.com'.
+      - SEAFILE_ADMIN_PASSWORD=RANDOMIZEDPASSWORD2     # Specifies Seafile admin password, default is 'asecret'.
+      - SEAFILE_SERVER_LETSENCRYPT=false   # Whether to use https or not.
+      - SEAFILE_SERVER_HOSTNAME=DOMAINSUBNAMEHERE # Specifies your host name if https is enabled.
+      - JWT_PRIVATE_KEY=RANDOMIZEDPASSWORD3
+      - CSRF_TRUSTED_ORIGINS=https://DOMAINSUBNAMEHERE
+      - ALLOWED_HOSTS=DOMAINSUBNAMEHERE
+      - SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO', 'https')
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.seafile.entrypoints: web,websecure
+      #traefik.http.routers.seafile.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.seafile.tls: true
+      #traefik.http.routers.seafile.tls.certresolver: production
+      #traefik.http.routers.seafile.middlewares:
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
+    depends_on:
+      - seafile-mysql
+      - seafile-memcached
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE
+
+  seafile-mysql:
+    image: mariadb:10.11
+    container_name: seafile-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=RANDOMIZEDPASSWORD1  # Requested, set the root's password of MySQL service.
+      - MYSQL_LOG_CONSOLE=true
+      - MARIADB_AUTO_UPGRADE=1
+    volumes:
+      - ./seafile-mysql/db:/var/lib/mysql  # Requested, specifies the path to MySQL data persistent store.
+    networks:
+      vpn:
+         ipv4_address: 10.8.1.132
+
+  seafile-memcached:
+    image: memcached:1.6.18
+    container_name: seafile-memcached
+    entrypoint: memcached -m 256 -p PORT2
+    networks:
+      vpn:
+         ipv4_address: 10.8.1.133
