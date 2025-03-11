@@ -56,9 +56,9 @@ scanFileForRandomPassword()
 
                     local bcrypt_password
                     bcrypt_password=$(echo "$raw_password" | hashPassword)
-                    escaped_bcrypt_password=$(echo "${bcrypt_passwords[$i]}" | sed -E 's/\$/\$\$/g')
+                    escaped_bcrypt_password=$(echo "$bcrypt_password" | sed -E 's/\$/\$\$/g')  # Properly escape $
 
-                    local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
+                    local result=$(sudo sed -i -E "s/${placeholder}/${escaped_bcrypt_password}/g" "$file")
                     checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
                 fi
             fi
@@ -69,7 +69,7 @@ scanFileForRandomPassword()
         if sudo grep -q "$placeholder" "$file"; then
             # Extract the variable name before the placeholder
             local variable_name
-            variable_name=$(grep -E "^[^#]*$placeholder" "$file" | sed -E "s/.*([A-Za-z_][A-Za-z0-9_]*)=[^=]*$placeholder.*/\1/" | head -n 1)
+            variable_name=$(sudo awk -F= '/'"$placeholder"'/ { gsub(/^[ \t-]+/, "", $1); print $1; exit }' "$file")
 
             if [ -n "$variable_name" ]; then
                 # Check if there's an existing password
@@ -83,9 +83,9 @@ scanFileForRandomPassword()
 
                 local bcrypt_password
                 bcrypt_password=$(echo "$raw_password" | hashPassword)
-                escaped_bcrypt_password=$(echo "${bcrypt_passwords[$i]}" | sed -E 's/\$/\$\$/g')
+                escaped_bcrypt_password=$(echo "$bcrypt_password" | sed -E 's/\$/\$\$/g')  # Properly escape $
 
-                local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
+                local result=$(sudo sed -i -E "s/${placeholder}/${escaped_bcrypt_password}/g" "$file")
                 checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
             fi
         fi
