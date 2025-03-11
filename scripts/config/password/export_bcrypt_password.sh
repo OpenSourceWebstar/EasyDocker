@@ -2,24 +2,34 @@
 
 exportBcryptPassword() 
 {
-	if [[ $CFG_REQUIREMENT_BCRYPT_SAVE == "true" ]]; then
+    if [[ $CFG_REQUIREMENT_BCRYPT_SAVE == "true" ]]; then
         local app_name="$1"
         local placeholder="$2"
         local raw_password="$3"
+        local file="$4"  # File where the placeholder was found
         local log_file="$containers_dir/bcrypt.txt"
 
+        # Ensure log file exists
         if [ ! -f "$log_file" ]; then
             local result=$(sudo touch "$log_file")
             checkSuccess "Created bcrypt.txt file."
 
-            local result=$(sudo chmod 600 "$log_file") 
-            checkSuccess "Adjust bcrypt.txt file permissions"
+            local result=$(sudo chmod 600 "$log_file")
+            checkSuccess "Adjusted bcrypt.txt file permissions."
         fi
 
-        local result=$(sudo sed -i "/^$app_name $placeholder /d" "$log_file")
-        checkSuccess "Remove existing entry for the same app & placeholder"
+        # Extract the real variable name (e.g., PASSWORD_HASH) before the placeholder
+        local variable_name
+        variable_name=$(grep -E "^[^#]*$placeholder" "$file" | sed -E "s/(.*)([A-Za-z_][A-Za-z0-9_]*)=.*$placeholder.*/\2/" | head -n 1)
 
-        local result=$(echo "$app_name $placeholder $raw_password" | sudo tee -a "$log_file" > /dev/null)
-        checkSuccess "Log unencrypted password before hashing"
+        if [ -n "$variable_name" ]; then
+            local result=$(sudo sed -i "/^$app_name $variable_name /d" "$log_file")
+            checkSuccess "Removed existing entry for $app_name $variable_name from bcrypt.txt."
+
+            local result=$(echo "$app_name $variable_name $raw_password" | sudo tee -a "$log_file" > /dev/null)
+            checkSuccess "Logged $app_name $variable_name in bcrypt.txt."
+        else
+            checkSuccess "Could not extract a variable name before $placeholder in $file."
+        fi
     fi
 }

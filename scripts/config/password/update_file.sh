@@ -40,35 +40,54 @@ scanFileForRandomPassword()
             local placeholder="RANDOMIZEDBCRYPTPASSWORD${i}"
             
             if sudo grep -q "$placeholder" "$file"; then
-                if [ -z "${bcrypt_passwords[$i]}" ]; then
-                    local raw_password
-                    raw_password=$(generateRandomPassword)  # Generate unencrypted password
-                    bcrypt_passwords[$i]=$(echo "$raw_password" | hashPassword)  # Encrypt password
+                # Extract the variable name before the placeholder (e.g., PASSWORD_HASH)
+                local variable_name
+                variable_name=$(grep -E "^[^#]*$placeholder" "$file" | sed -E "s/.*([A-Za-z_][A-Za-z0-9_]*)=[^=]*$placeholder.*/\1/" | head -n 1)
 
-                    # Export unencrypted password before hashing
-                    exportBcryptPassword "$app_name" "$placeholder" "$raw_password"
+                if [ -n "$variable_name" ]; then
+                    # Check if there's an existing password for this app & variable
+                    local raw_password
+                    raw_password=$(getStoredPassword "$app_name" "$variable_name")
+
+                    if [ -z "$raw_password" ]; then
+                        raw_password=$(generateRandomPassword)  # Generate unencrypted password
+                        exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
+                    fi
+
+                    local bcrypt_password
+                    bcrypt_password=$(echo "$raw_password" | hashPassword)
+                    escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
+
+                    local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
+                    checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
                 fi
-                
-                escaped_bcrypt_password=$(echo "${bcrypt_passwords[$i]}" | sed 's/[\/&]/\\&/g')
-                local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
-                checkSuccess "Updated ${placeholder} with Bcrypt in $(basename "$file")."
             fi
         done
 
         # Handle generic RANDOMIZEDBCRYPTPASSWORD
         local placeholder="RANDOMIZEDBCRYPTPASSWORD"
         if sudo grep -q "$placeholder" "$file"; then
-            local raw_password
-            raw_password=$(generateRandomPassword)
-            local bcrypt_password
-            bcrypt_password=$(echo "$raw_password" | hashPassword)
+            # Extract the variable name before the placeholder
+            local variable_name
+            variable_name=$(grep -E "^[^#]*$placeholder" "$file" | sed -E "s/.*([A-Za-z_][A-Za-z0-9_]*)=[^=]*$placeholder.*/\1/" | head -n 1)
 
-            # Export unencrypted password before hashing
-            exportBcryptPassword "$app_name" "$placeholder" "$raw_password"
+            if [ -n "$variable_name" ]; then
+                # Check if there's an existing password
+                local raw_password
+                raw_password=$(getStoredPassword "$app_name" "$variable_name")
 
-            escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
-            local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
-            checkSuccess "Updated ${placeholder} with Bcrypt in $(basename "$file")."
+                if [ -z "$raw_password" ]; then
+                    raw_password=$(generateRandomPassword)
+                    exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
+                fi
+
+                local bcrypt_password
+                bcrypt_password=$(echo "$raw_password" | hashPassword)
+                escaped_bcrypt_password=$(echo "${bcrypt_password}" | sed 's/[\/&]/\\&/g')
+
+                local result=$(sudo sed -i -E "s/${placeholder}/'${escaped_bcrypt_password}'/g" "$file")
+                checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
+            fi
         fi
     fi
 }
