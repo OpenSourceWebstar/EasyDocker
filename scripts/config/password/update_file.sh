@@ -54,7 +54,13 @@ scanFileForRandomPassword()
 
                     # Generate bcrypt hash
                     local bcrypt_password
-                    bcrypt_password=$(echo "$raw_password" | hashPassword)
+                    bcrypt_password=$(hashPassword "$raw_password")
+
+                    # Verify the hash isn't empty
+                    if [ -z "$bcrypt_password" ]; then
+                        isError "Failed to generate bcrypt hash for $variable_name. Raw password: '$raw_password'"
+                        return 1
+                    fi
 
                     # Verify the hash isn't empty
                     if [ -z "$bcrypt_password" ]; then
@@ -88,7 +94,7 @@ scanFileForRandomPassword()
 
                 # Generate bcrypt hash
                 local bcrypt_password
-                bcrypt_password=$(echo "$raw_password" | hashPassword)
+                bcrypt_password=$(hashPassword "$raw_password")
 
                 # Verify the hash isn't empty
                 if [ -z "$bcrypt_password" ]; then
