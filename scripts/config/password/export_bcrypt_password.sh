@@ -20,7 +20,7 @@ exportBcryptPassword()
 
         # Extract the real variable name (e.g., PASSWORD_HASH) before the placeholder
         local variable_name
-        variable_name=$(grep -E "^[^#]*$placeholder" "$file" | sed -E "s/(.*)([A-Za-z_][A-Za-z0-9_]*)=.*$placeholder.*/\2/" | head -n 1)
+        variable_name=$(sudo grep -E "^[^#]*$placeholder" "$file" | sed -E "s/(.*)([A-Za-z_][A-Za-z0-9_]*)=.*$placeholder.*/\2/" | head -n 1)
 
         if [ -n "$variable_name" ]; then
             local result=$(sudo sed -i "/^$app_name $variable_name /d" "$log_file")
