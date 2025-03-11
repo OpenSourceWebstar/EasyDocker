@@ -40,17 +40,15 @@ scanFileForRandomPassword()
             local placeholder="RANDOMIZEDBCRYPTPASSWORD${i}"
             
             if sudo grep -q "$placeholder" "$file"; then
-                # Extract the variable name before the placeholder (e.g., PASSWORD_HASH)
                 local variable_name
                 variable_name=$(sudo awk -F= '/'"$placeholder"'/ { gsub(/^[ \t-]+/, "", $1); print $1; exit }' "$file")
 
                 if [ -n "$variable_name" ]; then
-                    # Check if there's an existing password for this app & variable
                     local raw_password
                     raw_password=$(getStoredPassword "$app_name" "$variable_name")
 
                     if [ -z "$raw_password" ]; then
-                        raw_password=$(generateRandomPassword)  # Generate unencrypted password
+                        raw_password=$(generateRandomPassword)
                         exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
                     fi
 
@@ -64,7 +62,7 @@ scanFileForRandomPassword()
                         return 1
                     fi
 
-                    # Update the placeholder with the generated bcrypt hash
+                    # Use bcrypt_password directly (DO NOT escape again)
                     local result=$(sudo sed -i -E "s/${placeholder}/${bcrypt_password}/g" "$file")
                     checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
                 else
@@ -76,12 +74,10 @@ scanFileForRandomPassword()
         # Handle generic RANDOMIZEDBCRYPTPASSWORD
         local placeholder="RANDOMIZEDBCRYPTPASSWORD"
         if sudo grep -q "$placeholder" "$file"; then
-            # Extract the variable name before the placeholder
             local variable_name
             variable_name=$(sudo awk -F= '/'"$placeholder"'/ { gsub(/^[ \t-]+/, "", $1); print $1; exit }' "$file")
 
             if [ -n "$variable_name" ]; then
-                # Check if there's an existing password
                 local raw_password
                 raw_password=$(getStoredPassword "$app_name" "$variable_name")
 
@@ -100,7 +96,7 @@ scanFileForRandomPassword()
                     return 1
                 fi
 
-                # Update the placeholder with the generated bcrypt hash
+                # Use bcrypt_password directly (DO NOT escape again)
                 local result=$(sudo sed -i -E "s/${placeholder}/${bcrypt_password}/g" "$file")
                 checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
             else
