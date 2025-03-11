@@ -172,7 +172,7 @@ installWireguard()
         echo "    It may take 10+ seconds to load the panel, please be patient"
         echo ""
         echo "    URL : http://$public_ip_v4:$usedport2/"
-        echo "    PASS : $password"
+        echo "    PASS : $(getStoredPassword "$app_name" "PASSWORD_HASH")"
         echo ""
 
         while true; do
