@@ -42,7 +42,7 @@ scanFileForRandomPassword()
             if sudo grep -q "$placeholder" "$file"; then
                 # Extract the variable name before the placeholder (e.g., PASSWORD_HASH)
                 local variable_name
-                variable_name=$(grep -E "^[^#]*$placeholder" "$file" | sed -E "s/.*([A-Za-z_][A-Za-z0-9_]*)=[^=]*$placeholder.*/\1/" | head -n 1)
+                variable_name=$(sudo grep -E "^[^#]*$placeholder" "$file" | sed -E "s/.*([A-Za-z_][A-Za-z0-9_]*)=[^=]*$placeholder.*/\1/" | head -n 1)
 
                 if [ -n "$variable_name" ]; then
                     # Check if there's an existing password for this app & variable

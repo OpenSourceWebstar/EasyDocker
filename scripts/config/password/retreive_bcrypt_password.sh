@@ -7,7 +7,7 @@ getStoredPassword()
     local log_file="$containers_dir/bcrypt.txt"
 
     if [ -f "$log_file" ]; then
-        grep "^$app_name $variable_name " "$log_file" | awk '{print $3}' | tail -n 1
+        sudo grep "^$app_name $variable_name " "$log_file" | awk '{print $3}' | tail -n 1
     else
         echo ""
     fi
