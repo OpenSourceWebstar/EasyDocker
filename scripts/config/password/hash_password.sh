@@ -10,6 +10,9 @@ hashPassword()
         bcrypt_hash=$(sudo docker run --rm ghcr.io/wg-easy/wg-easy wgpw "$password" 2>/dev/null | tr -d '\n')
 
         if [[ -n "$bcrypt_hash" ]]; then
+            # Ensure we extract **only** the hash (strip out any variable names)
+            bcrypt_hash=$(echo "$bcrypt_hash" | awk -F= '{print $NF}')
+
             # Escape `$` to `$$` for Docker Compose
             local escaped_hash
             escaped_hash=$(echo "$bcrypt_hash" | sed 's/\$/\$\$/g')
@@ -25,6 +28,9 @@ hashPassword()
         bcrypt_hash=$(sudo htpasswd -bnBC 10 "" "$password" | tr -d ':\n')
 
         if [[ -n "$bcrypt_hash" ]]; then
+            # Extract **only** the hash (strip out any extra text)
+            bcrypt_hash=$(echo "$bcrypt_hash" | awk -F= '{print $NF}')
+
             # Escape `$` to `$$` for Docker Compose
             local escaped_hash
             escaped_hash=$(echo "$bcrypt_hash" | sed 's/\$/\$\$/g')
@@ -37,3 +43,4 @@ hashPassword()
     echo "ERROR: Failed to generate bcrypt hash." >&2
     return 1
 }
+
