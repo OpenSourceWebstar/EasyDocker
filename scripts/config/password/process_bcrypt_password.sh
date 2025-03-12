@@ -6,14 +6,16 @@ processBcryptPassword()
     local file="$2"
     local placeholder="$3"
 
+    # Extract the variable name before the placeholder
     local variable_name
     variable_name=$(sudo awk -F= '/'"$placeholder"'/ { gsub(/^[ \t-]+/, "", $1); print $1; exit }' "$file")
 
     if [ -z "$variable_name" ]; then
-        isError "Could not extract variable name before $placeholder."
+        echo "ERROR: Could not extract variable name before $placeholder." >&2
         return
     fi
 
+    # Get or generate password
     local raw_password
     raw_password=$(getStoredPassword "$app_name" "$variable_name")
 
@@ -22,32 +24,26 @@ processBcryptPassword()
         exportBcryptPassword "$app_name" "$variable_name" "$raw_password" "$file"
     fi
 
-    # Generate bcrypt hash
+    # Generate bcrypt hash (only return hash, no debug messages)
     local bcrypt_password
     bcrypt_password=$(hashPassword "$raw_password")
 
-    # Debugging output
-    echo "DEBUG: Placeholder: $placeholder" >&2
-    echo "DEBUG: Variable Name: $variable_name" >&2
-    echo "DEBUG: Raw Password: $raw_password" >&2
-    echo "DEBUG: Bcrypt Hash: $bcrypt_password" >&2
-
-    # Verify the hash isn't empty
+    # Validate hash
     if [ -z "$bcrypt_password" ]; then
-        isError "Failed to generate bcrypt hash for $variable_name."
+        echo "ERROR: Failed to generate bcrypt hash for $variable_name." >&2
         return 1
     fi
 
-    # Debug: Show `sed` command before running it
-    echo "DEBUG: Running sed command: sudo sed -i -E 's#${placeholder}#${bcrypt_password}#g' $file" >&2
+    # Remove any single quotes from the bcrypt hash
+    bcrypt_password=$(echo "$bcrypt_password" | tr -d "'")
 
-    # Replace the placeholder in the file (DO NOT WRAP IN QUOTES)
-    sudo sed -i -E "s#${placeholder}#${bcrypt_password}#g" "$file"
+    local result=$(sudo sed -i -E "s#$placeholder#$bcrypt_password#g" "$file")
+    checkSuccess "Use sed to replace placeholder with bcrypt hash"
 
-    # Check if replacement was successful
+    # Verify replacement
     if sudo grep -q "$bcrypt_password" "$file"; then
-        checkSuccess "Updated $variable_name with Bcrypt in $(basename "$file")."
+        isSuccessful "Updated $variable_name in $(basename "$file")." >&2
     else
-        isError "sed failed to replace $placeholder in $file. Check the syntax."
+        isError "ERROR: sed failed to replace $placeholder in $file." >&2
     fi
 }
