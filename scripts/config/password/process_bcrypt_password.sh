@@ -24,13 +24,13 @@ processBcryptPassword()
 
     # Generate bcrypt hash
     local bcrypt_password
-    bcrypt_password=$(hashPassword "$raw_password")
+    bcrypt_password=$(hashPassword "$raw_password" | tr -d '\n')
 
     # Debugging output
     echo "DEBUG: Placeholder: $placeholder" >&2
     echo "DEBUG: Variable Name: $variable_name" >&2
     echo "DEBUG: Raw Password: $raw_password" >&2
-    echo "DEBUG: Bcrypt Hash: $bcrypt_password" >&2
+    echo "DEBUG: Bcrypt Hash (before sed): $bcrypt_password" >&2
 
     # Verify the hash isn't empty
     if [ -z "$bcrypt_password" ]; then
@@ -39,7 +39,7 @@ processBcryptPassword()
     fi
 
     # Debug: Show `sed` command before running it
-    echo "DEBUG: Running sed command: sudo sed -i -E 's#${placeholder}#${bcrypt_password}#g' $file" >&2
+    echo "DEBUG: Running sed command: sudo sed -i -E 's#${placeholder}#${bcrypt_password}#g' \"$file\"" >&2
 
     # Replace the placeholder in the file
     sudo sed -i -E "s#${placeholder}#${bcrypt_password}#g" "$file"
