@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Category : system
-# Description : Adguard & Unbound - DNS Server (c/u/s/r/i):
+# Description : Adguard - DNS Server (c/u/s/r/i):
 
 installAdguard()
 {
@@ -69,9 +69,6 @@ installAdguard()
         echo ""
 
         dockerComposeSetupFile $app_name;
-
-		local result=$(copyResource "$app_name" "unbound.conf" "etc" | sudo tee -a "$logs_dir/$docker_log_file" 2>&1)
-		checkSuccess "Copying unbound.conf to containers folder."
 
 		((menu_number++))
         echo ""

@@ -2,6 +2,7 @@ networks:
   vpn:
     external: true
 
+services:
   adguard:
     container_name: adguard
     image: adguard/adguardhome
