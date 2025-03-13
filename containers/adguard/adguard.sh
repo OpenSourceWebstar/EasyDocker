@@ -112,20 +112,20 @@ installAdguard()
             fi
         done
 
-        result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-        checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
+        #result=$(sudo sed -i "s/address: 0.0.0.0:80/address: 0.0.0.0:${usedport2}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        #checkSuccess "Changing port 80 to $usedport2 for Admin Panel"
 
-        result=$(sudo sed -i "s/port: 53/port: ${usedport3}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-        checkSuccess "Changing port 53 to $usedport3 for DNS Port"
+        #result=$(sudo sed -i "s/port: 53/port: ${usedport3}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        #checkSuccess "Changing port 53 to $usedport3 for DNS Port"
 
-        result=$(sudo sed -i "s/port_https: 443/port_https: ${usedport4}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-        checkSuccess "Changing port 443 to $usedport4 for DNS Port"
+        #result=$(sudo sed -i "s/port_https: 443/port_https: ${usedport4}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        #checkSuccess "Changing port 443 to $usedport4 for DNS Port"
 
-        result=$(sudo sed -i "s/port_dns_over_tls: 853/port_dns_over_tls: ${usedport5}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-        checkSuccess "Changing port 853 to $usedport5 for port_dns_over_tls"
+        #result=$(sudo sed -i "s/port_dns_over_tls: 853/port_dns_over_tls: ${usedport5}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        #checkSuccess "Changing port 853 to $usedport5 for port_dns_over_tls"
 
-        result=$(sudo sed -i "s/port_dns_over_quic: 853/port_dns_over_quic: ${usedport5}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
-        checkSuccess "Changing port 853 to $usedport5 for port_dns_over_quic"
+        #result=$(sudo sed -i "s/port_dns_over_quic: 853/port_dns_over_quic: ${usedport5}/g" "$containers_dir$app_name/conf/AdGuardHome.yaml")
+        #checkSuccess "Changing port 853 to $usedport5 for port_dns_over_quic"
 
         # Find the line number containing "tls:"
         local tls_line_number=$(sudo awk '/tls:/ {print NR; exit}' "$containers_dir$app_name/conf/AdGuardHome.yaml")
