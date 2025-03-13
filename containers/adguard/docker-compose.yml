@@ -2,20 +2,7 @@ networks:
   vpn:
     external: true
 
-services:
-  unbound:
-    image: "mvance/unbound:latest"
-    container_name: unbound
-    restart: unless-stopped
-    hostname: "unbound"
-    volumes:
-      - "./etc:/opt/unbound/etc/unbound/"
-    networks:
-      vpn:
-        ipv4_address: 10.8.1.119
-
   adguard:
-    depends_on: [unbound]
     container_name: adguard
     image: adguard/adguardhome
     restart: unless-stopped

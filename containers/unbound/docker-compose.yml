@@ -1,0 +1,23 @@
+networks:
+  vpn:
+    external: true
+
+services:
+  unbound:
+    image: mvance/unbound:latest
+    container_name: unbound
+    restart: unless-stopped
+    ports:
+      - "PORT1:53/tcp"
+      - "PORT1:53/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+      - ./etc/unbound.conf:/opt/unbound/etc/unbound/unbound.conf:ro
+    environment:
+      - TZ=TIMEZONEHERE
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
+    networks:
+      vpn:
+        ipv4_address: IPADDRESSHERE

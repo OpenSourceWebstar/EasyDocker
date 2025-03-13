@@ -17,7 +17,7 @@ mainMenu()
 			echo "#####################################"
 			echo ""
 			isOption "i. Install Apps"
-			isOption "u. Uninstall Apps"
+			#isOption "u. Uninstall Apps"
 			isOption "g. Generate App"
 			echo ""
 			echo "#####################################"
