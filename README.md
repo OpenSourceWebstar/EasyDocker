@@ -38,11 +38,12 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | System         | <a href="https://github.com/fail2ban/fail2ban">Fail2Ban - Connection Security</a>                   | Tested & Working |
 | System         | <a href="https://github.com/traefik/traefik">Traefik - Reverse Proxy</a>                            | Tested & Working |
 | System         | <a href="https://github.com/wg-easy/wg-easy">Wireguard Easy - VPN Server</a>                        | Tested & Working |
-| System         | <a href="https://github.com/AdguardTeam/AdGuardHome">Adguard & Unbound - DNS Server</a>             | Tested & Working |
-| System         | <a href="https://github.com/pi-hole/pi-hole">Pi-Hole & Unbound - DNS Server</a>                     | Tested & Working |
+| System         | <a href="https://github.com/AdguardTeam/AdGuardHome">Adguard - DNS Server</a>                       | Tested & Working |
+| System         | <a href="https://github.com/pi-hole/pi-hole">Pi-Hole - DNS Server</a>                               | Tested & Working |
 | System         | <a href="https://github.com/portainer/portainer">Portainer - Docker Management</a>                  | Tested & Working |
 | System         | <a href="https://github.com/containrrr/watchtower">Watchtower - Docker Updater</a>                  | Tested & Working |
 | System         | <a href="https://github.com/Lissy93/dashy">Dashy - Docker Dashboard</a>                             | Tested & Working |
+| System         | <a href="https://github.com/NLnetLabs/unbound">Unbound - DNS Resolver</a>                           | Tested & Working |
 | Privacy        | <a href="https://github.com/searxng/searxng">Searxng - Search Engine</a>                            | Tested & Working |
 | Privacy        | <a href="https://github.com/librespeed/speedtest">LibreSpeed - Internet Speed Test</a>              | Tested & Working |
 | Privacy        | <a href="https://github.com/PeterDaveHello/ipinfo.tw">IPInfo - Show IP Address</a>                  | Tested & Working |
@@ -50,6 +51,7 @@ Ultimately, an automated Docker script is a powerful solution that streamlines t
 | Privacy        | <a href="https://github.com/dani-garcia/vaultwarden">Vaultwarden - Password Manager</a>             | Tested & Working |
 | Privacy        | <a href="https://github.com/firefly-iii/firefly-iii/">Firefly - Money Budgetting</a>                | Tested & Working |
 | Privacy        | <a href="https://github.com/TeamPiped/Piped">Piped - Alternative Youtube Frontend</a>               | Tested & Working |
+| Privacy        | <a href="https://github.com/mastodon/mastodon">Mastodon - Social Media Platform</a>                 | Tested & Working |
 | Privacy        | <a href="https://github.com/mailcow/mailcow-dockerized">Mailcow - Mail Server</a> *UNFINISHED*      | Needs Finishing  |
 | User           | <a href="https://github.com/nginx/nginx">NGINX - Web Server & Load Balancer</a>                     | Tested & Working |
 | User           | <a href="https://github.com/owncloud-docker/server">OwnCloud - File & Document Cloud</a>            | Tested & Working |
