@@ -1,0 +1,74 @@
+networks:
+  vpn:
+    external: true
+
+services:
+  mastodon-postgres:
+    image: postgres:15
+    container_name: mastodon-postgres
+    restart: always
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mastodon
+      POSTGRES_USER: mastodon
+      POSTGRES_PASSWORD: mastodon
+    networks:
+      vpn:
+         ipv4_address: 10.8.1.134
+
+  mastodon-redis:
+    image: redis:7
+    container_name: mastodon-redis
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./redis:/data
+    networks:
+      vpn:
+         ipv4_address: 10.8.1.135
+
+  mastodon:
+    image: tootsuite/mastodon:v4.2.0
+    container_name: mastodon
+    restart: always
+    depends_on:
+      - mastodon-postgres
+      - mastodon-redis
+    environment:
+      LOCAL_DOMAIN: "your-mastodon-domain.com"
+      DB_HOST: "mastodon-postgres"
+      DB_USER: "mastodon"
+      DB_PASS: "mastodon"
+      REDIS_HOST: "mastodon-redis"
+      SECRET_KEY_BASE: "your-random-secret-key"
+      OTP_SECRET: "your-random-otp-secret"
+      VAPID_PRIVATE_KEY: "your-random-vapid-private-key"
+      VAPID_PUBLIC_KEY: "your-random-vapid-public-key"
+      SMTP_SERVER: "smtp.example.com"
+      SMTP_PORT: "587"
+      SMTP_LOGIN: "user@example.com"
+      SMTP_PASSWORD: "password"
+      SMTP_FROM_ADDRESS: "mastodon@example.com"
+      EMAIL_DELIVERY_METHOD: "none"
+      SMTP_AUTH_METHOD: "none"
+    ports:
+      - "PORT1:3000"
+      - "PORT2:4000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro #SOCKETHERE
+      - ./mastodon_data:/mastodon/public/system
+    #labels:
+      #traefik.enable: true
+      #traefik.http.routers.mastodon.entrypoints: web,websecure
+      #traefik.http.routers.mastodon.rule: Host(`DOMAINSUBNAMEHERE`)
+      #traefik.http.routers.mastodon.tls: true
+      #traefik.http.routers.mastodon.tls.certresolver: production
+      #traefik.http.services.mastodon.loadbalancer.server.port: PORT1
+      #traefik.http.routers.mastodon.middlewares:
+    command: bash -c "RAILS_ENV=production bundle exec rails db:migrate && RAILS_ENV=production bundle exec rails s -b 0.0.0.0"
+    healthcheck:
+      disable: false #HEALTHCHECKHERE
+    networks:
+      vpn:
+         ipv4_address: IPADDRESSHERE
