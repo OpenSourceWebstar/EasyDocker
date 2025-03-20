@@ -20,7 +20,7 @@ installDockerRootedCompose()
         ###     Install Debian / Ubuntu    ###
         ######################################        
         
-        if [[ "$OS" == [1234567] ]]; then
+        if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
             local result=$(sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)" -o /usr/local/bin/docker-compose)
             checkSuccess "Download the official Docker Compose script"
 
@@ -35,7 +35,7 @@ installDockerRootedCompose()
         ###        Install Arch Linux      ###
         ######################################
 
-        if [[ "$OS" == "4" ]]; then
+        if [[ "$OS_TYPE" == "Arch" ]]; then
             pacman -Sy docker-compose --noconfirm > $logs_dir/$docker_log_file 2>&1
         fi
 

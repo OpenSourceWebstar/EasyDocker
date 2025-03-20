@@ -35,7 +35,7 @@ dockerComposeDown()
         local compose_file="$custom_compose"
     fi
 
-    if [[ "$OS" == [1234567] ]]; then
+    if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
         if [ -f "$containers_dir$app_name/$compose_file" ]; then
             # Used for the standard EasyDocker app
             if [[ "$type" == "" ]]; then

@@ -5,7 +5,7 @@ updateDNS()
     local app_name="$1"
     local flag="$2"
 
-	if [[ "$OS" == [1234567] ]]; then
+	if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
         dnsRemoveNameservers()
         {
             result=$(sudo sed -i '/^nameserver/d' /etc/resolv.conf)

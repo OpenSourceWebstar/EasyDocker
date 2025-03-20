@@ -2,7 +2,7 @@
 
 installArch()
 {
-    if [[ "$OS" == "4" ]]; then
+    if [[ "$OS_TYPE" == "Arch" ]]; then
         read -rp "Do you want to install system updates prior to installing Docker-CE? (y/n): " UPDARCH
         if [[ "$UPDARCH" == [yY] ]]; then
             isNotice "Installing System Updates... this may take a while...be patient."

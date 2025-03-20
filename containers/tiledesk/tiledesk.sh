@@ -92,7 +92,7 @@ installTiledesk()
         echo "---- $menu_number. Running the docker-compose.yml to install and start $app_name"
         echo ""
 
-		if [[ "$OS" == [1234567] ]]; then
+		if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
 			if [[ $CFG_DOCKER_INSTALL_TYPE == "rootless" ]]; then
 				local result=$(dockerCommandRunInstallUser "docker-compose -f docker-compose.yml -f docker-compose.$app_name.yml down")
 				checkSuccess "Shutting down docker-compose.$app_name.yml"

@@ -185,7 +185,7 @@ EOF
 
         status=$(dockerCheckAppInstalled "traefik" "docker")
         if [ "$status" == "installed" ]; then
-            if [[ "$OS" == [1234567] ]]; then
+            if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
                 if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
                     isError "The Compose file already contains custom edits. Please reinstalled $app_name"
                 else			
@@ -212,7 +212,7 @@ EOF
             fi
 
             if [[ "$MATN" == [yY] ]]; then
-                if [[ "$OS" == [1234567] ]]; then
+                if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
                     if sudo grep -q "vpn:" $containers_dir$app_name/$DCWN; then
                         isError "The Compose file already contains custom edits. Please reinstalled $app_name"
                     else			

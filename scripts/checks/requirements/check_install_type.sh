@@ -2,7 +2,7 @@
 
 checkInstallTypeRequirement()
 {  
-	if [[ "$OS" == [1234567] ]]; then
+	if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
 		ISCOMP=$( (docker-compose -v ) 2>&1 )
 		ISUFW=$( (sudo ufw status ) 2>&1 )
 		ISUFWD=$( (sudo ufw-docker) 2>&1 )

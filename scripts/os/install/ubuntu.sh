@@ -2,10 +2,10 @@
 
 installDebianUbuntu()
 {
-    if [[ "$OS" == [1234567] ]]; then
+    if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
         if checkIfOSUpdateShouldRun; then
             isNotice "Installing System Updates... this may take a while...be patient."
-            if [[ "$OS" == "1" ]]; then
+            if [[ "$OS_TYPE" == "Debian" ]]; then
                 export DEBIAN_FRONTEND="noninteractive"
             fi
             (apt update && apt install sudo -y && apt-get autoclean) > $logs_dir/$docker_log_file 2>&1 &

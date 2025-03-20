@@ -14,14 +14,14 @@ wireguardUninstall()
     read -p "" WIREGUARD_REMOVE
     
     if [[ $WIREGUARD_REMOVE == [yY] ]]; then
-        if [[ "$OS" == [1234567] ]]; then
+        if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
             result=$(sudo systemctl stop "wg-quick@${CFG_WG_SERVER_NIC}")
             checkSuccess "Stopped wg-quick@${CFG_WG_SERVER_NIC} service."
 
             result=$(sudo systemctl disable "wg-quick@${CFG_WG_SERVER_NIC}")
             checkSuccess "Disabled wg-quick@${CFG_WG_SERVER_NIC} service."
 
-            if [[ "$OS" == [1234567] ]]; then
+            if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
                 result=$(sudo apt-get remove -y wireguard wireguard-tools qrencode)
                 checkSuccess "Removed wireguard wireguard-tools qrencode"
             fi

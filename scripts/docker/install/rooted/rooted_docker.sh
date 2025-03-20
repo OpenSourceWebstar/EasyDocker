@@ -3,7 +3,7 @@
 installDockerRooted()
 {
     # Check if Docker is already installed
-    if [[ "$OS" == [1234567] ]]; then
+    if [[ "$OS_TYPE" == "Ubuntu" || "$OS_TYPE" == "Debian" ]]; then
         echo ""
         echo "##########################################"
         echo "###     Rooted Docker Installation     ###"
