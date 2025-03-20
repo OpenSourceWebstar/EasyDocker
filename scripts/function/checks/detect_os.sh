@@ -32,7 +32,7 @@ detectOS() {
         echo "Detected OS: $OS_TYPE $OS_VERSION"
 
         # Check if this is a tested/supported version
-        if [[ ("$OS_TYPE" == "Debian" && ! "$OS_VERSION" =~ ^(10|11|12)$) || 
+        if [[ ("$OS_TYPE" == "Debian" && ! "$OS_VERSION" =~ ^(10|11|12|13)$) || 
               ("$OS_TYPE" == "Ubuntu" && ! "$OS_VERSION" =~ ^(18.04|20.04|22.04)$) ]]; then
             echo "Warning: This OS version ($OS_VERSION) is untested and may not be fully supported."
             while true; do
