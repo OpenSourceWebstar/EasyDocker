@@ -125,7 +125,7 @@ checkConfigFirstInstall()
                     ;;
                     [aA])
                         viewEasyDockerConfigs;
-                        # No need to set config_check_done here; it will continue to the next iteration of the loop
+                        sourceScanFiles "easydocker_configs";
                         break  # Exit the loop
                     ;;
                     *)
