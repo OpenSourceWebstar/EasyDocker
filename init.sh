@@ -165,12 +165,8 @@ initializeScript()
 		else
 			echo "NOTICE: No Git repository found. Cloning Git Repository."
 
-			# Check if we have permission to write to the directory
-			if [ ! -w "$(dirname "$script_dir")" ]; then
-				echo "ERROR: No write permission for $(dirname "$script_dir"). Trying with sudo..."
-				sudo mkdir -p "$script_dir"
-				sudo chown -R $sudo_user_name:$sudo_user_name "$script_dir"
-			fi
+			sudo mkdir -p "$script_dir"
+			sudo chown -R $sudo_user_name:$sudo_user_name "$script_dir"
 
 			# Clone the Git repository into the specified directory as the correct user
 			if sudo runuser -l "$sudo_user_name" -c "git clone -q \"$repo_url\" \"$script_dir\""; then
