@@ -69,6 +69,17 @@ initializeScript()
 	echo "####################################################"
 	echo ""
 	sudo apt-get install git zip curl sshpass dos2unix dnsutils apt-transport-https ca-certificates software-properties-common uidmap jq -y
+	# Check if TARGET_PATH is already in PATH
+	TARGET_PATH="/usr/sbin"
+	CONFIG_FILE="$HOME/.bashrc"
+	if ! echo "$PATH" | grep -q "$TARGET_PATH"; then
+		echo "Adding $TARGET_PATH to PATH..."
+		echo "export PATH=\$PATH:$TARGET_PATH" >> "$CONFIG_FILE"
+		source "$CONFIG_FILE"
+		echo "PATH updated successfully!"
+	else
+		echo "$TARGET_PATH is already in PATH."
+	fi
 	echo "SUCCESS: Prerequisite apps installed."
 
 	if [[ "$param1" == "$install_param" ]]; then
