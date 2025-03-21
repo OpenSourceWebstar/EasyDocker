@@ -126,6 +126,7 @@ checkConfigFirstInstall()
                     [aA])
                         viewEasyDockerConfigs;
                         sourceScanFiles "easydocker_configs";
+                        config_check_done=true  # Set the flag to exit the loop
                         break  # Exit the loop
                     ;;
                     *)
