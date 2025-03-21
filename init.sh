@@ -85,7 +85,7 @@ initializeScript()
 	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
-		echo "###           Installing Docker             ###"
+		echo "###             Installing Docker                ###"
 		echo "####################################################"
 		echo ""
 		if command -v docker &> /dev/null; then
@@ -154,19 +154,31 @@ initializeScript()
 	if [[ "$param1" == "$install_param" ]]; then
 		echo ""
 		echo "####################################################"
-		echo "###      	      Git Clone / Update               ###"
+		echo "###      	      Git Clone / Update            ###"
 		echo "####################################################"
 		echo ""
+
 		# Git Clone and Update
-		# Check if it's a Git repository by checking if it's inside a Git working tree
 		if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
 			echo "A Git repository is already cloned in '$script_dir'."
 			echo "NOTICE: Please run the easydocker command to update the repository."
 		else
 			echo "NOTICE: No Git repository found. Cloning Git Repository."
-			# Clone the Git repository into the specified directory
-			sudo runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
-			echo "SUCCESS: Git repository cloned into '$script_dir'."
+
+			# Check if we have permission to write to the directory
+			if [ ! -w "$(dirname "$script_dir")" ]; then
+				echo "ERROR: No write permission for $(dirname "$script_dir"). Trying with sudo..."
+				sudo mkdir -p "$script_dir"
+				sudo chown -R $sudo_user_name:$sudo_user_name "$script_dir"
+			fi
+
+			# Clone the Git repository into the specified directory as the correct user
+			if sudo runuser -l "$sudo_user_name" -c "git clone -q \"$repo_url\" \"$script_dir\""; then
+				echo "SUCCESS: Git repository cloned into '$script_dir'."
+			else
+				echo "ERROR: Failed to clone the Git repository into '$script_dir'. Check permissions and try again."
+				exit 1
+			fi
 		fi
 	fi
 
@@ -185,7 +197,7 @@ setupEasyDockerCommand()
 {
 	echo ""
 	echo "####################################################"
-	echo "###      	     Custom Command Setup              ###"
+	echo "###           Custom Command Setup           ###"
 	echo "####################################################"
 	echo ""
 
