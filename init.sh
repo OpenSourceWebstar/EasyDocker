@@ -428,7 +428,7 @@ completeInitMessage()
 		echo ""
 		echo "Thank you & Enjoy! <3"
 		echo ""
-		reboot
+		sudo reboot
 	fi
 }
 
