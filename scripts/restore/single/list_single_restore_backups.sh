@@ -2,7 +2,7 @@
 
 restoreSingleBackupList() 
 {
-    if [[ "$restorefull" == [lL] ]]; then
+    if [[ "$restoresingle" == [lL] ]]; then
         local app_list=()
         local backup_list=()
         

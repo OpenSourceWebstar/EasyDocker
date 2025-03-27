@@ -52,7 +52,23 @@ cliInitialize()
                 elif [[ ! -z "$initial_command4" ]]; then
                     checkRemoteBackupStatus;
                     if [[ $remote_backups_disabled == "true" ]]; then
-                        isNotice "Unable to continue... please setup remote backups."
+                        while true; do
+                            read -rp "Remote backups are not configured. Do you want to edit the backup configuration now? (Y/N): " remotebackupsetup
+                            case "$remotebackupsetup" in
+                                [Yy]) 
+                                    viewEasyDockerConfigs "backup"
+                                    sourceScanFiles "easydocker_configs"
+                                    break
+                                    ;;
+                                [Nn]) 
+                                    isNotice "Skipping backup configuration."
+                                    break
+                                    ;;
+                                *) 
+                                    isNotice "Invalid input. Please enter 'Y' or 'N'."
+                                    ;;
+                            esac
+                        done
                     elif [[ $remote_backups_disabled == "false" ]]; then
                         restoreStart app remote $initial_command4
                     fi
@@ -64,7 +80,23 @@ cliInitialize()
                 elif [[ ! -z "$initial_command4" ]]; then
                     checkRemoteBackupStatus;
                     if [[ $remote_backups_disabled == "true" ]]; then
-                        isNotice "Unable to continue... please setup remote backups."
+                        while true; do
+                            read -rp "Remote backups are not configured. Do you want to edit the backup configuration now? (Y/N): " remotebackupsetup
+                            case "$remotebackupsetup" in
+                                [Yy]) 
+                                    viewEasyDockerConfigs "backup"
+                                    sourceScanFiles "easydocker_configs"
+                                    break
+                                    ;;
+                                [Nn]) 
+                                    isNotice "Skipping backup configuration."
+                                    break
+                                    ;;
+                                *) 
+                                    isNotice "Invalid input. Please enter 'Y' or 'N'."
+                                    ;;
+                            esac
+                        done
                     elif [[ $remote_backups_disabled == "false" ]]; then
                         restoreStart app local $initial_command4
                     fi
@@ -84,13 +116,34 @@ cliInitialize()
                 elif [ "$initial_command4" = "remote" ]; then
                     checkRemoteBackupStatus;
                     if [[ $remote_backups_disabled == "true" ]]; then
-                        isNotice "Unable to continue... please setup remote backups."
+                        while true; do
+                            read -rp "Remote backups are not configured. Do you want to edit the backup configuration now? (Y/N): " remotebackupsetup
+                            case "$remotebackupsetup" in
+                                [Yy]) 
+                                    viewEasyDockerConfigs "backup"
+                                    sourceScanFiles "easydocker_configs"
+                                    break
+                                    ;;
+                                [Nn]) 
+                                    isNotice "Skipping backup configuration."
+                                    break
+                                    ;;
+                                *) 
+                                    isNotice "Invalid input. Please enter 'Y' or 'N'."
+                                    ;;
+                            esac
+                        done
                     elif [[ $remote_backups_disabled == "false" ]]; then
+
                         restoreStart virtualmin domain remote
                     fi
 
                 elif [ "$initial_command4" = "local" ]; then
-                    restoreStart virtualmin domain local
+                    if [[ -z "$initial_command5" ]]; then
+                        cliRestoreVirtualminCommands;
+                    else
+                        restoreStart virtualmin domain local
+                    fi
                 fi
             
             elif [ "$initial_command3" = "config" ]; then
@@ -100,7 +153,23 @@ cliInitialize()
                 elif [ "$initial_command4" = "remote" ]; then
                     checkRemoteBackupStatus;
                     if [[ $remote_backups_disabled == "true" ]]; then
-                        isNotice "Unable to continue... please setup remote backups."
+                        while true; do
+                            read -rp "Remote backups are not configured. Do you want to edit the backup configuration now? (Y/N): " remotebackupsetup
+                            case "$remotebackupsetup" in
+                                [Yy]) 
+                                    viewEasyDockerConfigs "backup"
+                                    sourceScanFiles "easydocker_configs"
+                                    break
+                                    ;;
+                                [Nn]) 
+                                    isNotice "Skipping backup configuration."
+                                    break
+                                    ;;
+                                *) 
+                                    isNotice "Invalid input. Please enter 'Y' or 'N'."
+                                    ;;
+                            esac
+                        done
                     elif [[ $remote_backups_disabled == "false" ]]; then
                         restoreStart virtualmin config remote
                     fi
