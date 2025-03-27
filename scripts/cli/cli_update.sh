@@ -29,11 +29,9 @@ cliUpdateCommands()
     if [[ "$initial_command7" == "empty" ]]; then 
         initial_command7=""
     fi
-    fi
     
     if [[ "$initial_command8" == "empty" ]]; then 
         initial_command8=""
-    fi
     fi
     
     if [[ "$initial_command9" == "empty" ]]; then 
