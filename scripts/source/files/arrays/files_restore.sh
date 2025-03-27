@@ -1,7 +1,7 @@
 #!/bin/bash
 
 restore_scripts=(
-    "restore/file/decrypt/attempt_decrpytion.sh"
+    "restore/file/decrypt/attempt_decryption.sh"
     "restore/file/decrypt/prompt_passphrase.sh"
 
     "restore/file/copy_restore_file.sh"
