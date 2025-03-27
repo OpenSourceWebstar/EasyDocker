@@ -6,6 +6,7 @@ displayLocalBackups()
     local app_name="$1"
     local -n backup_list_ref=$2
 
+    echo ""
     echo "##########################################"
     echo "###  Available backups for $selected_app:"
     echo "##########################################"
@@ -19,4 +20,6 @@ displayLocalBackups()
             ((index++))
         fi
     done
+    
+    echo ""
 }

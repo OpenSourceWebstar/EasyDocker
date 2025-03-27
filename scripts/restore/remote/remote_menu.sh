@@ -30,5 +30,5 @@ restoreRemoteMenu()
         selectRemoteInstallName;
     fi
 
-    selectRemoteApp
+    selectRemoteApp;
 }

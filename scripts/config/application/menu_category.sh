@@ -49,9 +49,9 @@ viewAppCategoryConfigs()
 
     PS3="Select an application: "
 
-    selectRemoteApppp=""
+    select_app=""
 
-    while [[ -z "$selectRemoteApppp" ]]; do
+    while [[ -z "$select_app" ]]; do
         echo ""
         # Display *INSTALLED* apps first and then others
         for ((i = 0; i < ${#installed_apps[@]}; i++)); do
@@ -95,7 +95,7 @@ viewAppCategoryConfigs()
                 # Remove the "*INSTALLED" suffix if it's present
                 local app_name="${app_option//\\e[32m*INSTALLED*\\e[0m - /}"
                 editAppConfig "$app_name"
-                local selectRemoteApppp="$app_name"
+                local select_app="$app_name"
             else
                 isNotice "Invalid number. Please select a valid number or 'x' to exit."
                 echo ""

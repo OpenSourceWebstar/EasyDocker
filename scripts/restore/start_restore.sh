@@ -16,7 +16,7 @@ restoreStart()
 
     echo ""
     echo "##########################################"
-    echo "###      Restoring $stored_app_name Docker Folder"
+    echo "###      Restoring $stored_app_name"
     echo "##########################################"
     echo ""
 
