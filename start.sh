@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# Used for mainly CLI
 initial_command1="$1"
 initial_command2="$2"
 initial_command3="$3"
 initial_command4="$4"
 initial_command5="$5"
+initial_command6="$6"
+initial_command7="$7"
 
 # Used for saving directory path
-initial_path="$6"
+initial_path="$10"
 initial_path_save=$initial_path
 
 displayEasyDockerLogo() 

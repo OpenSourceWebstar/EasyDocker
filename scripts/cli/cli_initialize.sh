@@ -8,8 +8,120 @@ cliInitialize()
         cliShowCommands;
 
     elif [ "$initial_command1" = "install" ]; then
-        install_via_cli="true"
-        startLoad;
+        if [[ -z "$initial_command2" ]]; then
+            install_via_cli="true"
+            startLoad;
+        elif [ "$initial_command2" = "unattended" ]; then
+            install_via_cli="true"
+            startLoad unattended;
+        else
+            isNotice "Invalid app command used : ${RED}$initial_command2${NC}"
+            isNotice "Please use one of the following options below :"
+            echo ""
+            cliInstallCommands;
+        fi
+
+    elif [ "$initial_command1" = "restore" ]; then
+        checkRemoteBackupEnabled;
+        if [[ $remote_backups_disabled == "true" ]]; then
+            local remote_backup_status="Enabled"
+        elif [[ $remote_backups_disabled == "false" ]]; then
+            local remote_backup_status="Disabled"
+        fi
+        checkRemoteBackupStatus()
+        {
+            echo ""
+            isNotice "Remote restore is currently : ${RED}$remote_backup_status${NC}"
+            if [[ $remote_backups_disabled == "false" ]]; then
+                echo ""
+                isNotice "Run the command 'easydocker config backup' to setup the config."
+                echo ""
+            fi
+        }
+        if [[ -z "$initial_command2" ]]; then
+            cliRestoreCommands;
+
+
+        elif [ "$initial_command2" = "app" ]; then
+            if [[ -z "$initial_command3" ]]; then
+                cliRestoreAppCommands;
+
+            elif [ "$initial_command3" = "remote" ]; then
+                if [[ -z "$initial_command4" ]]; then
+                    cliRestoreAppCommands;
+                elif [[ ! -z "$initial_command4" ]]; then
+                    checkRemoteBackupStatus;
+                    if [[ $remote_backups_disabled == "true" ]]; then
+                        isNotice "Unable to continue... please setup remote backups."
+                    elif [[ $remote_backups_disabled == "false" ]]; then
+                        restoreStart app remote $initial_command4
+                    fi
+                fi
+
+            elif [ "$initial_command3" = "local" ]; then
+                if [[ -z "$initial_command4" ]]; then
+                    cliRestoreAppCommands;
+                elif [[ ! -z "$initial_command4" ]]; then
+                    checkRemoteBackupStatus;
+                    if [[ $remote_backups_disabled == "true" ]]; then
+                        isNotice "Unable to continue... please setup remote backups."
+                    elif [[ $remote_backups_disabled == "false" ]]; then
+                        restoreStart app local $initial_command4
+                    fi
+                fi
+            fi
+
+
+        elif [ "$initial_command2" = "virtualmin" ]; then
+            if [[ -z "$initial_command3" ]]; then
+                cliRestoreVirtualminCommands;
+
+
+            elif [ "$initial_command3" = "domain" ]; then
+                if [[ -z "$initial_command4" ]]; then
+                    cliRestoreVirtualminCommands;
+
+                elif [ "$initial_command4" = "remote" ]; then
+                    checkRemoteBackupStatus;
+                    if [[ $remote_backups_disabled == "true" ]]; then
+                        isNotice "Unable to continue... please setup remote backups."
+                    elif [[ $remote_backups_disabled == "false" ]]; then
+                        restoreStart virtualmin domain remote
+                    fi
+
+                elif [ "$initial_command4" = "local" ]; then
+                    restoreStart virtualmin domain local
+                fi
+            
+            elif [ "$initial_command3" = "config" ]; then
+                if [[ -z "$initial_command4" ]]; then
+                    cliRestoreVirtualminCommands;
+
+                elif [ "$initial_command4" = "remote" ]; then
+                    checkRemoteBackupStatus;
+                    if [[ $remote_backups_disabled == "true" ]]; then
+                        isNotice "Unable to continue... please setup remote backups."
+                    elif [[ $remote_backups_disabled == "false" ]]; then
+                        restoreStart virtualmin config remote
+                    fi
+
+                elif [ "$initial_command4" = "local" ]; then
+                    restoreStart virtualmin config local
+                fi
+
+            else
+                isNotice "Invalid command used : ${RED}$initial_command3${NC}"
+                isNotice "Please use one of the following options below :"
+                echo ""
+                cliRestoreVirtualminCommands;
+            fi
+        else
+            isNotice "Invalid app command used : ${RED}$initial_command2${NC}"
+            isNotice "Please use one of the following options below :"
+            echo ""
+            cliRestoreCommands;
+        fi
+
 
     elif [ "$initial_command1" = "update" ]; then
         checkUpdates;

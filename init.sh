@@ -1,6 +1,8 @@
 #!/bin/bash
 
-param1="$1"
+param1="$1" # init / virtualmin
+param2="$2" # unattended / domain
+param3="$3" # / webmin_password
 
 install_param="init"
 sudo_user_name=easydocker
@@ -38,7 +40,6 @@ install_scripts_dir="$script_dir/scripts/"
 
 initializeScript()
 {
-	# Check if script is run as root
 	if [[ $EUID -ne 0 ]]; then
 		echo "This script must be run as root."
 		exit 1
@@ -69,7 +70,6 @@ initializeScript()
 	echo "####################################################"
 	echo ""
 	sudo apt-get install git zip curl sshpass dos2unix dnsutils apt-transport-https ca-certificates software-properties-common uidmap jq -y
-	# Check if TARGET_PATH is already in PATH
 	TARGET_PATH="/usr/sbin"
 	CONFIG_FILE="$HOME/.bashrc"
 	if ! echo "$PATH" | grep -q "$TARGET_PATH"; then
@@ -107,20 +107,16 @@ initializeScript()
 		if id "$sudo_user_name" &>/dev/null; then
 			echo "SUCCESS: User $sudo_user_name already exists."
 		else
-			# If the user doesn't exist, create the user
 			useradd -s /bin/bash -d "/home/$sudo_user_name" -m -G sudo "$sudo_user_name"
 			echo "Setting password for $sudo_user_name user."
 			passwd $sudo_user_name
-			# Docker user group add
 			usermod -aG docker "$sudo_user_name"
 			systemctl restart docker
 			echo "SUCCESS: User $sudo_user_name created successfully."
 		fi
 		local sudoers_file="/etc/sudoers"
 		local sudo_entry="$sudo_user_name ALL=(ALL) NOPASSWD: ALL"
-		# Check if the sudo entry exists for the user
 		if ! grep -q "$sudo_entry" $sudoers_file; then
-			# Add the passwordless sudo entry for the user
 			echo "" | sudo tee -a "$sudoers_file" > /dev/null
 			echo "$sudo_entry" | sudo tee -a "$sudoers_file" > /dev/null
 			sudo visudo -c
@@ -136,7 +132,6 @@ initializeScript()
 		echo "###        EasyDocker Folder Creation            ###"
 		echo "####################################################"
 		echo ""
-		# Setup folder structure
 		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$wireguard_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
 		for folder in "${folders[@]}"; do
 			if [ ! -d "$folder" ]; then
@@ -144,8 +139,6 @@ initializeScript()
 				sudo chown $sudo_user_name:$sudo_user_name "$folder"
 				sudo chmod 750 "$folder"
 				echo "SUCCESS: Folder '$folder' created."
-			#else
-				#echo "Folder '$folder' already exists."
 			fi
 		done
 		echo "SUCCESS: All folders have been created."
@@ -157,14 +150,11 @@ initializeScript()
 		echo "###      	      Git Clone / Update            ###"
 		echo "####################################################"
 		echo ""
-		# Git Clone and Update
-		# Check if it's a Git repository by checking if it's inside a Git working tree
 		if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
 			echo "A Git repository is already cloned in '$script_dir'."
 			echo "NOTICE: Please run the easydocker command to update the repository."
 		else
 			echo "NOTICE: No Git repository found. Cloning Git Repository."
-			# Clone the Git repository into the specified directory
 			sudo runuser -l  $sudo_user_name -c "git clone -q "$repo_url" "$script_dir""
 			echo "SUCCESS: Git repository cloned into '$script_dir'."
 		fi
@@ -188,8 +178,6 @@ setupEasyDockerCommand()
 	echo "###           Custom Command Setup           ###"
 	echo "####################################################"
 	echo ""
-
-	# Clear previous custom commands
 	if ! grep -q "EasyDocker Command Start" $sudo_bashrc; then
 		echo "NOTICE: Command maker not found. Removing old EasyDocker command."
 		sed -i '/^easydocker() {$/,/^}$/d' $sudo_bashrc
@@ -197,7 +185,6 @@ setupEasyDockerCommand()
 		echo "NOTICE: Command maker found. Removing old EasyDocker command."
 		sed -i '/# EasyDocker Command Start/,/# EasyDocker Command End/d' $sudo_bashrc
 	fi
-	# Add command into bashrc
 	echo "NOTICE: Custom command 'easydocker' is not installed. Installing..."
 	echo '# EasyDocker Command Start' >> $sudo_bashrc
 	echo '# EasyDocker Command Version 1.1' >> $sudo_bashrc
@@ -212,7 +199,7 @@ setupEasyDockerCommand()
 	echo '  if [[ $command1 == "reset" ]]; then' >> $sudo_bashrc
 	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh '"$install_param"'"' >> $sudo_bashrc
 	echo '  elif [ -f "/docker/install/start.sh" ]; then' >> $sudo_bashrc
-	echo '    sudo chmod 0755 /docker/install/* && cd /docker/install && ./start.sh "$command1" "$command2" "$command3" "$command4" "$command5" "$path"' >> $sudo_bashrc
+	echo '    sudo chmod 0755 /docker/install/* && cd /docker/install && ./start.sh "$command1" "$command2" "$command3" "$command4" "$command5"  "$command6" "$command7" "$command8" "$command9" "$path"' >> $sudo_bashrc
 	echo '  else' >> $sudo_bashrc
 	echo '    sudo sh -c "rm -rf /docker/install && rm -rf ~/init.sh && apt-get install wget -y && wget -O ~/init.sh https://raw.githubusercontent.com/OpenSourceWebstar/EasyDocker/main/init.sh && chmod 0755 ~/init.sh && ~/init.sh '"$install_param"'"' >> $sudo_bashrc
 	echo '  fi' >> $sudo_bashrc
@@ -229,59 +216,46 @@ virtualminInstall()
 	echo "####################################################"
 	echo ""
 
-	# Download the Virtualmin auto-install script
 	cd / && wget https://software.virtualmin.com/gpl/scripts/virtualmin-install.sh
-
-	# Make the script executable
 	chmod +x virtualmin-install.sh
+	if [[ "$param2" != "unattended" ]]; then
+		sudo ./virtualmin-install.sh -b LEMP
+	else
+		export VIRTUALMIN_NONINTERACTIVE=1
+		sudo ./virtualmin-install.sh --force --setup --minimal --bundle LEMP --hostname $param2
+	fi
 
-	# Run the Virtualmin auto-install script with sudo
-	sudo ./virtualmin-install.sh -b LEMP # Using NGINX
-
-	# Disable Firewalld
-	#sudo systemctl stop firewalld
-	#sudo systemctl disable firewalld
-	#virtualmin disable-feature --all-domains --dns
-	#echo "Disabled the firewalld & DNS service for EasyDocker"
-	#sudo sed -i 's/80 default_server/8033 default_server/g' /etc/nginx/sites-available/default
-	#echo "Changing port 80 to port 8033 for NGINX"
-	#sudo systemctl restart nginx
-
-	while true; do
-		read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
-		if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
-			sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
-			sudo systemctl stop webmin
-			echo "Password changed and Webmin restarted successfully."
-			break
-		else
-			echo "Password is too short or empty. Please provide a password with at least 8 characters."
-		fi
-	done
+	if [[ "$param3" == "" ]]; then
+		while true; do
+			read -s -p "Enter the new password for the 'root' Webmin user: " webmin_password
+			if [ -n "$webmin_password" ] && [ ${#webmin_password} -ge 8 ]; then
+				sudo /usr/share/webmin/changepass.pl /etc/webmin root "$webmin_password"
+				sudo systemctl stop webmin
+				echo "Password changed and Webmin restarted successfully."
+				break
+			else
+				echo "Password is too short or empty. Please provide a password with at least 8 characters."
+			fi
+		done
+	else
+		sudo /usr/share/webmin/changepass.pl /etc/webmin root "$param3"
+		sudo systemctl stop webmin
+		echo "Password changed and Webmin restarted successfully."
+	fi
 
 	sudo systemctl start webmin
 
 	echo ""
 	echo "NOTICE - Now that Virtualmin is setup "
 	echo ""
-	#echo "NOTICE - In EasyDocker - Traefik will be used to handle the SSL certificate."
-	#echo "NOTICE - In EasyDocker - Virtualmin Proxy will redirect Virtualmin traffic to Traefik."
-	#echo ""
-	#echo "TIP - You can also install Adguard or Pi-Hole to use as a DNS server for Virtualmin."
-	#echo "TIP - You can setup a whitelist with Virtualmin Proxy for added security."
-	#echo ""
-	#echo "NOTICE - It's recommended to now install Traefik and Virtualmin Proxy through EasyDocker."
 }
 
 virtualminAskForFQDN()
 {
 	while true; do
-		# Prompt the user for the domain they want to use with Virtualmin
 		read -p "Enter the Fully Qualified Domain Name (FQDN) you'd like to use with Virtualmin (e.g. virtualmin.example.com): " domain_virtualmin
-
-		# Check if the input appears to be a valid domain (FQDN)
 		if [[ "$domain_virtualmin" =~ ^[a-zA-Z0-9.-]+\.[a-z]{2,}$ ]]; then
-			break  # Valid format, exit the loop
+			break
 		else
 			echo "Invalid domain format. Please enter a valid Fully Qualified Domain Name (FQDN) (e.g. virtualmin.example.com)."
 		fi
@@ -298,42 +272,46 @@ virtualminQuestions()
 {
 	echo ""
 	echo "####################################################"
-	echo "###              Initial Questions               ###"
+	echo "###              Initial Setup                   ###"
 	echo "####################################################"
 	echo ""
 	echo "NOTICE - EasyDocker can work alongside Virtualmin"
 	echo "Please only install if you need it"
 	echo ""
-	read -p "Do you want to install Virtualmin? (y/n): " install_virtualmin
-	if [[ "$install_virtualmin" == [yY] ]]; then
-		# Check if a valid subdomain is already stored in easydocker-fqdn.txt
-		if [[ -f "$fqdn_file" ]]; then
-			existing_subdomain=$(head -n 1 "$fqdn_file")
-			if [ -n "$existing_subdomain" ]; then
-				while true; do
-					echo ""
-					echo "NOTICE - An existing subdomain is configured: $existing_subdomain"
-					echo ""
-					echo "QUESTION : Would you like to use $existing_subdomain for your subdomain? (y/n): "
-					read -p "" reinstall_virtualmin_choice
-					if [[ -n "$reinstall_virtualmin_choice" ]]; then
-						break
+
+	if [[ "$param2" == "" ]]; then
+		read -p "Do you want to install Virtualmin? (y/n): " install_virtualmin
+		if [[ "$install_virtualmin" == [yY] ]]; then
+			if [[ -f "$fqdn_file" ]]; then
+				existing_subdomain=$(head -n 1 "$fqdn_file")
+				if [ -n "$existing_subdomain" ]; then
+					while true; do
+						echo ""
+						echo "NOTICE - An existing subdomain is configured: $existing_subdomain"
+						echo ""
+						echo "QUESTION : Would you like to use $existing_subdomain for your subdomain? (y/n): "
+						read -p "" reinstall_virtualmin_choice
+						if [[ -n "$reinstall_virtualmin_choice" ]]; then
+							break
+						fi
+						isNotice "Please provide a valid input."
+					done
+					if [[ "$reinstall_virtualmin_choice" == [yY] ]]; then
+						domain_virtualmin="$existing_subdomain"
 					fi
-					isNotice "Please provide a valid input."
-				done
-				if [[ "$reinstall_virtualmin_choice" == [yY] ]]; then
-					domain_virtualmin="$existing_subdomain"
-				fi
-				if [[ "$reinstall_virtualmin_choice" == [nN] ]]; then
+					if [[ "$reinstall_virtualmin_choice" == [nN] ]]; then
+						virtualminAskForFQDN;
+					fi
+				else
 					virtualminAskForFQDN;
 				fi
 			else
 				virtualminAskForFQDN;
+				virtualminCreateFQDNFile;
 			fi
-		else
-			virtualminAskForFQDN;
-			virtualminCreateFQDNFile;
 		fi
+	else
+		install_virtualmin=y
 	fi
 }
 
@@ -345,11 +323,8 @@ virtualminEdits()
 	echo "####################################################"
 	echo ""
 	if [[ "$install_virtualmin" == [yY] ]]; then
-
-		local hostname="${domain_virtualmin%%.*}" # Before .
-		local domain="${domain_virtualmin#*.}" # After .
-
-		# hosts edits
+		local hostname="${domain_virtualmin%%.*}"
+		local domain="${domain_virtualmin#*.}"
         if [[ -f "$hosts_file" ]]; then
 			sudo sed -i '/127.0.1.1/d' "$hosts_file"
 			sudo sed -i "1i 127.0.1.1\t$hostname.$domain $hostname" $hosts_file
@@ -358,14 +333,10 @@ virtualminEdits()
 			echo "No hostname file found...cancelling setup."
 			return
 		fi
-
-		# hostname edits
         if [[ -f "$hostname_file" ]]; then
-			# File updates
 			echo "" | sudo tee $hostname_file
 			echo "$domain_virtualmin" | sudo tee $hostname_file > /dev/null
 			echo "Hostname updated to '$domain_virtualmin'."
-			# Reload hostname
 			sudo hostnamectl set-hostname $(cat $hostname_file)
 			echo "Reloaded hostname file"
 		else
@@ -407,28 +378,31 @@ completeInitMessage()
 	echo "###      EasyDocker Initilization Complete       ###"
 	echo "####################################################"
 	echo ""
-	while true; do
-		echo ""
-		echo "NOTICE - It is recommended to restart the system upon initial install."
-		echo ""
-		echo "QUESTION : Would you like to restart your system as recommended? (y/n): "
-		read -p "" restart_after_install_choice
-		if [[ -n "$restart_after_install_choice" ]]; then
-			break
-		fi
-		isNotice "Please provide a valid input."
-	done
-	if [[ "$restart_after_install_choice" == [yY] ]]; then
-		if dpkg -l | grep -q virtualmin; then
-			echo "For Virtualmin, please run 'easydocker' to finalize the setup."
-			echo "Otherwise run 'sudo systemctl start'"
+
+	if [[ "$param2" == "" ]]; then
+		while true; do
 			echo ""
+			echo "NOTICE - It is recommended to restart the system upon initial install."
+			echo ""
+			echo "QUESTION : Would you like to restart your system as recommended? (y/n): "
+			read -p "" restart_after_install_choice
+			if [[ -n "$restart_after_install_choice" ]]; then
+				break
+			fi
+			isNotice "Please provide a valid input."
+		done
+		if [[ "$restart_after_install_choice" == [yY] ]]; then
+			if dpkg -l | grep -q virtualmin; then
+				echo "For Virtualmin, please run 'easydocker' to finalize the setup."
+				echo "Otherwise run 'sudo systemctl start'"
+				echo ""
+			fi
+			echo "You can now use the 'easydocker' command under the $sudo_user_name."
+			echo ""
+			echo "Thank you & Enjoy! <3"
+			echo ""
+			sudo reboot
 		fi
-		echo "You can now use the 'easydocker' command under the $sudo_user_name."
-		echo ""
-		echo "Thank you & Enjoy! <3"
-		echo ""
-		sudo reboot
 	fi
 }
 
