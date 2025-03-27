@@ -1,14 +1,11 @@
 # Backup - RECOMMENDED BUT NOT NEEDED FOR INSTALLATION
 #
-# Crontab Full : 
-# Used for the full backup crontab timings.
 #
 # Crontab App :
 # Used for the app backup crontab timings
 # Goes up from the initial timing then + the interval in minutes per app.
 #
 CFG_BACKUP_CRONTAB_FULL="0 4 * * SAT"
-CFG_BACKUP_FULL=false
 CFG_BACKUP_CRONTAB_APP="0 5 * * *"
 CFG_BACKUP_CRONTAB_APP_INTERVAL=3
 CFG_BACKUP_KEEPDAYS=7

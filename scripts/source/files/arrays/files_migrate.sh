@@ -7,7 +7,6 @@ migrate_scripts=(
     "migrate/file/check_migrate.sh"
     "migrate/file/update_migrate.sh"
 
-    "migrate/list/full_migrate_files.sh"
     "migrate/list/single_migrate_files.sh"
 
     "migrate/txt/build_txt.sh"

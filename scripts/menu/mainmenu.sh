@@ -102,10 +102,10 @@ mainMenu()
 					echo "###             Backup            ###"
 					echo "#####################################"
 					echo ""
-					isOptionMenu "Single App Backup - Docker Container Folder (y/n): "
+					isOptionMenu "App Backup - Docker Container Folder (y/n): "
 					read -rp "" backupsingle
-					isOptionMenu "Full Backup - Docker Folder (y/n): "
-					read -rp "" backupfull
+					isOptionMenu "EasyDocker Config Backup (y/n): "
+					read -rp "" backupconfig
 
 					startOther;
 
@@ -121,8 +121,8 @@ mainMenu()
 					echo ""
 					isOptionMenu "Single Restore - App (l/r): "
 					read -rp "" restoresingle
-					isOptionMenu "Full Restore - Docker Folder (l/r): "
-					read -rp "" restorefull
+					isOptionMenu "Restore Easydocker Config (l/r): "
+					read -rp "" restoresconfig
 
 					startOther;
 

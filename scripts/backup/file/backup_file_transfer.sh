@@ -11,12 +11,7 @@ backupTransferFile()
         exit
     fi
 
-    if [ "$app_name" == "full" ]; then
-        local backup_folder="full"
-    elif [ "$app_name" != "full" ]; then
-        local backup_folder="single"
-    fi
-
+    local backup_folder="single"
     local backup_location="$CFG_BACKUP_REMOTE_1_BACKUP_DIRECTORY/$CFG_INSTALL_NAME/$backup_folder"
     local backup_location_clean="$(echo "$backup_location" | sed 's/\/\//\//g')"
     

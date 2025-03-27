@@ -5,11 +5,7 @@ backupStart()
     local app_name="$1"
     local stored_app_name=$app_name
     local backup_file_name="$CFG_INSTALL_NAME-$app_name-backup-$backupDate"
-    if [ "$app_name" == "full" ]; then
-        local backup_save_directory="$backup_full_dir"
-    elif [ "$app_name" != "full" ]; then
-        local backup_save_directory="$backup_single_dir"
-    fi
+    local backup_save_directory="$backup_single_dir"
 
     # Safeguarding
     if [ "$app_name" == "" ]; then
@@ -35,11 +31,7 @@ backupStart()
     echo "---- $menu_number. Shutting container(s) for backup"
     echo ""
 
-    if [ "$stored_app_name" == "full" ]; then
-        dockerComposeDownAllApps;
-    else
-        dockerComposeDown $stored_app_name;
-    fi
+    dockerComposeDown $stored_app_name;
 
 	((menu_number++))
     echo ""
@@ -53,11 +45,8 @@ backupStart()
     echo "---- $menu_number. Starting up all docker containers"
     echo ""
 
-    if [ "$stored_app_name" == "full" ]; then
-        dockerComposeUpAllApps;
-    else
-        dockerComposeUp $stored_app_name;
-    fi
+
+    dockerComposeUp $stored_app_name;
 
     if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ] || [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
 
@@ -90,6 +79,5 @@ backupStart()
 
 	menu_number=0
     backupsingle=n
-    backupfull=n
     cd
 }

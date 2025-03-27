@@ -22,20 +22,19 @@ wireguard_dir="$docker_dir/wireguard/"
 logs_dir="$docker_dir/logs/"
 configs_dir="$docker_dir/configs/"
 backup_dir="$docker_dir/backups"
-backup_full_dir="$backup_dir/full"
 backup_single_dir="$backup_dir/single"
 backup_install_dir="$backup_dir/install"
 restore_dir="$docker_dir/restore"
-restore_full_dir="$restore_dir/full"
 restore_single_dir="$restore_dir/single"
 migrate_dir="$docker_dir/migrate"
-migrate_full_dir="$migrate_dir/full"
 migrate_single_dir="$migrate_dir/single"
 # Install Scripts
 script_dir="$docker_dir/install"
 install_configs_dir="$script_dir/configs/"
 install_containers_dir="$script_dir/containers/"
 install_scripts_dir="$script_dir/scripts/"
+# Virtualmin
+vm_backup_dir="/backups/"
 
 
 initializeScript()
@@ -132,7 +131,7 @@ initializeScript()
 		echo "###        EasyDocker Folder Creation            ###"
 		echo "####################################################"
 		echo ""
-		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$wireguard_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_full_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_full_dir" "$restore_single_dir" "$migrate_dir" "$migrate_full_dir" "$migrate_single_dir"  "$script_dir")
+		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$wireguard_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_single_dir" "$migrate_dir" "$migrate_single_dir"  "$script_dir")
 		for folder in "${folders[@]}"; do
 			if [ ! -d "$folder" ]; then
 				sudo mkdir "$folder"

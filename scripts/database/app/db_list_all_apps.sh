@@ -18,7 +18,7 @@ databaseListAllApps()
 
         echo ""
         echo "##########################################"
-        echo "###     Listing full apps database     ###"
+        echo "###          Listing all apps          ###"
         echo "##########################################"
         echo ""
 

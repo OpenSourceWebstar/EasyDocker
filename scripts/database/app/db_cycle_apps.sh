@@ -4,32 +4,7 @@ databaseCycleThroughListApps()
 {
     local name=$1
     # Protection from running in start script
-    if [[ "$backupsingle" == [yY] ]] || [[ "$backupfull" == [yY] ]] || [[ "$migratesingle" == [yY] ]] || [[ "$migratefull" == [yY] ]]; then
-
-        # Full
-        # Backup
-        if [[ "$backupfull" == [yY] ]]; then
-            local name=full
-            isQuestion "Do you want to backup : $name? (y/n) "
-            read -rp "" BACKUPACCEPT
-
-            if [[ $BACKUPACCEPT == [yY] ]]; then
-                isNotice "Starting a $name backup."
-                backupStart $name;
-            fi
-        fi
-
-        # Migrate
-        if [[ "$migratefull" == [yY] ]]; then
-            local name=full
-            isQuestion "Do you want to migrate $name? (y/n)? "
-            read -rp "" MIGRATEACCEPT
-
-            if [[ $MIGRATEACCEPT == [yY] ]]; then
-                isNotice "Starting a $name migrate."
-                migrateStart $name;
-            fi
-        fi
+    if [[ "$backupsingle" == [yY] ]]  [[ "$migratesingle" == [yY] ]]; then
 
         # This is for single apps ONLY    
         local app_names=()

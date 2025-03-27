@@ -25,10 +25,10 @@ restoreCopyFile()
         done
         if [[ "$redownload_backup_file" == [yY] ]]; then
             # Perform the copy or download
-            if [[ "$restorefull" == [lL] ]] || [[ "$restoresingle" == [lL] ]] || [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
+            if [[ "$restoresingle" == [lL] ]] || [[ "$restoresingle" == [mM] ]]; then
                 local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$docker_install_user" | pv -p -e -r > /dev/null)
                 checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
-            elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
+            elif [[ "$restoresingle" == [rR] ]]; then
                 if [[ "$remote_server" == "1" ]]; then
                     local result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$destination_path" | pv -p -e -r > /dev/null)
                     checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"
@@ -40,10 +40,10 @@ restoreCopyFile()
         fi
     else
         # Perform the copy or download
-        if [[ "$restorefull" == [lL] ]] || [[ "$restoresingle" == [lL] ]] || [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
+        if [[ "$restoresingle" == [lL] ]] || [[ "$restoresingle" == [mM] ]]; then
             local result=$(copyFile "loud" "$backup_save_directory/$chosen_backup_file" "$RESTORE_SAVE_DIRECTORY" "$docker_install_user" | pv -p -e -r > /dev/null)
             checkSuccess "Copying over $chosen_backup_file to the local Restore Directory"
-        elif [[ "$restorefull" == [rR] ]] || [[ "$restoresingle" == [rR] ]]; then
+        elif [[ "$restoresingle" == [rR] ]]; then
             if [[ "$remote_server" == "1" ]]; then
                 local result=$(sudo sshpass -p "$CFG_BACKUP_REMOTE_1_PASS" scp -o StrictHostKeyChecking=no "$CFG_BACKUP_REMOTE_1_USER"@"$CFG_BACKUP_REMOTE_1_IP":"$remote_path_save/$chosen_backup_file" "$destination_path" | pv -p -e -r > /dev/null)
                 checkSuccess "Copy $chosen_backup_file from $CFG_BACKUP_REMOTE_1_IP to $RESTORE_SAVE_DIRECTORY"

@@ -76,30 +76,11 @@ cliInitialize()
 
             elif [ "$initial_command3" = "local" ]; then
                 if [[ -z "$initial_command4" ]]; then
+                    isNotice "No app defined, please specify one."
+                    echo ""
                     cliRestoreAppCommands;
-                elif [[ ! -z "$initial_command4" ]]; then
-                    checkRemoteBackupStatus;
-                    if [[ $remote_backups_disabled == "true" ]]; then
-                        while true; do
-                            read -rp "Remote backups are not configured. Do you want to edit the backup configuration now? (Y/N): " remotebackupsetup
-                            case "$remotebackupsetup" in
-                                [Yy]) 
-                                    viewEasyDockerConfigs "backup"
-                                    sourceScanFiles "easydocker_configs"
-                                    break
-                                    ;;
-                                [Nn]) 
-                                    isNotice "Skipping backup configuration."
-                                    break
-                                    ;;
-                                *) 
-                                    isNotice "Invalid input. Please enter 'Y' or 'N'."
-                                    ;;
-                            esac
-                        done
-                    elif [[ $remote_backups_disabled == "false" ]]; then
-                        restoreStart app local $initial_command4
-                    fi
+                else
+                    restoreLatestLocalBackup "$initial_command4";
                 fi
             fi
 
@@ -134,7 +115,6 @@ cliInitialize()
                             esac
                         done
                     elif [[ $remote_backups_disabled == "false" ]]; then
-
                         restoreStart virtualmin domain remote
                     fi
 

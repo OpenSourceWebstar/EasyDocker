@@ -30,7 +30,7 @@ databaseCycleThroughListAppsCrontab()
         echo "############################################"
     fi
 
-    local app_names=("full")  # To Inject full to set up crontab also
+    local app_names=()
     while IFS= read -r name; do
         local app_names+=("$name")
     done < <(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 1;")
@@ -42,8 +42,9 @@ databaseCycleThroughListAppsCrontab()
     fi
 
     # Remove crontab entries for applications with status = 0 (uninstalled)
+    local uninstalled_apps=()
     while IFS= read -r name; do
-        local uninstalled_apps+=("$name")
+        uninstalled_apps+=("$name")
     done < <(sudo sqlite3 "$docker_dir/$db_file" "SELECT name FROM apps WHERE status = 0;")
 
     for name in "${uninstalled_apps[@]}"; do
@@ -58,4 +59,3 @@ databaseCycleThroughListAppsCrontab()
     crontabClean;
     isSuccessful "Setting up Crontab backups for application(s) completed."
 }
-

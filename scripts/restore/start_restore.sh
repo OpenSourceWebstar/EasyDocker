@@ -12,19 +12,6 @@ restoreStart()
     if [[ $stored_app_name == "" ]]; then
         isError "No app_name provided, unable to start restore."
         return 1
-    elif [[ $stored_app_name == "full" ]]; then
-        isNotice "You are trying to restore a full backup! This is dangerous is unintended."
-        while true; do
-            isQuestion "Are you sure you want to restore a full backup? (y/n): "
-            read -rp "" confirmfullrestore
-            if [[ "$confirmfullrestore" =~ ^[yYnN]$ ]]; then
-                break
-            fi
-            isNotice "Please provide a valid input (y/n)."
-        done
-        if [[ "$confirmfullrestore" == [nN] ]]; then
-            return 1
-        fi
     fi
 
     echo ""
@@ -32,6 +19,7 @@ restoreStart()
     echo "###      Restoring $stored_app_name Docker Folder"
     echo "##########################################"
     echo ""
+
     portClearAllData;
 
     ((menu_number++))
@@ -54,11 +42,7 @@ restoreStart()
     echo "---- $menu_number. Shutting Down container(s) for restoration"
     echo ""
 
-    if [ "$stored_app_name" == "full" ]; then
-        dockerStopAllApps;
-    else
-        dockerComposeDown $stored_app_name;
-    fi
+    dockerComposeDown $stored_app_name;
 
     ((menu_number++))
     echo ""
@@ -81,7 +65,7 @@ restoreStart()
 
     restoreExtractFile;
 
-    if [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
+    if [[ "$restoresingle" == [mM] ]]; then
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Running migration scans to update the files before install."
@@ -132,11 +116,7 @@ restoreStart()
     echo "---- $menu_number. Starting up the $stored_app_name docker service(s)"
     echo ""
 
-    if [ "$stored_app_name" == "full" ]; then
-        dockerStartAllApps;
-    else
-        dockerComposeUp $stored_app_name;
-    fi
+    dockerComposeUp $stored_app_name;
 
     ((menu_number++))
     echo ""
@@ -173,7 +153,7 @@ restoreStart()
 
     restoreCleanFiles;
 
-    if [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
+    if [[ "$restoresingle" == [mM] ]]; then
         ((menu_number++))
         echo ""
         echo "---- $menu_number. Moving installed backup file to Migration storage."
@@ -189,11 +169,9 @@ restoreStart()
     
     menu_number=0
     backupsingle=n
-    backupfull=n
     restoresingle=n
-    restorefull=n
 
-    if [[ "$restorefull" == [mM] ]] || [[ "$restoresingle" == [mM] ]]; then
+    if [[ "$restoresingle" == [mM] ]]; then
         migrateCheckForMigrateFiles;
     else
         return

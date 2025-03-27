@@ -31,11 +31,9 @@ resetToMenu()
     
     # Backup
     backupsingle=n
-    backupfull=n
     
     # Restore
     restoresingle=n
-    restorefull=n
     
     # Mirate
     migratecheckforfiles=n

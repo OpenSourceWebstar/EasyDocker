@@ -24,7 +24,7 @@ ____ ____ ____ _   _    ___  ____ ____ _  _ ____ ____
 
 initEasyDocker()
 {
-    # For the full application loading
+    # For the application loading
     if [[ "$initial_command1" == "run" ]]; then
         init_run_flag="true"
         displayEasyDockerLogo;
