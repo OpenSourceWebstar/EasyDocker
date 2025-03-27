@@ -4,7 +4,7 @@ databaseCycleThroughListApps()
 {
     local name=$1
     # Protection from running in start script
-    if [[ "$backupsingle" == [yY] ]]  [[ "$migratesingle" == [yY] ]]; then
+    if [[ "$backupsingle" == [yY] ]] || [[ "$migratesingle" == [yY] ]]; then
 
         # This is for single apps ONLY    
         local app_names=()
