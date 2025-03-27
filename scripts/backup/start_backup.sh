@@ -36,7 +36,7 @@ backupStart()
     echo ""
 
     if [ "$stored_app_name" == "full" ]; then
-        dockerStopAllApps;
+        dockerComposeDownAllApps;
     else
         dockerComposeDown $stored_app_name;
     fi
@@ -54,9 +54,9 @@ backupStart()
     echo ""
 
     if [ "$stored_app_name" == "full" ]; then
-        dockerStartAllApps;
+        dockerComposeUpAllApps;
     else
-        dockerStartApp $stored_app_name;
+        dockerComposeUp $stored_app_name;
     fi
 
     if [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ] || [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
