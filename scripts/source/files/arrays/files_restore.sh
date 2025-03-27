@@ -12,7 +12,7 @@ restore_scripts=(
     "restore/local/get_available_apps.sh"
     "restore/local/get_latest_backup.sh"
     "restore/local/restore_latest_backup.sh"
-    "restore/local/select_applicaton.sh"
+    "restore/local/select_application.sh"
     "restore/local/select_backup_file.sh"
 
     "restore/remote/remote_menu.sh"
