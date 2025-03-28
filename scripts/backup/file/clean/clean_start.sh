@@ -12,11 +12,11 @@ backupCleanFiles()
     # Clean local backups if specified
     if [ "$CFG_BACKUP_KEEPDAYS" != "0" ]; then
         isNotice "Starting local backup cleanup..."
-        clean_local_backups "$backup_location"
+        clean_local_backups "$backup_save_directory"
     fi
 
     # Clean remote backups for remote server 1 if flag is set
-    if [ "$CFG_BACKUP_REMOTE_1_BACKUP_CLEAN" == "true" ]; then
+    if [ "$CFG_BACKUP_REMOTE_1_BACKUP_CLEAN" == "true" ] && [ "$CFG_BACKUP_REMOTE_1_ENABLED" == "true" ]; then
         isNotice "Starting remote backup cleanup for server 1..."
         clean_remote_backups "$CFG_BACKUP_REMOTE_1_IP" "$CFG_BACKUP_REMOTE_1_USER" \
                              "$CFG_BACKUP_REMOTE_1_PASS" "$CFG_BACKUP_REMOTE_1_PORT" \
@@ -24,7 +24,7 @@ backupCleanFiles()
     fi
 
     # Clean remote backups for remote server 2 if flag is set
-    if [ "$CFG_BACKUP_REMOTE_2_BACKUP_CLEAN" == "true" ]; then
+    if [ "$CFG_BACKUP_REMOTE_2_BACKUP_CLEAN" == "true" ] && [ "$CFG_BACKUP_REMOTE_2_ENABLED" == "true" ]; then
         isNotice "Starting remote backup cleanup for server 2..."
         clean_remote_backups "$CFG_BACKUP_REMOTE_2_IP" "$CFG_BACKUP_REMOTE_2_USER" \
                              "$CFG_BACKUP_REMOTE_2_PASS" "$CFG_BACKUP_REMOTE_2_PORT" \
