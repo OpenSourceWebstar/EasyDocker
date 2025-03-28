@@ -27,12 +27,10 @@ wireguard_dir="$docker_dir/wireguard/"
 logs_dir="$docker_dir/logs/"
 configs_dir="$docker_dir/configs/"
 # Backup
+# Other Directories defined in backup/restore start
 backup_dir="$docker_dir/backups"
 backup_dir_tmp="$backup_dir/tmp"
 backup_folder="backup-$current_date"
-backup_file_name="$CFG_INSTALL_NAME-$app_name"
-backup_save_directory="$backup_dir/backup-$current_date"
-backup_remote_directory="EasyDocker-$CFG_INSTALL_NAME/$backup_folder"
 vm_backup_dir="/backups"
 restore_dir="$docker_dir/restore"
 restore_single_dir="$restore_dir/single"

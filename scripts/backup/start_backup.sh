@@ -4,6 +4,10 @@ backupStart()
 {
     local app_name="$1"
     local stored_app_name=$app_name
+    
+    backup_file_name="$CFG_INSTALL_NAME-$app_name"
+    backup_save_directory="$backup_dir/backup-$current_date"
+    backup_remote_directory="EasyDocker-$CFG_INSTALL_NAME/$backup_folder"
 
     # Safeguarding
     if [ "$app_name" == "" ]; then
