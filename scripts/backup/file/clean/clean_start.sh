@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Function to clean backups (local or remote)
-backupClean() 
+backupCleanFiles() 
 {
     # Safeguarding
     if [ -z "$app_name" ]; then
