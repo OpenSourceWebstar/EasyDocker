@@ -11,12 +11,9 @@ PINK='\033[0;35m'
 NC='\033[0m' # No Color
 
 # Date/Time
-backupDate=$(date  +'%F')
-backupFolder="backup_$(date +"%Y%m%d%H%M%S")"
 current_date=$(date +%Y-%m-%d)
 current_time=$(date +%H:%M:%S)
-backup_file_name="$CFG_INSTALL_NAME-$app_name"
-backup_save_directory="$backup_dir/backup-$current_date/"
+backupDate=$(date  +'%F')
 
 # Domain/Network
 public_ip_v4=$(dig +short myip.opendns.com @resolver1.opendns.com)

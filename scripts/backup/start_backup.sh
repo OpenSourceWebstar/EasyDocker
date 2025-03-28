@@ -22,7 +22,7 @@ backupStart()
     echo "---- $menu_number. Checking exisiting backup files"
     echo ""
 
-    backupExistsCheck $app_name $backup_file_name $backup_save_directory;
+    backupExistsCheck $app_name;
 
 	((menu_number++))
     echo ""
@@ -36,7 +36,7 @@ backupStart()
     echo "---- $menu_number. Backing up $stored_app_name docker folder"
     echo ""
 
-    backupZipFile $app_name $backup_file_name $backup_save_directory;
+    backupZipFile $app_name;
 
 	((menu_number++))
     echo ""

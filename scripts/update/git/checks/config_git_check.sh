@@ -8,7 +8,7 @@ gitCheckConfigs()
         local valid_configs_found=false
 
         # Get a list of all backup zip files in the directory, sorted by date (latest first)
-        local backup_files=($(sudo find "$backup_install_dir" -type f -name 'backup_*.zip' | sort -r))
+        local backup_files=($(sudo find "$backup_dir" -type f -name 'backup_*.zip' | sort -r))
         
         # Check if any backup files were found
         if [ ${#backup_files[@]} -eq 0 ]; then
@@ -30,7 +30,7 @@ gitCheckConfigs()
                 elif [[ "$acceptnoconfigs" =~ ^[nN]$ ]]; then
                     echo ""
                     echo ""
-                    isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
+                    isNotice "Place your EasyDocker install backup file into $backup_dir and run the 'easydocker' command."
                     exitScript
                     exit;
                 else
@@ -105,7 +105,7 @@ gitCheckConfigs()
                 if [[ $acceptnoconfigs == [nN] ]]; then
                     echo ""
                     echo ""
-                    isNotice "Place your EasyDocker install backup file into $backup_install_dir and run the 'easydocker' command."
+                    isNotice "Place your EasyDocker install backup file into $backup_dir and run the 'easydocker' command."
                     exitScript
                     exit
                 fi

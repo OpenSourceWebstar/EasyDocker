@@ -4,8 +4,6 @@
 backupExistsCheck()
 {
     local app_name="$1"
-    local backup_file_name="$2"
-    local backup_save_directory="$3"
 
     # Safeguarding
     if [ "$app_name" == "" ]; then
@@ -22,8 +20,8 @@ backupExistsCheck()
     if [ -f "$backup_save_directory/$backup_file_name.zip" ]; then
         while true; do
             isQuestion "Backup file already exists for $app_name. Would you like to overwrite it? (y/n): "
-            read -rp "" backupsinglefileexists
-            if [[ -n "$backupsinglefileexists" ]]; then
+            read -rp "" backupfileexists
+            if [[ -n "$backupfileexists" ]]; then
                 break
             fi
             isNotice "Please provide a valid input."

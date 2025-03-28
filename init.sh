@@ -21,9 +21,15 @@ ssh_dir="$docker_dir/ssh/"
 wireguard_dir="$docker_dir/wireguard/"
 logs_dir="$docker_dir/logs/"
 configs_dir="$docker_dir/configs/"
+# Backup
 backup_dir="$docker_dir/backups"
+backup_dir_tmp="$backup_dir/tmp"
 backup_single_dir="$backup_dir/single"
 backup_install_dir="$backup_dir/install"
+backup_folder="backup-$current_date"
+backup_file_name="$CFG_INSTALL_NAME-$app_name"
+backup_save_directory="$backup_dir/backup-$current_date"
+vm_backup_dir="/backups"
 restore_dir="$docker_dir/restore"
 restore_single_dir="$restore_dir/single"
 migrate_dir="$docker_dir/migrate"
@@ -33,8 +39,6 @@ script_dir="$docker_dir/install"
 install_configs_dir="$script_dir/configs/"
 install_containers_dir="$script_dir/containers/"
 install_scripts_dir="$script_dir/scripts/"
-# Virtualmin
-vm_backup_dir="/backups/"
 
 
 initializeScript()
