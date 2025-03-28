@@ -4,6 +4,11 @@ param1="$1" # init / virtualmin
 param2="$2" # unattended / domain
 param3="$3" # / webmin_password
 
+# Date/Time
+current_date=$(date +%Y-%m-%d)
+current_time=$(date +%H:%M:%S)
+backupDate=$(date  +'%F')
+
 install_param="init"
 sudo_user_name=easydocker
 repo_url="https://github.com/OpenSourceWebstar/EasyDocker"
