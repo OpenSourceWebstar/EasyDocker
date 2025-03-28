@@ -45,7 +45,7 @@ migrateRestoreFilesMoveToMigrate()
         checkSuccess "Moving $full_backup_file to $migrate_full_dir"
     done
 
-    local single_files_without_string=$(sudo ls "$backup_single_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo ls "$backup_dir" | sudo grep  -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$single_files_without_string" ]; then
@@ -85,7 +85,7 @@ migrateRestoreFilesMoveToMigrate()
     # Restore selected files
     for single_backup_file in "${selected_files[@]}"; do
         echo ""
-        local result=$(sudo mv $backup_single_dir/$single_backup_file "$migrate_single_dir")
+        local result=$(sudo mv $backup_dir/$single_backup_file "$migrate_single_dir")
         checkSuccess "Moving $single_backup_file to $migrate_single_dir"
     done
 }

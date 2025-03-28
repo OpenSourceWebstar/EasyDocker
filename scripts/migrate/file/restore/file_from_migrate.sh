@@ -42,10 +42,10 @@ migrateRestoreFileMoveFromMigrate()
             fi
             local file_to_move="${files[file_choice-1]}"
             local src_path="$file_to_move"
-            local dst_path="$backup_single_dir/${file_to_move##*/}"
+            local dst_path="$backup_dir/${file_to_move##*/}"
             echo ""
             local result=$(sudo mv "$src_path" "$dst_path")
-            checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
+            checkSuccess "Moving $(basename "$file_to_move") to $backup_dir"
 
         elif [ "$choice" = "2" ]; then
             local file_count=$(sudo find "$migrate_full_dir" -maxdepth 1 -type f -name "*.zip" | wc -l)
@@ -88,7 +88,7 @@ migrateRestoreFileMoveFromMigrate()
             read -p "" backup_choice
             if [ "$backup_choice" = "1" ]; then
                 local src_dir="$migrate_single_dir"
-                local dst_dir="$backup_single_dir"
+                local dst_dir="$backup_dir"
             elif [ "$backup_choice" = "2" ]; then
                 local src_dir="$migrate_full_dir"
                 local dst_dir="$backup_full_dir"
@@ -130,7 +130,7 @@ migrateRestoreFileMoveFromMigrate()
                     local src_path="$f"
                     local dst_path="$dst_dir/${f##*/}"
                     local result=$(sudo mv "$src_path" "$dst_path")
-                    checkSuccess "Moving $(basename "$file_to_move") to $backup_single_dir"
+                    checkSuccess "Moving $(basename "$file_to_move") to $backup_dir"
                 done
                 echo ""
                 isSuccessful "Files moved successfully"

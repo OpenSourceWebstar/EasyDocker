@@ -26,7 +26,7 @@ migrateRestoreFileMoveToMigrate()
             local result=$(sudo mv $backup_full_dir/$chosen_backup_file $migrate_full_dir/$chosen_backup_file)
             checkSuccess "Moving $chosen_backup_file to $migrate_full_dir"
         else
-            local result=$(sudo mv $backup_single_dir/$chosen_backup_file $migrate_single_dir/$chosen_backup_file)
+            local result=$(sudo mv $backup_dir/$chosen_backup_file $migrate_single_dir/$chosen_backup_file)
             checkSuccess "Moving $chosen_backup_file to $migrate_single_dir"
         fi
   fi
@@ -48,8 +48,8 @@ migrateRestoreFileMoveToMigrate()
             local result=$(sudo mv $backup_full_dir/$chosen_backup_file)
             checkSuccess "Deleting $chosen_backup_file in $backup_full_dir"
         else
-            local result=$(sudo rm $backup_single_dir/$chosen_backup_file)
-            checkSuccess "Deleting $chosen_backup_file in $backup_single_dir"
+            local result=$(sudo rm $backup_dir/$chosen_backup_file)
+            checkSuccess "Deleting $chosen_backup_file in $backup_dir"
         fi
     fi
   fi

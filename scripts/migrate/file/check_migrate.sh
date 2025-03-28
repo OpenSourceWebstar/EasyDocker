@@ -3,7 +3,7 @@
 migrateCheckForMigrateFiles() 
 {
     # Check if there are files without the specified string
-    local single_files_without_string=$(sudo ls "$backup_single_dir" | sudo grep -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo ls "$backup_dir" | sudo grep -v "$CFG_INSTALL_NAME")
 
     if [ -n "$single_files_without_string" ]; then
         migrateCheckForSingleMigrateFiles;
@@ -44,7 +44,7 @@ migrateCheckForMigrateFiles()
 migrateCheckForSingleMigrateFiles() 
 {
     # Check if there are backup files found
-    local single_backup_files=$(sudo ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
+    local single_backup_files=$(sudo ls "$backup_dir" | grep -v "$CFG_INSTALL_NAME")
 
     if [ -n "$single_backup_files" ]; then
         migrateshowsingle=true

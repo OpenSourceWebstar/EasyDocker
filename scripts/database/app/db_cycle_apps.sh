@@ -26,6 +26,7 @@ databaseCycleThroughListApps()
 
         # Backup
         if [[ "$backupsingle" == [yY] ]]; then
+            echo ""
             for name in "${app_names[@]}"; do
                 isQuestion "Do you want to backup $name? (y/n) "
                 read -rp "" BACKUPACCEPT

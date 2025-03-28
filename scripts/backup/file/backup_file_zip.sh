@@ -3,8 +3,6 @@
 backupZipFile()
 {
     local app_name="$1"
-    local backup_file_name="$2"
-    local backup_save_directory="$3"
 
     # Safeguarding
     if [ "$app_name" == "" ]; then

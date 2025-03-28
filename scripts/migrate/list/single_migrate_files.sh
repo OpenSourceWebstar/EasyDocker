@@ -3,7 +3,7 @@
 migrateListSingleMigrateFiles() 
 {
     # Find files not containing $CFG_INSTALL_NAME
-    local single_files_without_string=$(sudo ls "$backup_single_dir" | grep -v "$CFG_INSTALL_NAME")
+    local single_files_without_string=$(sudo ls "$backup_dir" | grep -v "$CFG_INSTALL_NAME")
 
     # Output list of filenames found
     if [ -n "$single_files_without_string" ]; then
