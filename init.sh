@@ -131,7 +131,7 @@ initializeScript()
 		echo "###        EasyDocker Folder Creation            ###"
 		echo "####################################################"
 		echo ""
-		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$wireguard_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$backup_single_dir" "$backup_install_dir" "$restore_dir" "$restore_single_dir" "$migrate_dir" "$migrate_single_dir"  "$script_dir")
+		folders=("$docker_dir" "$containers_dir" "$ssl_dir" "$ssh_dir" "$wireguard_dir" "$logs_dir" "$configs_dir" "$backup_dir" "$restore_dir" "$restore_single_dir" "$migrate_dir" "$migrate_single_dir"  "$script_dir")
 		for folder in "${folders[@]}"; do
 			if [ ! -d "$folder" ]; then
 				sudo mkdir "$folder"

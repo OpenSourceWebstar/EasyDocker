@@ -4,8 +4,6 @@ backupStart()
 {
     local app_name="$1"
     local stored_app_name=$app_name
-    local backup_file_name="$CFG_INSTALL_NAME-$app_name-backup-$backupDate"
-    local backup_save_directory="$backup_single_dir"
 
     # Safeguarding
     if [ "$app_name" == "" ]; then
@@ -44,7 +42,6 @@ backupStart()
     echo ""
     echo "---- $menu_number. Starting up all docker containers"
     echo ""
-
 
     dockerComposeUp $stored_app_name;
 
